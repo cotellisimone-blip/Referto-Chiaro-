@@ -14,7 +14,7 @@ cp .env.example .env.local   # facoltativo: i default sono già sicuri
 npm run dev                   # http://localhost:3000
 ```
 
-Nessuna chiave API, database o servizio esterno è necessario per la demo.
+Nessuna chiave API o servizio esterno è necessario: senza `DATABASE_URL` il database è PGlite (PostgreSQL embedded) nella cartella `.data/`. L'area personale si prova con il pulsante «Entra con l'account demo» in `/accedi`.
 
 ## Comandi
 
@@ -24,7 +24,7 @@ Nessuna chiave API, database o servizio esterno è necessario per la demo.
 | `npm run build` / `npm start` | Build e avvio di produzione |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript strict |
-| `npm test` | Test unitari (Vitest): parsing numeri, coerenza valori, feature gate, PDF |
+| `npm test` | Test unitari (Vitest): parsing numeri, coerenza valori, feature gate, PDF, isolamento DB, dossier |
 | `npm run test:e2e -- --trace off` | Test end-to-end (Playwright) desktop 1440×900 e mobile 390×844, con axe-core |
 | `npm run screenshots` | Rigenera gli screenshot in `docs/screenshots/` |
 
@@ -39,9 +39,15 @@ src/
   components/site           header, footer, banner demo
   components/ui             componenti del design system
   components/demo           demo interattiva (hero e percorso completo)
+  components/area           area personale (accesso, archivio, percorso referto, dossier, impostazioni)
+  components/report         facsimile, lista di verifica, spiegazione, stepper (condivisi fra demo e area)
+  db                        schema PostgreSQL con RLS e client (pg / PGlite)
+  domain/pipeline           repository e job (lettura, report, dossier)
+  domain/dossier            confronto fra referti
+  lib/auth                  link di accesso, sessioni, consensi, export, eliminazione
   domain/extraction         schema estrazione, parsing numeri e intervalli
   domain/reporting          glossario, schema spiegazione, controllo coerenza, PDF
-  providers/explanation     adapter del modulo informativo (oggi solo mock deterministico)
+  providers/                adapter spiegazione (deterministico), upload/OCR/AI (spenti dai gate)
   fixtures/synthetic        unici documenti accettati dalla demo
   lib                       feature gate, rate limit, helper API
 public/brand                varianti del logo (colore, mono, scura, favicon)

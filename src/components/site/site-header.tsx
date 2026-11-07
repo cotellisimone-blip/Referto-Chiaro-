@@ -9,10 +9,31 @@ import { Logo } from "@/components/brand/logo";
 import { MAIN_NAV } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
 
+/**
+ * Il percorso corrente serve solo a evidenziare la voce attiva. Sulle pagine dinamiche
+ * (area personale) non è noto in prerendering: il layout mostra la versione senza percorso
+ * come fallback di Suspense e questa versione "viva" la sostituisce subito dopo.
+ */
 export function SiteHeader() {
   const pathname = usePathname();
+  return <SiteHeaderView pathname={pathname} />;
+}
+
+export function SiteHeaderView({ pathname }: { pathname: string | null }) {
   const [open, setOpen] = useState(false);
   const [lastPath, setLastPath] = useState(pathname);
+  // Con una sessione attiva il link "Accedi" diventa "Area personale" (controllo leggero, lato client).
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/v1/auth/me", { credentials: "same-origin" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => alive && setSignedIn(Boolean(j?.user)))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [pathname]);
   const panelRef = useRef<HTMLDivElement>(null);
   if (pathname !== lastPath) {
     setLastPath(pathname);
@@ -64,7 +85,7 @@ export function SiteHeader() {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={clsx(
-                      "relative rounded-full px-4 py-2.5 text-[0.9375rem] font-medium transition-colors duration-150",
+                      "relative whitespace-nowrap rounded-full px-4 py-2.5 text-[0.9375rem] font-medium transition-colors duration-150",
                       active ? "bg-mist text-ink" : "text-ink-soft hover:bg-mist/70 hover:text-ink",
                     )}
                   >
@@ -78,6 +99,9 @@ export function SiteHeader() {
 
         <div className="hidden items-center gap-2 lg:flex">
           <ThemeToggle />
+          <Link href={signedIn ? "/area" : "/accedi"} className="btn btn-ghost whitespace-nowrap">
+            {signedIn ? "Area personale" : "Accedi"}
+          </Link>
           <Link href="/esempio" className="btn btn-secondary">
             Prova la demo
           </Link>
@@ -129,6 +153,9 @@ export function SiteHeader() {
                 </Link>
                 <Link href="/esempio" className="btn btn-secondary w-full">
                   Prova la demo
+                </Link>
+                <Link href={signedIn ? "/area" : "/accedi"} className="btn btn-ghost w-full">
+                  {signedIn ? "Vai all'area personale" : "Accedi all'area personale"}
                 </Link>
               </div>
             </nav>

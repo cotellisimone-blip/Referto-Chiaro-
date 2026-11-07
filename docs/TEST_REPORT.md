@@ -6,10 +6,10 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 |---|---|---|
 | Lint | `npm run lint` | ✅ 0 errori, 0 avvisi |
 | Tipi | `npm run typecheck` | ✅ TypeScript strict senza errori |
-| Unit | `npm test` | ✅ 39/39 |
-| Build | `npm run build` | ✅ 14 pagine statiche + 5 API |
-| E2E | `npm run test:e2e -- --trace off` | ✅ 57/57 (desktop 1440×900 e mobile 390×844; include 3 pagine in tema scuro con axe, selettore del tema, menu mobile) |
-| Screenshot | `npm run screenshots` | ✅ 20 immagini in `docs/screenshots/` + 11 in tema scuro (`scuro-*.png`) |
+| Unit | `npm test` | ✅ 48/48 |
+| Build | `npm run build` | ✅ 27 pagine (19 statiche, 8 con contenuto dinamico dell'area) + 21 API |
+| E2E | `npm run test:e2e -- --trace off` | ✅ 69/69 (desktop 1440×900 e mobile 390×844; include 3 pagine in tema scuro con axe, selettore del tema, menu mobile, 6 test dell'area personale) |
+| Screenshot | `npm run screenshots` | ✅ 36 immagini in `docs/screenshots/` + 15 in tema scuro (`scuro-*.png`), area personale inclusa |
 
 ## Cosa copre
 
@@ -21,6 +21,8 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 - Prompt injection: istruzioni nel nome del parametro non cambiano l'output.
 - Feature gate: tutto spento di default, valori ambigui (`TRUE`, `1`, `yes`) non accendono nulla, flag senza approvazione bloccato, demo blocca anche con approvazione.
 - PDF valido con titolo DEMO; sostituzione dei caratteri non rappresentabili.
+- Isolamento DB (PGlite reale, stesse policy di produzione): il proprietario vede il suo documento; un altro utente ne vede/modifica/elimina 0; inserimento per conto di altri rifiutato dalla RLS; senza contesto utente 0 righe; id non valido rifiutato; `audit_log` non cancellabile.
+- Dossier: confronto solo fra esami comparabili, valori non confermati/illeggibili elencati a parte, differenze corrette.
 
 **E2E (Playwright + axe-core)**
 - Percorso demo completo fino al download del PDF, su desktop e mobile, senza errori in console e senza scroll orizzontale.
@@ -29,10 +31,12 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 - Nessun link interno rotto; 404 curato.
 - Nessun testo vietato (lorem ipsum, «certificato GDPR», «conforme MDR», «24/7», «100%», «garantito»).
 - Fail-closed: upload reale → 403; configurazione pubblica tutta spenta; demo rifiuta documenti diversi dalla fixture e campi extra; PDF demo valido.
+- Area personale: senza sessione 401 e rimando all'accesso; percorso completo con l'account demo (nuovo referto → valori → servizio → report → PDF scaricato, 0 violazioni axe, ripresa dopo ricarica); **nessuno vede i documenti di un altro** (API, pagina e export); dossier con confronto corretto e axe; link di accesso monouso; eliminazione account; upload reale 403 anche da autenticati; registrazione senza consensi rifiutata.
 
 ## Non verificato
 
 - Revisione manuale con screen reader e navigazione completa da tastiera (fatta solo a campione).
 - Browser diversi da Chromium (Safari/Firefox).
 - Prestazioni sotto carico.
-- Tutto ciò che riguarda fasi non ancora implementate (auth, DB, pagamenti, medico).
+- Tutto ciò che riguarda fasi non ancora implementate (pagamenti, medico, upload reale).
+- Il database in test è PGlite: le policy sono identiche ma un PostgreSQL gestito va provato prima della produzione.

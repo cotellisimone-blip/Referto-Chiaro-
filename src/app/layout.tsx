@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { SiteHeader } from "@/components/site/site-header";
+import { Suspense } from "react";
+import { SiteHeader, SiteHeaderView } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { DemoRibbon } from "@/components/site/demo-ribbon";
 import { THEME_INIT_SCRIPT } from "@/components/site/theme-toggle";
@@ -48,7 +49,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Vai al contenuto
         </a>
         <DemoRibbon />
-        <SiteHeader />
+        <Suspense fallback={<SiteHeaderView pathname={null} />}>
+          <SiteHeader />
+        </Suspense>
         <main id="contenuto" className="flex-1">
           {children}
         </main>

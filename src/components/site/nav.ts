@@ -8,6 +8,7 @@ export const MAIN_NAV = [
 export const FOOTER_NAV = {
   Servizio: [
     { href: "/esempio", label: "Referto di esempio" },
+    { href: "/accedi", label: "Area personale" },
     { href: "/come-funziona", label: "Come funziona" },
     { href: "/servizi-prezzi", label: "Servizi & Prezzi" },
     { href: "/secondo-parere", label: "Secondo parere medico" },

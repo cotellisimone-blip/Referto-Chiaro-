@@ -2,25 +2,16 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { clsx } from "clsx";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  CheckCheck,
-  Download,
-  FileText,
-  Loader2,
-  RotateCcw,
-  ScanEye,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, Loader2, RotateCcw } from "lucide-react";
 import lab001 from "@/fixtures/synthetic/referto-lab-001.json";
 import type { Explanation } from "@/domain/reporting/explanation-schema";
+import { Facsimile as FacsimileBase, revealFacsimileLine } from "@/components/report/facsimile";
+import { VerificationList, isReadableObs, type VerifiableObservation } from "@/components/report/verification-list";
+import { ExplanationView } from "@/components/report/explanation-view";
+import { Stepper as StepperBase } from "@/components/report/stepper";
 
-type Obs = (typeof lab001.observations)[number];
-const DOC = lab001;
-const readable = (o: Obs) => o.valueRaw !== null && o.parseConfidence !== "low";
+const DOC = lab001 as Omit<typeof lab001, "observations"> & { observations: VerifiableObservation[] };
+const readable = isReadableObs;
 
 const STEPS = ["Documento", "Valori", "Spiegazione", "PDF"] as const;
 type Step = 0 | 1 | 2 | 3;
@@ -32,84 +23,12 @@ function formatDate(iso: string) {
   return `${d}/${m}/${y}`;
 }
 
-/* ---------- Facsimile del documento ---------- */
-
-function Facsimile({ highlightLine, compact = false }: { highlightLine: number | null; compact?: boolean }) {
-  const refs = useRef(new Map<number, HTMLLIElement>());
-  const scroller = useRef<HTMLDivElement>(null);
-  // Scorre SOLO dentro il riquadro del documento, mai la pagina (evita salti su mobile).
-  useEffect(() => {
-    if (highlightLine == null || !scroller.current) return;
-    const el = refs.current.get(highlightLine);
-    const box = scroller.current;
-    if (!el) return;
-    const top = el.offsetTop - box.clientHeight / 2 + el.clientHeight / 2;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    box.scrollTo({ top: Math.max(0, top), behavior: reduce ? "auto" : "smooth" });
-  }, [highlightLine]);
-
-  return (
-    <figure data-facsimile className="card overflow-hidden" aria-label="Facsimile del referto sintetico">
-      <figcaption className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-mist/60 px-5 py-3">
-        <span className="inline-flex items-center gap-2 text-sm font-semibold text-ink">
-          <FileText aria-hidden className="h-4 w-4 text-teal" /> Pagina 1 di {DOC.pageCount}
-        </span>
-        <span className="chip bg-cream text-ink">Esempio sintetico</span>
-      </figcaption>
-      <div
-        ref={scroller}
-        tabIndex={0}
-        role="region"
-        aria-label="Testo del documento, scorrevole"
-        className={clsx("doc-paper relative overflow-x-auto", compact ? "max-h-[420px] overflow-y-auto" : "")}
-      >
-        <ol className="min-w-[560px] py-3 font-mono text-[0.8125rem] leading-8 text-ink">
-          {DOC.sourceLines.map((l) => (
-            <li
-              key={l.line}
-              ref={(el) => {
-                if (el) refs.current.set(l.line, el);
-              }}
-              className={clsx(
-                "grid grid-cols-[2.5rem_1fr] whitespace-pre px-2 transition-colors duration-200",
-                highlightLine === l.line && "bg-cream outline-2 -outline-offset-2 outline-teal",
-              )}
-              aria-current={highlightLine === l.line ? "true" : undefined}
-            >
-              <span className="select-none pr-3 text-right text-muted/70" aria-label={`Riga ${l.line}`}>
-                {l.line}
-              </span>
-              <span>{l.text}</span>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </figure>
-  );
+function Facsimile(props: { highlightLine: number | null; compact?: boolean }) {
+  return <FacsimileBase doc={DOC} {...props} />;
 }
 
-/* ---------- Stepper ---------- */
-
 function Stepper({ step }: { step: Step }) {
-  return (
-    <nav aria-label="Avanzamento della demo" className="no-print">
-      <ol className="grid grid-cols-4 gap-2">
-        {STEPS.map((label, i) => {
-          const state = i < step ? "done" : i === step ? "current" : "todo";
-          return (
-            <li key={label} aria-current={state === "current" ? "step" : undefined} className="min-w-0">
-              <div className={clsx("h-1.5 rounded-full transition-colors duration-200", state === "todo" ? "bg-line" : "bg-teal")} />
-              <p className={clsx("mt-2 flex items-center gap-1.5 truncate text-xs font-semibold sm:text-sm", state === "todo" ? "text-muted" : "text-ink")}>
-                {state === "done" ? <Check aria-hidden className="h-3.5 w-3.5 shrink-0 text-sage-deep" /> : <span className="tabular hidden text-muted sm:inline">{i + 1}.</span>}
-                <span className="truncate">{label}</span>
-                <span className="sr-only">{state === "done" ? " (completato)" : state === "current" ? " (passaggio attuale)" : ""}</span>
-              </p>
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
-  );
+  return <StepperBase steps={STEPS} step={step} label="Avanzamento della demo" />;
 }
 
 /* ---------- Componente principale ---------- */
@@ -165,20 +84,9 @@ export function DemoFlow() {
     });
   }, []);
 
-  const readableIds = DOC.observations.filter(readable).map((o) => o.id);
-  const allConfirmed = readableIds.every((id) => confirmed.includes(id));
 
   /** Azione esplicita dell'utente: evidenzia la riga e, se il documento non è visibile, lo porta in vista. */
-  const reveal = (line: number) => {
-    setHighlight(line);
-    const fig = document.querySelector<HTMLElement>("[data-facsimile]");
-    if (!fig) return;
-    const r = fig.getBoundingClientRect();
-    if (r.top < 80 || r.bottom > window.innerHeight) {
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      fig.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
-    }
-  };
+  const reveal = (line: number) => revealFacsimileLine(setHighlight, line);
 
   const toggle = (id: string) => setConfirmed((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id]));
 
@@ -279,85 +187,7 @@ export function DemoFlow() {
           </div>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start [&>*]:min-w-0">
-            <fieldset>
-              <legend className="sr-only">Valori estratti dal documento</legend>
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm text-muted" aria-live="polite">
-                  <span className="tabular font-semibold text-ink">{confirmed.length}</span> di {readableIds.length} valori leggibili confermati
-                </p>
-                <button
-                  type="button"
-                  className="btn btn-ghost min-h-11 text-sm"
-                  onClick={() => setConfirmed(allConfirmed ? [] : readableIds)}
-                >
-                  <CheckCheck aria-hidden className="h-4 w-4" />
-                  {allConfirmed ? "Togli tutte le conferme" : "Conferma tutti i valori leggibili"}
-                </button>
-              </div>
-              <ul className="space-y-3">
-                {DOC.observations.map((o) => {
-                  const ok = readable(o);
-                  const checked = confirmed.includes(o.id);
-                  const inputId = `conf-${o.id}`;
-                  return (
-                    <li
-                      key={o.id}
-                      onMouseEnter={() => setHighlight(o.sourceLine)}
-                      onFocus={() => setHighlight(o.sourceLine)}
-                      className={clsx(
-                        "rounded-2xl border bg-paper p-4 transition-colors duration-150 sm:p-5",
-                        !ok ? "border-dashed border-muted/40 bg-canvas" : checked ? "border-teal/60 shadow-[var(--shadow-card)]" : "border-line",
-                      )}
-                    >
-                      <div className="flex items-start gap-4">
-                        {ok ? (
-                          <input
-                            id={inputId}
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() => toggle(o.id)}
-                            className="mt-1 h-6 w-6 shrink-0 cursor-pointer rounded-md accent-[var(--color-teal)]"
-                            aria-describedby={`${inputId}-src`}
-                          />
-                        ) : (
-                          <AlertTriangle aria-hidden className="mt-1 h-6 w-6 shrink-0 text-warn" />
-                        )}
-                        <div className="min-w-0 flex-1">
-                          <label htmlFor={ok ? inputId : undefined} className={clsx("block", ok && "cursor-pointer")}>
-                            <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                              <span className="font-semibold text-ink">{o.nameRaw}</span>
-                              <span className="tabular font-mono text-[0.9375rem]">
-                                {ok ? (
-                                  <>
-                                    <strong className="text-ink">{o.valueRaw}</strong> <span className="text-muted">{o.unitRaw}</span>
-                                  </>
-                                ) : (
-                                  <span className="text-warn">non leggibile</span>
-                                )}
-                              </span>
-                            </span>
-                            <span className="mt-1 block text-sm text-muted">
-                              Intervallo stampato: <span className="tabular">{o.referenceRaw ?? "non riportato"}</span>
-                            </span>
-                          </label>
-                          <p id={`${inputId}-src`} className="mt-2 flex items-center gap-1.5 text-xs text-muted">
-                            <ScanEye aria-hidden className="h-3.5 w-3.5" /> Pagina {o.sourcePage}, riga {o.sourceLine}
-                            <button type="button" className="ml-1 underline underline-offset-2 hover:text-teal lg:hidden" onClick={() => reveal(o.sourceLine)}>
-                              mostra
-                            </button>
-                          </p>
-                          {!ok ? (
-                            <p className="mt-3 rounded-lg bg-cream/70 px-3 py-2 text-sm text-ink">
-                              Valore non leggibile: verifica il documento originale. Non lo includeremo nella spiegazione.
-                            </p>
-                          ) : null}
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </fieldset>
+            <VerificationList observations={DOC.observations} confirmed={confirmed} onToggle={toggle} onSetAll={setConfirmed} onHighlight={setHighlight} onReveal={reveal} />
 
             <div className="lg:sticky lg:top-28">
               <Facsimile highlightLine={highlight} compact />
@@ -416,74 +246,7 @@ export function DemoFlow() {
 
           {report.status === "ready" ? (
             <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start [&>*]:min-w-0">
-              <div className="space-y-6">
-                <div className="rounded-2xl bg-mist p-5 sm:p-6">
-                  <p className="eyebrow">In breve</p>
-                  <p className="mt-2 text-lg text-ink">{report.explanation.summary}</p>
-                </div>
-
-                <ol className="space-y-4" aria-label="Spiegazione dei valori">
-                  {report.explanation.items.map((it) => (
-                    <li key={it.sourceObservationId} className="card p-5 sm:p-6">
-                      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                        <h3 className="text-lg font-semibold text-ink">{it.nameExact}</h3>
-                        <p className="tabular font-mono">
-                          <strong>{it.originalValueExact}</strong> <span className="text-muted">{it.originalUnitExact}</span>
-                        </p>
-                      </div>
-                      <p className="mt-3 text-ink">{it.plainLanguageDefinition}</p>
-                      <p className="mt-3 text-[0.9375rem] text-muted">
-                        Intervallo stampato: <span className="tabular font-semibold text-ink">{it.originalReferenceExact}</span>. {it.printedRangeNote}
-                      </p>
-                      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3">
-                        <span className="text-xs text-muted">{it.limits}</span>
-                        <button
-                          type="button"
-                          className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-teal hover:bg-mist"
-                          onClick={() => reveal(it.sourceCitation.line)}
-                          aria-label={`Mostra ${it.nameExact} nel documento, pagina ${it.sourceCitation.page}, riga ${it.sourceCitation.line}`}
-                        >
-                          <ScanEye aria-hidden className="h-4 w-4" /> Pag. {it.sourceCitation.page}, riga {it.sourceCitation.line}
-                        </button>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-
-                {report.explanation.excludedObservations.length ? (
-                  <div className="rounded-2xl border border-dashed border-muted/40 p-5">
-                    <p className="font-semibold text-ink">Non inclusi nella spiegazione</p>
-                    <ul className="mt-2 space-y-1 text-[0.9375rem] text-muted">
-                      {report.explanation.excludedObservations.map((e) => (
-                        <li key={e.id}>
-                          <span className="text-ink">{e.nameExact}</span>: {e.reason}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-
-                <div className="card p-5 sm:p-6">
-                  <h3 className="font-serif text-2xl">Domande da portare al medico</h3>
-                  <ul className="mt-4 space-y-3">
-                    {report.explanation.questionsForDoctor.map((q) => (
-                      <li key={q} className="flex gap-3">
-                        <span aria-hidden className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sage" />
-                        <span>{q}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="rounded-2xl bg-cream/60 p-5 text-[0.9375rem] text-ink">
-                  <p className="font-semibold">Limiti di questa spiegazione</p>
-                  <ul className="mt-2 list-disc space-y-1 pl-5">
-                    {report.explanation.limitations.map((l) => (
-                      <li key={l}>{l}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              <ExplanationView explanation={report.explanation} onReveal={reveal} />
 
               <aside className="space-y-5 lg:sticky lg:top-28" aria-label="Documento e download">
                 <div className="card p-5 sm:p-6">

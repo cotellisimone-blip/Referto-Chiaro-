@@ -21,3 +21,9 @@
 | 17 | 07/11/2026 | Illustrazioni originali astratte (fogli, righe, bolle, spunte), niente foto, volti o simboli medici | Coerenza con il logo, nessun materiale di stock, nessuna promessa clinica implicita |
 | 18 | 07/11/2026 | Animazioni d'ingresso solo su elementi decorativi e solo in trasformazione (mai opacità sul testo) | axe misura il contrasto durante le animazioni; gli screenshot e la stampa non devono dipendere dal tempo |
 | 19 | 07/11/2026 | Font del PDF come istanze statiche TTF (400/600) generate con fontTools, sottoinsieme latino (~30 KB l'una) | `pdf-lib` non gestisce gli assi variabili; file piccoli nel repo |
+| 20 | 07/11/2026 | PostgreSQL con Row-Level Security; senza `DATABASE_URL` parte PGlite embedded | Isolamento per utente imposto dal database, non solo dal codice; demo e test senza servizi esterni |
+| 21 | 07/11/2026 | Accesso con link via email (magic link), niente password | Meno dati da proteggere; in demo il link è mostrato a schermo perché non c'è un servizio email |
+| 22 | 07/11/2026 | Job eseguiti a richiesta nelle API di lettura («tick»), nessun processo separato | Stati reali (coda → elaborazione → pronto/errore) senza infrastruttura aggiuntiva; sostituibile con una coda vera |
+| 23 | 07/11/2026 | Dossier: confronto solo fra esami con stesso nome normalizzato e stessa unità, tutti confermati | Evita confronti fra esami diversi o fra metodi diversi; la differenza è riportata senza alcun giudizio |
+| 24 | 07/11/2026 | Un solo driver DB per processo (`globalThis`) | Next.js impacchetta i moduli in più chunk: due istanze PGlite sulla stessa cartella vedevano dati diversi |
+| 25 | 07/11/2026 | Header: «Accedi» diventa «Area personale» con una chiamata leggera a `/api/v1/auth/me` | Le pagine pubbliche restano statiche; il header non dipende dai cookie lato server |
