@@ -15,7 +15,7 @@ const GROUPS = [
 export default function FaqPage() {
   return (
     <>
-      <PageHeader eyebrow="FAQ" title="Domande frequenti." lead="Risposte dirette, anche quando la risposta è «non ancora»." />
+      <PageHeader art="faq" eyebrow="FAQ" title="Domande frequenti." lead="Risposte dirette, anche quando la risposta è «non ancora»." />
       <div className="container-rc space-y-12 py-14 sm:py-20">
         {GROUPS.map((g) => (
           <section key={g.key} aria-labelledby={`faq-${g.key}`}>

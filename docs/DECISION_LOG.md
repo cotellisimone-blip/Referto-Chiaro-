@@ -12,8 +12,12 @@
 | 8 | 07/11/2026 | Fixture con 6 voci: aggiunti Colesterolo LDL (fuori dall'intervallo stampato) e Trigliceridi illeggibile | Mostrare in demo la descrizione neutra fuori intervallo e il blocco dei dati illeggibili |
 | 9 | 07/11/2026 | Posizione rispetto all'intervallo descritta solo con frasi neutre, senza colori | Il kit vieta codici rosso/giallo/verde e giudizi clinici |
 | 10 | 07/11/2026 | Controllo numerico anche sul testo libero (allowlist dei numeri presenti nelle righe confermate + 112) | Impedisce che una spiegazione futura generata da AI introduca valori assenti |
-| 11 | 07/11/2026 | PDF generato lato server con `pdf-lib` e font standard | Nessun browser headless in produzione, output deterministico; caratteri non WinAnsi sostituiti in modo esplicito |
+| 11 | 07/11/2026 | PDF generato lato server con `pdf-lib`; dalla fase 1 grafica con i font del sito via `@pdf-lib/fontkit` (fallback ai font standard) | Nessun browser headless in produzione, output deterministico; caratteri fuori sottoinsieme sostituiti in modo esplicito |
 | 12 | 07/11/2026 | Gate: flag `"true"` esatto + `PRODUCTION_COMPLIANCE_APPROVED` + fuori demo | Fail-closed; un errore di configurazione non può accendere funzioni sensibili |
 | 13 | 07/11/2026 | Stato demo salvato solo in `sessionStorage` (id sintetici) | Riprendere la demo dopo un refresh senza alcun dato personale |
 | 14 | 07/11/2026 | Aggiunta voce «Secondo parere» nel menu principale | È il terzo pilastro del posizionamento; mostra con chiarezza lo stato «in preparazione» |
 | 15 | 07/11/2026 | `robots: noindex` su tutto il sito | Versione dimostrativa, da non indicizzare finché copy e note legali non sono approvati |
+| 16 | 07/11/2026 | Tema scuro ottenuto ridefinendo i token CSS, non duplicando le utility | Ogni componente eredita; i colori letterali (`bg-ink text-white`, esadecimali) sono stati sostituiti dai token `strong/on-strong/warn` |
+| 17 | 07/11/2026 | Illustrazioni originali astratte (fogli, righe, bolle, spunte), niente foto, volti o simboli medici | Coerenza con il logo, nessun materiale di stock, nessuna promessa clinica implicita |
+| 18 | 07/11/2026 | Animazioni d'ingresso solo su elementi decorativi e solo in trasformazione (mai opacità sul testo) | axe misura il contrasto durante le animazioni; gli screenshot e la stampa non devono dipendere dal tempo |
+| 19 | 07/11/2026 | Font del PDF come istanze statiche TTF (400/600) generate con fontTools, sottoinsieme latino (~30 KB l'una) | `pdf-lib` non gestisce gli assi variabili; file piccoli nel repo |

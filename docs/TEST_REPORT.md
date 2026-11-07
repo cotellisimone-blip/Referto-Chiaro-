@@ -8,8 +8,8 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 | Tipi | `npm run typecheck` | ✅ TypeScript strict senza errori |
 | Unit | `npm test` | ✅ 39/39 |
 | Build | `npm run build` | ✅ 14 pagine statiche + 5 API |
-| E2E | `npm run test:e2e -- --trace off` | ✅ 48/48 (24 desktop 1440×900, 24 mobile 390×844) |
-| Screenshot | `npm run screenshots` | ✅ 20 immagini in `docs/screenshots/` |
+| E2E | `npm run test:e2e -- --trace off` | ✅ 57/57 (desktop 1440×900 e mobile 390×844; include 3 pagine in tema scuro con axe, selettore del tema, menu mobile) |
+| Screenshot | `npm run screenshots` | ✅ 20 immagini in `docs/screenshots/` + 11 in tema scuro (`scuro-*.png`) |
 
 ## Cosa copre
 

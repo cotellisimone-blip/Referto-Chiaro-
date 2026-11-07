@@ -20,12 +20,13 @@ export default function ServiziPrezziPage() {
   return (
     <>
       <PageHeader
+        art="dossier"
         eyebrow="Servizi & Prezzi"
         title="Scegli quanta chiarezza ti serve."
         lead="Da un singolo referto a un dossier per la tua prossima visita. Ogni servizio ha uno scopo preciso e limiti trasparenti."
       >
         <p className="mt-6 inline-flex rounded-xl bg-cream/80 px-4 py-3 text-[0.9375rem] text-ink">
-          I prezzi sono indicativi e in fase di validazione. In questa versione non è possibile acquistare nulla.
+          Prezzi indicativi, in fase di validazione: in questa versione non è possibile acquistare nulla.
         </p>
       </PageHeader>
       <div className="container-rc py-14 sm:py-20">

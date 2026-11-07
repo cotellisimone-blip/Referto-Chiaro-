@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Informativa privacy" };
 export default function Page() {
   return (
     <>
-      <PageHeader eyebrow="Note legali" title="Informativa privacy" lead="Come saranno trattati i dati personali." />
+      <PageHeader art="shield" eyebrow="Note legali" title="Informativa privacy" lead="Come saranno trattati i dati personali." />
       <div className="container-rc py-12 sm:py-16">
         <DraftNotice />
         <div className="mt-10">

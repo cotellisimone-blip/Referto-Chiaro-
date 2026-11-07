@@ -11,6 +11,7 @@ export default function EsempioPage() {
   return (
     <>
       <PageHeader
+        art="translate"
         eyebrow="Demo con dati inventati"
         title="Esplora un referto di esempio."
         lead="Dal documento al riepilogo PDF in quattro passaggi. Nessuna registrazione, nessun dato personale: il referto e la persona sono inventati."

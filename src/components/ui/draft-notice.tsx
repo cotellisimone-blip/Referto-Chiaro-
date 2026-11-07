@@ -3,8 +3,8 @@ import { FileWarning } from "lucide-react";
 /** Etichetta obbligatoria per testi legali non ancora revisionati da un professionista. */
 export function DraftNotice() {
   return (
-    <div role="note" className="mt-8 flex gap-3 rounded-2xl border border-[#8a5a00]/30 bg-cream/70 p-5">
-      <FileWarning aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-[#8a5a00]" />
+    <div role="note" className="mt-8 flex gap-3 rounded-2xl border border-warn/30 bg-cream/70 p-5">
+      <FileWarning aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-warn" />
       <div>
         <p className="font-semibold text-ink">BOZZA — DA REVISIONARE</p>
         <p className="mt-1 text-[0.9375rem] text-ink">

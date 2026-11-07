@@ -1,6 +1,6 @@
 # Stato dell'implementazione
 
-Aggiornato: 7 novembre 2026 · Fasi 1–2 del piano (design system, homepage, demo verticale).
+Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo verticale) + **Fase 1 grafica** del piano di evoluzione (vedi `AUDIT_VISIVO_FASE1.md`).
 
 ## Funziona davvero (verificato da test)
 
@@ -9,7 +9,11 @@ Aggiornato: 7 novembre 2026 · Fasi 1–2 del piano (design system, homepage, de
 | Sito pubblico | Home, Come funziona, Servizi & Prezzi, Secondo parere (stato «in preparazione»), FAQ, Inizia, Chi siamo, Contatti, Sicurezza, Accessibilità, 404 |
 | Bozze legali | Privacy, Termini, Cookie, Accessibilità marcate «BOZZA — DA REVISIONARE» |
 | Design system | Token colore/tipografia/raggi/ombre in `globals.css`, font locali (Fraunces, DM Sans), componenti Section, PageHeader, ServiceCards, FaqList, DraftNotice |
-| Logo | Proposta originale SVG: simbolo, orizzontale, scura, monocromatica, favicon (`public/brand`, `src/app/icon.svg`) |
+| Logo e kit | Proposta originale SVG: simbolo, orizzontale, scura, monocromatica, favicon (`public/brand`, `src/app/icon.svg`); immagine social `opengraph-image.tsx` e `apple-icon.tsx` generate dal logo |
+| Illustrazioni | Sistema SVG originale (`src/components/brand/illustrations.tsx`): 6 soggetti + trama CTA + linea del metodo, colori via token |
+| Tema scuro | Token ridefiniti per `prefers-color-scheme` e `data-theme`; selettore auto/chiaro/scuro nel header, ricordato in `localStorage`; verificato con axe |
+| Hero | Traduzione animata della riga (rotazione automatica con anello di avanzamento, pausa esplicita, rispetta `prefers-reduced-motion`) |
+| PDF | Font del sito incorporati (Fraunces/DM Sans, istanze statiche in `src/domain/reporting/fonts`), copertina, sezioni numerate, glossario, domande numerate |
 | Demo end-to-end | Facsimile sintetico → controllo valori con conferma → spiegazione → PDF con filigrana DEMO, da desktop e smartphone |
 | Motore informativo | Parsing numeri italiani (`4,5`/`4.5`, migliaia, separatori ambigui rifiutati), intervalli stampati, posizione neutra rispetto all'intervallo |
 | Integrità dei valori | Controllo deterministico origine ↔ output: valori, unità, intervalli, citazioni, duplicati, numeri estranei nel testo |
@@ -37,4 +41,4 @@ Aggiornato: 7 novembre 2026 · Fasi 1–2 del piano (design system, homepage, de
 ```bash
 npm install && npm run build && npm test && npm run test:e2e -- --trace off
 ```
-Poi proseguire dalla fase 3 (vedi `DECISION_LOG.md` per le scelte già fatte).
+Poi proseguire dalla fase 2 del piano di evoluzione (account e area personale) (vedi `DECISION_LOG.md` per le scelte già fatte).

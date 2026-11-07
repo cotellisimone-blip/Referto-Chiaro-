@@ -48,6 +48,7 @@ export default function ComeFunzionaPage() {
   return (
     <>
       <PageHeader
+        art="magnify"
         eyebrow="Come funziona"
         title="Dall'esame alla comprensione, con ogni passaggio sotto controllo."
         lead="Due fasi separate: prima leggiamo fedelmente il documento, poi lo spieghiamo con parole comuni. In mezzo ci sei tu, che controlli i valori."

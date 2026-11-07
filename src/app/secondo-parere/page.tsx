@@ -17,6 +17,7 @@ export default function SecondoParerePage() {
   return (
     <>
       <PageHeader
+        art="dialogue"
         eyebrow="Secondo parere medico"
         title="Un altro punto di vista, da un medico vero."
         lead="Quando hai già un quesito clinico e documenti pertinenti, un professionista abilitato può offrirti una valutazione indipendente, nei limiti di una consulenza a distanza."

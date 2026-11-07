@@ -1,18 +1,29 @@
 import { PDFDocument, StandardFonts, rgb, degrees, type PDFFont, type PDFPage } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import type { ExtractedDocument } from "@/domain/extraction/schema";
 import type { Explanation } from "./explanation-schema";
 
+// Palette coerente con i token del sito (src/app/globals.css).
 const INK = rgb(0x16 / 255, 0x2d / 255, 0x39 / 255);
 const TEAL = rgb(0x22 / 255, 0x5f / 255, 0x75 / 255);
+const SAGE = rgb(0x5e / 255, 0x96 / 255, 0x7e / 255);
+const SAGE_DEEP = rgb(0x3e / 255, 0x6e / 255, 0x59 / 255);
 const MUTED = rgb(0x4a / 255, 0x5c / 255, 0x66 / 255);
 const LINE = rgb(0xdb / 255, 0xe6 / 255, 0xe5 / 255);
 const MIST = rgb(0xee / 255, 0xf4 / 255, 0xf2 / 255);
 const CREAM = rgb(0xf4 / 255, 0xec / 255, 0xdc / 255);
+const WHITE = rgb(1, 1, 1);
 
 const A4 = { w: 595.28, h: 841.89 };
 const M = 56; // margine
+const CONTENT_W = A4.w - 2 * M;
 
-/** I font standard PDF usano WinAnsi: sostituiamo i caratteri non rappresentabili invece di fallire. */
+/**
+ * Con i font incorporati gestiamo i caratteri latini estesi; i simboli fuori dal sottoinsieme
+ * (es. «▒» dei dati illeggibili) vengono sostituiti invece di far fallire la generazione.
+ */
 export function toWinAnsi(s: string): string {
   return s
     .replace(/[≤]/g, "<=")
@@ -28,7 +39,35 @@ interface Ctx {
   sans: PDFFont;
   sansBold: PDFFont;
   serif: PDFFont;
+  serifBold: PDFFont;
   demo: boolean;
+}
+
+interface Fonts {
+  sans: Uint8Array;
+  sansBold: Uint8Array;
+  serif: Uint8Array;
+  serifBold: Uint8Array;
+}
+
+let fontCache: Promise<Fonts | null> | null = null;
+
+/** Carica i font del sito (istanze statiche, sottoinsieme latino). Se mancano, si usano gli standard PDF. */
+async function loadSiteFonts(): Promise<Fonts | null> {
+  if (!fontCache) {
+    fontCache = (async () => {
+      try {
+        const dir = path.join(process.cwd(), "src/domain/reporting/fonts");
+        const [sans, sansBold, serif, serifBold] = await Promise.all(
+          ["dm-sans-400.ttf", "dm-sans-600.ttf", "fraunces-400.ttf", "fraunces-600.ttf"].map((f) => readFile(path.join(dir, f))),
+        );
+        return { sans, sansBold, serif, serifBold };
+      } catch {
+        return null;
+      }
+    })();
+  }
+  return fontCache;
 }
 
 function wrap(text: string, font: PDFFont, size: number, maxWidth: number): string[] {
@@ -53,15 +92,19 @@ function newPage(ctx: Ctx) {
 }
 
 function ensure(ctx: Ctx, needed: number) {
-  if (ctx.y - needed < M + 40) newPage(ctx);
+  if (ctx.y - needed < M + 44) newPage(ctx);
 }
 
-function text(ctx: Ctx, s: string, opts: { font?: PDFFont; size?: number; color?: ReturnType<typeof rgb>; indent?: number; gap?: number; lh?: number } = {}) {
+function text(
+  ctx: Ctx,
+  s: string,
+  opts: { font?: PDFFont; size?: number; color?: ReturnType<typeof rgb>; indent?: number; gap?: number; lh?: number; maxWidth?: number } = {},
+) {
   const font = opts.font ?? ctx.sans;
   const size = opts.size ?? 10.5;
   const lh = opts.lh ?? size * 1.5;
   const x = M + (opts.indent ?? 0);
-  for (const l of wrap(s, font, size, A4.w - M - x)) {
+  for (const l of wrap(s, font, size, opts.maxWidth ?? A4.w - M - x)) {
     ensure(ctx, lh);
     ctx.page.drawText(l, { x, y: ctx.y - size, size, font, color: opts.color ?? INK });
     ctx.y -= lh;
@@ -69,27 +112,42 @@ function text(ctx: Ctx, s: string, opts: { font?: PDFFont; size?: number; color?
   ctx.y -= opts.gap ?? 0;
 }
 
-function heading(ctx: Ctx, s: string) {
-  ensure(ctx, 60);
-  ctx.y -= 10;
-  text(ctx, s, { font: ctx.serif, size: 15, color: INK, gap: 4 });
+/** Titolo di sezione: numero in sage, titolo in serif, filetto sottile. */
+function heading(ctx: Ctx, n: number, s: string) {
+  ensure(ctx, 150); // mai un titolo orfano a fondo pagina
+  ctx.y -= 14;
+  const label = String(n).padStart(2, "0");
+  ctx.page.drawText(label, { x: M, y: ctx.y - 14, size: 11, font: ctx.sansBold, color: SAGE_DEEP });
+  ctx.page.drawText(toWinAnsi(s), { x: M + 24, y: ctx.y - 15, size: 17, font: ctx.serif, color: INK });
+  ctx.y -= 24;
+  ctx.page.drawLine({ start: { x: M, y: ctx.y }, end: { x: A4.w - M, y: ctx.y }, thickness: 0.6, color: LINE });
+  ctx.y -= 12;
 }
 
-function drawMark(page: PDFPage, x: number, y: number, scale: number) {
+function drawMark(page: PDFPage, x: number, y: number, scale: number, inverse = false) {
   // Simbolo: bolla di dialogo-documento con check (stessa geometria del logo SVG, viewBox 64).
   page.drawSvgPath("M12 10h30l12 12v22a8 8 0 0 1-8 8H30l-12 9v-9h-6a8 8 0 0 1-8-8V18a8 8 0 0 1 8-8z", {
     x,
     y,
     scale,
-    color: TEAL,
+    color: inverse ? WHITE : TEAL,
   });
-  page.drawSvgPath("M42 10v8a4 4 0 0 0 4 4h8z", { x, y, scale, color: rgb(0x5e / 255, 0x96 / 255, 0x7e / 255) });
-  page.drawSvgPath("M19 31l7 7 13-14", { x, y, scale, borderColor: rgb(1, 1, 1), borderWidth: 4.5, borderLineCap: 1 });
+  page.drawSvgPath("M42 10v8a4 4 0 0 0 4 4h8z", { x, y, scale, color: inverse ? MIST : SAGE });
+  page.drawSvgPath("M19 31l7 7 13-14", { x, y, scale, borderColor: inverse ? INK : WHITE, borderWidth: 4.5, borderLineCap: 1 });
 }
 
 function formatDateIt(iso: string): string {
   const [y, m, d] = iso.slice(0, 10).split("-");
   return `${d}/${m}/${y}`;
+}
+
+/** Pillola di testo (es. stato DEMO) con sfondo. */
+function pill(page: PDFPage, x: number, y: number, label: string, font: PDFFont, bg: ReturnType<typeof rgb>, fg: ReturnType<typeof rgb>) {
+  const size = 8;
+  const w = font.widthOfTextAtSize(label, size) + 16;
+  page.drawRectangle({ x, y: y - 6, width: w, height: 18, color: bg, borderWidth: 0 });
+  page.drawText(label, { x: x + 8, y, size, font, color: fg });
+  return w;
 }
 
 export async function renderReportPdf(args: {
@@ -105,62 +163,101 @@ export async function renderReportPdf(args: {
   pdf.setProducer("Referto Chiaro");
   pdf.setCreationDate(new Date(generatedAt));
 
-  const ctx: Ctx = {
-    pdf,
-    page: undefined as unknown as PDFPage,
-    y: 0,
-    sans: await pdf.embedFont(StandardFonts.Helvetica),
-    sansBold: await pdf.embedFont(StandardFonts.HelveticaBold),
-    serif: await pdf.embedFont(StandardFonts.TimesRoman),
-    demo: doc.isSynthetic,
-  };
-  newPage(ctx);
-
-  // Testata
-  drawMark(ctx.page, M - 2, A4.h - M + 4, 0.5);
-  ctx.page.drawText("Referto", { x: M + 32, y: A4.h - M - 20, size: 15, font: ctx.serif, color: INK });
-  ctx.page.drawText("Chiaro", {
-    x: M + 32 + ctx.serif.widthOfTextAtSize("Referto", 15),
-    y: A4.h - M - 20,
-    size: 15,
-    font: ctx.serif,
-    color: TEAL,
-  });
-  ctx.y -= 50;
-
-  if (ctx.demo) {
-    ctx.page.drawRectangle({ x: M, y: ctx.y - 26, width: A4.w - 2 * M, height: 26, color: CREAM });
-    ctx.page.drawText(toWinAnsi("ESEMPIO DIMOSTRATIVO — DATI SINTETICI — NON È UN DOCUMENTO MEDICO"), {
-      x: M + 10,
-      y: ctx.y - 17,
-      size: 9,
-      font: ctx.sansBold,
-      color: INK,
-    });
-    ctx.y -= 40;
+  const fonts = await loadSiteFonts();
+  let sans: PDFFont, sansBold: PDFFont, serif: PDFFont, serifBold: PDFFont;
+  if (fonts) {
+    pdf.registerFontkit(fontkit);
+    [sans, sansBold, serif, serifBold] = await Promise.all([
+      pdf.embedFont(fonts.sans, { subset: true }),
+      pdf.embedFont(fonts.sansBold, { subset: true }),
+      pdf.embedFont(fonts.serif, { subset: true }),
+      pdf.embedFont(fonts.serifBold, { subset: true }),
+    ]);
+  } else {
+    [sans, sansBold, serif, serifBold] = await Promise.all([
+      pdf.embedFont(StandardFonts.Helvetica),
+      pdf.embedFont(StandardFonts.HelveticaBold),
+      pdf.embedFont(StandardFonts.TimesRoman),
+      pdf.embedFont(StandardFonts.TimesRomanBold),
+    ]);
   }
 
-  text(ctx, "Il tuo referto, in parole semplici", { font: ctx.serif, size: 24, lh: 30, gap: 6 });
-  text(ctx, `${doc.laboratoryName} · Data del documento: ${formatDateIt(doc.reportDate)} · ${doc.patientLabel}`, {
-    size: 9,
-    color: MUTED,
-    gap: 10,
+  const ctx: Ctx = { pdf, page: undefined as unknown as PDFPage, y: 0, sans, sansBold, serif, serifBold, demo: doc.isSynthetic };
+  newPage(ctx);
+
+  // ── Copertina editoriale (prima pagina) ──────────────────────────────────
+  const coverH = 300;
+  ctx.page.drawRectangle({ x: 0, y: A4.h - coverH, width: A4.w, height: coverH, color: INK });
+  // Trama di "righe di referto" in trasparenza sulla copertina
+  for (let r = 0; r < 7; r++) {
+    for (let c = 0; c < 3; c++) {
+      const w = 40 + ((r * 13 + c * 29) % 70);
+      ctx.page.drawRectangle({
+        x: A4.w / 2 + c * 150 + ((r * 17) % 40),
+        y: A4.h - 40 - r * 34,
+        width: w,
+        height: 5,
+        color: WHITE,
+        opacity: 0.07,
+      });
+    }
+  }
+  drawMark(ctx.page, M - 2, A4.h - M + 2, 0.5, true);
+  ctx.page.drawText("Referto", { x: M + 32, y: A4.h - M - 20, size: 15, font: serif, color: WHITE });
+  ctx.page.drawText("Chiaro", { x: M + 32 + serif.widthOfTextAtSize("Referto", 15), y: A4.h - M - 20, size: 15, font: serif, color: MIST });
+
+  let cy = A4.h - M - 76;
+  if (ctx.demo) {
+    pill(ctx.page, M, cy, toWinAnsi("ESEMPIO DIMOSTRATIVO · DATI SINTETICI · NON È UN DOCUMENTO MEDICO"), sansBold, CREAM, INK);
+    cy -= 34;
+  }
+  for (const l of wrap("Il tuo referto, in parole semplici", serif, 30, CONTENT_W - 60)) {
+    ctx.page.drawText(l, { x: M, y: cy - 30, size: 30, font: serif, color: WHITE });
+    cy -= 36;
+  }
+  cy -= 10;
+  const meta = [
+    ["Laboratorio", doc.laboratoryName],
+    ["Data del documento", formatDateIt(doc.reportDate)],
+    ["Riferimento", doc.patientLabel],
+    ["Generato il", formatDateIt(generatedAt)],
+  ];
+  const fractions = [0.34, 0.2, 0.3, 0.16];
+  meta.forEach(([k, v], i) => {
+    const x = M + fractions.slice(0, i).reduce((a, f) => a + f * CONTENT_W, 0);
+    const colW = fractions[i] * CONTENT_W;
+    ctx.page.drawText(toWinAnsi(k.toUpperCase()), { x, y: cy - 8, size: 7, font: sansBold, color: MIST, opacity: 0.8 });
+    wrap(v, sans, 9.5, colW - 12)
+      .slice(0, 2)
+      .forEach((l, li) => ctx.page.drawText(l, { x, y: cy - 24 - li * 12, size: 9.5, font: sans, color: WHITE }));
   });
+  ctx.y = A4.h - coverH - 28;
 
-  heading(ctx, "In breve");
-  text(ctx, exp.summary, { gap: 6 });
+  // Riquadro "In breve"
+  const summaryLines = wrap(exp.summary, sans, 11, CONTENT_W - 44);
+  const boxH = summaryLines.length * 16.5 + 46;
+  ctx.page.drawRectangle({ x: M, y: ctx.y - boxH, width: CONTENT_W, height: boxH, color: MIST, borderColor: LINE, borderWidth: 0.6 });
+  ctx.page.drawRectangle({ x: M, y: ctx.y - boxH, width: 4, height: boxH, color: TEAL });
+  ctx.page.drawText("IN BREVE", { x: M + 22, y: ctx.y - 20, size: 8, font: sansBold, color: SAGE_DEEP });
+  let sy = ctx.y - 40;
+  for (const l of summaryLines) {
+    ctx.page.drawText(l, { x: M + 22, y: sy, size: 11, font: sans, color: INK });
+    sy -= 16.5;
+  }
+  ctx.y -= boxH + 10;
 
-  // Tabella valori
-  heading(ctx, "I valori, esattamente come stampati");
-  const cols = [M, M + 210, M + 320, M + 430];
-  const rowH = 22;
+  // ── 01 Tabella valori ─────────────────────────────────────────────────────
+  heading(ctx, 1, "I valori, esattamente come stampati");
+  const cols = [M, M + 200, M + 300, M + 410];
+  const rowH = 24;
   ensure(ctx, rowH * (exp.items.length + 1) + 10);
-  ctx.page.drawRectangle({ x: M, y: ctx.y - rowH, width: A4.w - 2 * M, height: rowH, color: MIST });
+  ctx.page.drawRectangle({ x: M, y: ctx.y - rowH, width: CONTENT_W, height: rowH, color: MIST });
   ["Nome riportato", "Risultato", "Intervallo stampato", "Fonte"].forEach((h, i) =>
-    ctx.page.drawText(h, { x: cols[i] + 6, y: ctx.y - 15, size: 8.5, font: ctx.sansBold, color: MUTED }),
+    ctx.page.drawText(h, { x: cols[i] + 8, y: ctx.y - 15.5, size: 8, font: sansBold, color: MUTED }),
   );
   ctx.y -= rowH;
-  for (const it of exp.items) {
+  exp.items.forEach((it, idx) => {
+    if (idx % 2 === 1) ctx.page.drawRectangle({ x: M, y: ctx.y - rowH, width: CONTENT_W, height: rowH, color: MIST, opacity: 0.45 });
     const cells = [
       it.nameExact,
       `${it.originalValueExact} ${it.originalUnitExact ?? ""}`.trim(),
@@ -168,12 +265,18 @@ export async function renderReportPdf(args: {
       `pag. ${it.sourceCitation.page}, riga ${it.sourceCitation.line}`,
     ];
     cells.forEach((c, i) =>
-      ctx.page.drawText(toWinAnsi(c), { x: cols[i] + 6, y: ctx.y - 15, size: 9.5, font: i === 1 ? ctx.sansBold : ctx.sans, color: INK }),
+      ctx.page.drawText(toWinAnsi(c), {
+        x: cols[i] + 8,
+        y: ctx.y - 16,
+        size: i === 3 ? 8.5 : 9.5,
+        font: i === 1 ? sansBold : sans,
+        color: i === 3 ? MUTED : INK,
+      }),
     );
     ctx.page.drawLine({ start: { x: M, y: ctx.y - rowH }, end: { x: A4.w - M, y: ctx.y - rowH }, thickness: 0.5, color: LINE });
     ctx.y -= rowH;
-  }
-  ctx.y -= 8;
+  });
+  ctx.y -= 10;
   if (exp.excludedObservations.length) {
     text(ctx, `Non inclusi: ${exp.excludedObservations.map((e) => `${e.nameExact} (${e.reason.replace(/\.$/, "").toLowerCase()})`).join("; ")}.`, {
       size: 8.5,
@@ -182,16 +285,23 @@ export async function renderReportPdf(args: {
     });
   }
 
-  heading(ctx, "Che cosa significano i termini");
+  // ── 02 Glossario ──────────────────────────────────────────────────────────
+  heading(ctx, 2, "Che cosa significano i termini");
   for (const it of exp.items) {
-    ensure(ctx, 70);
-    text(ctx, it.nameExact, { font: ctx.sansBold, size: 11, gap: 1 });
-    text(ctx, it.plainLanguageDefinition, { gap: 1 });
+    ensure(ctx, 84);
+    const top = ctx.y;
+    ctx.page.drawText(toWinAnsi(it.nameExact), { x: M + 14, y: ctx.y - 13, size: 12, font: serifBold, color: INK });
+    ctx.y -= 22;
+    text(ctx, it.plainLanguageDefinition, { indent: 14, gap: 2, maxWidth: CONTENT_W - 14 });
     text(ctx, `Nel documento: ${it.originalValueExact} ${it.originalUnitExact ?? ""} — intervallo stampato ${it.originalReferenceExact ?? "non riportato"}. ${it.printedRangeNote}`, {
       size: 9.5,
       color: TEAL,
-      gap: 8,
+      indent: 14,
+      gap: 12,
+      maxWidth: CONTENT_W - 14,
     });
+    // filetto laterale per il blocco (solo se non è cambiata pagina)
+    if (ctx.y < top) ctx.page.drawLine({ start: { x: M + 2, y: top - 4 }, end: { x: M + 2, y: ctx.y + 10 }, thickness: 2, color: SAGE, opacity: 0.6 });
   }
   text(ctx, "Queste definizioni sono generali e non equivalgono alla valutazione del referto da parte di un medico.", {
     size: 9,
@@ -199,10 +309,17 @@ export async function renderReportPdf(args: {
     gap: 4,
   });
 
-  heading(ctx, "Domande da portare al medico");
-  exp.questionsForDoctor.forEach((q) => text(ctx, `•  ${q}`, { indent: 4, gap: 2 }));
+  // ── 03 Domande ────────────────────────────────────────────────────────────
+  heading(ctx, 3, "Domande da portare al medico");
+  exp.questionsForDoctor.forEach((q, i) => {
+    ensure(ctx, 30);
+    ctx.page.drawCircle({ x: M + 8, y: ctx.y - 7, size: 7, color: TEAL });
+    ctx.page.drawText(String(i + 1), { x: M + 5.2, y: ctx.y - 9.5, size: 7.5, font: sansBold, color: WHITE });
+    text(ctx, q, { indent: 24, gap: 4 });
+  });
 
-  heading(ctx, "Limiti");
+  // ── 04 Limiti ─────────────────────────────────────────────────────────────
+  heading(ctx, 4, "Limiti");
   exp.limitations.forEach((l) => text(ctx, `•  ${l}`, { indent: 4, size: 9.5, color: MUTED, gap: 2 }));
 
   // Watermark e piè di pagina su ogni pagina
@@ -213,7 +330,7 @@ export async function renderReportPdf(args: {
         x: 120,
         y: 260,
         size: 46,
-        font: ctx.sansBold,
+        font: sansBold,
         color: TEAL,
         opacity: 0.08,
         rotate: degrees(40),
@@ -221,13 +338,16 @@ export async function renderReportPdf(args: {
     }
     p.drawLine({ start: { x: M, y: M }, end: { x: A4.w - M, y: M }, thickness: 0.5, color: LINE });
     p.drawText(
-      toWinAnsi(
-        `Generato il ${formatDateIt(generatedAt)} · ${exp.modelAndPromptVersion} · Strumento informativo, non una diagnosi${ctx.demo ? " · DEMO" : ""}`,
-      ),
-      { x: M, y: M - 14, size: 7.5, font: ctx.sans, color: MUTED },
+      toWinAnsi(`Generato il ${formatDateIt(generatedAt)} · ${exp.modelAndPromptVersion} · Strumento informativo, non una diagnosi${ctx.demo ? " · DEMO" : ""}`),
+      { x: M, y: M - 14, size: 7.5, font: sans, color: MUTED },
     );
     const label = `Pagina ${i + 1} di ${pages.length}`;
-    p.drawText(label, { x: A4.w - M - ctx.sans.widthOfTextAtSize(label, 7.5), y: M - 14, size: 7.5, font: ctx.sans, color: MUTED });
+    p.drawText(label, { x: A4.w - M - sans.widthOfTextAtSize(label, 7.5), y: M - 14, size: 7.5, font: sans, color: MUTED });
+    if (i > 0) {
+      drawMark(p, M - 2, A4.h - M + 10, 0.32);
+      p.drawText("Referto Chiaro", { x: M + 20, y: A4.h - M + 2, size: 8.5, font: serif, color: MUTED });
+      ctx.y = Math.min(ctx.y, A4.h - M);
+    }
   });
 
   return pdf.save();

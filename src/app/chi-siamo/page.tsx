@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Il progetto" };
 export default function Page() {
   return (
     <>
-      <PageHeader eyebrow="Chi siamo" title="Il progetto" lead="Referto Chiaro nasce da un'idea semplice: arrivare dal medico avendo capito che cosa c'è scritto nei propri esami." />
+      <PageHeader art="translate" eyebrow="Chi siamo" title="Il progetto" lead="Referto Chiaro nasce da un'idea semplice: arrivare dal medico avendo capito che cosa c'è scritto nei propri esami." />
       <div className="container-rc py-12 sm:py-16">
         
         <div className="mt-10">

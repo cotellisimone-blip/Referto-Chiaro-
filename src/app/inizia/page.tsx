@@ -38,7 +38,7 @@ const CHOICES = [
 export default function IniziaPage() {
   return (
     <>
-      <PageHeader eyebrow="Inizia" title="Che cosa ti serve oggi?" lead="Per ora puoi provare il percorso completo con un referto inventato. Gli altri servizi apriranno dopo le verifiche necessarie." />
+      <PageHeader art="dossier" eyebrow="Inizia" title="Che cosa ti serve oggi?" lead="Per ora puoi provare il percorso completo con un referto inventato. Gli altri servizi apriranno dopo le verifiche necessarie." />
       <div className="container-rc py-14 sm:py-20">
         <ul className="grid gap-5 lg:grid-cols-3">
           {CHOICES.map(({ icon: Icon, ...c }) => (

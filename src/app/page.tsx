@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, BookOpenText, CircleHelp, FileCheck2, ListChecks, MessageSquareText, ScanSearch, Stethoscope, Check, X } from "lucide-react";
 import { HeroDocument } from "@/components/demo/hero-document";
+import { DocumentLinesPattern, MethodLine } from "@/components/brand/illustrations";
 import { Section } from "@/components/ui/section";
 import { ServiceCards } from "@/components/ui/service-cards";
 import { FaqList } from "@/components/ui/faq-list";
@@ -84,7 +85,9 @@ export default function Home() {
               <strong className="font-semibold text-ink">Uno strumento di comprensione. Non una diagnosi.</strong> I contenuti automatici possono contenere errori: confrontati sempre con un professionista sanitario.
             </p>
           </div>
-          <HeroDocument />
+          <div>
+            <HeroDocument />
+          </div>
         </div>
       </section>
 
@@ -128,18 +131,23 @@ export default function Home() {
         title="Dal documento alla comprensione, un passaggio alla volta."
         lead="Dove c'è un valore, trovi anche la sua fonte nel documento."
       >
-        <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="relative">
+          <MethodLine />
+          <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map(({ n, icon: Icon, title, text }) => (
-            <li key={n} className="relative rounded-[var(--radius-lg)] border border-line bg-canvas p-6">
+            <li key={n} className="relative rounded-[var(--radius-lg)] border border-line bg-canvas p-6 transition-transform duration-300 hover:-translate-y-1">
               <div className="flex items-center justify-between">
-                <span className="tabular font-serif text-3xl text-sage">{n}</span>
-                <Icon aria-hidden className="h-6 w-6 text-teal" />
+                <span className="tabular font-serif text-3xl text-sage-deep">{n}</span>
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-mist">
+                  <Icon aria-hidden className="h-5 w-5 text-teal" />
+                </span>
               </div>
               <h3 className="mt-6 text-lg font-semibold leading-snug text-ink">{title}</h3>
               <p className="mt-2 text-[0.9375rem] text-muted">{text}</p>
             </li>
           ))}
-        </ol>
+          </ol>
+        </div>
       </Section>
 
       {/* PRIMA / DOPO */}
@@ -245,15 +253,14 @@ export default function Home() {
       {/* CTA FINALE */}
       <section aria-labelledby="cta-titolo" className="pb-20">
         <div className="container-rc">
-          <div className="relative overflow-hidden rounded-[var(--radius-xl)] bg-ink px-6 py-14 text-white sm:px-14 sm:py-20">
-            <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-teal/50 blur-3xl" />
-            <div aria-hidden className="absolute -bottom-32 left-1/3 h-72 w-72 rounded-full bg-sage/30 blur-3xl" />
+          <div className="relative overflow-hidden rounded-[var(--radius-xl)] bg-strong px-6 py-14 text-on-strong sm:px-14 sm:py-20">
+            <DocumentLinesPattern className="text-on-strong opacity-[0.07] [mask-image:linear-gradient(90deg,transparent_35%,black)]" />
             <div className="relative max-w-2xl">
               <h2 id="cta-titolo" className="display text-[2rem] sm:text-[2.75rem]">
                 Comincia da un esempio. Capirai subito come funziona.
               </h2>
-              <p className="mt-4 text-lg text-white/80">Due minuti, nessuna registrazione, nessun dato personale.</p>
-              <Link href="/esempio" className="btn mt-8 bg-white text-ink hover:bg-cream">
+              <p className="mt-4 text-lg text-on-strong-soft">Due minuti, nessuna registrazione, nessun dato personale.</p>
+              <Link href="/esempio" className="btn btn-on-strong mt-8">
                 Esplora un referto di esempio <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
             </div>

@@ -320,7 +320,7 @@ export function DemoFlow() {
                             aria-describedby={`${inputId}-src`}
                           />
                         ) : (
-                          <AlertTriangle aria-hidden className="mt-1 h-6 w-6 shrink-0 text-[#8a5a00]" />
+                          <AlertTriangle aria-hidden className="mt-1 h-6 w-6 shrink-0 text-warn" />
                         )}
                         <div className="min-w-0 flex-1">
                           <label htmlFor={ok ? inputId : undefined} className={clsx("block", ok && "cursor-pointer")}>
@@ -332,7 +332,7 @@ export function DemoFlow() {
                                     <strong className="text-ink">{o.valueRaw}</strong> <span className="text-muted">{o.unitRaw}</span>
                                   </>
                                 ) : (
-                                  <span className="text-[#8a5a00]">non leggibile</span>
+                                  <span className="text-warn">non leggibile</span>
                                 )}
                               </span>
                             </span>

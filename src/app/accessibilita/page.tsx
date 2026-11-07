@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Accessibilità" };
 export default function Page() {
   return (
     <>
-      <PageHeader eyebrow="Accessibilità" title="Accessibilità" lead="Vogliamo che il sito sia utilizzabile da tutti." />
+      <PageHeader art="faq" eyebrow="Accessibilità" title="Accessibilità" lead="Vogliamo che il sito sia utilizzabile da tutti." />
       <div className="container-rc py-12 sm:py-16">
         <DraftNotice />
         <div className="mt-10">

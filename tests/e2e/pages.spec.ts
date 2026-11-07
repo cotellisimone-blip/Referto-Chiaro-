@@ -47,3 +47,37 @@ test("nessun testo vietato o promessa non verificabile", async ({ page }) => {
     }
   }
 });
+
+test.describe("tema scuro", () => {
+  test.use({ colorScheme: "dark" });
+  for (const path of ["/", "/servizi-prezzi", "/esempio"]) {
+    test(`pagina ${path} in tema scuro: accessibilità`, async ({ page }) => {
+      await page.goto(path);
+      const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+      expect(bg).toBe("rgb(15, 26, 32)");
+      const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+      expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
+    });
+  }
+});
+
+test("il selettore del tema forza il tema scuro e lo ricorda", async ({ page }) => {
+  await page.goto("/");
+  const toggle = page.getByRole("button", { name: /cambia tema/ }).first();
+  await toggle.click(); // auto -> chiaro
+  await toggle.click(); // chiaro -> scuro
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+});
+
+test("menu mobile: si apre, intrappola il fuoco e si chiude con Esc", async ({ page, isMobile }) => {
+  test.skip(!isMobile, "solo mobile");
+  await page.goto("/");
+  await page.getByRole("button", { name: "Apri il menu" }).click();
+  const menu = page.locator("#menu-mobile");
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole("link", { name: "Inizia ora" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
+});

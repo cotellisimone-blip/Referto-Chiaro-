@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Sicurezza dei dati" };
 export default function Page() {
   return (
     <>
-      <PageHeader eyebrow="Sicurezza" title="Sicurezza dei dati" lead="Come proteggiamo, e proteggeremo, le informazioni." />
+      <PageHeader art="shield" eyebrow="Sicurezza" title="Sicurezza dei dati" lead="Come proteggiamo, e proteggeremo, le informazioni." />
       <div className="container-rc py-12 sm:py-16">
         
         <div className="mt-10">

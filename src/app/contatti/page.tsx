@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Contatti" };
 export default function Page() {
   return (
     <>
-      <PageHeader eyebrow="Contatti" title="Contatti" lead="Il servizio non è ancora aperto al pubblico." />
+      <PageHeader art="dialogue" eyebrow="Contatti" title="Contatti" lead="Il servizio non è ancora aperto al pubblico." />
       <div className="container-rc py-12 sm:py-16">
         
         <div className="mt-10">

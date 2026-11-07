@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { DemoRibbon } from "@/components/site/demo-ribbon";
+import { THEME_INIT_SCRIPT } from "@/components/site/theme-toggle";
 import "./globals.css";
 
 const fraunces = localFont({
@@ -27,12 +28,18 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAFBF9",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FAFBF9" },
+    { media: "(prefers-color-scheme: dark)", color: "#0F1A20" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="it" className={`${fraunces.variable} ${dmSans.variable} h-full antialiased`}>
+    <html lang="it" className={`${fraunces.variable} ${dmSans.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col">
         <a
           href="#contenuto"

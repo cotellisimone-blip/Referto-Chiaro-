@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Termini del servizio" };
 export default function Page() {
   return (
     <>
-      <PageHeader eyebrow="Note legali" title="Termini del servizio" lead="Le condizioni che regoleranno l'uso di Referto Chiaro." />
+      <PageHeader compact eyebrow="Note legali" title="Termini del servizio" lead="Le condizioni che regoleranno l'uso di Referto Chiaro." />
       <div className="container-rc py-12 sm:py-16">
         <DraftNotice />
         <div className="mt-10">

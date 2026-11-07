@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Cookie" };
 export default function Page() {
   return (
     <>
-      <PageHeader eyebrow="Note legali" title="Cookie" lead="Quali cookie usa il sito." />
+      <PageHeader compact eyebrow="Note legali" title="Cookie" lead="Quali cookie usa il sito." />
       <div className="container-rc py-12 sm:py-16">
         <DraftNotice />
         <div className="mt-10">
