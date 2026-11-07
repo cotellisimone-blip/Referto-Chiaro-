@@ -9,7 +9,7 @@ Nessuno di questi punti si risolve con il codice da solo. Finché non sono chius
 - [x] Test automatici di accessibilità e responsive
 - [ ] Revisione professionale di copy, privacy e cookie
 - [ ] Dati del titolare e contatti reali pubblicati
-- [ ] Header di sicurezza (CSP, HSTS) configurati sull'hosting
+- [x] Header di sicurezza nell'app (CSP, HSTS, nosniff, frame-ancestors, Permissions-Policy). Limite noto: `script-src 'unsafe-inline'` perché le pagine statiche con Cache Components non possono usare nonce per richiesta — da irrigidire con hash o nonce quando il rendering diventa dinamico
 
 ## B. Elaborazione di referti reali
 - [ ] Parere formale su inquadramento MDR/IVDR e destinazione d'uso
@@ -19,7 +19,7 @@ Nessuno di questi punti si risolve con il codice da solo. Finché non sono chius
 - [ ] DPA con i fornitori (hosting, storage, OCR, AI) e valutazione dei trasferimenti
 - [ ] Medico supervisore: revisione clinica del glossario e delle frasi standard
 - [ ] Pipeline upload con verifica firma file, antivirus, limiti, storage cifrato, cancellazione — **da implementare (fase 4)**
-- [ ] Autenticazione, ownership, RLS, audit — **da implementare (fase 3)**
+- [x] Autenticazione (link via email), ownership, RLS, audit append-only — implementati; manca l'invio email reale e un PostgreSQL gestito
 - [ ] Set di test di integrità valori/citazioni con revisione indipendente
 - [ ] Penetration test
 - [ ] Approvazione interna registrata per l'attivazione
@@ -27,11 +27,11 @@ Nessuno di questi punti si risolve con il codice da solo. Finché non sono chius
 ## C. Pagamenti
 - [ ] Ragione sociale, fatturazione, trattamento IVA
 - [ ] Termini, recesso, rimborsi pubblicati e approvati
-- [ ] Checkout Stripe con webhook firmati e idempotenti — **da implementare (fase 4)**
+- [x] Checkout Stripe con webhook firmati e idempotenti — implementato in modalità test/simulata; le chiavi live restano bloccate dal gate `livePayments`
 
 ## D. Secondo parere medico
 - [ ] Medici reclutati, abilitazione e specialità verificate
 - [ ] Contratti, responsabilità professionale, eventuali autorizzazioni sanitarie
 - [ ] Prezzi, disponibilità e tempi reali per specialità
-- [ ] Portale medico con 2FA, audit, workflow di firma appropriato — **da implementare (fase 5)**
+- [x] Portale medico con 2FA (TOTP), accesso ai documenti registrato, parere firmato con impronta — implementato come simulazione; la firma qualificata/FEA e la verifica dell'abilitazione (albo) restano da fare
 - [ ] Gestione rifiuto del caso e rimborsi

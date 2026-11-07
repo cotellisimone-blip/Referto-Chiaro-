@@ -6,10 +6,10 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 |---|---|---|
 | Lint | `npm run lint` | ✅ 0 errori, 0 avvisi |
 | Tipi | `npm run typecheck` | ✅ TypeScript strict senza errori |
-| Unit | `npm test` | ✅ 48/48 |
-| Build | `npm run build` | ✅ 27 pagine (19 statiche, 8 con contenuto dinamico dell'area) + 21 API |
-| E2E | `npm run test:e2e -- --trace off` | ✅ 69/69 (desktop 1440×900 e mobile 390×844; include 3 pagine in tema scuro con axe, selettore del tema, menu mobile, 6 test dell'area personale) |
-| Screenshot | `npm run screenshots` | ✅ 36 immagini in `docs/screenshots/` + 15 in tema scuro (`scuro-*.png`), area personale inclusa |
+| Unit | `npm test` | ✅ 70/70 |
+| Build | `npm run build` | ✅ 74 route (pagine pubbliche statiche, area/medico/admin, 38 API) |
+| E2E | `npm run test:e2e -- --trace off` | ✅ 111/111 (desktop 1440×900 e mobile 390×844; area personale, ordini e pagamento simulato, lista d'attesa, header di sicurezza, secondo parere/medico/admin con 2FA) |
+| Screenshot | `npm run screenshots` | ✅ 58 immagini in `docs/screenshots/` (sito, area, pagamento, secondo parere, portale medico, admin; 15 in tema scuro) |
 
 ## Cosa copre
 
@@ -23,6 +23,9 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 - PDF valido con titolo DEMO; sostituzione dei caratteri non rappresentabili.
 - Isolamento DB (PGlite reale, stesse policy di produzione): il proprietario vede il suo documento; un altro utente ne vede/modifica/elimina 0; inserimento per conto di altri rifiutato dalla RLS; senza contesto utente 0 righe; id non valido rifiutato; `audit_log` non cancellabile.
 - Dossier: confronto solo fra esami comparabili, valori non confermati/illeggibili elencati a parte, differenze corrette.
+- TOTP: vettori RFC 6238, base32 andata/ritorno, finestra ±1, codici malformati rifiutati.
+- Pagamenti: scelta del provider (nessuna chiave → simulato; `sk_test_` → test; `sk_live_` senza gate → errore, mai ripiego); ordini: stato pending → paid una sola volta, report creato solo al pagamento; webhook idempotente per id evento, firma verificata.
+- Lista d'attesa: validazione, consenso obbligatorio, idempotenza per email+interesse.
 
 **E2E (Playwright + axe-core)**
 - Percorso demo completo fino al download del PDF, su desktop e mobile, senza errori in console e senza scroll orizzontale.
@@ -31,6 +34,10 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 - Nessun link interno rotto; 404 curato.
 - Nessun testo vietato (lorem ipsum, «certificato GDPR», «conforme MDR», «24/7», «100%», «garantito»).
 - Fail-closed: upload reale → 403; configurazione pubblica tutta spenta; demo rifiuta documenti diversi dalla fixture e campi extra; PDF demo valido.
+- Ordini: pagina ordine 0 violazioni axe; pagamento fallito → riprova; annullato; webhook senza firma → 400; ordine sconosciuto → 404; utente B non vede l'ordine di A; report diretto senza ordine pagato → 402.
+- Lista d'attesa e B2B: pagina con un solo H1 e 0 violazioni axe; iscrizione con consenso; senza consenso → avviso; API: email non valida, campi extra, consenso mancante → 400; duplicato → `already`.
+- Header di sicurezza presenti con i valori attesi su pagine e API.
+- Secondo parere: richiesta → medico dimostrativo (2FA obbligatoria: prima 403 `mfa-required`, codice errato rifiutato, codice TOTP accettato) prende in carico e firma (senza conferma di responsabilità → 400; dopo la firma → 409) → la persona legge il parere firmato e chiude; un altro utente non vede il caso (404); portale medico senza sessione chiede l'accesso, utente normale rifiutato, 2FA dall'interfaccia con il codice mostrato in demo; admin: panoramica, CSV della lista d'attesa, tabelle medici/registro/configurazione, 0 violazioni axe, un medico non è admin (403).
 - Area personale: senza sessione 401 e rimando all'accesso; percorso completo con l'account demo (nuovo referto → valori → servizio → report → PDF scaricato, 0 violazioni axe, ripresa dopo ricarica); **nessuno vede i documenti di un altro** (API, pagina e export); dossier con confronto corretto e axe; link di accesso monouso; eliminazione account; upload reale 403 anche da autenticati; registrazione senza consensi rifiutata.
 
 ## Non verificato

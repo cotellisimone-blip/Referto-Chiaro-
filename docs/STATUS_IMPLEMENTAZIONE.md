@@ -1,6 +1,6 @@
 # Stato dell'implementazione
 
-Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo verticale) + **Fase 1 grafica** (vedi `AUDIT_VISIVO_FASE1.md`) + **Fase 2 piattaforma** (account, database, area personale) del piano di evoluzione.
+Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo verticale) + **Fase 1 grafica** (vedi `AUDIT_VISIVO_FASE1.md`) + **Fase 2 piattaforma** (account, database, area personale) + **Fase 3 vendibilità** (pagamenti test, lista d'attesa, B2B, secondo parere con portale medico 2FA, admin, header di sicurezza) del piano di evoluzione.
 
 ## Funziona davvero (verificato da test)
 
@@ -27,13 +27,22 @@ Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo
 | Dossier | Confronto **solo** fra esami con stesso nome e stessa unità, tutti confermati e leggibili; differenza riportata senza giudizio; gli altri elencati «non confrontati» con il motivo |
 | Referti sintetici | 5 fixture: laboratorio base, emocromo, tiroide (con valore illeggibile), assetto lipidico (confrontabile col primo), funzionalità epatica; glossario a 24 voci |
 | Isolamento | Test automatici: un utente non vede, non modifica e non elimina i documenti di un altro (API, pagine, export); link monouso; account eliminabile |
+| Pagamenti | Ordini per servizio (`orders`), provider scelto dalla chiave: nessuna chiave → **pagamento simulato** (pagina in-app, nessun addebito, etichettata); `sk_test_` → Stripe Checkout in test; `sk_live_` → solo con gate `livePayments` (altrimenti 503, mai ripiego silenzioso). Webhook con firma verificata e idempotenza su `payment_events`. Il report nasce solo dopo un ordine pagato (402 altrimenti) |
+| Lista d'attesa | `POST /api/v1/waitlist` con consenso obbligatorio, idempotente per email+interesse, rate limit; moduli su Secondo parere, Servizi & Prezzi e Per le strutture; export CSV dall'admin. Nessuna email inviata |
+| B2B | Pagina `/per-le-strutture` (laboratori, poliambulatori, farmacie, associazioni) con offerta, limiti dichiarati, pilota ipotetico e lista d'attesa |
+| Secondo parere | Richiesta dall'area (referto confermato + specialità + domanda + conferma esplicita della simulazione), assegnazione al medico verificato con meno casi aperti, stati inviata → presa in carico/non accettata → parere firmato → chiusa. Finché il gate è chiuso: solo referti sintetici, `is_simulated = true`, avviso in ogni pagina |
+| Portale medico | `/medico`: ruolo `physician` + **2FA TOTP obbligatoria** (RFC 6238, senza librerie esterne); casi assegnati (RLS su `app.physician_id`), lettura del referto registrata nell'audit, presa in carico/rifiuto motivato, parere con conferma di responsabilità e impronta SHA-256 (caso + medico + ora + testo) |
+| Admin | `/admin`: ruolo `admin` + 2FA; panoramica, lista d'attesa con CSV, verifica/sospensione medici, assegnazione casi, ordini, registro (ultime 200 voci), configurazione dei gate in sola lettura. Ogni lettura è registrata |
+| Account demo di servizio | Solo in DEMO_MODE: «Medico dimostrativo (nessun medico reale)» e «Amministratore dimostrativo»; il codice TOTP corrente è mostrato a schermo per provare la 2FA senza app |
+| Header di sicurezza | CSP, HSTS, nosniff, Referrer-Policy, X-Frame-Options, Permissions-Policy, COOP su tutte le risposte; testati |
 
 ## Non ancora implementato (fasi successive)
 
-- **Fase 3 (vendibilità):** checkout Stripe in test, lista d'attesa, pagina B2B, secondo parere + portale medico con 2FA, pannello admin, header di sicurezza/CSP, pitch.
 - **Fase 4 (SEO):** guide, glossario pubblico, SEO tecnica, revisione medica prima dell'indicizzazione.
 - Pipeline reale di upload (firma file, antivirus, storage cifrato), OCR, provider AI reale: gli adapter esistono ma sono spenti dai gate.
-- Invio email reale dei link di accesso (oggi solo a schermo in demo).
+- Invio email reale dei link di accesso e delle notifiche (oggi solo a schermo in demo).
+- Chiavi Stripe live, fatturazione, IVA, rimborsi: bloccati dal gate `livePayments` finché i punti C di `PRODUCTION_GATES.md` non sono chiusi.
+- Firma qualificata del parere medico, verifica dell'iscrizione all'albo, contratti con i medici.
 
 ## Note sincere
 
@@ -43,10 +52,12 @@ Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo
 - L'account demo è **condiviso**: chi lo usa vede i referti aggiunti dagli altri. È scritto nella pagina di accesso.
 - PGlite va bene per demo e test; in produzione serve `DATABASE_URL` verso un PostgreSQL gestito (schema e policy sono le stesse).
 - I contatti reali del titolare non sono pubblicati: vanno aggiunti prima di qualsiasi apertura.
+- Il «medico dimostrativo» non è un medico: il nome lo dice, ogni pagina lo ripete e i casi sono marcati come simulazione.
+- La CSP consente `'unsafe-inline'` per gli script: limite delle pagine statiche, documentato in `PRODUCTION_GATES.md`.
 
 ## Come riprendere
 
 ```bash
 npm install && npm run build && npm test && npm run test:e2e -- --trace off
 ```
-Poi proseguire dalla fase 3 del piano di evoluzione (vendibilità) (vedi `DECISION_LOG.md` per le scelte già fatte).
+Poi proseguire dalla fase 4 del piano di evoluzione (SEO e contenuti) (vedi `DECISION_LOG.md` per le scelte già fatte).

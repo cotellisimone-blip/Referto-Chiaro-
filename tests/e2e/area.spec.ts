@@ -20,12 +20,20 @@ async function createReadyDocument(request: APIRequestContext, sampleId: string)
   expect(d.document.status).toBe("needs-verification");
   const ids = d.document.extracted.observations.filter((o: { valueRaw: string | null }) => o.valueRaw !== null).map((o: { id: string }) => o.id);
   expect((await request.post(`/api/v1/area/documents/${id}/verification`, { data: { confirmedObservationIds: ids } })).status()).toBe(200);
-  const rep = await request.post(`/api/v1/area/documents/${id}/reports`, { data: { service: "essenziale" } });
-  expect(rep.status()).toBe(201);
-  const reportId = (await rep.json()).id;
+  // Il report nasce solo dopo il pagamento: ordine → esito simulato "pagato" → generazione (avanza con il GET).
+  const ord = await request.post("/api/v1/area/orders", { data: { service: "essenziale", documentId: id } });
+  expect(ord.status()).toBe(201);
+  const order = await ord.json();
+  expect(order.provider).toBe("simulated");
+  const sim = await request.post(`/api/v1/area/orders/${order.id}/simula`, { data: { esito: "pagato" } });
+  expect(sim.status()).toBe(200);
+  expect((await sim.json()).order.status).toBe("paid");
+  const list = await (await request.get(`/api/v1/area/documents/${id}`)).json();
+  expect(list.reports).toHaveLength(1);
+  const reportId = list.reports[0].id as string;
   const after = await (await request.get(`/api/v1/area/reports/${reportId}`)).json();
   expect(after.report.status).toBe("ready");
-  return { id, reportId };
+  return { id, reportId, orderId: order.id as string };
 }
 
 test.describe("area personale", () => {
@@ -47,7 +55,11 @@ test.describe("area personale", () => {
     await page.getByRole("button", { name: "Conferma tutti i valori leggibili" }).click();
     await page.getByRole("button", { name: /Salva e scegli il servizio/ }).click();
     await expect(page.getByRole("heading", { name: "Scegli il servizio." })).toBeVisible();
-    await page.getByRole("button", { name: /Genera il report/ }).click();
+    await page.getByRole("button", { name: /Procedi al pagamento/ }).click();
+    await expect(page.getByText("Pagamento simulato — nessun addebito")).toBeVisible();
+    await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
+    await expect(page.getByText("Pagamento registrato")).toBeVisible();
+    await page.getByRole("link", { name: "Torna al referto" }).click();
     await expect(page.getByRole("heading", { name: "Il tuo referto, in parole semplici." })).toBeVisible({ timeout: 20_000 });
     await expect(page.getByRole("list", { name: "Spiegazione dei valori" })).toBeVisible();
     await expect(page.getByText("Anticorpi anti-TPO", { exact: false }).first()).toBeVisible();
@@ -74,6 +86,10 @@ test.describe("area personale", () => {
     expect((await b.request.get(`/api/v1/area/reports/${docA.reportId}`)).status()).toBe(404);
     expect([404, 409]).toContain((await b.request.get(`/api/v1/area/reports/${docA.reportId}/pdf`)).status());
     expect((await b.request.delete(`/api/v1/area/documents/${docA.id}`)).status()).toBe(404);
+    expect((await b.request.get(`/api/v1/area/orders/${docA.orderId}`)).status()).toBe(404);
+    expect((await b.request.post(`/api/v1/area/orders/${docA.orderId}/simula`, { data: { esito: "annullato" } })).status()).toBe(404);
+    expect((await b.request.post("/api/v1/area/orders", { data: { service: "essenziale", documentId: docA.id } })).status()).toBe(409);
+    expect((await (await b.request.get("/api/v1/area/orders")).json()).orders).toEqual([]);
     expect((await b.request.post(`/api/v1/area/documents/${docA.id}/verification`, { data: { confirmedObservationIds: ["obs-01"] } })).status()).toBe(409);
     // Alice ha ancora tutto
     expect((await a.request.get(`/api/v1/area/documents/${docA.id}`)).status()).toBe(200);

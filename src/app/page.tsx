@@ -77,7 +77,10 @@ export default function Home() {
               <Link href="/esempio" className="btn btn-primary">
                 Esplora un referto di esempio <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
-              <Link href="/servizi-prezzi" className="btn btn-secondary">
+              <Link href="/accedi" className="btn btn-secondary">
+                Crea il tuo archivio gratuito
+              </Link>
+              <Link href="/servizi-prezzi" className="btn btn-ghost">
                 Scopri servizi e prezzi
               </Link>
             </div>
@@ -263,6 +266,12 @@ export default function Home() {
               <Link href="/esempio" className="btn btn-on-strong mt-8">
                 Esplora un referto di esempio <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
+              <p className="mt-6 text-[0.9375rem] text-on-strong-soft">
+                Sei una struttura?{" "}
+                <Link href="/per-le-strutture" className="font-semibold underline underline-offset-4">
+                  Scopri il programma pilota
+                </Link>
+              </p>
             </div>
           </div>
         </div>

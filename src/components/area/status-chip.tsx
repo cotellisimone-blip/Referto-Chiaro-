@@ -1,8 +1,8 @@
 import { clsx } from "clsx";
-import { STATUS_LABEL } from "./api";
+import { ORDER_STATUS_LABEL, STATUS_LABEL } from "./api";
 
-export function StatusChip({ status }: { status: string }) {
-  const s = STATUS_LABEL[status] ?? { label: status, tone: "muted" as const };
+export function StatusChip({ status, kind = "document" }: { status: string; kind?: "document" | "order" }) {
+  const s = (kind === "order" ? ORDER_STATUS_LABEL : STATUS_LABEL)[status] ?? { label: status, tone: "muted" as const };
   return (
     <span
       className={clsx(

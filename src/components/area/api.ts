@@ -42,6 +42,18 @@ export const STATUS_LABEL: Record<string, { label: string; tone: "muted" | "teal
   error: { label: "Errore", tone: "danger" },
 };
 
+export const ORDER_STATUS_LABEL: Record<string, { label: string; tone: "muted" | "teal" | "sage" | "warn" | "danger" }> = {
+  pending: { label: "In attesa di pagamento", tone: "warn" },
+  paid: { label: "Pagato", tone: "sage" },
+  failed: { label: "Non riuscito", tone: "danger" },
+  cancelled: { label: "Annullato", tone: "muted" },
+  refunded: { label: "Rimborsato", tone: "muted" },
+};
+
+export function formatEuro(cents: number) {
+  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(cents / 100);
+}
+
 export function formatDateTime(iso: string) {
   const d = new Date(iso);
   return d.toLocaleString("it-IT", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const PAGES = ["/", "/esempio", "/come-funziona", "/servizi-prezzi", "/faq", "/secondo-parere", "/inizia", "/chi-siamo", "/contatti", "/sicurezza", "/accessibilita", "/privacy", "/termini", "/cookie"];
+const PAGES = ["/", "/esempio", "/come-funziona", "/servizi-prezzi", "/faq", "/secondo-parere", "/per-le-strutture", "/inizia", "/chi-siamo", "/contatti", "/sicurezza", "/accessibilita", "/privacy", "/termini", "/cookie"];
 
 for (const path of PAGES) {
   test(`pagina ${path}: nessun errore, nessun overflow, accessibilità`, async ({ page }) => {

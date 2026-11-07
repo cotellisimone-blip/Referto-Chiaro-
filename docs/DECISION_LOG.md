@@ -27,3 +27,11 @@
 | 23 | 07/11/2026 | Dossier: confronto solo fra esami con stesso nome normalizzato e stessa unità, tutti confermati | Evita confronti fra esami diversi o fra metodi diversi; la differenza è riportata senza alcun giudizio |
 | 24 | 07/11/2026 | Un solo driver DB per processo (`globalThis`) | Next.js impacchetta i moduli in più chunk: due istanze PGlite sulla stessa cartella vedevano dati diversi |
 | 25 | 07/11/2026 | Header: «Accedi» diventa «Area personale» con una chiamata leggera a `/api/v1/auth/me` | Le pagine pubbliche restano statiche; il header non dipende dai cookie lato server |
+| 26 | 07/11/2026 | Provider di pagamento scelto dal formato della chiave; senza chiave pagamento simulato in-app, chiave live solo con gate | Provare il flusso completo senza soldi veri; impossibile attivare addebiti reali per errore di configurazione |
+| 27 | 07/11/2026 | Il report nasce solo da un ordine pagato (402 altrimenti), anche in demo | Il percorso di acquisto è quello reale; il pagamento simulato costa un clic |
+| 28 | 07/11/2026 | TOTP implementato con `node:crypto` (RFC 6238) invece di una libreria | 60 righe testate contro i vettori RFC; nessuna dipendenza in più nel perimetro di sicurezza |
+| 29 | 07/11/2026 | Portali medico/admin: gate client (`RoleGate`) + controllo vero nelle API (`requireRole` con 2FA) | Le pagine restano statiche; nessun dato riservato arriva senza ruolo e seconda verifica |
+| 30 | 07/11/2026 | Il medico legge il referto tramite una lettura di sistema dopo il controllo RLS sul caso, con audit | La RLS resta «solo il proprietario»; l'accesso del medico è esplicito e tracciato |
+| 31 | 07/11/2026 | Parere firmato con conferma di responsabilità e impronta SHA-256 (caso, medico, ora, testo), non modificabile | Valore probatorio minimo e verificabile; la firma qualificata arriverà con il servizio reale |
+| 32 | 07/11/2026 | Secondo parere sempre `is_simulated` finché il gate `medicalSecondOpinion` è chiuso; solo referti sintetici | Nessun dato reale e nessun medico reale in demo, detto in ogni pagina |
+| 33 | 07/11/2026 | CSP con `script-src 'unsafe-inline'` | Le pagine statiche (Cache Components) non possono usare nonce per richiesta; limite documentato nei gate |

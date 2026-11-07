@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { clsx } from "clsx";
-import { FilePlus2, Files, FolderOpen, LogOut, Settings } from "lucide-react";
+import { FilePlus2, Files, FolderOpen, LogOut, Receipt, Settings, Stethoscope } from "lucide-react";
 import { api } from "./api";
 
 const ITEMS = [
   { href: "/area", label: "Referti", icon: Files, exact: true },
   { href: "/area/dossier", label: "Dossier", icon: FolderOpen, exact: false },
   { href: "/area/impostazioni", label: "Impostazioni", icon: Settings, exact: false },
+  { href: "/area/ordini", label: "Ordini", icon: Receipt, exact: false },
+  { href: "/area/secondo-parere", label: "Secondo parere", icon: Stethoscope, exact: false },
 ];
 
 export function AreaNav({ email, displayName, isDemo }: { email: string; displayName: string | null; isDemo: boolean }) {

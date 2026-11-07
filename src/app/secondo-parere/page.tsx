@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Clock3, FileSearch, ShieldCheck, UserRoundCheck } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
+import { WaitlistForm } from "@/components/site/waitlist-form";
 
 export const metadata: Metadata = { title: "Secondo parere medico" };
 
@@ -53,6 +54,11 @@ export default function SecondoParerePage() {
             Confronta i servizi
           </Link>
         </p>
+      </Section>
+      <Section id="avvisami" tone="mist" eyebrow="Lista d'attesa" title="Avvisami quando parte.">
+        <div className="max-w-2xl">
+          <WaitlistForm interest="secondo-parere" />
+        </div>
       </Section>
     </>
   );

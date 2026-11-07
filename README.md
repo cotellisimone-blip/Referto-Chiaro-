@@ -14,7 +14,7 @@ cp .env.example .env.local   # facoltativo: i default sono già sicuri
 npm run dev                   # http://localhost:3000
 ```
 
-Nessuna chiave API o servizio esterno è necessario: senza `DATABASE_URL` il database è PGlite (PostgreSQL embedded) nella cartella `.data/`. L'area personale si prova con il pulsante «Entra con l'account demo» in `/accedi`.
+Nessuna chiave API o servizio esterno è necessario: senza `DATABASE_URL` il database è PGlite (PostgreSQL embedded) nella cartella `.data/`. L'area personale si prova con il pulsante «Entra con l'account demo» in `/accedi`; il portale medico (`/medico`) e l'admin (`/admin`) con gli account dimostrativi e la 2FA (in demo il codice è mostrato a schermo). Senza chiavi Stripe il pagamento è simulato; con `STRIPE_SECRET_KEY=sk_test_...` e `STRIPE_WEBHOOK_SECRET` si usa Stripe Checkout in test.
 
 ## Comandi
 
@@ -44,7 +44,12 @@ src/
   db                        schema PostgreSQL con RLS e client (pg / PGlite)
   domain/pipeline           repository e job (lettura, report, dossier)
   domain/dossier            confronto fra referti
-  lib/auth                  link di accesso, sessioni, consensi, export, eliminazione
+  lib/auth                  link di accesso, sessioni, consensi, export, eliminazione, TOTP (2FA), ruoli
+  lib/payments              provider di pagamento (simulato, Stripe test/live con gate)
+  domain/orders             ordini e eventi di pagamento (idempotenti)
+  domain/cases              casi di secondo parere (paziente, medico, admin)
+  components/portale        gate dei portali riservati (ruolo + 2FA)
+  components/medico, admin  portale medico e pannello admin
   domain/extraction         schema estrazione, parsing numeri e intervalli
   domain/reporting          glossario, schema spiegazione, controllo coerenza, PDF
   providers/                adapter spiegazione (deterministico), upload/OCR/AI (spenti dai gate)

@@ -131,6 +131,39 @@ export async function loginDemoAccount(): Promise<{ ok: true; sessionToken: stri
   });
 }
 
+export const DEMO_PHYSICIAN_EMAIL = "medico-demo@esempio.referto-chiaro.invalid";
+export const DEMO_ADMIN_EMAIL = "admin-demo@esempio.referto-chiaro.invalid";
+
+/**
+ * Account di servizio dimostrativi (solo DEMO_MODE): un «medico» e un «admin» con 2FA.
+ * Il medico dimostrativo NON è un medico reale e il suo nome lo dice.
+ */
+export async function loginDemoRole(role: "physician" | "admin"): Promise<{ ok: true; sessionToken: string; user: User } | { ok: false }> {
+  if (!readFlags().demoMode) return { ok: false };
+  const email = role === "physician" ? DEMO_PHYSICIAN_EMAIL : DEMO_ADMIN_EMAIL;
+  return withSystem(async (tx) => {
+    let u = await tx.query("SELECT * FROM users WHERE email = $1", [email]);
+    if (!u.rows[0]) {
+      const id = randomUUID();
+      const name = role === "physician" ? "Medico dimostrativo (nessun medico reale)" : "Amministratore dimostrativo";
+      await tx.query("INSERT INTO users(id, email, display_name, is_demo, role) VALUES ($1, $2, $3, true, $4)", [id, email, name, role]);
+      for (const k of Object.keys(CONSENT_VERSIONS) as ConsentKind[]) {
+        await tx.query("INSERT INTO consents(id, user_id, kind, version, granted) VALUES (gen_random_uuid(), $1, $2, $3, true)", [id, k, CONSENT_VERSIONS[k]]);
+      }
+      if (role === "physician") {
+        await tx.query(
+          "INSERT INTO physicians(id, user_id, full_name, specialty, registration_ref, status, verified_at) VALUES ($1, $2, $3, 'Medicina interna (simulazione)', 'ACCOUNT DIMOSTRATIVO', 'verified', now())",
+          [randomUUID(), id, name],
+        );
+      }
+      await audit(tx, { userId: id, actor: "system", action: "demo-service-account-created", target: role });
+      u = await tx.query("SELECT * FROM users WHERE id = $1", [id]);
+    }
+    const sessionToken = await openSession(tx, String(u.rows[0].id));
+    return { ok: true as const, sessionToken, user: rowToUser(u.rows[0]) };
+  });
+}
+
 export async function getUserBySession(sessionToken: string | undefined): Promise<User | null> {
   if (!sessionToken || sessionToken.length > 128) return null;
   return withSystem(async (tx) => {

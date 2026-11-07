@@ -105,6 +105,19 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
     }
   }
 
+  async function proceedToPayment() {
+    setBusy(true);
+    setError(null);
+    try {
+      const r = await api<{ id: string; checkoutUrl: string; provider: string }>("/api/v1/area/orders", { method: "POST", body: { service: chosenService, documentId } });
+      if (r.checkoutUrl.startsWith("/")) router.push(r.checkoutUrl);
+      else window.location.assign(r.checkoutUrl);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Errore imprevisto.");
+      setBusy(false);
+    }
+  }
+
   async function requestReport() {
     setBusy(true);
     setError(null);
@@ -278,7 +291,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
             <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="display text-[1.75rem] outline-none sm:text-[2.25rem]">
               Scegli il servizio.
             </h1>
-            <p className="mt-4 text-lg text-muted">In questa versione dimostrativa nessun servizio è a pagamento: i prezzi indicati sono ipotesi in validazione e non viene addebitato nulla.</p>
+            <p className="mt-4 text-lg text-muted">I prezzi indicati sono ipotesi in validazione. In questa versione dimostrativa nessun addebito reale.</p>
           </div>
           <ul className="mt-8 grid gap-4 md:grid-cols-2" aria-label="Servizi disponibili">
             {SERVICES.filter((s) => s.id !== "secondo-parere").map((s) => {
@@ -295,7 +308,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
                     </span>
                     <span className="mt-4 flex items-baseline gap-2">
                       <span className="tabular font-serif text-3xl">{s.priceLabel}</span>
-                      <span className="chip bg-cream text-ink">gratuito in demo</span>
+                      <span className="chip bg-cream text-ink">prova, senza addebito</span>
                     </span>
                     <ul className="mt-4 space-y-1.5 text-sm text-ink">
                       {s.includes.slice(0, 4).map((x) => (
@@ -317,10 +330,15 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
             <button type="button" className="btn btn-ghost" onClick={reopenVerification}>
               <ArrowLeft aria-hidden className="h-4 w-4" /> Torna al controllo valori
             </button>
-            <button type="button" className="btn btn-primary" onClick={requestReport} disabled={busy}>
-              {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null}
-              Genera il report <ArrowRight aria-hidden className="h-4 w-4" />
-            </button>
+            <div className="flex flex-col items-stretch gap-2 sm:items-end">
+              <button type="button" className="btn btn-primary" onClick={proceedToPayment} disabled={busy} aria-describedby="nota-pagamento">
+                {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null}
+                Procedi al pagamento ({SERVICES.find((x) => x.id === chosenService)?.priceLabel}) <ArrowRight aria-hidden className="h-4 w-4" />
+              </button>
+              <p id="nota-pagamento" className="text-center text-sm text-muted sm:text-right">
+                Versione di prova: nessun addebito reale.
+              </p>
+            </div>
           </div>
         </section>
       ) : null}

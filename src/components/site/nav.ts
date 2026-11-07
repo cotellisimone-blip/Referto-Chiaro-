@@ -13,6 +13,7 @@ export const FOOTER_NAV = {
     { href: "/servizi-prezzi", label: "Servizi & Prezzi" },
     { href: "/secondo-parere", label: "Secondo parere medico" },
     { href: "/faq", label: "Domande frequenti" },
+    { href: "/per-le-strutture", label: "Per le strutture" },
   ],
   "Chi siamo": [
     { href: "/chi-siamo", label: "Il progetto" },
