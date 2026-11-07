@@ -147,3 +147,121 @@ DROP POLICY IF EXISTS magic_links_owner ON magic_links;
 CREATE POLICY magic_links_owner ON magic_links USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid) WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
 
 INSERT INTO schema_migrations(version) VALUES (1) ON CONFLICT DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Schema v2 (Fase 3): ruoli e 2FA, ordini e pagamenti, lista d'attesa,
+-- medici, casi di secondo parere. Tutto idempotente (IF NOT EXISTS).
+-- ---------------------------------------------------------------------------
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role text NOT NULL DEFAULT 'user';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_secret text;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_enabled_at timestamptz;
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS mfa_verified_at timestamptz;
+
+-- Ordini: creati dall'utente, aggiornati dal sistema (webhook o pagamento simulato).
+CREATE TABLE IF NOT EXISTS orders (
+  id uuid PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  service text NOT NULL CHECK (service IN ('essenziale', 'completo', 'secondo-parere')),
+  document_id uuid REFERENCES documents(id) ON DELETE SET NULL,
+  amount_cents integer NOT NULL CHECK (amount_cents >= 0),
+  currency text NOT NULL DEFAULT 'eur',
+  status text NOT NULL CHECK (status IN ('pending', 'paid', 'failed', 'cancelled', 'refunded')),
+  provider text NOT NULL CHECK (provider IN ('simulated', 'stripe-test', 'stripe-live')),
+  provider_ref text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  paid_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS orders_user_idx ON orders(user_id, created_at DESC);
+
+-- Eventi del fornitore di pagamento: idempotenza per id evento. Solo sistema.
+CREATE TABLE IF NOT EXISTS payment_events (
+  id uuid PRIMARY KEY,
+  provider text NOT NULL,
+  provider_event_id text NOT NULL UNIQUE,
+  kind text NOT NULL,
+  order_id uuid REFERENCES orders(id) ON DELETE SET NULL,
+  payload jsonb,
+  received_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Lista d'attesa pubblica. Solo sistema (scrittura via API pubblica, lettura da admin).
+CREATE TABLE IF NOT EXISTS waitlist (
+  id uuid PRIMARY KEY,
+  email text NOT NULL,
+  interest text NOT NULL CHECK (interest IN ('completo', 'secondo-parere', 'strutture')),
+  organization text,
+  note text,
+  consent_version text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (email, interest)
+);
+
+-- Medici: profilo collegato a un utente con ruolo 'physician'. Verifica a carico dell'admin.
+CREATE TABLE IF NOT EXISTS physicians (
+  id uuid PRIMARY KEY,
+  user_id uuid NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  full_name text NOT NULL,
+  specialty text NOT NULL,
+  registration_ref text,
+  status text NOT NULL CHECK (status IN ('pending', 'verified', 'suspended')),
+  verified_at timestamptz,
+  verified_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Casi di secondo parere: il paziente vede i propri, il medico quelli assegnati a lui.
+CREATE TABLE IF NOT EXISTS cases (
+  id uuid PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  document_id uuid REFERENCES documents(id) ON DELETE SET NULL,
+  physician_id uuid REFERENCES physicians(id) ON DELETE SET NULL,
+  specialty text NOT NULL,
+  question text NOT NULL,
+  status text NOT NULL CHECK (status IN ('submitted', 'accepted', 'declined', 'answered', 'closed')),
+  answer text,
+  answer_hash text,
+  decline_reason text,
+  is_simulated boolean NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  answered_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS cases_user_idx ON cases(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS cases_physician_idx ON cases(physician_id, created_at DESC);
+
+-- Storico append-only di ogni caso.
+CREATE TABLE IF NOT EXISTS case_events (
+  id uuid PRIMARY KEY,
+  case_id uuid NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+  actor_user_id uuid,
+  kind text NOT NULL,
+  detail text,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+GRANT SELECT, INSERT, UPDATE ON orders TO app_rls;
+GRANT SELECT ON physicians TO app_rls;
+GRANT SELECT, INSERT, UPDATE ON cases TO app_rls;
+GRANT SELECT, INSERT ON case_events TO app_rls;
+
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE case_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE physicians ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS orders_owner ON orders;
+CREATE POLICY orders_owner ON orders USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid) WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
+-- Il paziente vede i propri casi; il medico (app.physician_id) solo quelli assegnati a lui.
+DROP POLICY IF EXISTS cases_patient ON cases;
+CREATE POLICY cases_patient ON cases USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid) WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
+DROP POLICY IF EXISTS cases_physician ON cases;
+CREATE POLICY cases_physician ON cases USING (physician_id IS NOT NULL AND physician_id = NULLIF(current_setting('app.physician_id', true), '')::uuid);
+DROP POLICY IF EXISTS case_events_visible ON case_events;
+CREATE POLICY case_events_visible ON case_events USING (EXISTS (SELECT 1 FROM cases c WHERE c.id = case_events.case_id)) WITH CHECK (EXISTS (SELECT 1 FROM cases c WHERE c.id = case_events.case_id));
+-- I profili dei medici verificati sono leggibili (nome e specialità) da chi crea un caso.
+DROP POLICY IF EXISTS physicians_public ON physicians;
+CREATE POLICY physicians_public ON physicians USING (status = 'verified' OR user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
+
+INSERT INTO schema_migrations(version) VALUES (2) ON CONFLICT DO NOTHING;

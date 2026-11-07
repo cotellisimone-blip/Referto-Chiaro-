@@ -111,6 +111,12 @@ export async function withUser<T>(userId: string, fn: TxFn<T>): Promise<T> {
   return transaction(["SET LOCAL ROLE app_rls", `SET LOCAL app.user_id = '${userId}'`], fn);
 }
 
+/** Transazione di un medico: vede i propri dati e i casi assegnati a lui (app.physician_id). */
+export async function withPhysician<T>(userId: string, physicianId: string, fn: TxFn<T>): Promise<T> {
+  if (!UUID.test(userId) || !UUID.test(physicianId)) throw new Error("id non valido");
+  return transaction(["SET LOCAL ROLE app_rls", `SET LOCAL app.user_id = '${userId}'`, `SET LOCAL app.physician_id = '${physicianId}'`], fn);
+}
+
 /** Transazione di sistema (senza utente): usata da login, registrazione e manutenzione. */
 export function withSystem<T>(fn: TxFn<T>): Promise<T> {
   return transaction([], fn);

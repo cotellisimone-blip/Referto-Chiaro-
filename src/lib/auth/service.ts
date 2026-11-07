@@ -4,11 +4,18 @@ import { audit, withSystem, withUser } from "@/db/client";
 import { readFlags } from "@/lib/feature-flags";
 import { MAGIC_LINK_TTL_MS, SESSION_TTL_MS, hashToken, newToken } from "./tokens";
 
+export type Role = "user" | "physician" | "admin";
+
 export interface User {
   id: string;
   email: string;
   displayName: string | null;
   isDemo: boolean;
+  role: Role;
+  /** 2FA (TOTP) attiva sull'account: obbligatoria per medici e admin. */
+  mfaEnabled: boolean;
+  /** La sessione corrente ha superato la verifica 2FA. */
+  mfaVerified: boolean;
   createdAt: string;
 }
 
@@ -30,6 +37,9 @@ function rowToUser(r: Record<string, unknown>): User {
     email: String(r.email),
     displayName: (r.display_name as string | null) ?? null,
     isDemo: Boolean(r.is_demo),
+    role: (["user", "physician", "admin"].includes(String(r.role)) ? String(r.role) : "user") as Role,
+    mfaEnabled: Boolean(r.mfa_enabled_at),
+    mfaVerified: Boolean(r.mfa_verified_at),
     createdAt: new Date(r.created_at as string).toISOString(),
   };
 }
@@ -125,7 +135,7 @@ export async function getUserBySession(sessionToken: string | undefined): Promis
   if (!sessionToken || sessionToken.length > 128) return null;
   return withSystem(async (tx) => {
     const r = await tx.query(
-      `SELECT u.*, s.id AS session_id FROM sessions s JOIN users u ON u.id = s.user_id
+      `SELECT u.*, s.id AS session_id, s.mfa_verified_at FROM sessions s JOIN users u ON u.id = s.user_id
        WHERE s.token_hash = $1 AND s.revoked_at IS NULL AND s.expires_at > now() AND u.deleted_at IS NULL`,
       [hashToken(sessionToken)],
     );
