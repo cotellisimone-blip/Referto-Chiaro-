@@ -2,7 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { audit, withSystem, withUser } from "@/db/client";
 import { readFlags } from "@/lib/feature-flags";
-import { MAGIC_LINK_TTL_MS, SESSION_TTL_MS, hashToken, newToken } from "./tokens";
+import { MAGIC_LINK_TTL_MS, hashToken, newToken, sessionTtlMs } from "./tokens";
 
 export type Role = "user" | "physician" | "admin";
 
@@ -19,7 +19,12 @@ export interface User {
   createdAt: string;
 }
 
-export const CONSENT_VERSIONS = { terms: "bozza-2026-11", privacy: "bozza-2026-11", "health-data": "bozza-2026-11" } as const;
+export const CONSENT_VERSIONS = { terms: "bozza-2026-11", privacy: "bozza-2026-11", "health-data": "bozza-2026-11", "subject-declaration": "bozza-2026-11" } as const;
+/** Consensi necessari per creare un account. La dichiarazione di essere l'interessato è registrata quando fornita. */
+export const REQUIRED_CONSENTS: ConsentKind[] = ["terms", "privacy", "health-data"];
+
+/** Domini riservati ai test (RFC 2606/6761): nessuna casella reale può riceverli. */
+const TEST_EMAIL = /@([^@]+\.)?(invalid|test|example|localhost)$|@example\.(com|net|org)$/;
 export type ConsentKind = keyof typeof CONSENT_VERSIONS;
 
 export const DEMO_ACCOUNT_EMAIL = "demo@esempio.referto-chiaro.invalid";
@@ -49,15 +54,21 @@ function rowToUser(r: Record<string, unknown>): User {
  * In demo il link non viene inviato per email (nessun servizio di posta): viene restituito al chiamante,
  * che lo mostra sullo schermo. Fuori dalla demo serve il gate publicSignup e un adattatore email.
  */
+export type MagicLinkDelivery = "on-screen" | "email" | "unavailable";
+
 export async function requestMagicLink(args: { email: string; consents: ConsentKind[] }): Promise<
-  { ok: true; link: string; isNew: boolean } | { ok: false; code: "invalid-email" | "signup-closed" | "consent-required" }
+  { ok: true; delivery: MagicLinkDelivery; link?: string } | { ok: false; code: "invalid-email" | "signup-closed" | "consent-required" }
 > {
   const email = normalizeEmail(args.email);
   if (!email) return { ok: false, code: "invalid-email" };
   const flags = readFlags();
-  const required: ConsentKind[] = ["terms", "privacy", "health-data"];
+  const required = REQUIRED_CONSENTS;
   const token = newToken();
   return withSystem(async (tx) => {
+    // Pulizia periodica: link scaduti, sessioni scadute da oltre 30 giorni, lista d'attesa oltre 12 mesi.
+    await tx.query("DELETE FROM magic_links WHERE expires_at < now() - interval '1 day'");
+    await tx.query("DELETE FROM sessions WHERE expires_at < now() - interval '30 days'");
+    await tx.query("DELETE FROM waitlist WHERE created_at < now() - interval '12 months'");
     const existing = await tx.query("SELECT * FROM users WHERE email = $1 AND deleted_at IS NULL", [email]);
     let userId: string;
     let isNew = false;
@@ -67,7 +78,8 @@ export async function requestMagicLink(args: { email: string; consents: ConsentK
       if (!required.every((k) => args.consents.includes(k))) return { ok: false, code: "consent-required" as const };
       userId = randomUUID();
       await tx.query("INSERT INTO users(id, email, is_demo) VALUES ($1, $2, $3)", [userId, email, flags.demoMode]);
-      for (const k of required) {
+      const recorded = new Set<ConsentKind>([...required, ...args.consents.filter((k) => k in CONSENT_VERSIONS)]);
+      for (const k of recorded) {
         await tx.query("INSERT INTO consents(id, user_id, kind, version, granted) VALUES (gen_random_uuid(), $1, $2, $3, true)", [userId, k, CONSENT_VERSIONS[k]]);
       }
       isNew = true;
@@ -81,7 +93,12 @@ export async function requestMagicLink(args: { email: string; consents: ConsentK
       new Date(Date.now() + MAGIC_LINK_TTL_MS).toISOString(),
     ]);
     await audit(tx, { userId, actor: "user", action: "magic-link-requested" });
-    return { ok: true as const, link: `/api/v1/auth/verifica?token=${token}`, isNew };
+    if (!flags.demoMode) return { ok: true as const, delivery: "email" as const }; // qui andrà l'adattatore email
+    // In demo il link si mostra a schermo solo quando nessun altro potrebbe rivendicare quell'account:
+    // account appena creato, oppure indirizzo di un dominio riservato ai test. Altrimenti niente link.
+    const onScreen = isNew || TEST_EMAIL.test(email) || email === DEMO_ACCOUNT_EMAIL;
+    if (!onScreen) return { ok: true as const, delivery: "unavailable" as const };
+    return { ok: true as const, delivery: "on-screen" as const, link: `/api/v1/auth/verifica?token=${token}` };
   });
 }
 
@@ -89,10 +106,10 @@ export async function requestMagicLink(args: { email: string; consents: ConsentK
 export async function consumeMagicLink(token: string): Promise<{ ok: true; sessionToken: string; user: User } | { ok: false }> {
   if (!token || token.length > 128) return { ok: false };
   return withSystem(async (tx) => {
-    const r = await tx.query("SELECT id, user_id FROM magic_links WHERE token_hash = $1 AND used_at IS NULL AND expires_at > now()", [hashToken(token)]);
+    // Consumo atomico: due richieste simultanee con lo stesso token non possono aprire due sessioni.
+    const r = await tx.query("UPDATE magic_links SET used_at = now() WHERE token_hash = $1 AND used_at IS NULL AND expires_at > now() RETURNING id, user_id", [hashToken(token)]);
     const link = r.rows[0];
     if (!link) return { ok: false as const };
-    await tx.query("UPDATE magic_links SET used_at = now() WHERE id = $1", [link.id]);
     const session = await openSession(tx, String(link.user_id));
     const u = await tx.query("SELECT * FROM users WHERE id = $1 AND deleted_at IS NULL", [link.user_id]);
     if (!u.rows[0]) return { ok: false as const };
@@ -102,11 +119,12 @@ export async function consumeMagicLink(token: string): Promise<{ ok: true; sessi
 
 async function openSession(tx: Parameters<Parameters<typeof withSystem>[0]>[0], userId: string): Promise<string> {
   const token = newToken();
+  const role = await tx.query("SELECT role FROM users WHERE id = $1", [userId]);
   await tx.query("INSERT INTO sessions(id, user_id, token_hash, expires_at) VALUES ($1, $2, $3, $4)", [
     randomUUID(),
     userId,
     hashToken(token),
-    new Date(Date.now() + SESSION_TTL_MS).toISOString(),
+    new Date(Date.now() + sessionTtlMs(String(role.rows[0]?.role ?? "user"))).toISOString(),
   ]);
   await tx.query("UPDATE users SET last_login_at = now() WHERE id = $1", [userId]);
   await audit(tx, { userId, actor: "user", action: "login" });
@@ -186,28 +204,55 @@ export async function revokeSession(sessionToken: string | undefined): Promise<v
 /** Esportazione dei propri dati (GDPR art. 20): tutto in un JSON, senza token né hash. */
 export async function exportUserData(userId: string) {
   return withUser(userId, async (tx) => {
-    const [user, consents, documents, reports, dossiers] = await Promise.all([
-      tx.query("SELECT id, email, display_name, is_demo, created_at, last_login_at FROM users"),
+    const [user, consents, documents, reports, dossiers, orders, cases, auditRows] = await Promise.all([
+      tx.query("SELECT id, email, display_name, is_demo, role, created_at, last_login_at FROM users"),
       tx.query("SELECT kind, version, granted, recorded_at FROM consents ORDER BY recorded_at"),
       tx.query("SELECT id, title, source_kind, source_ref, status, extracted, verification, created_at, updated_at FROM documents ORDER BY created_at"),
       tx.query("SELECT id, document_id, service, status, explanation, policy_version, created_at, generated_at FROM reports ORDER BY created_at"),
       tx.query("SELECT id, title, document_ids, status, content, created_at, generated_at FROM dossiers ORDER BY created_at"),
+      tx.query("SELECT id, service, amount_cents, currency, status, provider, created_at, paid_at FROM orders ORDER BY created_at"),
+      tx.query("SELECT id, document_id, specialty, question, status, answer, decline_reason, is_simulated, created_at, answered_at FROM cases ORDER BY created_at"),
+      tx.query("SELECT action, target, created_at FROM audit_log ORDER BY created_at"),
     ]);
     await audit(tx, { userId, actor: "user", action: "export-data" });
-    return { exportedAt: new Date().toISOString(), user: user.rows[0], consents: consents.rows, documents: documents.rows, reports: reports.rows, dossiers: dossiers.rows };
+    return {
+      exportedAt: new Date().toISOString(),
+      user: user.rows[0],
+      consents: consents.rows,
+      documents: documents.rows,
+      reports: reports.rows,
+      dossiers: dossiers.rows,
+      orders: orders.rows,
+      secondOpinionCases: cases.rows,
+      activityLog: auditRows.rows,
+    };
   });
 }
 
-/** Eliminazione dell'account: cancellazione fisica di documenti, report, dossier e sessioni; l'utente resta come riga anonimizzata. */
+/** Cancella tutti i contenuti sanitari dell'utente (documenti, report, dossier, lavorazioni, casi). */
+async function purgeHealthData(tx: Parameters<Parameters<typeof withSystem>[0]>[0], userId: string) {
+  await tx.query("DELETE FROM jobs WHERE user_id = $1", [userId]);
+  await tx.query("DELETE FROM case_events WHERE case_id IN (SELECT id FROM cases WHERE user_id = $1)", [userId]);
+  await tx.query("DELETE FROM cases WHERE user_id = $1", [userId]);
+  await tx.query("DELETE FROM dossiers WHERE user_id = $1", [userId]);
+  await tx.query("DELETE FROM reports WHERE user_id = $1", [userId]);
+  await tx.query("DELETE FROM documents WHERE user_id = $1", [userId]);
+}
+
+/**
+ * Eliminazione dell'account (GDPR art. 17): cancellazione fisica di tutto ciò che è personale o sanitario.
+ * Restano solo la riga utente anonimizzata, gli ordini (obblighi contabili, senza contenuti) e il registro.
+ */
 export async function deleteAccount(userId: string): Promise<void> {
-  await withUser(userId, async (tx) => {
-    await tx.query("DELETE FROM jobs");
-    await tx.query("DELETE FROM dossiers");
-    await tx.query("DELETE FROM reports");
-    await tx.query("DELETE FROM documents");
-    await tx.query("DELETE FROM magic_links");
-    await tx.query("UPDATE sessions SET revoked_at = now() WHERE revoked_at IS NULL");
-    await tx.query("UPDATE users SET email = $1, display_name = NULL, deleted_at = now() WHERE id = $2", [`deleted-${userId}@anon.invalid`, userId]);
+  await withSystem(async (tx) => {
+    const u = await tx.query("SELECT email FROM users WHERE id = $1 AND deleted_at IS NULL", [userId]);
+    if (!u.rows[0]) return;
+    await purgeHealthData(tx, userId);
+    await tx.query("DELETE FROM consents WHERE user_id = $1", [userId]);
+    await tx.query("DELETE FROM magic_links WHERE user_id = $1", [userId]);
+    await tx.query("DELETE FROM waitlist WHERE email = $1", [String(u.rows[0].email)]);
+    await tx.query("UPDATE sessions SET revoked_at = now() WHERE user_id = $1 AND revoked_at IS NULL", [userId]);
+    await tx.query("UPDATE users SET email = $1, display_name = NULL, mfa_secret = NULL, mfa_enabled_at = NULL, mfa_last_step = NULL, deleted_at = now() WHERE id = $2", [`deleted-${userId}@anon.invalid`, userId]);
     await audit(tx, { userId, actor: "user", action: "delete-account" });
   });
 }
@@ -216,10 +261,27 @@ export async function listConsents(userId: string) {
   return withUser(userId, async (tx) => (await tx.query("SELECT kind, version, granted, recorded_at FROM consents ORDER BY recorded_at DESC")).rows);
 }
 
+/** L'ultimo consenso registrato per i dati sanitari è ancora valido? */
+export async function hasHealthDataConsent(userId: string): Promise<boolean> {
+  return withUser(userId, async (tx) => {
+    const r = await tx.query("SELECT granted FROM consents WHERE kind = 'health-data' ORDER BY recorded_at DESC LIMIT 1");
+    return Boolean(r.rows[0]?.granted);
+  });
+}
+
 export async function recordConsent(userId: string, kind: ConsentKind | "marketing", granted: boolean) {
   await withUser(userId, async (tx) => {
     const version = kind === "marketing" ? "bozza-2026-11" : CONSENT_VERSIONS[kind];
     await tx.query("INSERT INTO consents(id, user_id, kind, version, granted) VALUES (gen_random_uuid(), $1, $2, $3, $4)", [userId, kind, version, granted]);
     await audit(tx, { userId, actor: "user", action: granted ? "consent-granted" : "consent-withdrawn", target: kind });
+  });
+}
+
+/** Revoca del consenso ai dati sanitari (art. 9): i contenuti sanitari vengono cancellati subito, l'account resta. */
+export async function withdrawHealthDataConsent(userId: string): Promise<void> {
+  await withSystem(async (tx) => {
+    await purgeHealthData(tx, userId);
+    await tx.query("INSERT INTO consents(id, user_id, kind, version, granted) VALUES (gen_random_uuid(), $1, 'health-data', $2, false)", [userId, CONSENT_VERSIONS["health-data"]]);
+    await audit(tx, { userId, actor: "user", action: "consent-withdrawn", target: "health-data" });
   });
 }

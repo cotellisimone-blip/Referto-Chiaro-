@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 CREATE TABLE IF NOT EXISTS consents (
   id uuid PRIMARY KEY,
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  kind text NOT NULL CHECK (kind IN ('terms', 'privacy', 'health-data', 'marketing')),
+  kind text NOT NULL,
   version text NOT NULL,
   granted boolean NOT NULL,
   recorded_at timestamptz NOT NULL DEFAULT now()
@@ -118,6 +118,15 @@ END $$;
 GRANT USAGE ON SCHEMA public TO app_rls;
 GRANT SELECT, INSERT, UPDATE, DELETE ON users, magic_links, sessions, consents, documents, reports, dossiers, jobs TO app_rls;
 GRANT SELECT, INSERT ON audit_log TO app_rls;
+-- Il ruolo applicativo può aggiornare solo le colonne «proprie» di users: mai ruolo, 2FA, is_demo.
+REVOKE UPDATE ON users FROM app_rls;
+GRANT UPDATE (email, display_name, deleted_at, last_login_at) ON users TO app_rls;
+-- Registro: ognuno legge solo le proprie voci; inserimento sempre consentito; mai UPDATE/DELETE.
+ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS audit_select_own ON audit_log;
+CREATE POLICY audit_select_own ON audit_log FOR SELECT USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
+DROP POLICY IF EXISTS audit_insert ON audit_log;
+CREATE POLICY audit_insert ON audit_log FOR INSERT WITH CHECK (true);
 
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE consents ENABLE ROW LEVEL SECURITY;
@@ -156,6 +165,11 @@ INSERT INTO schema_migrations(version) VALUES (1) ON CONFLICT DO NOTHING;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS role text NOT NULL DEFAULT 'user';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_secret text;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_enabled_at timestamptz;
+-- Ultimo passo TOTP accettato: un codice già usato non vale una seconda volta.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_last_step bigint;
+-- Vincolo sui consensi esteso (v3): dichiarazione sull'interessato e consenso per il secondo parere.
+ALTER TABLE consents DROP CONSTRAINT IF EXISTS consents_kind_check;
+ALTER TABLE consents ADD CONSTRAINT consents_kind_check CHECK (kind IN ('terms', 'privacy', 'health-data', 'marketing', 'subject-declaration', 'second-opinion'));
 ALTER TABLE sessions ADD COLUMN IF NOT EXISTS mfa_verified_at timestamptz;
 
 -- Ordini: creati dall'utente, aggiornati dal sistema (webhook o pagamento simulato).

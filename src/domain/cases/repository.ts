@@ -125,6 +125,7 @@ export async function createCase(userId: string, args: { documentId: string; spe
       "INSERT INTO cases(id, user_id, document_id, physician_id, specialty, question, status, is_simulated) VALUES ($1, $2, $3, $4, $5, $6, 'submitted', $7)",
       [id, userId, args.documentId, physicianId, args.specialty, args.question, args.isSimulated],
     );
+    await tx.query("INSERT INTO consents(id, user_id, kind, version, granted) VALUES (gen_random_uuid(), $1, 'second-opinion', $2, true)", [userId, `caso:${id}`]);
     await addEvent(tx, id, userId, "submitted", physicianId ? "Assegnato a un medico della specialità richiesta." : "In attesa di assegnazione.");
     await audit(tx, { userId, actor: "user", action: "case-created", target: id });
     return { id };
@@ -166,7 +167,8 @@ export async function getPhysicianCase(userId: string, physicianId: string, case
     return { case: toCase(r.rows[0]), events: ev.rows.map(toEvent) };
   });
   if (!found) return null;
-  const document = found.case.documentId
+  // Il referto è leggibile dal medico solo finché il caso è in lavorazione (inviato o preso in carico).
+  const document = found.case.documentId && ["submitted", "accepted"].includes(found.case.status)
     ? await withSystem(async (tx) => {
         const d = await tx.query("SELECT title, extracted FROM documents WHERE id = $1", [found.case.documentId]);
         await audit(tx, { userId, actor: "physician", action: "case-document-viewed", target: caseId });

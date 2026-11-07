@@ -23,8 +23,8 @@ const strictTrue = (v: string | undefined) => v === "true";
 
 export function readFlags(env: Env = process.env): Flags {
   return {
-    // La demo è attiva salvo esplicito "false".
-    demoMode: env.DEMO_MODE !== "false",
+    // Demo: "true" esplicito; senza variabile è attiva solo fuori produzione (in produzione resta spenta).
+    demoMode: env.DEMO_MODE === "true" || (env.DEMO_MODE === undefined && env.NODE_ENV !== "production"),
     productionComplianceApproved: strictTrue(env.PRODUCTION_COMPLIANCE_APPROVED),
     realUploads: strictTrue(env.ENABLE_REAL_UPLOADS),
     aiProcessing: strictTrue(env.ENABLE_AI_PROCESSING),

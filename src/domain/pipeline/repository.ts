@@ -149,15 +149,18 @@ export async function saveVerification(userId: string, documentId: string, confi
 }
 
 export async function createReport(userId: string, documentId: string, service: "essenziale" | "completo"): Promise<string | null> {
-  return withUser(userId, async (tx) => {
-    const d = await tx.query("SELECT status FROM documents WHERE id = $1", [documentId]);
-    if (!d.rows[0] || !["verified", "ready"].includes(String(d.rows[0].status))) return null;
-    const id = randomUUID();
-    await tx.query("INSERT INTO reports(id, user_id, document_id, service, status) VALUES ($1, $2, $3, $4, 'queued')", [id, userId, documentId, service]);
-    await enqueue(tx, userId, "generate-report", id);
-    await audit(tx, { userId, actor: "user", action: "report-requested", target: id });
-    return id;
-  });
+  return withUser(userId, (tx) => createReportIn(tx, userId, documentId, service));
+}
+
+/** Variante dentro una transazione già aperta (es. insieme al passaggio dell'ordine a «pagato»). */
+export async function createReportIn(tx: Queryable, userId: string, documentId: string, service: "essenziale" | "completo"): Promise<string | null> {
+  const d = await tx.query("SELECT status FROM documents WHERE id = $1 AND user_id = $2", [documentId, userId]);
+  if (!d.rows[0] || !["verified", "ready"].includes(String(d.rows[0].status))) return null;
+  const id = randomUUID();
+  await tx.query("INSERT INTO reports(id, user_id, document_id, service, status) VALUES ($1, $2, $3, $4, 'queued')", [id, userId, documentId, service]);
+  await enqueue(tx, userId, "generate-report", id);
+  await audit(tx, { userId, actor: "user", action: "report-requested", target: id });
+  return id;
 }
 
 export async function createDossier(userId: string, title: string, documentIds: string[]): Promise<string | null> {

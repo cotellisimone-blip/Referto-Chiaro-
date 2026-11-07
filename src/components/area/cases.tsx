@@ -57,6 +57,7 @@ export function CasesPage() {
   const [specialty, setSpecialty] = useState("");
   const [question, setQuestion] = useState("");
   const [ack, setAck] = useState(false);
+  const [share, setShare] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,7 +79,7 @@ export function CasesPage() {
     setBusy(true);
     setError(null);
     try {
-      const r = await api<{ id: string }>("/api/v1/area/casi", { method: "POST", body: { documentId, specialty, question, acknowledgeSimulation: ack } });
+      const r = await api<{ id: string }>("/api/v1/area/casi", { method: "POST", body: { documentId, specialty, question, acknowledgeSimulation: ack, consentToShare: share } });
       router.push(`/area/secondo-parere/${r.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Errore");
@@ -140,13 +141,17 @@ export function CasesPage() {
               </select>
             </div>
             <div>
-              <label htmlFor="caso-q" className="text-sm font-semibold text-ink">La tua domanda (da 20 a 1500 caratteri)</label>
-              <textarea id="caso-q" value={question} onChange={(e) => setQuestion(e.target.value)} required minLength={20} maxLength={1500} rows={5} className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-ink" placeholder="Esempio: alcuni valori sono fuori dall'intervallo stampato; vorrei capire quali approfondimenti chiedere al mio medico." />
-              <p className="mt-1 text-xs text-muted">Non inserire dati di persone reali: questa è una simulazione.</p>
+              <label htmlFor="caso-q" className="text-sm font-semibold text-ink">La tua domanda (da 20 a 500 caratteri)</label>
+              <textarea id="caso-q" value={question} onChange={(e) => setQuestion(e.target.value)} required minLength={20} maxLength={500} rows={5} className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-ink" placeholder="Esempio: alcuni valori sono fuori dall'intervallo stampato; vorrei capire quali approfondimenti chiedere al mio medico." />
+              <p className="mt-1 text-xs text-muted">Non inserire dati di persone reali: questa è una simulazione. Con l&apos;account demo condiviso la domanda è visibile a chiunque usi il medico dimostrativo.</p>
             </div>
             <label className="flex items-start gap-3 text-[0.9375rem] text-ink-soft">
               <input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} required className="mt-1 h-5 w-5 rounded border-line" />
               <span>Ho capito che questa è una simulazione: nessun medico reale leggerà la richiesta e la risposta non ha valore clinico.</span>
+            </label>
+            <label className="flex items-start gap-3 text-[0.9375rem] text-ink-soft">
+              <input type="checkbox" checked={share} onChange={(e) => setShare(e.target.checked)} required className="mt-1 h-5 w-5 rounded border-line" />
+              <span>Acconsento a condividere questo referto e la mia domanda con il medico assegnato, solo per rispondere alla richiesta.</span>
             </label>
             {error ? <p role="alert" className="rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">{error}</p> : null}
             <button type="submit" disabled={busy} className="btn btn-primary">

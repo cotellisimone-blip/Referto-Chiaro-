@@ -52,15 +52,24 @@ export function totpCode(secret: string, time = Date.now(), step = 30, digits = 
   return String(bin % 10 ** digits).padStart(digits, "0");
 }
 
+/**
+ * Passo temporale (contatore RFC 6238) a cui corrisponde il codice, nella finestra ±window; null se non corrisponde.
+ * Serve a rifiutare il riuso dello stesso codice: un passo già accettato non vale più.
+ */
+export function totpMatchStep(secret: string, code: string, time = Date.now(), window = 1): number | null {
+  const given = code.replace(/\s+/g, "");
+  if (!/^\d{6}$/.test(given)) return null;
+  for (let w = -window; w <= window; w++) {
+    const t = time + w * 30_000;
+    const expected = totpCode(secret, t);
+    if (expected.length === given.length && timingSafeEqual(Buffer.from(expected), Buffer.from(given))) return Math.floor(t / 1000 / 30);
+  }
+  return null;
+}
+
 /** Accetta il codice corrente e quelli adiacenti (±1 finestra) per tollerare orologi non perfetti. */
 export function verifyTotp(secret: string, code: string, time = Date.now(), window = 1): boolean {
-  const given = code.replace(/\s+/g, "");
-  if (!/^\d{6}$/.test(given)) return false;
-  for (let w = -window; w <= window; w++) {
-    const expected = totpCode(secret, time + w * 30_000);
-    if (expected.length === given.length && timingSafeEqual(Buffer.from(expected), Buffer.from(given))) return true;
-  }
-  return false;
+  return totpMatchStep(secret, code, time, window) !== null;
 }
 
 /** URI otpauth:// da mostrare come QR o da copiare nell'app di autenticazione. */

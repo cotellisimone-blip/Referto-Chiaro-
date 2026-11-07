@@ -1,11 +1,10 @@
 import { z } from "zod";
 import { requestMagicLink } from "@/lib/auth/service";
-import { readFlags } from "@/lib/feature-flags";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 import { json } from "@/lib/api";
 import { readJson } from "@/lib/auth/guard";
 
-const Body = z.object({ email: z.string().max(254), consents: z.array(z.enum(["terms", "privacy", "health-data"])).default([]) }).strict();
+const Body = z.object({ email: z.string().max(254), consents: z.array(z.enum(["terms", "privacy", "health-data", "subject-declaration"])).default([]) }).strict();
 
 /**
  * Richiesta del link di accesso. In demo non esiste un servizio email: il link viene restituito
@@ -24,6 +23,6 @@ export async function POST(req: Request) {
     const messages = { "invalid-email": "Indirizzo email non valido.", "signup-closed": "Le registrazioni non sono ancora aperte.", "consent-required": "Per registrarti devi accettare termini, privacy e trattamento dei dati sanitari." };
     return json({ error: out.code, message: messages[out.code] }, { status: out.code === "signup-closed" ? 403 : 400 });
   }
-  const demo = readFlags().demoMode;
-  return json({ ok: true, isNew: out.isNew, delivery: demo ? "on-screen" : "email", link: demo ? out.link : undefined });
+  // Nessuna indicazione se l'indirizzo era già registrato: la risposta è la stessa.
+  return json({ ok: true, delivery: out.delivery, link: out.link });
 }

@@ -15,6 +15,12 @@ const SHOTS = [
   ["fase4-3-guida-emocromo", "/guide/emocromo"],
   ["fase4-4-glossario", "/glossario"],
   ["fase4-5-voce-ferritina", "/glossario/ferritina"],
+  ["round2-1-guide-hub", "/guide"],
+  ["round2-2-guida-risonanza", "/guide/risonanza-magnetica"],
+  ["round2-3-guida-ecg", "/guide/elettrocardiogramma-ecg"],
+  ["round2-4-guida-tac-o-risonanza", "/guide/tac-o-risonanza"],
+  ["round2-5-privacy", "/privacy"],
+  ["round2-6-accedi-consensi", "/accedi"],
 ] as const;
 
 /** Porta a termine le animazioni d'ingresso prima dello scatto. */
@@ -148,7 +154,7 @@ test.describe("screenshots", () => {
     await page.getByRole("heading", { name: "Nuova richiesta" }).waitFor({ timeout: 15_000 });
     await settle(page);
     await page.screenshot({ path: `${dir}/fase3-4-secondo-parere-richiesta.png`, fullPage: true });
-    const c = await (await ctx.request.post("/api/v1/area/casi", { data: { documentId: id, specialty: "Medicina interna (simulazione)", question: "Alcuni valori sono fuori dall'intervallo stampato: quali approfondimenti potrei chiedere al mio medico?", acknowledgeSimulation: true } })).json();
+    const c = await (await ctx.request.post("/api/v1/area/casi", { data: { documentId: id, specialty: "Medicina interna (simulazione)", question: "Alcuni valori sono fuori dall'intervallo stampato: quali approfondimenti potrei chiedere al mio medico?", acknowledgeSimulation: true, consentToShare: true } })).json();
     const dp = await doc.newPage();
     await dp.goto(`/medico/casi/${c.id}`);
     await dp.getByRole("button", { name: "Prendo in carico" }).waitFor({ timeout: 15_000 });

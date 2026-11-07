@@ -6,10 +6,10 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 |---|---|---|
 | Lint | `npm run lint` | ✅ 0 errori, 0 avvisi |
 | Tipi | `npm run typecheck` | ✅ TypeScript strict senza errori |
-| Unit | `npm test` | ✅ 82/82 |
-| Build | `npm run build` | ✅ build pulita: tutte le route di prima più `/guide`, `/glossario`, 67 guide e 139 voci prerenderizzate, area/medico/admin, 38 API, robots e sitemap) |
-| E2E | `npm run test:e2e -- --trace off` | ✅ 128/128 (desktop 1440×900 e mobile 390×844; area personale, ordini e pagamento simulato, lista d'attesa, header di sicurezza, secondo parere/medico/admin con 2FA, guide e glossario, 404 reali, indicizzazione spenta) |
-| Screenshot | `npm run screenshots` | ✅ 83 immagini in `docs/screenshots/` (sito, area, pagamento, secondo parere, portale medico, admin, guide e glossario; 15 in tema scuro) |
+| Unit | `npm test` | ✅ 88/88 |
+| Build | `npm run build` | ✅ build pulita: tutte le route di prima più `/guide`, `/glossario`, 90 guide e 139 voci prerenderizzate, area/medico/admin, 38 API, robots e sitemap) |
+| E2E | `npm run test:e2e -- --trace off` | ✅ 138/138 (desktop 1440×900 e mobile 390×844; area personale, ordini e pagamento simulato, lista d'attesa, header di sicurezza, secondo parere/medico/admin con 2FA, guide di laboratorio e strumentali, glossario, 404 reali, indicizzazione spenta, consensi/revoca/cancellazione GDPR) |
+| Screenshot | `npm run screenshots` | ✅ 95 immagini in `docs/screenshots/` (sito, area, pagamento, secondo parere, portale medico, admin, guide e glossario; 15 in tema scuro) |
 
 ## Cosa copre
 
@@ -26,7 +26,8 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 - TOTP: vettori RFC 6238, base32 andata/ritorno, finestra ±1, codici malformati rifiutati.
 - Pagamenti: scelta del provider (nessuna chiave → simulato; `sk_test_` → test; `sk_live_` senza gate → errore, mai ripiego); ordini: stato pending → paid una sola volta, report creato solo al pagamento; webhook idempotente per id evento, firma verificata.
 - Lista d'attesa: validazione, consenso obbligatorio, idempotenza per email+interesse.
-- Contenuti: ogni guida (67) e voce del glossario (139) rispetta lo schema zod; slug unici; nessuna frase diagnostica/prescrittiva (lista `FORBIDDEN_PHRASES`, anche come sottostringa); riferimenti incrociati guida↔guida e guida↔glossario tutti risolti; fonti solo https da domini istituzionali ammessi; stato «bozza da revisione clinica» obbligatorio.
+- Correzioni dell'audit: default di `DEMO_MODE` in produzione, passo TOTP per il rifiuto del riuso, cifratura dei segreti (andata/ritorno, chiave mancante o corta), «inferiore a» stretto, `X-Forwarded-For` solo con proxy fidato, durata delle sessioni per ruolo.
+- Contenuti: ogni guida (90, di cui 23 strumentali con `procedure` al posto di unità e intervalli) e voce del glossario (139) rispetta lo schema zod; slug unici; nessuna frase diagnostica/prescrittiva (lista `FORBIDDEN_PHRASES`, anche come sottostringa); riferimenti incrociati guida↔guida e guida↔glossario tutti risolti; fonti solo https da domini istituzionali ammessi; stato «bozza da revisione clinica» obbligatorio.
 - SEO: indicizzazione accesa solo con `ENABLE_INDEXING="true"` esatto; sitemap vuota e robots «disallow /» per default; con indicizzazione accesa sitemap con guide e glossario e aree riservate escluse; JSON-LD non può chiudere lo script.
 
 **E2E (Playwright + axe-core)**

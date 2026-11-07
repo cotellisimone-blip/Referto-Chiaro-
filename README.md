@@ -14,7 +14,7 @@ cp .env.example .env.local   # facoltativo: i default sono già sicuri
 npm run dev                   # http://localhost:3000
 ```
 
-Nessuna chiave API o servizio esterno è necessario: senza `DATABASE_URL` il database è PGlite (PostgreSQL embedded) nella cartella `.data/`. L'area personale si prova con il pulsante «Entra con l'account demo» in `/accedi`; il portale medico (`/medico`) e l'admin (`/admin`) con gli account dimostrativi e la 2FA (in demo il codice è mostrato a schermo). Senza chiavi Stripe il pagamento è simulato; con `STRIPE_SECRET_KEY=sk_test_...` e `STRIPE_WEBHOOK_SECRET` si usa Stripe Checkout in test. Le guide agli esami (`/guide`) e il glossario (`/glossario`) sono bozze in attesa di revisione medica: l'indicizzazione resta spenta finché non si imposta `ENABLE_INDEXING=true` insieme a `PUBLIC_BASE_URL`.
+Nessuna chiave API o servizio esterno è necessario: senza `DATABASE_URL` il database è PGlite (PostgreSQL embedded) nella cartella `.data/`. L'area personale si prova con il pulsante «Entra con l'account demo» in `/accedi`; il portale medico (`/medico`) e l'admin (`/admin`) con gli account dimostrativi e la 2FA (in demo il codice è mostrato a schermo). Senza chiavi Stripe il pagamento è simulato; con `STRIPE_SECRET_KEY=sk_test_...` e `STRIPE_WEBHOOK_SECRET` si usa Stripe Checkout in test. Le 90 guide agli esami (`/guide`, di laboratorio e strumentali) e il glossario (`/glossario`) sono bozze in attesa di revisione medica: l'indicizzazione resta spenta finché non si imposta `ENABLE_INDEXING=true` insieme a `PUBLIC_BASE_URL`.
 
 ## Comandi
 
@@ -73,4 +73,5 @@ docs/                       decisioni, stato, gate, test, costi, screenshot
 - [`docs/DECISION_LOG.md`](docs/DECISION_LOG.md) — decisioni prese e perché
 - [`docs/PRODUCTION_GATES.md`](docs/PRODUCTION_GATES.md) — cosa impedisce l'uso con pazienti reali
 - [`docs/TEST_REPORT.md`](docs/TEST_REPORT.md) — test eseguiti e risultati
+- [`docs/AUDIT_ESTERNO.md`](docs/AUDIT_ESTERNO.md) — audit sicurezza/GDPR/codice e correzioni
 - [`docs/COSTI_OPERATIVI.md`](docs/COSTI_OPERATIVI.md) — costi noti e da stimare

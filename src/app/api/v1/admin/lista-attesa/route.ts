@@ -2,7 +2,12 @@ import { requireRole } from "@/lib/auth/guard";
 import { listWaitlist } from "@/lib/waitlist";
 import { json } from "@/lib/api";
 
-const csvCell = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+/** Cella CSV: virgolette raddoppiate e caratteri iniziali di formula neutralizzati (=, +, -, @, tab, CR). */
+const csvCell = (v: unknown) => {
+  let s = String(v ?? "");
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
+  return `"${s.replace(/"/g, '""')}"`;
+};
 
 export async function GET(req: Request) {
   const g = await requireRole(["admin"]);

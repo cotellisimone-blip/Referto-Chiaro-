@@ -40,6 +40,12 @@ Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo
 | SEO tecnica | Canonical e `metadataBase` da `PUBLIC_BASE_URL`; JSON-LD Article + FAQPage + BreadcrumbList; `sitemap.xml` e `robots.txt` generati; **indicizzazione spenta** (noindex, disallow, sitemap vuota) finché `ENABLE_INDEXING="true"`; slug sconosciuti → 404 reale via `src/proxy.ts`; «Guide» nel menu e «Guide agli esami»/«Glossario» nel footer |
 | Header di sicurezza | CSP, HSTS, nosniff, Referrer-Policy, X-Frame-Options, Permissions-Policy, COOP su tutte le risposte; testati |
 
+## Secondo giro (7 novembre 2026, pomeriggio)
+
+- **Grafica**: testo base 18px, pulsanti grandi, pulsante «Aa», home essenziale, rivelazioni allo scorrimento, header verificato a tutte le larghezze.
+- **Audit sicurezza/GDPR/codice con correzioni**: vedi `docs/AUDIT_ESTERNO.md` (consensi separati, revoca dei dati sanitari, cancellazione completa, TOTP cifrato e senza riuso, link a schermo solo per account nuovi, pagine legali complete ma ancora in bozza).
+- **Guide strumentali**: 23 guide (immagini, cuore ed esami funzionali, endoscopie) con preparazione, «che cosa aspettarsi», durata e contenuto del referto; fonti specifiche per tutte le 90 guide (due senza fonte, dichiarate).
+
 ## Non ancora implementato (fasi successive)
 
 - **Revisione medica** di guide e glossario (gate E in `PRODUCTION_GATES.md`): finché non c'è, l'indicizzazione resta spenta.

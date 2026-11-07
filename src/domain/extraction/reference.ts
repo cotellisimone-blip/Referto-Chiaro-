@@ -28,12 +28,12 @@ export function parseReferenceRange(raw: string | null | undefined): ReferenceRa
   m = s.match(BELOW);
   if (m) {
     const high = parseLocaleNumber(m[2]);
-    if (high.ok) return { kind: "below", high: high.value, inclusive: m[1] !== "<" };
+    if (high.ok) return { kind: "below", high: high.value, inclusive: m[1] === "<=" || m[1] === "≤" };
   }
   m = s.match(ABOVE);
   if (m) {
     const low = parseLocaleNumber(m[2]);
-    if (low.ok) return { kind: "above", low: low.value, inclusive: m[1] !== ">" };
+    if (low.ok) return { kind: "above", low: low.value, inclusive: m[1] === ">=" || m[1] === "≥" };
   }
   return { kind: "unparsed", raw: s };
 }

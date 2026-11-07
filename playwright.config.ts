@@ -10,7 +10,7 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${PORT}`, trace: "off" },
   webServer: {
     command: `rm -rf .data/e2e && npm run start -- -p ${PORT}`,
-    env: { PGLITE_DATA_DIR: ".data/e2e", COOKIE_INSECURE: "true", AUTH_RATE_LIMIT_PER_10MIN: "1000", WAITLIST_RATE_LIMIT_PER_10MIN: "1000" },
+    env: { DEMO_MODE: "true", PGLITE_DATA_DIR: ".data/e2e", COOKIE_INSECURE: "true", AUTH_RATE_LIMIT_PER_10MIN: "1000", WAITLIST_RATE_LIMIT_PER_10MIN: "1000" },
     url: `http://localhost:${PORT}`,
     reuseExistingServer: true,
     timeout: 60_000,

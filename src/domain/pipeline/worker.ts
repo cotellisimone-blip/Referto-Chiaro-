@@ -19,18 +19,28 @@ export async function runPendingJobs(userId: string, maxJobs = 5): Promise<numbe
   let done = 0;
   for (let i = 0; i < maxJobs; i++) {
     const ran = await withUser(userId, async (tx) => {
-      const j = await tx.query("SELECT * FROM jobs WHERE status = 'queued' ORDER BY created_at LIMIT 1");
+      // Lavori in coda con tentativi residui; quelli rimasti «running» da più di 10 minuti (processo caduto) vengono ripresi.
+      const j = await tx.query(
+        "SELECT * FROM jobs WHERE attempts < 3 AND (status = 'queued' OR (status = 'running' AND updated_at < now() - interval '10 minutes')) ORDER BY created_at LIMIT 1",
+      );
       const job = j.rows[0];
       if (!job) return false;
       await tx.query("UPDATE jobs SET status = 'running', attempts = attempts + 1, updated_at = now() WHERE id = $1", [job.id]);
+      // Savepoint: un errore SQL nel lavoro annulla solo il lavoro, non la registrazione dell'errore.
+      await tx.query("SAVEPOINT job_step");
       try {
         if (job.kind === "extract-document") await extractDocument(tx, String(job.target_id));
         else if (job.kind === "generate-report") await generateReport(tx, String(job.target_id));
         else if (job.kind === "generate-dossier") await generateDossier(tx, String(job.target_id));
+        else throw new Error(`Tipo di lavoro sconosciuto: ${String(job.kind)}`);
+        await tx.query("RELEASE SAVEPOINT job_step");
         await tx.query("UPDATE jobs SET status = 'done', updated_at = now() WHERE id = $1", [job.id]);
       } catch (e) {
-        const msg = e instanceof Error ? e.message : "Errore sconosciuto";
-        await tx.query("UPDATE jobs SET status = 'failed', last_error = $2, updated_at = now() WHERE id = $1", [job.id, msg]);
+        await tx.query("ROLLBACK TO SAVEPOINT job_step");
+        const msg = (e instanceof Error ? e.message : "Errore sconosciuto").slice(0, 500);
+        const final = Number(job.attempts ?? 0) + 1 >= 3;
+        await tx.query("UPDATE jobs SET status = $3, last_error = $2, updated_at = now() WHERE id = $1", [job.id, msg, final ? "failed" : "queued"]);
+        console.error(`[jobs] ${String(job.kind)} ${String(job.id)} tentativo ${Number(job.attempts ?? 0) + 1}: ${msg}`);
       }
       return true;
     });

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { readJson, requireUser } from "@/lib/auth/guard";
 import { json } from "@/lib/api";
+import { hasHealthDataConsent } from "@/lib/auth/service";
 import { createSyntheticDocument, listDocuments, listReports } from "@/domain/pipeline/repository";
 import { runPendingJobs } from "@/domain/pipeline/worker";
 import { getSyntheticDocument, listSyntheticSamples } from "@/fixtures/synthetic";
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
   if ("response" in r) return r.response;
   const parsed = Body.safeParse(r.body);
   if (!parsed.success) return json({ error: "invalid-request" }, { status: 400 });
+  if (!(await hasHealthDataConsent(g.user.id))) return json({ error: "consent-withdrawn", message: "Hai revocato il consenso al trattamento dei dati sanitari: per aggiungere referti serve un nuovo consenso." }, { status: 403 });
   const sample = getSyntheticDocument(parsed.data.sampleId);
   if (!sample) return json({ error: "sample-not-found", message: "Referto di esempio non trovato." }, { status: 404 });
   const count = (await listDocuments(g.user.id)).length;

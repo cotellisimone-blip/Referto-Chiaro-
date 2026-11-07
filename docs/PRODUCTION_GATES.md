@@ -43,3 +43,13 @@ Nessuno di questi punti si risolve con il codice da solo. Finché non sono chius
 - [ ] Revisione clinica di ogni guida e voce da parte di un medico identificato (aggiornare `reviewStatus` e `lastUpdated`)
 - [ ] Responsabile editoriale e procedura di aggiornamento periodico dichiarati
 - [ ] Dominio reale e `PUBLIC_BASE_URL` impostati prima di accendere l'indicizzazione (canonical e sitemap usano quel valore)
+
+## F. Sicurezza e protezione dei dati (dopo l'audit del 7/11/2026)
+
+Vedi `docs/AUDIT_ESTERNO.md`. Prima di qualsiasi dato reale:
+
+- [ ] `MFA_SECRET_KEY` impostata (64 caratteri esadecimali) e `TRUST_PROXY=true` solo dietro un reverse proxy fidato.
+- [ ] `DEMO_MODE` dichiarato esplicitamente (`false` in produzione); chiavi di pagamento presenti, altrimenti il checkout si blocca.
+- [ ] Titolare, contatto privacy e DPO inseriti nell'informativa; informativa, cookie e termini verificati da un professionista (oggi «BOZZA»).
+- [ ] DPIA, registro dei trattamenti, contratti con i fornitori.
+- [ ] Penetration test esterno; limitatore di richieste condiviso se si usano più istanze.

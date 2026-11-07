@@ -19,7 +19,10 @@ type Env = Record<string, string | undefined>;
  */
 export function getPaymentProvider(env: Env = process.env, flags: Flags = readFlags(env)): PaymentProvider {
   const key = env.STRIPE_SECRET_KEY?.trim();
-  if (!key) return simulatedProvider;
+  if (!key) {
+    if (flags.demoMode) return simulatedProvider;
+    throw new PaymentsMisconfiguredError("Nessun fornitore di pagamento configurato: fuori dalla demo il pagamento simulato non è disponibile.");
+  }
   if (key.startsWith("sk_test_")) return stripeProvider(key, "stripe-test");
   if (key.startsWith("sk_live_")) {
     requireCapability("livePayments", flags); // lancia CapabilityDisabledError

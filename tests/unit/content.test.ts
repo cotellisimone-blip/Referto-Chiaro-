@@ -13,7 +13,8 @@ function guideText(g: Guide): string {
     ...g.sections.whyRequested,
     ...g.sections.howToRead,
     ...g.sections.factors,
-    g.unitsAndRanges.rangeNote,
+    g.unitsAndRanges?.rangeNote ?? '',
+    ...(g.procedure ? [...g.procedure.preparation, ...g.procedure.whatToExpect, g.procedure.duration, ...g.procedure.afterwards, ...g.procedure.reportContains] : []),
     ...g.questionsForDoctor,
     ...g.faq.flatMap((f) => [f.q, f.a]),
   ]

@@ -6,7 +6,10 @@ import Link from "next/link";
 import { ArrowRight, FlaskConical, Loader2, MailCheck } from "lucide-react";
 import { api } from "./api";
 
-type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; link?: string; isNew: boolean } | { kind: "error"; message: string };
+type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; link?: string; delivery: "on-screen" | "email" | "unavailable" } | { kind: "error"; message: string };
+
+const CONSENT_KINDS = ["terms", "privacy", "health-data", "subject-declaration"] as const;
+type ConsentKind = (typeof CONSENT_KINDS)[number];
 
 /**
  * Accesso con link sicuro. In demo non c'è un servizio email: il link viene mostrato qui,
@@ -18,7 +21,8 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
   const next = params.get("next")?.startsWith("/area") ? params.get("next")! : "/area";
   const linkError = params.get("errore") === "link";
   const [email, setEmail] = useState("");
-  const [consent, setConsent] = useState(false);
+  const [consents, setConsents] = useState<Record<ConsentKind, boolean>>({ terms: false, privacy: false, "health-data": false, "subject-declaration": false });
+  const toggle = (k: ConsentKind) => (e: React.ChangeEvent<HTMLInputElement>) => setConsents((c) => ({ ...c, [k]: e.target.checked }));
   const [state, setState] = useState<State>({ kind: "idle" });
   const [demoBusy, setDemoBusy] = useState(false);
 
@@ -26,11 +30,11 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
     e.preventDefault();
     setState({ kind: "sending" });
     try {
-      const r = await api<{ ok: true; isNew: boolean; link?: string }>("/api/v1/auth/magic-link", {
+      const r = await api<{ ok: true; delivery: "on-screen" | "email" | "unavailable"; link?: string }>("/api/v1/auth/magic-link", {
         method: "POST",
-        body: { email, consents: consent ? ["terms", "privacy", "health-data"] : [] },
+        body: { email, consents: CONSENT_KINDS.filter((k) => consents[k]) },
       });
-      setState({ kind: "sent", link: r.link, isNew: r.isNew });
+      setState({ kind: "sent", link: r.link, delivery: r.delivery });
     } catch (err) {
       setState({ kind: "error", message: err instanceof Error ? err.message : "Errore imprevisto." });
     }
@@ -81,17 +85,21 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
         {state.kind === "sent" ? (
           <div role="status" className="mt-6 rounded-2xl bg-mist p-5">
             <p className="flex items-center gap-2 font-semibold text-ink">
-              <MailCheck aria-hidden className="h-5 w-5 text-sage-deep" /> {state.isNew ? "Account creato." : "Link pronto."}
+              <MailCheck aria-hidden className="h-5 w-5 text-sage-deep" /> {state.delivery === "unavailable" ? "Link non mostrabile." : "Link pronto."}
             </p>
-            {state.link ? (
+            {state.delivery === "on-screen" && state.link ? (
               <>
                 <p className="mt-2 text-sm text-muted">In questa versione dimostrativa non inviamo email: ecco il tuo link, valido 15 minuti e utilizzabile una sola volta.</p>
                 <Link href={state.link} className="btn btn-primary mt-4 w-full">
                   Apri il link di accesso <ArrowRight aria-hidden className="h-4 w-4" />
                 </Link>
               </>
+            ) : state.delivery === "unavailable" ? (
+              <p className="mt-2 text-sm text-muted">
+                In demo il link si mostra a schermo solo per gli account appena creati o per indirizzi di prova (per esempio <span className="font-mono">nome@esempio.test</span>): così nessuno può entrare nell&apos;account di un&apos;altra persona. Usa un indirizzo di prova oppure l&apos;account demo.
+              </p>
             ) : (
-              <p className="mt-2 text-sm text-muted">Controlla la posta: il link è valido 15 minuti.</p>
+              <p className="mt-2 text-sm text-muted">Se l&apos;indirizzo è registrato, riceverai il link per posta: è valido 15 minuti.</p>
             )}
           </div>
         ) : (
@@ -112,20 +120,37 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
                 placeholder="nome@esempio.it"
               />
             </div>
-            <label className="flex items-start gap-3 text-sm text-ink">
-              <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 rounded accent-[var(--color-teal)]" />
-              <span>
-                Se mi registro, accetto i{" "}
-                <Link href="/termini" className="link">
-                  termini
-                </Link>
-                , l&apos;
-                <Link href="/privacy" className="link">
-                  informativa privacy
-                </Link>{" "}
-                e il trattamento dei miei dati sanitari per il servizio (bozze in revisione).
-              </span>
-            </label>
+            <fieldset className="space-y-3">
+              <legend className="text-sm font-semibold text-ink">Se è la prima volta (bozze in revisione legale)</legend>
+              <label className="flex items-start gap-3 text-sm text-ink">
+                <input type="checkbox" checked={consents.terms} onChange={toggle("terms")} className="mt-0.5 h-5 w-5 shrink-0 rounded accent-[var(--color-teal)]" />
+                <span>
+                  Accetto i{" "}
+                  <Link href="/termini" className="link">
+                    termini del servizio
+                  </Link>
+                  .
+                </span>
+              </label>
+              <label className="flex items-start gap-3 text-sm text-ink">
+                <input type="checkbox" checked={consents.privacy} onChange={toggle("privacy")} className="mt-0.5 h-5 w-5 shrink-0 rounded accent-[var(--color-teal)]" />
+                <span>
+                  Ho letto l&apos;
+                  <Link href="/privacy" className="link">
+                    informativa privacy
+                  </Link>
+                  .
+                </span>
+              </label>
+              <label className="flex items-start gap-3 text-sm text-ink">
+                <input type="checkbox" checked={consents["health-data"]} onChange={toggle("health-data")} className="mt-0.5 h-5 w-5 shrink-0 rounded accent-[var(--color-teal)]" />
+                <span>Acconsento in modo esplicito al trattamento dei miei dati relativi alla salute, solo per spiegarmi i referti che caricherò. Posso revocarlo quando voglio dalle impostazioni.</span>
+              </label>
+              <label className="flex items-start gap-3 text-sm text-ink">
+                <input type="checkbox" checked={consents["subject-declaration"]} onChange={toggle("subject-declaration")} className="mt-0.5 h-5 w-5 shrink-0 rounded accent-[var(--color-teal)]" />
+                <span>Dichiaro di essere maggiorenne e di caricare solo referti che riguardano me.</span>
+              </label>
+            </fieldset>
             {state.kind === "error" ? (
               <p role="alert" className="rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">
                 {state.message}

@@ -11,11 +11,12 @@ async function expectAccessible(page: import("@playwright/test").Page) {
 test.describe("guide e glossario", () => {
   test("hub delle guide: categorie, elenco, avviso di revisione", async ({ page }) => {
     await page.goto("/guide");
-    await expect(page.getByRole("heading", { level: 1, name: "Gli esami di laboratorio, spiegati." })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Gli esami, spiegati." })).toBeVisible();
     await expect(page.getByRole("note")).toContainText("revisione medica");
     await expect(page.getByRole("navigation", { name: "Categorie" }).getByRole("link")).not.toHaveCount(0);
     const links = page.locator("a[href^='/guide/']");
-    expect(await links.count()).toBeGreaterThanOrEqual(60);
+    expect(await links.count()).toBeGreaterThanOrEqual(85);
+    await expect(page.getByRole("navigation", { name: "Categorie" })).toContainText("Esami per immagini");
     await expectAccessible(page);
   });
 
@@ -33,6 +34,18 @@ test.describe("guide e glossario", () => {
     const ld = await page.locator('script[type="application/ld+json"]').first().textContent();
     const parsed = JSON.parse(ld ?? "[]") as { "@type": string }[];
     expect(parsed.map((x) => x["@type"])).toEqual(["Article", "FAQPage", "BreadcrumbList"]);
+    await expectAccessible(page);
+  });
+
+  test("una guida strumentale: preparazione, che cosa aspettarsi, referto; nessun intervallo numerico", async ({ page }) => {
+    const res = await page.goto("/guide/risonanza-magnetica");
+    expect(res?.status()).toBe(200);
+    await expect(page.locator("h1")).toHaveCount(1);
+    for (const name of [/Che cosa mostra/i, /Come ci si prepara/i, /Che cosa aspettarsi/i, /E dopo l'esame/i, /Che cosa c'è nel referto/i, /Domande da portare al medico/i]) {
+      await expect(page.getByRole("heading", { level: 2, name })).toBeVisible();
+    }
+    await expect(page.getByRole("heading", { level: 2, name: /Unità e intervalli/i })).toHaveCount(0);
+    await expect(page.getByText(/Durata indicativa/i)).toBeVisible();
     await expectAccessible(page);
   });
 

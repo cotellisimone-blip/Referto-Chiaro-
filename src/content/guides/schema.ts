@@ -16,6 +16,9 @@ export const GUIDE_CATEGORIES = {
   ferro: { title: "Ferro e vitamine", lead: "Sideremia, ferritina, transferrina, B12, folati, vitamina D." },
   infiammazione: { title: "Infiammazione e coagulazione", lead: "PCR, VES, PT/INR, aPTT, fibrinogeno, D-dimero." },
   ormoni: { title: "Ormoni e altri esami", lead: "Cortisolo, prolattina, calcio, amilasi, PSA e altri." },
+  immagini: { title: "Esami per immagini", lead: "Radiografia, ecografia, TAC, risonanza, mammografia, MOC: che cosa mostrano e come si legge il referto." },
+  "cuore-e-funzionali": { title: "Cuore ed esami funzionali", lead: "ECG, Holter, ecocardiogramma, prova da sforzo, spirometria, EEG." },
+  endoscopie: { title: "Endoscopie", lead: "Gastroscopia e colonscopia: come si svolgono e che cosa c'è nel referto." },
 } as const;
 
 export type GuideCategory = keyof typeof GUIDE_CATEGORIES;
@@ -39,10 +42,23 @@ export const GuideSchema = z
       howToRead: z.array(para).min(1).max(4),
       factors: z.array(bullet).min(3).max(10),
     }),
-    unitsAndRanges: z.object({
-      commonUnits: z.array(z.string().min(1).max(24)).min(1).max(5),
-      rangeNote: z.string().min(60).max(500),
-    }),
+    /** Esami di laboratorio: unità e intervalli. Assente per gli esami strumentali. */
+    unitsAndRanges: z
+      .object({
+        commonUnits: z.array(z.string().min(1).max(24)).min(1).max(5),
+        rangeNote: z.string().min(60).max(500),
+      })
+      .optional(),
+    /** Esami strumentali (immagini, funzionali, endoscopie): che cosa aspettarsi, senza consigli clinici. */
+    procedure: z
+      .object({
+        preparation: z.array(para).min(1).max(3),
+        whatToExpect: z.array(para).min(1).max(4),
+        duration: z.string().min(8).max(120),
+        afterwards: z.array(para).min(1).max(3),
+        reportContains: z.array(bullet).min(3).max(8),
+      })
+      .optional(),
     questionsForDoctor: z.array(bullet).min(3).max(7),
     faq: z.array(z.object({ q: z.string().min(10).max(140), a: z.string().min(40).max(600) })).min(2).max(6),
     relatedGuides: z.array(slug).max(6),
@@ -51,7 +67,8 @@ export const GuideSchema = z
     lastUpdated: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     reviewStatus: z.literal("draft-needs-clinical-review"),
   })
-  .strict();
+  .strict()
+  .refine((g) => Boolean(g.unitsAndRanges) !== Boolean(g.procedure), { message: "Una guida ha unitsAndRanges (laboratorio) oppure procedure (strumentale), mai entrambi o nessuno" });
 
 export type Guide = z.infer<typeof GuideSchema>;
 

@@ -9,8 +9,10 @@ const Body = z
   .object({
     documentId: z.string(),
     specialty: z.string().min(2).max(80),
-    question: z.string().min(20).max(1500),
+    question: z.string().min(20).max(500),
     acknowledgeSimulation: z.boolean(),
+    /** Consenso esplicito a condividere referto e domanda con il medico assegnato (art. 9). */
+    consentToShare: z.literal(true),
   })
   .strict();
 

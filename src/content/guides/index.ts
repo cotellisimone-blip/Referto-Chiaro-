@@ -9,6 +9,9 @@ import { GUIDE_TIROIDE } from "./categorie/tiroide";
 import { GUIDE_FERRO } from "./categorie/ferro";
 import { GUIDE_INFIAMMAZIONE } from "./categorie/infiammazione";
 import { GUIDE_ORMONI } from "./categorie/ormoni";
+import { GUIDE_IMMAGINI } from "./categorie/immagini";
+import { GUIDE_CUORE_E_FUNZIONALI } from "./categorie/cuore-e-funzionali";
+import { GUIDE_ENDOSCOPIE } from "./categorie/endoscopie";
 
 /** Tutte le guide, in ordine di categoria. Ogni file di categoria è indipendente. */
 export const GUIDES: Guide[] = [
@@ -22,6 +25,9 @@ export const GUIDES: Guide[] = [
   ...GUIDE_FERRO,
   ...GUIDE_INFIAMMAZIONE,
   ...GUIDE_ORMONI,
+  ...GUIDE_IMMAGINI,
+  ...GUIDE_CUORE_E_FUNZIONALI,
+  ...GUIDE_ENDOSCOPIE,
 ];
 
 export function getGuide(slug: string): Guide | null {

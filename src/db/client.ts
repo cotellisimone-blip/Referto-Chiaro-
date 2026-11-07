@@ -44,6 +44,9 @@ async function createDriver(): Promise<Driver> {
     return { kind: "pg", pool };
   }
   const dir = process.env.PGLITE_DATA_DIR;
+  if (process.env.NODE_ENV === "production" && process.env.DEMO_MODE !== "true") {
+    console.warn("[db] DATABASE_URL assente: uso PGlite embedded. Adatto solo a demo e test, non a dati reali.");
+  }
   if (dir) await mkdir(dir, { recursive: true });
   const db = dir ? new PGlite(dir) : new PGlite();
   await db.waitReady;
@@ -52,7 +55,12 @@ async function createDriver(): Promise<Driver> {
 }
 
 export function getDriver(): Promise<Driver> {
-  if (!G.__rcDriver) G.__rcDriver = createDriver();
+  if (!G.__rcDriver) {
+    G.__rcDriver = createDriver().catch((e) => {
+      G.__rcDriver = null; // il prossimo accesso riprova invece di restare bloccato sull'errore
+      throw e;
+    });
+  }
   return G.__rcDriver;
 }
 

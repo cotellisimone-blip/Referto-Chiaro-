@@ -19,8 +19,8 @@ export default function GuideHubPage() {
       <PageHeader
         art="magnify"
         eyebrow="Guide"
-        title="Gli esami di laboratorio, spiegati."
-        lead={`${GUIDES.length} guide su che cosa misura un esame, come è fatto il referto e che cosa chiedere al medico. Spiegazioni, non diagnosi.`}
+        title="Gli esami, spiegati."
+        lead={`${GUIDES.length} guide su esami di laboratorio, immagini, cuore ed endoscopie: che cosa misura un esame, che cosa aspettarsi e che cosa chiedere al medico. Spiegazioni, non diagnosi.`}
       />
       <div className="container-rc py-6">
         <p role="note" className="max-w-3xl rounded-2xl border border-dashed border-warn/60 bg-cream px-5 py-4 text-sm text-ink-soft">

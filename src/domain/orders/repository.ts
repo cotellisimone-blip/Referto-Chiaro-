@@ -1,7 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { audit, withSystem, withUser, type Queryable } from "@/db/client";
-import { createReport } from "@/domain/pipeline/repository";
+import { createReportIn } from "@/domain/pipeline/repository";
 import type { ProviderKind } from "@/lib/payments/types";
 
 export type OrderStatus = "pending" | "paid" | "failed" | "cancelled" | "refunded";
@@ -81,13 +81,13 @@ export async function markOrderPaid(orderId: string, providerRef?: string): Prom
     );
     if (!r.rows[0]) return null;
     await audit(tx, { userId: r.rows[0].user_id, actor: "system", action: "order-paid", target: orderId });
+    // Stessa transazione: se la richiesta del report fallisce, l'ordine non resta «pagato» senza report.
+    if (r.rows[0].document_id && (r.rows[0].service === "essenziale" || r.rows[0].service === "completo")) {
+      await createReportIn(tx, r.rows[0].user_id, r.rows[0].document_id, r.rows[0].service);
+    }
     return r.rows[0];
   });
-  if (!row) return false;
-  if (row.document_id && (row.service === "essenziale" || row.service === "completo")) {
-    await createReport(row.user_id, row.document_id, row.service);
-  }
-  return true;
+  return Boolean(row);
 }
 
 async function transitionPending(orderId: string, to: "failed" | "cancelled", action: string): Promise<boolean> {

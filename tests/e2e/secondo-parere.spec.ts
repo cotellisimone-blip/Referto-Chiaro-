@@ -48,13 +48,13 @@ test.describe("secondo parere e portali riservati", () => {
     await loginRole(doctor, "physician");
 
     // Senza conferma esplicita della simulazione: rifiuto
-    expect((await patient.request.post("/api/v1/area/casi", { data: { documentId: docId, specialty: "Medicina interna (simulazione)", question: "Una domanda abbastanza lunga da passare la validazione minima.", acknowledgeSimulation: false } })).status()).toBe(400);
+    expect((await patient.request.post("/api/v1/area/casi", { data: { documentId: docId, specialty: "Medicina interna (simulazione)", question: "Una domanda abbastanza lunga da passare la validazione minima.", acknowledgeSimulation: false, consentToShare: true } })).status()).toBe(400);
 
     const page = await patient.newPage();
     await page.goto("/area/secondo-parere");
     await expect(page.getByRole("heading", { name: "Secondo parere" })).toBeVisible();
     await page.getByLabel(/La tua domanda/).fill("Alcuni valori sono fuori dall'intervallo stampato: quali approfondimenti potrei chiedere al mio medico?");
-    await page.getByRole("checkbox").check();
+    for (const box of await page.getByRole("checkbox").all()) await box.check(); // simulazione + consenso alla condivisione
     await page.getByRole("button", { name: "Invia la richiesta" }).click();
     await expect(page.getByRole("heading", { name: "Richiesta di secondo parere" })).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText("Inviata", { exact: true }).first()).toBeVisible();
@@ -71,7 +71,9 @@ test.describe("secondo parere e portali riservati", () => {
     const dp = await doctor.newPage();
     await dp.goto("/medico");
     await expect(dp.getByRole("heading", { name: /Medico dimostrativo/ })).toBeVisible({ timeout: 15_000 });
-    await dp.getByRole("link", { name: "Apri il caso" }).first().click();
+    await expect(dp.getByRole("link", { name: "Apri il caso" }).first()).toBeVisible();
+    // Il medico dimostrativo è condiviso fra i test in parallelo: si apre il proprio caso, non il primo in lista.
+    await dp.goto(`/medico/casi/${caseId}`);
     await expect(dp.getByRole("heading", { name: /^Caso ·/ })).toBeVisible();
     await expect(dp.getByRole("figure", { name: /Facsimile/ })).toBeVisible();
     const axe2 = await new AxeBuilder({ page: dp }).withTags(AXE).analyze();

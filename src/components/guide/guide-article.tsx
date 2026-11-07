@@ -28,16 +28,41 @@ export function GuideArticle({ guide }: { guide: Guide }) {
 
       <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="prose-rc max-w-3xl space-y-12">
-          <Block id="cosa-misura" title="Che cosa misura">{guide.sections.whatItMeasures}</Block>
+          <Block id="cosa-misura" title={guide.procedure ? "Che cosa mostra" : "Che cosa misura"}>{guide.sections.whatItMeasures}</Block>
           <Block id="perche" title="Perché viene richiesto">{guide.sections.whyRequested}</Block>
-          <Block id="come-leggere" title="Come leggere il risultato">{guide.sections.howToRead}</Block>
-          <section aria-labelledby="unita-titolo">
-            <h2 id="unita-titolo" className="font-serif text-2xl text-ink sm:text-3xl">Unità e intervalli</h2>
-            <p className="mt-3 text-muted">Unità più comuni: {guide.unitsAndRanges.commonUnits.join(", ")}.</p>
-            <p className="mt-3 text-ink-soft">{guide.unitsAndRanges.rangeNote}</p>
-          </section>
+          {guide.procedure ? (
+            <>
+              <Block id="preparazione" title="Come ci si prepara">{guide.procedure.preparation}</Block>
+              <section aria-labelledby="aspettarsi-titolo" className="rounded-[var(--radius-lg)] bg-cream/60 p-6 sm:p-8">
+                <h2 id="aspettarsi-titolo" className="font-serif text-2xl text-ink sm:text-3xl">Che cosa aspettarsi</h2>
+                <p className="mt-2 text-[1.0625rem] font-semibold text-ink">Durata indicativa: {guide.procedure.duration}</p>
+                <div className="mt-4 space-y-4 text-ink-soft">
+                  {guide.procedure.whatToExpect.map((p) => (
+                    <p key={p.slice(0, 40)}>{p}</p>
+                  ))}
+                </div>
+              </section>
+              <Block id="dopo" title="E dopo l'esame">{guide.procedure.afterwards}</Block>
+              <section aria-labelledby="referto-titolo">
+                <h2 id="referto-titolo" className="font-serif text-2xl text-ink sm:text-3xl">Che cosa c&apos;è nel referto</h2>
+                <ul className="mt-4 list-disc space-y-2 pl-6 text-ink-soft">
+                  {guide.procedure.reportContains.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              </section>
+            </>
+          ) : null}
+          <Block id="come-leggere" title={guide.procedure ? "Come leggere il referto" : "Come leggere il risultato"}>{guide.sections.howToRead}</Block>
+          {guide.unitsAndRanges ? (
+            <section aria-labelledby="unita-titolo">
+              <h2 id="unita-titolo" className="font-serif text-2xl text-ink sm:text-3xl">Unità e intervalli</h2>
+              <p className="mt-3 text-muted">Unità più comuni: {guide.unitsAndRanges.commonUnits.join(", ")}.</p>
+              <p className="mt-3 text-ink-soft">{guide.unitsAndRanges.rangeNote}</p>
+            </section>
+          ) : null}
           <section aria-labelledby="fattori-titolo">
-            <h2 id="fattori-titolo" className="font-serif text-2xl text-ink sm:text-3xl">Che cosa può influenzare il valore</h2>
+            <h2 id="fattori-titolo" className="font-serif text-2xl text-ink sm:text-3xl">{guide.procedure ? "Che cosa può influenzare l'esame" : "Che cosa può influenzare il valore"}</h2>
             <ul className="mt-4 space-y-2 text-ink-soft">
               {guide.sections.factors.map((f) => (
                 <li key={f} className="flex gap-3">
