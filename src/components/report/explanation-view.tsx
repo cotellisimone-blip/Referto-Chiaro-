@@ -18,7 +18,7 @@ export function ExplanationView({ explanation, onReveal }: { explanation: Explan
             <span aria-hidden className="absolute inset-y-0 left-0 w-1.5 bg-[linear-gradient(180deg,var(--color-teal),var(--color-sage))]" />
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
               <h3 className="flex items-baseline gap-3 text-xl font-semibold text-ink">
-                <span className="num text-xl text-sage" aria-hidden>
+                <span className="num text-xl text-sage-deep" aria-hidden>
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 {it.nameExact}

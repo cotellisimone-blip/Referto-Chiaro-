@@ -41,9 +41,9 @@ export default function PerLeStrutturePage() {
       <Section id="cosa-offriamo" eyebrow="Che cosa potremmo offrire" title="Ciò che stiamo valutando.">
         <ul className="grid gap-5 md:grid-cols-3">
           {OFFER.map((o) => (
-            <li key={o.title} className="card p-6 sm:p-7">
-              <h3 className="text-lg font-semibold text-ink">{o.title}</h3>
-              <p className="mt-2 text-muted">{o.text}</p>
+            <li key={o.title} className="card card-lift p-6 sm:p-7">
+              <h3 className="text-xl font-semibold text-ink">{o.title}</h3>
+              <p className="mt-2 text-lg text-ink-soft">{o.text}</p>
             </li>
           ))}
         </ul>

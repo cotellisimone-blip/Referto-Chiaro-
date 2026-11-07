@@ -64,9 +64,9 @@ export function HeroDocument() {
       <div aria-hidden className="absolute -inset-6 -z-10 rounded-[40px] bg-[radial-gradient(60%_60%_at_70%_20%,var(--color-cream),transparent_70%)]" />
       <div aria-hidden className="absolute -right-3 top-10 -z-10 h-[88%] w-[92%] rotate-3 rounded-[24px] border border-line bg-paper/70 shadow-[var(--shadow-card)]" />
       <div className="card overflow-hidden shadow-[var(--shadow-float)]">
-        <div className="flex items-center justify-between gap-3 border-b border-line bg-mist/60 px-5 py-3">
-          <span className="inline-flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-ink">
-            <FileText aria-hidden className="h-4 w-4 text-teal" /> Referto di laboratorio
+        <div className="flex items-center justify-between gap-2 border-b border-line bg-mist/60 px-4 py-3 sm:px-5">
+          <span className="inline-flex min-w-0 items-center gap-2 whitespace-nowrap text-sm font-semibold text-ink">
+            <FileText aria-hidden className="h-4 w-4 shrink-0 text-teal" /> <span className="truncate">Referto<span className="hidden sm:inline"> di laboratorio</span></span>
           </span>
           <span className="flex items-center gap-2">
             <span className="chip shrink-0 bg-cream text-ink">Esempio sintetico</span>

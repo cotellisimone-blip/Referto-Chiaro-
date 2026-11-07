@@ -25,11 +25,19 @@ const SHOTS = [
 
 /** Porta a termine le animazioni d'ingresso prima dello scatto. */
 async function settle(page: import("@playwright/test").Page) {
-  await page.evaluate(() =>
+  await page.evaluate(async () => {
+    // Scorri tutta la pagina così i blocchi Reveal entrano, poi torna in cima (header sticky al suo posto).
+    const h = document.documentElement.scrollHeight;
+    for (let y = 0; y < h; y += 600) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 40));
+    }
+    window.scrollTo(0, 0);
+    await new Promise((r) => setTimeout(r, 800));
     document.getAnimations().forEach((a) => {
       if (Number.isFinite(a.effect?.getComputedTiming().endTime ?? Infinity)) a.finish();
-    }),
-  );
+    });
+  });
 }
 
 test.describe("screenshots", () => {

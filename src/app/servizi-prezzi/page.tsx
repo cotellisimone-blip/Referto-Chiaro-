@@ -25,7 +25,7 @@ export default function ServiziPrezziPage() {
         art="dossier"
         eyebrow="Servizi & Prezzi"
         title="Scegli quanta chiarezza ti serve."
-        lead="Da un singolo referto a un dossier per la tua prossima visita. Ogni servizio ha uno scopo preciso e limiti trasparenti."
+        lead="Da un singolo referto a un dossier per la prossima visita. Ogni servizio ha uno scopo preciso e limiti dichiarati prima, non dopo."
       >
         <p className="mt-6 inline-flex rounded-xl bg-cream/80 px-4 py-3 text-[0.9375rem] text-ink">
           Prezzi indicativi, in fase di validazione: in questa versione non è possibile acquistare nulla.

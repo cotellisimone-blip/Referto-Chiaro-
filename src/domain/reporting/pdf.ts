@@ -15,6 +15,7 @@ const LINE = rgb(0xdb / 255, 0xe6 / 255, 0xe5 / 255);
 const MIST = rgb(0xee / 255, 0xf4 / 255, 0xf2 / 255);
 const CREAM = rgb(0xf4 / 255, 0xec / 255, 0xdc / 255);
 const WHITE = rgb(1, 1, 1);
+const MARKER = rgb(0xff / 255, 0xe1 / 255, 0x8a / 255);
 
 const A4 = { w: 595.28, h: 841.89 };
 const M = 56; // margine
@@ -211,10 +212,16 @@ export async function renderReportPdf(args: {
     pill(ctx.page, M, cy, toWinAnsi("ESEMPIO DIMOSTRATIVO · DATI SINTETICI · NON È UN DOCUMENTO MEDICO"), sansBold, CREAM, INK);
     cy -= 34;
   }
-  for (const l of wrap("Il tuo referto, in parole semplici", serif, 30, CONTENT_W - 60)) {
-    ctx.page.drawText(l, { x: M, y: cy - 30, size: 30, font: serif, color: WHITE });
+  // Titolo in due righe: "in parole semplici" ha l'evidenziatore, la firma visiva del sito.
+  const titleLines = ["Il tuo referto,", "in parole semplici"];
+  titleLines.forEach((l, i) => {
+    if (i === 1) {
+      const w = serif.widthOfTextAtSize(l, 30);
+      ctx.page.drawRectangle({ x: M - 6, y: cy - 39, width: w + 14, height: 40, color: MARKER });
+    }
+    ctx.page.drawText(l, { x: M, y: cy - 30, size: 30, font: serif, color: i === 1 ? INK : WHITE });
     cy -= 36;
-  }
+  });
   cy -= 10;
   const meta = [
     ["Laboratorio", doc.laboratoryName],

@@ -19,7 +19,7 @@ export default function GuideHubPage() {
       <PageHeader
         art="magnify"
         eyebrow="Guide"
-        title="Gli esami, spiegati."
+        title="Gli esami, spiegati uno per uno."
         lead={`${GUIDES.length} guide su esami di laboratorio, immagini, cuore ed endoscopie: che cosa misura un esame, che cosa aspettarsi e che cosa chiedere al medico. Spiegazioni, non diagnosi.`}
       />
       <div className="container-rc py-6">

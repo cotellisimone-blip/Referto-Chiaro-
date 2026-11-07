@@ -16,7 +16,7 @@ async function LoginAtRequest() {
 export default function AccediPage() {
   return (
     <>
-      <PageHeader compact eyebrow="Area personale" title="Accedi o crea un account." lead="I tuoi referti e i tuoi report, in un archivio che vedi solo tu." />
+      <PageHeader compact eyebrow="Area personale" title="Il tuo archivio, visibile solo a te." lead="Nessuna password da ricordare: un link via email. Oppure entra con l'account demo e prova subito." />
       <div className="container-rc py-10 sm:py-14">
         <Suspense fallback={<div className="h-64 animate-pulse rounded-2xl bg-mist" />}>
           <LoginAtRequest />

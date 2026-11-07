@@ -11,7 +11,7 @@ async function expectAccessible(page: import("@playwright/test").Page) {
 test.describe("guide e glossario", () => {
   test("hub delle guide: categorie, elenco, avviso di revisione", async ({ page }) => {
     await page.goto("/guide");
-    await expect(page.getByRole("heading", { level: 1, name: "Gli esami, spiegati." })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Gli esami, spiegati uno per uno." })).toBeVisible();
     await expect(page.getByRole("note")).toContainText("revisione medica");
     await expect(page.getByRole("navigation", { name: "Categorie" }).getByRole("link")).not.toHaveCount(0);
     const links = page.locator("a[href^='/guide/']");
