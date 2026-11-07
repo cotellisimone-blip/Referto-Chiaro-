@@ -11,9 +11,17 @@ export default function Page() {
       <PageHeader art="translate" eyebrow="Chi siamo" title="Il progetto" lead="Referto Chiaro nasce da un'idea semplice: arrivare dal medico avendo capito che cosa c'è scritto nei propri esami." />
       <div className="container-rc py-12 sm:py-16">
         
-        <div className="mt-10">
+        <blockquote className="card grain relative overflow-hidden p-8 sm:p-12">
+          <p className="display-lg max-w-3xl">
+            Un referto non dovrebbe fare paura solo perché è scritto in un&apos;altra lingua.
+          </p>
+          <p className="mt-6 max-w-2xl text-xl text-ink-soft">
+            Referto Chiaro traduce quella lingua. Non interpreta, non giudica, non decide. Ti porta dal medico con le idee più chiare e le domande già pronte.
+          </p>
+        </blockquote>
+        <div className="mt-12">
           <Prose>
-            <p>Referto Chiaro è un progetto italiano in fase di sviluppo. Oggi è una versione dimostrativa: mostra come funzionerà il servizio usando solo referti inventati.</p>
+            <p>Referto Chiaro è un progetto italiano in fase di sviluppo. Oggi è una versione dimostrativa: mostra come funzionerà il servizio usando solo referti inventati. È pensato prima di tutto per chi ha più di sessant&apos;anni e per chi aiuta un genitore: testo grande, poche parole, un passo per volta.</p>
             <h2>Che cosa crediamo</h2>
             <ul>
               <li>Capire un referto è un diritto, ma non sostituisce il medico.</li>

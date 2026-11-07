@@ -22,15 +22,15 @@ export function Section({
     <section
       id={id}
       aria-labelledby={headingId}
-      className={clsx("py-16 sm:py-24", tone === "paper" && "bg-paper", tone === "mist" && "bg-mist", className)}
+      className={clsx("py-16 sm:py-24", tone === "paper" && "border-y border-line/70 bg-paper", tone === "mist" && "grain bg-mist", className)}
     >
       <div className="container-rc">
         <div className="max-w-2xl">
           {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-          <h2 id={headingId} className="display mt-3 text-[2rem] sm:text-[2.75rem]">
+          <h2 id={headingId} className="display-lg mt-4">
             {title}
           </h2>
-          {lead ? <div className="mt-4 text-xl text-ink-soft">{lead}</div> : null}
+          {lead ? <div className="mt-5 text-xl text-ink-soft">{lead}</div> : null}
         </div>
         {children ? <div className="mt-10 sm:mt-14">{children}</div> : null}
       </div>

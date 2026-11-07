@@ -27,6 +27,11 @@
   --color-strong-soft: #1f3e4e;
   --color-on-strong: #ffffff;
   --color-on-strong-soft: rgb(255 255 255 / 0.78);
+  /* Giro 3: evidenziatore e ambra. Il marker sta solo DIETRO testo scuro (ink su marker ≈ 11:1). */
+  --color-marker: #ffe18a;
+  --color-marker-soft: #fff1c2;
+  --color-amber: #a6600f;
+  --color-glow: rgb(34 95 117 / 0.16);
 
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
   --font-serif: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
@@ -39,6 +44,7 @@
 
   --shadow-card: 0 1px 2px rgb(22 45 57 / 0.04), 0 8px 24px -12px rgb(22 45 57 / 0.12);
   --shadow-lift: 0 2px 4px rgb(22 45 57 / 0.05), 0 18px 40px -18px rgb(22 45 57 / 0.22);
+  --shadow-float: 0 1px 0 rgb(255 255 255 / 0.6) inset, 0 2px 6px rgb(22 45 57 / 0.06), 0 30px 60px -24px rgb(22 45 57 / 0.3);
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -68,6 +74,10 @@
     --color-strong-soft: #2a5366;
     --color-on-strong: #f4f8f9;
     --color-on-strong-soft: rgb(244 248 249 / 0.78);
+    --color-marker: #5a4712;
+    --color-marker-soft: #3d3212;
+    --color-amber: #e8b968;
+    --color-glow: rgb(140 203 224 / 0.14);
     --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
     --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 18px 40px -18px rgb(0 0 0 / 0.7);
     color-scheme: dark;
@@ -93,6 +103,10 @@
   --color-strong-soft: #2a5366;
   --color-on-strong: #f4f8f9;
   --color-on-strong-soft: rgb(244 248 249 / 0.78);
+  --color-marker: #5a4712;
+  --color-marker-soft: #3d3212;
+  --color-amber: #e8b968;
+  --color-glow: rgb(140 203 224 / 0.14);
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
   --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 18px 40px -18px rgb(0 0 0 / 0.7);
   color-scheme: dark;
@@ -156,11 +170,25 @@
   }
 
   .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
     font-size: 0.875rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-sage-deep);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 1.5rem;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.7;
+  }
+  .eyebrow-plain::before {
+    display: none;
   }
 
   .display {
@@ -169,6 +197,85 @@
     letter-spacing: -0.02em;
     line-height: 1.08;
     font-variation-settings: "SOFT" 50, "opsz" 96;
+  }
+  /* Titolo della home: grande ma mai oltre lo schermo, con ottica massima del Fraunces. */
+  .display-xl {
+    font-family: var(--font-serif);
+    font-weight: 420;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-size: clamp(2.875rem, 5.2vw + 1rem, 5.75rem);
+    font-variation-settings: "SOFT" 80, "opsz" 144;
+  }
+  .display-lg {
+    font-family: var(--font-serif);
+    font-weight: 440;
+    letter-spacing: -0.025em;
+    line-height: 1.04;
+    font-size: clamp(2.125rem, 2.4vw + 1.25rem, 3.5rem);
+    font-variation-settings: "SOFT" 60, "opsz" 120;
+  }
+  .serif-italic {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-variation-settings: "SOFT" 100, "opsz" 144, "WONK" 1;
+  }
+  /*
+   * Evidenziatore: la firma visiva di Referto Chiaro. Il prodotto "evidenzia una riga e la spiega",
+   * così il titolo fa lo stesso. Solo sfondo dietro testo scuro: il testo non cambia mai opacità.
+   */
+  .marker {
+    background-image: linear-gradient(104deg, transparent 0.4%, var(--color-marker) 1.8%, var(--color-marker) 97.5%, transparent 99%);
+    background-repeat: no-repeat;
+    background-size: 100% 0.52em;
+    background-position: 0 78%;
+    padding: 0 0.08em;
+    margin: 0 -0.08em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .marker-animate {
+    background-size: 0% 0.52em;
+    animation: marker-draw 900ms 350ms var(--ease-out-soft) forwards;
+  }
+  .marker-thick {
+    background-size: 100% 0.95em;
+    background-position: 0 60%;
+  }
+  /* Grana di carta: un rumore SVG leggerissimo sopra gli sfondi grandi. */
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.045;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  :root[data-theme="dark"] .grain::before {
+    mix-blend-mode: screen;
+    opacity: 0.06;
+  }
+  /* Griglia di punti: ricorda la carta millimetrata dei laboratori. */
+  .dots {
+    background-image: radial-gradient(circle at 1px 1px, var(--color-line) 1px, transparent 1.5px);
+    background-size: 22px 22px;
+  }
+  .dots-fade {
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 75%);
+  }
+  /* Aloni morbidi: la "luce" del logo. */
+  .glow-teal {
+    background: radial-gradient(closest-side, var(--color-glow), transparent);
+  }
+  .glow-cream {
+    background: radial-gradient(closest-side, var(--color-cream), transparent);
   }
 
   .btn {
@@ -219,12 +326,18 @@
     cursor: not-allowed;
   }
   .btn-primary {
-    background: var(--color-strong);
+    background: linear-gradient(180deg, var(--color-strong-soft), var(--color-strong));
     color: var(--color-on-strong);
-    box-shadow: 0 6px 16px -8px rgb(22 45 57 / 0.5);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.12),
+      0 8px 20px -10px rgb(22 45 57 / 0.55);
   }
   .btn-primary:hover:not(:disabled) {
-    background: var(--color-strong-soft);
+    background: linear-gradient(180deg, var(--color-strong-soft), var(--color-strong-soft));
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.14),
+      0 14px 28px -12px rgb(22 45 57 / 0.55);
   }
   .btn-on-strong {
     background: var(--color-on-strong);
@@ -259,6 +372,86 @@
     border: 1px solid var(--color-line);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
+  }
+  .card-lift {
+    transition:
+      transform 260ms var(--ease-out-soft),
+      box-shadow 260ms var(--ease-out-soft),
+      border-color 260ms var(--ease-out-soft);
+  }
+  .card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in oklab, var(--color-teal) 40%, var(--color-line));
+  }
+  /* Bordo sfumato per la card in evidenza: due sfondi, uno ritagliato al bordo. */
+  .card-featured {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(var(--color-paper), var(--color-paper)) padding-box,
+      linear-gradient(135deg, var(--color-teal), var(--color-sage) 60%, var(--color-marker)) border-box;
+    box-shadow: var(--shadow-float);
+  }
+  /* Foglio di carta: ombra bassa e angolo piegato in CSS. */
+  .sheet {
+    position: relative;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: 6px 22px 6px 6px;
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.5) inset,
+      0 24px 50px -24px rgb(22 45 57 / 0.35);
+  }
+  .sheet::after {
+    content: "";
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(225deg, var(--color-canvas) 50%, var(--color-mist) 50%);
+    border-bottom-left-radius: 6px;
+    box-shadow: -2px 2px 4px rgb(22 45 57 / 0.08);
+  }
+  /* Numero di passo editoriale: "01", "02"… */
+  .num {
+    font-family: var(--font-serif);
+    font-variation-settings: "SOFT" 100, "opsz" 144;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+  }
+  .stat-num {
+    font-family: var(--font-serif);
+    font-variation-settings: "SOFT" 100, "opsz" 144;
+    font-weight: 450;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .divider-fade {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-line), transparent);
+  }
+  .tilt-in {
+    animation: tilt-in 900ms 120ms var(--ease-out-soft) both;
+    transform-origin: 50% 100%;
+  }
+  .float-slow {
+    animation: float-soft 9s ease-in-out infinite;
+  }
+  .float-slower {
+    animation: float-soft 12s 1.5s ease-in-out infinite;
+  }
+  .underline-grow {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 2px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 260ms var(--ease-out-soft);
+  }
+  .underline-grow:hover {
+    background-size: 100% 2px;
   }
 
   .link {
@@ -410,6 +603,19 @@
 @keyframes rise-in {
   from {
     transform: translateY(14px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes marker-draw {
+  to {
+    background-size: 100% 0.52em;
+  }
+}
+@keyframes tilt-in {
+  from {
+    transform: perspective(1200px) rotateX(8deg) translateY(28px);
   }
   to {
     transform: none;

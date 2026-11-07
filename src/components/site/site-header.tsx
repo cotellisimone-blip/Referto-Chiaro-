@@ -70,7 +70,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
   }, [open]);
 
   return (
-    <header className="no-print relative sticky top-0 z-40 border-b border-line/70 bg-canvas/90 backdrop-blur-md supports-[backdrop-filter]:bg-canvas/75">
+    <header className="no-print relative sticky top-0 z-40 border-b border-line/70 bg-canvas/90 shadow-[0_1px_0_rgb(255_255_255/0.5)_inset] backdrop-blur-md supports-[backdrop-filter]:bg-canvas/75">
       <div className="container-rc relative z-10 flex h-16 items-center justify-between gap-3 lg:h-20">
         <Link href="/" className="rounded-md">
           <Logo />

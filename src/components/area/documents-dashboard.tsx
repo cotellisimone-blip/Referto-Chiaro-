@@ -56,9 +56,10 @@ export function DocumentsDashboard() {
 
   if (data.documents.length === 0) {
     return (
-      <div className="card grid gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_0.7fr] lg:items-center">
+      <div className="card grain grid gap-8 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_0.7fr] lg:items-center">
         <div>
-          <h1 className="display text-[2rem] sm:text-[2.5rem]">Nessun referto, per ora.</h1>
+          <p className="eyebrow">Il tuo archivio</p>
+          <h1 className="display-lg mt-3">Nessun referto, per ora.</h1>
           <p className="mt-4 text-lg text-muted">Aggiungi un referto di esempio e segui il percorso completo: lettura, controllo dei valori, spiegazione e PDF.</p>
           <Link href="/area/nuovo" className="btn btn-primary mt-6">
             <FilePlus2 aria-hidden className="h-4 w-4" /> Aggiungi un referto
@@ -75,9 +76,14 @@ export function DocumentsDashboard() {
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="display text-[2rem] sm:text-[2.5rem]">I tuoi referti</h1>
-          <p className="mt-2 text-muted">Ogni documento mostra il suo stato. Apri un referto per continuare da dove eri rimasto.</p>
+          <p className="eyebrow">Il tuo archivio</p>
+          <h1 className="display-lg mt-3">I tuoi referti</h1>
+          <p className="mt-3 text-lg text-muted">Ogni documento mostra il suo stato. Apri un referto per continuare da dove eri rimasto.</p>
         </div>
+        <p className="rounded-full border border-line bg-paper px-4 py-2 text-[0.9375rem] text-muted">
+          <span className="tabular font-semibold text-ink">{data.documents.length}</span> {data.documents.length === 1 ? "referto" : "referti"} ·{" "}
+          <span className="tabular font-semibold text-ink">{data.reports.filter((r) => r.status === "ready").length}</span> report pronti
+        </p>
       </div>
       <ul className="mt-8 grid gap-4 md:grid-cols-2" aria-label="Elenco dei referti">
         {data.documents.map((d) => {
@@ -86,9 +92,10 @@ export function DocumentsDashboard() {
           const active = reps.find((r) => ACTIVE.has(r.status));
           const status = active ? active.status : d.status;
           return (
-            <li key={d.id} className="card flex flex-col p-5 sm:p-6">
+            <li key={d.id} className="card card-lift relative flex flex-col overflow-hidden p-5 pl-6 sm:p-6 sm:pl-7">
+              <span aria-hidden className={`absolute inset-y-0 left-0 w-1.5 ${ready ? "bg-[linear-gradient(180deg,var(--color-teal),var(--color-sage))]" : "bg-line"}`} />
               <div className="flex items-start justify-between gap-3">
-                <h2 className="font-serif text-xl leading-tight">{d.title}</h2>
+                <h2 className="font-serif text-[1.375rem] leading-tight">{d.title}</h2>
                 <StatusChip status={status} />
               </div>
               <p className="mt-2 text-sm text-muted">

@@ -33,10 +33,12 @@ export default function SecondoParerePage() {
       <Section id="come-sara" eyebrow="Come funzionerà" title="Trasparenza prima di tutto.">
         <ul className="grid gap-5 sm:grid-cols-2">
           {TRANSPARENCY.map(({ icon: Icon, title, text }) => (
-            <li key={title} className="card p-6 sm:p-7">
-              <Icon aria-hidden className="h-6 w-6 text-teal" />
-              <h3 className="mt-4 text-lg font-semibold text-ink">{title}</h3>
-              <p className="mt-2 text-muted">{text}</p>
+            <li key={title} className="card card-lift p-6 sm:p-7">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-mist">
+                <Icon aria-hidden className="h-6 w-6 text-teal" />
+              </span>
+              <h3 className="mt-5 text-xl font-semibold text-ink">{title}</h3>
+              <p className="mt-2 text-lg text-ink-soft">{text}</p>
             </li>
           ))}
         </ul>

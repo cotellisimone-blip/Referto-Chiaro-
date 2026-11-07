@@ -62,7 +62,8 @@ export function HeroDocument() {
   return (
     <div className="relative">
       <div aria-hidden className="absolute -inset-6 -z-10 rounded-[40px] bg-[radial-gradient(60%_60%_at_70%_20%,var(--color-cream),transparent_70%)]" />
-      <div className="card overflow-hidden shadow-[var(--shadow-lift)]">
+      <div aria-hidden className="absolute -right-3 top-10 -z-10 h-[88%] w-[92%] rotate-3 rounded-[24px] border border-line bg-paper/70 shadow-[var(--shadow-card)]" />
+      <div className="card overflow-hidden shadow-[var(--shadow-float)]">
         <div className="flex items-center justify-between gap-3 border-b border-line bg-mist/60 px-5 py-3">
           <span className="inline-flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-ink">
             <FileText aria-hidden className="h-4 w-4 text-teal" /> Referto di laboratorio
@@ -112,7 +113,7 @@ export function HeroDocument() {
                     onClick={() => choose(r.id)}
                     className={clsx(
                       "grid min-h-12 w-full grid-cols-[1fr_auto] items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors duration-300 sm:grid-cols-[1fr_auto_auto]",
-                      active ? "translate-sweep bg-strong text-on-strong" : "hover:bg-mist",
+                      active ? "translate-sweep bg-strong text-on-strong shadow-[0_8px_20px_-10px_rgb(22_45_57_/_0.6)]" : "hover:bg-mist",
                     )}
                   >
                     <span className="truncate text-[0.9375rem] font-medium">{r.nameRaw}</span>
@@ -135,7 +136,7 @@ export function HeroDocument() {
 
         <div id={panelId} aria-live="polite" className="mx-3 mb-3 rounded-2xl bg-mist px-5 py-4 sm:mx-5 sm:mb-5">
           <p className="eyebrow">In parole semplici</p>
-          <p key={obs.id} className="fade-in mt-2 min-h-[4.5rem] text-[1.0625rem] leading-relaxed text-ink">
+          <p key={obs.id} className="fade-in mt-2 min-h-[4.5rem] font-serif text-[1.25rem] leading-snug text-ink">
             {entry?.definition}
           </p>
           <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">

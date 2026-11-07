@@ -42,15 +42,15 @@ export default function IniziaPage() {
       <div className="container-rc py-14 sm:py-20">
         <ul className="grid gap-5 lg:grid-cols-3">
           {CHOICES.map(({ icon: Icon, ...c }) => (
-            <li key={c.title} className={`card flex flex-col p-6 sm:p-7 ${c.active ? "border-teal/50 shadow-[var(--shadow-lift)]" : ""}`}>
+            <li key={c.title} className={`card card-lift flex flex-col p-6 sm:p-7 ${c.active ? "card-featured" : ""}`}>
               <div className="flex items-start justify-between gap-3">
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-mist">
                   <Icon aria-hidden className="h-6 w-6 text-teal" />
                 </span>
                 <span className={`chip ${c.active ? "bg-mist text-teal-deep" : "bg-cream text-ink"}`}>{c.status}</span>
               </div>
-              <h2 className="mt-6 font-serif text-2xl">{c.title}</h2>
-              <p className="mt-2 text-muted">{c.text}</p>
+              <h2 className="mt-6 font-serif text-[1.75rem] leading-tight">{c.title}</h2>
+              <p className="mt-3 text-lg text-ink-soft">{c.text}</p>
               <Link href={c.href} className={`btn mt-auto ${c.active ? "btn-primary" : "btn-secondary"} mt-8 w-full`}>
                 {c.cta} <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
