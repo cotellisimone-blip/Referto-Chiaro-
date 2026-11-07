@@ -1,7 +1,9 @@
 import { Plus } from "lucide-react";
 import type { FaqItem } from "@/content/faq";
 
-export function FaqList({ items }: { items: FaqItem[] }) {
+type FaqListItem = Pick<FaqItem, "q" | "a">;
+
+export function FaqList({ items }: { items: FaqListItem[] }) {
   return (
     <div className="divide-y divide-line rounded-[var(--radius-lg)] border border-line bg-paper">
       {items.map((f) => (

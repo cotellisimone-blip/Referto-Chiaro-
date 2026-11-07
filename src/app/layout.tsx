@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { SITE_URL, indexingEnabled } from "@/lib/seo";
 import localFont from "next/font/local";
 import { Suspense } from "react";
 import { SiteHeader, SiteHeaderView } from "@/components/site/site-header";
@@ -25,7 +26,8 @@ export const metadata: Metadata = {
   title: { default: "Referto Chiaro — i tuoi referti, finalmente comprensibili", template: "%s · Referto Chiaro" },
   description:
     "Una spiegazione semplice dei referti di laboratorio, un dossier ordinato e le domande giuste per il tuo medico. Uno strumento di comprensione, non una diagnosi.",
-  robots: { index: false, follow: false },
+  robots: indexingEnabled() ? { index: true, follow: true } : { index: false, follow: false },
+  metadataBase: new URL(SITE_URL),
 };
 
 export const viewport: Viewport = {

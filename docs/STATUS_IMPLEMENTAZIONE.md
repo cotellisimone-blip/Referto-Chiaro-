@@ -1,6 +1,6 @@
 # Stato dell'implementazione
 
-Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo verticale) + **Fase 1 grafica** (vedi `AUDIT_VISIVO_FASE1.md`) + **Fase 2 piattaforma** (account, database, area personale) + **Fase 3 vendibilità** (pagamenti test, lista d'attesa, B2B, secondo parere con portale medico 2FA, admin, header di sicurezza) del piano di evoluzione.
+Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo verticale) + **Fase 1 grafica** (vedi `AUDIT_VISIVO_FASE1.md`) + **Fase 2 piattaforma** (account, database, area personale) + **Fase 3 vendibilità** (pagamenti test, lista d'attesa, B2B, secondo parere con portale medico 2FA, admin, header di sicurezza) + **Fase 4 SEO e contenuti** (67 guide agli esami, glossario di 139 voci, SEO tecnica con indicizzazione spenta fino alla revisione medica) del piano di evoluzione. **Il piano in 4 fasi è completo.**
 
 ## Funziona davvero (verificato da test)
 
@@ -34,11 +34,14 @@ Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo
 | Portale medico | `/medico`: ruolo `physician` + **2FA TOTP obbligatoria** (RFC 6238, senza librerie esterne); casi assegnati (RLS su `app.physician_id`), lettura del referto registrata nell'audit, presa in carico/rifiuto motivato, parere con conferma di responsabilità e impronta SHA-256 (caso + medico + ora + testo) |
 | Admin | `/admin`: ruolo `admin` + 2FA; panoramica, lista d'attesa con CSV, verifica/sospensione medici, assegnazione casi, ordini, registro (ultime 200 voci), configurazione dei gate in sola lettura. Ogni lettura è registrata |
 | Account demo di servizio | Solo in DEMO_MODE: «Medico dimostrativo (nessun medico reale)» e «Amministratore dimostrativo»; il codice TOTP corrente è mostrato a schermo per provare la 2FA senza app |
+| Guide agli esami | `/guide`: hub per 10 categorie; `/guide/[slug]`: 67 guide (che cosa misura, perché viene richiesto, come leggere il risultato, unità e intervalli, fattori, domande per il medico, FAQ, termini e guide collegate, fonti) come dati tipizzati zod in `src/content/guides`; avviso «bozza in attesa di revisione medica» su ogni pagina; validazione automatica di schema, frasi vietate, riferimenti e fonti |
+| Glossario pubblico | `/glossario`: 139 voci per lettera; `/glossario/[slug]`: definizione, approfondimento, guide e termini collegati; JSON-LD DefinedTerm |
+| SEO tecnica | Canonical e `metadataBase` da `PUBLIC_BASE_URL`; JSON-LD Article + FAQPage + BreadcrumbList; `sitemap.xml` e `robots.txt` generati; **indicizzazione spenta** (noindex, disallow, sitemap vuota) finché `ENABLE_INDEXING="true"`; slug sconosciuti → 404 reale via `src/proxy.ts`; «Guide» nel menu e «Guide agli esami»/«Glossario» nel footer |
 | Header di sicurezza | CSP, HSTS, nosniff, Referrer-Policy, X-Frame-Options, Permissions-Policy, COOP su tutte le risposte; testati |
 
 ## Non ancora implementato (fasi successive)
 
-- **Fase 4 (SEO):** guide, glossario pubblico, SEO tecnica, revisione medica prima dell'indicizzazione.
+- **Revisione medica** di guide e glossario (gate E in `PRODUCTION_GATES.md`): finché non c'è, l'indicizzazione resta spenta.
 - Pipeline reale di upload (firma file, antivirus, storage cifrato), OCR, provider AI reale: gli adapter esistono ma sono spenti dai gate.
 - Invio email reale dei link di accesso e delle notifiche (oggi solo a schermo in demo).
 - Chiavi Stripe live, fatturazione, IVA, rimborsi: bloccati dal gate `livePayments` finché i punti C di `PRODUCTION_GATES.md` non sono chiusi.
@@ -46,6 +49,7 @@ Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo
 
 ## Note sincere
 
+- Guide e glossario sono **bozze editoriali** scritte da un modello e validate solo a macchina (struttura e linguaggio): accuratezza clinica da verificare da un medico prima di accenderne l'indicizzazione. Le fonti citate sono solo pagine indice istituzionali, non riferimenti puntuali.
 - Le spiegazioni della demo sono **testi fissi** del glossario (`src/domain/reporting/glossary.ts`), non generati da un modello. Sono bozze editoriali da sottoporre a revisione clinica.
 - I prezzi sono ipotesi da validare; nessun pagamento è possibile.
 - Il rate limit è in memoria: adatto a una singola istanza demo, non alla produzione.
@@ -60,4 +64,4 @@ Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo
 ```bash
 npm install && npm run build && npm test && npm run test:e2e -- --trace off
 ```
-Poi proseguire dalla fase 4 del piano di evoluzione (SEO e contenuti) (vedi `DECISION_LOG.md` per le scelte già fatte).
+Il piano in 4 fasi è completo: i passi successivi sono fuori dal codice (revisione medica dei contenuti, dati del titolare, dominio, chiavi) e sono elencati in `PRODUCTION_GATES.md` (vedi `DECISION_LOG.md` per le scelte già fatte).

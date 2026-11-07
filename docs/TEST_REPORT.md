@@ -6,10 +6,10 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 |---|---|---|
 | Lint | `npm run lint` | ✅ 0 errori, 0 avvisi |
 | Tipi | `npm run typecheck` | ✅ TypeScript strict senza errori |
-| Unit | `npm test` | ✅ 70/70 |
-| Build | `npm run build` | ✅ 74 route (pagine pubbliche statiche, area/medico/admin, 38 API) |
-| E2E | `npm run test:e2e -- --trace off` | ✅ 111/111 (desktop 1440×900 e mobile 390×844; area personale, ordini e pagamento simulato, lista d'attesa, header di sicurezza, secondo parere/medico/admin con 2FA) |
-| Screenshot | `npm run screenshots` | ✅ 58 immagini in `docs/screenshots/` (sito, area, pagamento, secondo parere, portale medico, admin; 15 in tema scuro) |
+| Unit | `npm test` | ✅ 82/82 |
+| Build | `npm run build` | ✅ build pulita: tutte le route di prima più `/guide`, `/glossario`, 67 guide e 139 voci prerenderizzate, area/medico/admin, 38 API, robots e sitemap) |
+| E2E | `npm run test:e2e -- --trace off` | ✅ 128/128 (desktop 1440×900 e mobile 390×844; area personale, ordini e pagamento simulato, lista d'attesa, header di sicurezza, secondo parere/medico/admin con 2FA, guide e glossario, 404 reali, indicizzazione spenta) |
+| Screenshot | `npm run screenshots` | ✅ 83 immagini in `docs/screenshots/` (sito, area, pagamento, secondo parere, portale medico, admin, guide e glossario; 15 in tema scuro) |
 
 ## Cosa copre
 
@@ -26,11 +26,14 @@ Eseguiti il 7 novembre 2026 su Node 22, Chromium (Playwright 1.63), build di pro
 - TOTP: vettori RFC 6238, base32 andata/ritorno, finestra ±1, codici malformati rifiutati.
 - Pagamenti: scelta del provider (nessuna chiave → simulato; `sk_test_` → test; `sk_live_` senza gate → errore, mai ripiego); ordini: stato pending → paid una sola volta, report creato solo al pagamento; webhook idempotente per id evento, firma verificata.
 - Lista d'attesa: validazione, consenso obbligatorio, idempotenza per email+interesse.
+- Contenuti: ogni guida (67) e voce del glossario (139) rispetta lo schema zod; slug unici; nessuna frase diagnostica/prescrittiva (lista `FORBIDDEN_PHRASES`, anche come sottostringa); riferimenti incrociati guida↔guida e guida↔glossario tutti risolti; fonti solo https da domini istituzionali ammessi; stato «bozza da revisione clinica» obbligatorio.
+- SEO: indicizzazione accesa solo con `ENABLE_INDEXING="true"` esatto; sitemap vuota e robots «disallow /» per default; con indicizzazione accesa sitemap con guide e glossario e aree riservate escluse; JSON-LD non può chiudere lo script.
 
 **E2E (Playwright + axe-core)**
+- Guide e glossario: hub con ≥60 guide e categorie; una guida con un solo H1, sezioni, avviso di bozza, `meta robots noindex`, canonical, JSON-LD Article+FAQPage+BreadcrumbList; tutte le 67 guide rispondono 200 con un solo H1; glossario con ≥100 voci e voce singola con DefinedTerm; slug inesistenti → **404 reale** (proxy); `robots.txt` disallow e `sitemap.xml` senza URL; «Guide» nel menu senza a capo a 1024px; 0 violazioni axe.
 - Percorso demo completo fino al download del PDF, su desktop e mobile, senza errori in console e senza scroll orizzontale.
 - Solo i valori confermati vengono spiegati.
-- 14 pagine: risposta 200, un solo H1, nessuno scroll orizzontale, **0 violazioni axe** (WCAG 2.0/2.1/2.2 A e AA), nessun errore in console.
+- 16 pagine: risposta 200, un solo H1, nessuno scroll orizzontale, **0 violazioni axe** (WCAG 2.0/2.1/2.2 A e AA), nessun errore in console.
 - Nessun link interno rotto; 404 curato.
 - Nessun testo vietato (lorem ipsum, «certificato GDPR», «conforme MDR», «24/7», «100%», «garantito»).
 - Fail-closed: upload reale → 403; configurazione pubblica tutta spenta; demo rifiuta documenti diversi dalla fixture e campi extra; PDF demo valido.

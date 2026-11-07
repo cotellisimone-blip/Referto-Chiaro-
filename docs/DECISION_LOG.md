@@ -35,3 +35,8 @@
 | 31 | 07/11/2026 | Parere firmato con conferma di responsabilità e impronta SHA-256 (caso, medico, ora, testo), non modificabile | Valore probatorio minimo e verificabile; la firma qualificata arriverà con il servizio reale |
 | 32 | 07/11/2026 | Secondo parere sempre `is_simulated` finché il gate `medicalSecondOpinion` è chiuso; solo referti sintetici | Nessun dato reale e nessun medico reale in demo, detto in ogni pagina |
 | 33 | 07/11/2026 | CSP con `script-src 'unsafe-inline'` | Le pagine statiche (Cache Components) non possono usare nonce per richiesta; limite documentato nei gate |
+| 34 | 07/11/2026 | Guide e glossario come dati tipizzati (zod) in `src/content`, non Markdown/CMS | Validazione automatica di struttura e linguaggio a ogni test; pagine statiche; nessuna dipendenza in più |
+| 35 | 07/11/2026 | Lista di frasi vietate (diagnosi, «normale/anormale», terapie, promesse) applicata a tutto il testo pubblico | I contenuti spiegano che cosa misura un esame, mai che cosa significa per una persona: il limite è verificato dalla macchina, non solo dichiarato |
+| 36 | 07/11/2026 | Indicizzazione dietro `ENABLE_INDEXING="true"`: noindex, robots disallow e sitemap vuota per default | Nessun contenuto non revisionato può finire nei motori per una configurazione mancante |
+| 37 | 07/11/2026 | Fonti ammesse solo da domini istituzionali (ISS, Ministero, AIFA, OMS, NHS, MedlinePlus) e solo URL di indice | Nessun link inventato: la verifica puntuale delle fonti spetta alla revisione medica |
+| 38 | 07/11/2026 | Glossario pubblico separato dal glossario interno dei report | I testi generati nei report restano sotto controllo di coerenza; il glossario pubblico è divulgativo e più ampio |

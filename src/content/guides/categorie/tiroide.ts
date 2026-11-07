@@ -1,0 +1,255 @@
+import type { Guide } from "../schema";
+
+/** Guide della categoria «tiroide». Bozze editoriali, da revisione medica. */
+export const GUIDE_TIROIDE: Guide[] = [
+  {
+    slug: "tsh",
+    title: "TSH: che cosa misura e come leggere il referto",
+    metaDescription: "Il TSH è l'ormone dell'ipofisi che regola la tiroide. Come leggere il risultato in mUI/L, l'intervallo del laboratorio, i fattori che lo influenzano.",
+    category: "tiroide",
+    examName: "TSH",
+    aliases: ["tireotropina", "ormone tireostimolante", "thyroid stimulating hormone"],
+    summary: "Il TSH è un ormone prodotto dall'ipofisi che stimola la tiroide. Nel referto compare come numero in mUI/L con l'intervallo del laboratorio: è spesso il primo esame richiesto per valutare la funzione tiroidea.",
+    sections: {
+      whatItMeasures: [
+        "Il TSH (ormone tireostimolante) viene prodotto dall'ipofisi, una piccola ghiandola alla base del cervello, e comunica alla tiroide quanto ormone produrre. L'esame misura la concentrazione di TSH nel sangue: non misura direttamente gli ormoni tiroidei, ma il segnale che li regola.",
+        "Il TSH e gli ormoni tiroidei (FT4 e FT3) sono legati da un meccanismo di controllo a retroazione: quando cambia la quantità di ormoni tiroidei circolanti, l'ipofisi adegua il TSH. Per questo piccole variazioni degli ormoni possono tradursi in variazioni più evidenti del TSH.",
+      ],
+      whyRequested: [
+        "Il TSH viene richiesto come primo esame di approfondimento quando si vuole valutare la funzione della tiroide: in presenza di sintomi che il medico ritiene possano riguardare la ghiandola, in un controllo di routine, in gravidanza o per seguire nel tempo una situazione già nota. Spesso è affiancato dalla FT4 e, se serve, dalla FT3.",
+      ],
+      howToRead: [
+        "Sul referto trovi il valore (di solito in mUI/L, equivalente a µUI/mL), l'intervallo di riferimento del laboratorio e un eventuale segno accanto ai valori fuori dall'intervallo stampato. Leggi il TSH insieme alla FT4: il medico li interpreta come coppia, non separatamente.",
+        "Il TSH può oscillare nell'arco della giornata e da un prelievo all'altro. Un singolo risultato fuori dall'intervallo non è, da solo, un'indicazione: il medico valuta l'andamento, i sintomi e spesso chiede di ripetere l'esame. Gli intervalli cambiano con l'età e in gravidanza, e dipendono dal metodo del laboratorio.",
+      ],
+      factors: [
+        "Orario del prelievo: il TSH ha un ritmo giornaliero, con valori più alti nelle ore notturne e del primo mattino.",
+        "Gravidanza: gli intervalli di riferimento sono diversi e il medico li adegua al trimestre.",
+        "Età: i valori possono variare fra neonati, adulti e persone anziane.",
+        "Farmaci e integratori, in particolare quelli che agiscono sulla tiroide o che contengono biotina, che può interferire con alcuni metodi.",
+        "Malattie acute o ricoveri recenti possono alterare temporaneamente il valore.",
+        "Metodo e laboratorio: lo stesso campione può dare numeri leggermente diversi.",
+      ],
+    },
+    unitsAndRanges: {
+      commonUnits: ["mUI/L", "µUI/mL"],
+      rangeNote: "Il TSH è espresso in mUI/L (equivalente a µUI/mL). L'intervallo di riferimento è stampato dal laboratorio e dipende da metodo, età e condizioni come la gravidanza: confronta il risultato solo con l'intervallo riportato sul tuo referto.",
+    },
+    questionsForDoctor: [
+      "Per quale motivo ha richiesto il TSH e con quali altri esami va letto?",
+      "Conviene ripetere l'esame, e dopo quanto tempo?",
+      "Farmaci o integratori che prendo possono influenzare il risultato?",
+      "Devo fare il prelievo sempre alla stessa ora per confrontare gli esami nel tempo?",
+      "Servono altri accertamenti, come FT4, FT3 o gli anticorpi tiroidei?",
+    ],
+    faq: [
+      { q: "Il TSH misura gli ormoni della tiroide?", a: "No, misura l'ormone dell'ipofisi che stimola la tiroide. Gli ormoni prodotti dalla tiroide si misurano con la FT4 e la FT3. Il medico legge i tre valori insieme per avere un quadro completo." },
+      { q: "Devo essere a digiuno per il TSH?", a: "In genere il digiuno non è richiesto, ma le indicazioni dipendono dal laboratorio e dagli altri esami prescritti insieme. Se assumi farmaci per la tiroide, chiedi al medico o al laboratorio come comportarti la mattina del prelievo." },
+      { q: "Perché il TSH cambia fra due prelievi ravvicinati?", a: "Il TSH segue un ritmo giornaliero e risente di molti fattori, oltre alla normale variabilità biologica e analitica. Piccole differenze sono frequenti; il medico valuta il quadro complessivo e l'andamento nel tempo." },
+    ],
+    relatedGuides: ["ft4-tiroxina-libera", "ft3-triiodotironina-libera", "anticorpi-anti-tpo", "intervalli-di-riferimento", "prima-del-prelievo"],
+    glossaryTerms: ["tsh", "ormone", "ft4", "ft3", "intervallo-di-riferimento", "ritmo-circadiano", "variabilita-biologica"],
+    sources: [{ title: "MedlinePlus — Lab Tests (NIH)", url: "https://medlineplus.gov/lab-tests/" }],
+    lastUpdated: "2026-11-07",
+    reviewStatus: "draft-needs-clinical-review",
+  },
+  {
+    slug: "ft4-tiroxina-libera",
+    title: "FT4 (tiroxina libera): guida al referto",
+    metaDescription: "La FT4 misura la quota libera di tiroxina, l'ormone principale della tiroide. Unità ng/dL e pmol/L, come leggere il referto e che cosa chiedere al medico.",
+    category: "tiroide",
+    examName: "FT4",
+    aliases: ["tiroxina libera", "free T4", "T4 libera"],
+    summary: "La FT4 è la quota di tiroxina libera, cioè disponibile per i tessuti. Nel referto compare in ng/dL o pmol/L e di solito si legge insieme al TSH per descrivere come lavora la tiroide.",
+    sections: {
+      whatItMeasures: [
+        "La tiroxina (T4) è il principale ormone prodotto dalla tiroide. Gran parte della T4 nel sangue è legata a proteine di trasporto; solo una piccola quota è libera (FT4) ed è questa la frazione disponibile per i tessuti. L'esame misura la quota libera, perché meno influenzata dalla quantità di proteine di trasporto.",
+        "Nei tessuti la T4 viene in parte trasformata in triiodotironina (T3), la forma più attiva. Per questo la FT4 e la FT3 descrivono aspetti diversi della stessa funzione.",
+      ],
+      whyRequested: [
+        "La FT4 viene richiesta insieme al TSH quando si vuole valutare la funzione tiroidea, oppure come secondo passo se il TSH è fuori dall'intervallo stampato. Serve anche a seguire nel tempo una situazione già nota o l'effetto di una terapia stabilita dal medico.",
+      ],
+      howToRead: [
+        "Il risultato è espresso in ng/dL oppure in pmol/L: le due unità non sono intercambiabili senza conversione, quindi controlla sempre quale compare sul tuo referto. Accanto trovi l'intervallo di riferimento del laboratorio.",
+        "Il medico legge FT4 e TSH come coppia: i due valori insieme dicono più di ciascuno preso da solo. Un risultato appena fuori dall'intervallo stampato va letto nel contesto e, spesso, confermato con un secondo prelievo.",
+      ],
+      factors: [
+        "Gravidanza e farmaci a base di estrogeni, che modificano le proteine di trasporto.",
+        "Alcuni farmaci, fra cui eparina e altri che interferiscono con il legame alle proteine.",
+        "Biotina (integratori ad alto contenuto) che può interferire con certi metodi di misura.",
+        "Malattie acute o gravi, che possono alterare temporaneamente gli ormoni tiroidei.",
+        "Assunzione di farmaci per la tiroide la mattina del prelievo: chiedi come comportarti.",
+        "Metodo del laboratorio e variabilità biologica fra un giorno e l'altro.",
+      ],
+    },
+    unitsAndRanges: {
+      commonUnits: ["ng/dL", "pmol/L"],
+      rangeNote: "La FT4 si trova in ng/dL o in pmol/L; per passare da ng/dL a pmol/L si moltiplica indicativamente per 12,9. L'intervallo di riferimento dipende dal metodo del laboratorio, dall'età e dalla gravidanza: usa quello stampato sul tuo referto.",
+    },
+    questionsForDoctor: [
+      "Come devo leggere la FT4 insieme al TSH nel mio caso?",
+      "Il mio referto riporta ng/dL o pmol/L, e il laboratorio è lo stesso degli esami precedenti?",
+      "Farmaci, integratori o la gravidanza possono aver influenzato il risultato?",
+      "Quando conviene ripetere l'esame?",
+      "Serve misurare anche la FT3 o gli anticorpi tiroidei?",
+    ],
+    faq: [
+      { q: "Perché si misura la tiroxina libera e non quella totale?", a: "La quota libera è quella disponibile per i tessuti e risente meno delle variazioni delle proteine di trasporto, che possono cambiare per esempio in gravidanza o con alcuni farmaci. Per questo la FT4 è di solito preferita alla T4 totale." },
+      { q: "Posso confrontare una FT4 in ng/dL con una in pmol/L?", a: "Solo dopo aver convertito l'unità, e comunque tenendo conto che i metodi dei laboratori possono differire. È più affidabile confrontare esami eseguiti con lo stesso metodo e nella stessa unità." },
+      { q: "La FT4 va letta da sola?", a: "Di norma no. Il medico la interpreta insieme al TSH e al quadro clinico, perché i due valori sono legati da un meccanismo di controllo reciproco." },
+    ],
+    relatedGuides: ["tsh", "ft3-triiodotironina-libera", "anticorpi-anti-tpo", "unita-di-misura-nei-referti"],
+    glossaryTerms: ["ft4", "tsh", "ft3", "ormone", "unita-di-misura", "metodo-analitico"],
+    sources: [{ title: "MedlinePlus — Lab Tests (NIH)", url: "https://medlineplus.gov/lab-tests/" }],
+    lastUpdated: "2026-11-07",
+    reviewStatus: "draft-needs-clinical-review",
+  },
+  {
+    slug: "ft3-triiodotironina-libera",
+    title: "FT3 (triiodotironina libera): guida al referto",
+    metaDescription: "La FT3 misura la forma più attiva dell'ormone tiroideo. Unità pg/mL e pmol/L, quando viene richiesta, come leggerla con TSH e FT4 e che cosa chiedere al medico.",
+    category: "tiroide",
+    examName: "FT3",
+    aliases: ["triiodotironina libera", "free T3", "T3 libera"],
+    summary: "La FT3 è la quota libera di triiodotironina, la forma più attiva degli ormoni tiroidei. Nel referto compare in pg/mL o pmol/L ed è richiesta meno spesso del TSH e della FT4.",
+    sections: {
+      whatItMeasures: [
+        "La triiodotironina (T3) è l'ormone tiroideo biologicamente più attivo. Solo una piccola parte viene prodotta direttamente dalla tiroide: la maggior parte nasce dalla trasformazione della tiroxina (T4) nei tessuti. L'esame misura la quota libera (FT3), non legata alle proteine di trasporto.",
+      ],
+      whyRequested: [
+        "La FT3 non è di solito il primo esame richiesto per la tiroide. Il medico la aggiunge a TSH e FT4 quando vuole completare il quadro, per esempio per approfondire un risultato che lo richiede o per seguire una situazione già nota nel tempo.",
+      ],
+      howToRead: [
+        "Il valore compare in pg/mL oppure in pmol/L, con l'intervallo di riferimento del laboratorio. Come per la FT4, le due unità richiedono una conversione e non vanno confrontate direttamente.",
+        "La FT3 è più variabile della FT4 e risente di molte condizioni non legate alla tiroide, come le malattie acute o il digiuno prolungato. Per questo si interpreta sempre insieme a TSH e FT4 e al contesto clinico, senza trarre conclusioni da un solo numero.",
+      ],
+      factors: [
+        "Malattie acute, ricoveri o stati di forte stress fisico possono abbassare temporaneamente la FT3.",
+        "Digiuno prolungato o diete molto ipocaloriche.",
+        "Alcuni farmaci, che possono modificare la trasformazione di T4 in T3.",
+        "Gravidanza e variazioni delle proteine di trasporto.",
+        "Biotina ad alto dosaggio nell'integratore, che può interferire con alcuni metodi.",
+        "Metodo del laboratorio e variabilità biologica.",
+      ],
+    },
+    unitsAndRanges: {
+      commonUnits: ["pg/mL", "pmol/L"],
+      rangeNote: "La FT3 è espressa in pg/mL oppure in pmol/L, con una conversione fra le due unità. L'intervallo di riferimento cambia con il metodo del laboratorio e con l'età: considera solo quello stampato sul tuo referto.",
+    },
+    questionsForDoctor: [
+      "Perché ha ritenuto utile misurare anche la FT3?",
+      "Come si legge la FT3 insieme a TSH e FT4 nel mio referto?",
+      "Una malattia recente o una dieta particolare possono aver influenzato il valore?",
+      "Serve ripetere l'esame e, se sì, dopo quanto?",
+    ],
+    faq: [
+      { q: "Perché la FT3 non viene richiesta sempre?", a: "Perché TSH e FT4 forniscono già, nella maggior parte dei casi, le informazioni iniziali sulla funzione tiroidea. La FT3 si aggiunge quando il medico ha un motivo specifico per approfondire." },
+      { q: "La FT3 può cambiare anche se la tiroide non c'entra?", a: "Sì. Malattie acute, digiuno e alcuni farmaci possono modificarla perché agiscono sulla trasformazione dell'ormone nei tessuti. Per questo non si interpreta da sola." },
+      { q: "Qual è la differenza fra FT3 e T3 totale?", a: "La T3 totale comprende anche la parte legata alle proteine di trasporto, mentre la FT3 è solo la quota libera. La quota libera risente meno delle variazioni di queste proteine." },
+    ],
+    relatedGuides: ["tsh", "ft4-tiroxina-libera", "anticorpi-anti-tpo", "unita-di-misura-nei-referti"],
+    glossaryTerms: ["ft3", "ft4", "tsh", "ormone", "unita-di-misura"],
+    sources: [{ title: "MedlinePlus — Lab Tests (NIH)", url: "https://medlineplus.gov/lab-tests/" }],
+    lastUpdated: "2026-11-07",
+    reviewStatus: "draft-needs-clinical-review",
+  },
+  {
+    slug: "anticorpi-anti-tpo",
+    title: "Anticorpi anti-TPO: che cosa misurano e come leggerli",
+    metaDescription: "Gli anticorpi anti-TPO indicano se il sistema immunitario reagisce contro un enzima della tiroide. Unità UI/mL, come leggere il referto e domande per il medico.",
+    category: "tiroide",
+    examName: "Anticorpi anti-TPO",
+    aliases: ["anti-TPO", "AbTPO", "anticorpi antiperossidasi tiroidea", "TPOAb"],
+    summary: "Gli anticorpi anti-TPO sono proteine del sistema immunitario che riconoscono la perossidasi tiroidea, un enzima della tiroide. Il referto riporta una concentrazione in UI/mL o kUI/L con una soglia indicata dal laboratorio.",
+    sections: {
+      whatItMeasures: [
+        "La perossidasi tiroidea (TPO) è un enzima che la tiroide usa per produrre gli ormoni. Gli anticorpi anti-TPO sono autoanticorpi, cioè proteine del sistema immunitario rivolte contro un componente dell'organismo stesso. L'esame ne misura la quantità nel sangue.",
+        "La presenza di questi anticorpi segnala che il sistema immunitario sta reagendo verso la tiroide, ma da sola non dice come lavora la ghiandola: per quello servono TSH e FT4.",
+      ],
+      whyRequested: [
+        "Il medico richiede gli anticorpi anti-TPO quando vuole capire se dietro un'alterazione tiroidea ci sia una componente autoimmune, oppure per completare gli esami in presenza di una tiroide ingrossata o di valori ormonali fuori dall'intervallo stampato. Si usa anche in alcune valutazioni in gravidanza o pre-concepimento.",
+      ],
+      howToRead: [
+        "Nel referto trovi un numero (in UI/mL o kUI/L) e, di solito, un valore soglia indicato dal laboratorio sopra il quale il risultato è segnato come positivo. Alcuni referti scrivono soltanto «negativo» o «positivo». La soglia dipende dal metodo e non è uguale in tutti i laboratori.",
+        "Il numero preciso conta meno di quanto sembri: laboratori diversi usano scale non confrontabili. Il medico valuta il risultato insieme a TSH, FT4, all'ecografia se presente e ai sintomi. Una positività da sola non dice quando o se cambierà qualcosa nella funzione della tiroide.",
+      ],
+      factors: [
+        "Metodo analitico: i valori non sono confrontabili fra laboratori che usano kit diversi.",
+        "Sesso ed età: la presenza di questi anticorpi è più frequente in alcune fasce della popolazione.",
+        "Altre condizioni autoimmuni, che possono associarsi alla presenza di anticorpi.",
+        "Gravidanza, durante la quale i livelli possono variare.",
+        "Alcuni farmaci e trattamenti che agiscono sul sistema immunitario.",
+        "Variazioni nel tempo: per seguire l'andamento conviene usare sempre lo stesso laboratorio.",
+      ],
+    },
+    unitsAndRanges: {
+      commonUnits: ["UI/mL", "kUI/L"],
+      rangeNote: "Gli anticorpi anti-TPO si esprimono in UI/mL o kUI/L, ma la soglia di positività è definita da ogni laboratorio in base al kit usato. Non esiste un valore unico: fai riferimento a quello stampato sul tuo referto.",
+    },
+    questionsForDoctor: [
+      "Perché ha richiesto gli anticorpi anti-TPO nel mio caso?",
+      "Come si collega questo risultato a TSH e FT4?",
+      "Serve ripetere l'esame nel tempo o basta una misurazione?",
+      "Devo fare un'ecografia tiroidea o altri accertamenti?",
+      "Per i controlli futuri conviene usare sempre lo stesso laboratorio?",
+    ],
+    faq: [
+      { q: "Anticorpi anti-TPO positivi significano che la tiroide non funziona bene?", a: "Non necessariamente. Gli anticorpi segnalano una reazione del sistema immunitario, ma la funzione della tiroide si valuta con TSH e FT4. Il significato nel tuo caso lo stabilisce il medico." },
+      { q: "Serve ripetere spesso questo esame?", a: "Di solito la ripetizione frequente aggiunge poco. Sarà il medico a dire se e quando ripeterlo, in base alla situazione." },
+      { q: "Anti-TPO e anti-tireoglobulina sono lo stesso esame?", a: "No, sono due anticorpi diversi, diretti contro due componenti differenti della tiroide. A volte vengono richiesti insieme, a volte solo uno dei due." },
+    ],
+    relatedGuides: ["anticorpi-anti-tireoglobulina", "tsh", "ft4-tiroxina-libera", "intervalli-di-riferimento"],
+    glossaryTerms: ["anticorpi-anti-tpo", "autoanticorpi", "anticorpi", "tsh", "ft4", "marcatore"],
+    sources: [{ title: "MedlinePlus — Lab Tests (NIH)", url: "https://medlineplus.gov/lab-tests/" }],
+    lastUpdated: "2026-11-07",
+    reviewStatus: "draft-needs-clinical-review",
+  },
+  {
+    slug: "anticorpi-anti-tireoglobulina",
+    title: "Anticorpi anti-tireoglobulina: guida al referto",
+    metaDescription: "Gli anticorpi anti-tireoglobulina riconoscono una proteina della tiroide. Come leggere il referto in UI/mL e che cosa chiedere al medico.",
+    category: "tiroide",
+    examName: "Anticorpi anti-tireoglobulina",
+    aliases: ["anti-Tg", "AbTg", "TgAb", "anticorpi antitireoglobulina"],
+    summary: "Gli anticorpi anti-tireoglobulina sono autoanticorpi rivolti contro la tireoglobulina, una proteina prodotta dalla tiroide. Il referto riporta una concentrazione e la soglia scelta dal laboratorio.",
+    sections: {
+      whatItMeasures: [
+        "La tireoglobulina è una grande proteina prodotta dalle cellule della tiroide: serve da deposito e da base per la sintesi degli ormoni. Gli anticorpi anti-tireoglobulina sono autoanticorpi, cioè proteine del sistema immunitario che riconoscono questa proteina. L'esame ne misura la quantità nel sangue.",
+      ],
+      whyRequested: [
+        "Si richiedono a completamento degli anticorpi anti-TPO per valutare una possibile componente autoimmune della tiroide. Hanno un ruolo particolare anche nel controllo di chi viene seguito con la misurazione della tireoglobulina, perché la loro presenza può disturbare quel dosaggio: il medico li misura per interpretarlo correttamente.",
+      ],
+      howToRead: [
+        "Il referto riporta un valore (spesso in UI/mL) e una soglia indicata dal laboratorio; in alcuni casi compare solo la dicitura positivo o negativo. La soglia dipende dal kit utilizzato e non è uguale ovunque, perciò confronta sempre il risultato con quanto stampato sul tuo referto.",
+        "Come per gli altri autoanticorpi, il risultato non dice da solo come funziona la tiroide: va letto con TSH, FT4 e, se disponibile, con l'ecografia. Il medico valuta anche se serve rifare l'esame nel tempo e con quale metodo.",
+      ],
+      factors: [
+        "Metodo analitico: kit diversi danno numeri non confrontabili.",
+        "Presenza di altre condizioni autoimmuni.",
+        "Sesso ed età, perché la frequenza degli anticorpi varia fra gruppi di persone.",
+        "Interventi o trattamenti alla tiroide, che modificano la quantità di tireoglobulina disponibile.",
+        "Variazioni nel tempo: l'andamento è più informativo del singolo valore, se misurato con lo stesso metodo.",
+      ],
+    },
+    unitsAndRanges: {
+      commonUnits: ["UI/mL", "kUI/L"],
+      rangeNote: "Il valore è in UI/mL o kUI/L e la soglia di positività è stabilita dal laboratorio in base al metodo. Non esistono soglie valide per tutti: leggi il risultato rispetto a quella stampata sul tuo referto.",
+    },
+    questionsForDoctor: [
+      "Perché mi ha chiesto gli anticorpi anti-tireoglobulina oltre agli anti-TPO?",
+      "Questo risultato influisce sull'interpretazione di altri esami della tiroide?",
+      "Devo ripetere l'esame, e con quale frequenza?",
+      "Per i controlli successivi è importante usare lo stesso laboratorio?",
+    ],
+    faq: [
+      { q: "Che cosa significa che gli anticorpi sono positivi?", a: "Significa che nel sangue è stata rilevata una quantità di anticorpi oltre la soglia del laboratorio. Che cosa comporti nel tuo caso lo valuta il medico insieme agli altri esami e ai sintomi." },
+      { q: "Perché questi anticorpi contano per la tireoglobulina?", a: "Perché possono interferire con la misura della tireoglobulina e renderla meno affidabile. Per questo, quando si segue quel marcatore, si controllano anche gli anticorpi." },
+      { q: "Sono più importanti degli anti-TPO?", a: "Non sono né più né meno importanti: rispondono a domande in parte diverse. Il medico sceglie quale richiedere, a volte entrambi, in base al motivo della valutazione." },
+    ],
+    relatedGuides: ["anticorpi-anti-tpo", "tsh", "ft4-tiroxina-libera", "unita-di-misura-nei-referti"],
+    glossaryTerms: ["anticorpi-anti-tireoglobulina", "tireoglobulina", "autoanticorpi", "anticorpi", "marcatore", "metodo-analitico"],
+    sources: [{ title: "MedlinePlus — Lab Tests (NIH)", url: "https://medlineplus.gov/lab-tests/" }],
+    lastUpdated: "2026-11-07",
+    reviewStatus: "draft-needs-clinical-review",
+  },
+];

@@ -2,6 +2,7 @@ export const MAIN_NAV = [
   { href: "/come-funziona", label: "Come funziona" },
   { href: "/servizi-prezzi", label: "Servizi & Prezzi" },
   { href: "/secondo-parere", label: "Secondo parere" },
+  { href: "/guide", label: "Guide" },
   { href: "/faq", label: "FAQ" },
 ] as const;
 

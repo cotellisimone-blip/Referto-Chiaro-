@@ -10,6 +10,11 @@ const SHOTS = [
   ["faq", "/faq"],
   ["errore-404", "/pagina-inesistente"],
   ["per-le-strutture", "/per-le-strutture"],
+  ["fase4-1-guide-hub", "/guide"],
+  ["fase4-2-guida-tsh", "/guide/tsh"],
+  ["fase4-3-guida-emocromo", "/guide/emocromo"],
+  ["fase4-4-glossario", "/glossario"],
+  ["fase4-5-voce-ferritina", "/glossario/ferritina"],
 ] as const;
 
 /** Porta a termine le animazioni d'ingresso prima dello scatto. */

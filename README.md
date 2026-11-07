@@ -14,7 +14,7 @@ cp .env.example .env.local   # facoltativo: i default sono già sicuri
 npm run dev                   # http://localhost:3000
 ```
 
-Nessuna chiave API o servizio esterno è necessario: senza `DATABASE_URL` il database è PGlite (PostgreSQL embedded) nella cartella `.data/`. L'area personale si prova con il pulsante «Entra con l'account demo» in `/accedi`; il portale medico (`/medico`) e l'admin (`/admin`) con gli account dimostrativi e la 2FA (in demo il codice è mostrato a schermo). Senza chiavi Stripe il pagamento è simulato; con `STRIPE_SECRET_KEY=sk_test_...` e `STRIPE_WEBHOOK_SECRET` si usa Stripe Checkout in test.
+Nessuna chiave API o servizio esterno è necessario: senza `DATABASE_URL` il database è PGlite (PostgreSQL embedded) nella cartella `.data/`. L'area personale si prova con il pulsante «Entra con l'account demo» in `/accedi`; il portale medico (`/medico`) e l'admin (`/admin`) con gli account dimostrativi e la 2FA (in demo il codice è mostrato a schermo). Senza chiavi Stripe il pagamento è simulato; con `STRIPE_SECRET_KEY=sk_test_...` e `STRIPE_WEBHOOK_SECRET` si usa Stripe Checkout in test. Le guide agli esami (`/guide`) e il glossario (`/glossario`) sono bozze in attesa di revisione medica: l'indicizzazione resta spenta finché non si imposta `ENABLE_INDEXING=true` insieme a `PUBLIC_BASE_URL`.
 
 ## Comandi
 

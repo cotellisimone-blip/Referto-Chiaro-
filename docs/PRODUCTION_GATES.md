@@ -35,3 +35,11 @@ Nessuno di questi punti si risolve con il codice da solo. Finché non sono chius
 - [ ] Prezzi, disponibilità e tempi reali per specialità
 - [x] Portale medico con 2FA (TOTP), accesso ai documenti registrato, parere firmato con impronta — implementato come simulazione; la firma qualificata/FEA e la verifica dell'abilitazione (albo) restano da fare
 - [ ] Gestione rifiuto del caso e rimborsi
+
+## E. Contenuti pubblici e indicizzazione (guide e glossario)
+- [x] Guide agli esami e glossario scritti come bozze con `reviewStatus: "draft-needs-clinical-review"`, avviso visibile su ogni pagina
+- [x] Validazione automatica: schema, frasi diagnostiche/prescrittive vietate, fonti solo da domini istituzionali, riferimenti incrociati risolti
+- [x] Indicizzazione spenta per default: `robots` noindex, `robots.txt` disallow, sitemap vuota finché `ENABLE_INDEXING` non è esattamente `"true"`
+- [ ] Revisione clinica di ogni guida e voce da parte di un medico identificato (aggiornare `reviewStatus` e `lastUpdated`)
+- [ ] Responsabile editoriale e procedura di aggiornamento periodico dichiarati
+- [ ] Dominio reale e `PUBLIC_BASE_URL` impostati prima di accendere l'indicizzazione (canonical e sitemap usano quel valore)
