@@ -11,6 +11,7 @@ Aggiornato: 7 novembre 2026 · Fasi 1–2 del kit (design system, homepage, demo
 | Design system | Token colore/tipografia/raggi/ombre in `globals.css`, font locali (Fraunces, DM Sans), componenti Section, PageHeader, ServiceCards, FaqList, DraftNotice |
 | Logo e kit | Proposta originale SVG: simbolo, orizzontale, scura, monocromatica, favicon (`public/brand`, `src/app/icon.svg`); immagine social `opengraph-image.tsx` e `apple-icon.tsx` generate dal logo |
 | Illustrazioni | Sistema SVG originale (`src/components/brand/illustrations.tsx`): 6 soggetti + trama CTA + linea del metodo, colori via token |
+| Leggibilità | Testo base 18px, pulsanti grandi, pulsante «Aa» nel header per testo più grande (ricordato nel browser, header che si adatta); home e «Come funziona» riscritte con poco testo, tre/quattro passi illustrati e rivelazione allo scorrimento rispettosa di `prefers-reduced-motion` |
 | Tema scuro | Token ridefiniti per `prefers-color-scheme` e `data-theme`; selettore auto/chiaro/scuro nel header, ricordato in `localStorage`; verificato con axe |
 | Hero | Traduzione animata della riga (rotazione automatica con anello di avanzamento, pausa esplicita, rispetta `prefers-reduced-motion`) |
 | PDF | Font del sito incorporati (Fraunces/DM Sans, istanze statiche in `src/domain/reporting/fonts`), copertina, sezioni numerate, glossario, domande numerate |

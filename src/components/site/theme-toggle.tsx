@@ -3,8 +3,9 @@
 import { useSyncExternalStore } from "react";
 import { Monitor, Moon, Sun } from "lucide-react";
 
+import { THEME_KEY as KEY } from "@/lib/prefs-init";
+
 type Theme = "auto" | "light" | "dark";
-const KEY = "rc-theme";
 const ORDER: Theme[] = ["auto", "light", "dark"];
 const LABEL: Record<Theme, string> = { auto: "Tema automatico", light: "Tema chiaro", dark: "Tema scuro" };
 
@@ -13,9 +14,6 @@ export function applyTheme(t: Theme) {
   if (t === "auto") root.removeAttribute("data-theme");
   else root.setAttribute("data-theme", t);
 }
-
-/** Script da inserire prima del rendering per evitare lo sfarfallio del tema. */
-export const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem(${JSON.stringify(KEY)});if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t)}}catch(e){}})();`;
 
 const EVENT = "rc-theme-change";
 

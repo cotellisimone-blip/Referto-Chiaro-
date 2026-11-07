@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { SiteHeader, SiteHeaderView } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { DemoRibbon } from "@/components/site/demo-ribbon";
-import { THEME_INIT_SCRIPT } from "@/components/site/theme-toggle";
+import { PREFS_INIT_SCRIPT } from "@/lib/prefs-init";
 import "./globals.css";
 
 const fraunces = localFont({
@@ -41,7 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="it" className={`${fraunces.variable} ${dmSans.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: PREFS_INIT_SCRIPT }} />
       </head>
       <body className="flex min-h-full flex-col">
         <a

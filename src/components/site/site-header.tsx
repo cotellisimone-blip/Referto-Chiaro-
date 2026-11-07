@@ -8,6 +8,7 @@ import { clsx } from "clsx";
 import { Logo } from "@/components/brand/logo";
 import { MAIN_NAV } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
+import { TextSizeToggle } from "./text-size-toggle";
 
 /**
  * Il percorso corrente serve solo a evidenziare la voce attiva. Sulle pagine dinamiche
@@ -70,13 +71,13 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
 
   return (
     <header className="no-print relative sticky top-0 z-40 border-b border-line/70 bg-canvas/90 backdrop-blur-md supports-[backdrop-filter]:bg-canvas/75">
-      <div className="container-rc relative z-10 flex h-16 items-center justify-between gap-4 lg:h-20">
+      <div className="container-rc relative z-10 flex h-16 items-center justify-between gap-3 lg:h-20">
         <Link href="/" className="rounded-md">
           <Logo />
         </Link>
 
-        <nav aria-label="Principale" className="hidden lg:block">
-          <ul className="flex items-center gap-1">
+        <nav aria-label="Principale" className="hdr-desktop">
+          <ul className="flex items-center gap-0.5 xl:gap-1">
             {MAIN_NAV.map((item) => {
               const active = pathname === item.href;
               return (
@@ -85,7 +86,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={clsx(
-                      "relative whitespace-nowrap rounded-full px-4 py-2.5 text-[0.9375rem] font-medium transition-colors duration-150",
+                      "relative whitespace-nowrap rounded-full px-2 py-2.5 text-[0.9375rem] font-medium transition-colors duration-150 xl:px-3.5 xl:text-[1rem]",
                       active ? "bg-mist text-ink" : "text-ink-soft hover:bg-mist/70 hover:text-ink",
                     )}
                   >
@@ -97,20 +98,22 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
           </ul>
         </nav>
 
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hdr-desktop items-center gap-1.5 xl:gap-2">
+          <TextSizeToggle />
           <ThemeToggle />
-          <Link href={signedIn ? "/area" : "/accedi"} className="btn btn-ghost whitespace-nowrap">
+          <Link href={signedIn ? "/area" : "/accedi"} className="btn btn-ghost btn-sm whitespace-nowrap">
             {signedIn ? "Area personale" : "Accedi"}
           </Link>
-          <Link href="/esempio" className="btn btn-secondary">
+          <Link href="/esempio" className="btn btn-secondary btn-sm hdr-demo">
             Prova la demo
           </Link>
-          <Link href="/inizia" className="btn btn-primary">
+          <Link href="/inizia" className="btn btn-primary btn-sm">
             Inizia ora
           </Link>
         </div>
 
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="hdr-mobile items-center gap-2">
+          <TextSizeToggle />
           <ThemeToggle />
           <button
             type="button"
@@ -126,7 +129,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
       </div>
 
       {open ? (
-        <div className="absolute inset-x-0 top-full lg:hidden">
+        <div className="hdr-panel absolute inset-x-0 top-full">
           <button type="button" aria-label="Chiudi il menu" className="modal-backdrop fixed inset-0" onClick={() => setOpen(false)} />
           <div id="menu-mobile" ref={panelRef} className="fade-in relative max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-line bg-canvas shadow-[var(--shadow-lift)]">
             <nav aria-label="Menu mobile" className="container-rc py-4">

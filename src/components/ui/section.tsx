@@ -30,7 +30,7 @@ export function Section({
           <h2 id={headingId} className="display mt-3 text-[2rem] sm:text-[2.75rem]">
             {title}
           </h2>
-          {lead ? <div className="mt-4 text-lg text-muted">{lead}</div> : null}
+          {lead ? <div className="mt-4 text-xl text-ink-soft">{lead}</div> : null}
         </div>
         {children ? <div className="mt-10 sm:mt-14">{children}</div> : null}
       </div>

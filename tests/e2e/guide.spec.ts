@@ -76,13 +76,20 @@ test.describe("guide e glossario", () => {
     expect(await sitemap.text()).not.toContain("<loc>");
   });
 
-  test("navigazione: Guide nel menu, nessun a capo nel header a 1024px", async ({ page, isMobile }) => {
+  test("navigazione: Guide nel menu, header senza a capo né overflow a 1024/1280/1440, anche con testo grande", async ({ page, isMobile }) => {
     test.skip(isMobile, "solo desktop");
-    await page.setViewportSize({ width: 1024, height: 800 });
-    await page.goto("/");
-    const nav = page.getByRole("navigation", { name: /principale/i });
-    await expect(nav.getByRole("link", { name: "Guide" })).toBeVisible();
-    const box = await page.locator("header").first().boundingBox();
-    expect(box?.height ?? 0).toBeLessThan(90);
+    for (const width of [1024, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto("/");
+      await expect(page.getByRole("navigation", { name: /principale/i }).getByRole("link", { name: "Guide" })).toBeVisible();
+      for (const large of [false, true]) {
+        if (large) await page.getByRole("button", { name: "Testo più grande" }).click();
+        const box = await page.locator("header").first().boundingBox();
+        expect(box?.height ?? 0, `${width}px ${large ? "testo grande" : ""}`).toBeLessThan(100);
+        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        expect(overflow, `${width}px ${large ? "testo grande" : ""}`).toBeLessThanOrEqual(0);
+      }
+      await page.getByRole("button", { name: "Testo più grande" }).click();
+    }
   });
 });

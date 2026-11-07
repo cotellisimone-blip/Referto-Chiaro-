@@ -50,11 +50,11 @@ export function PageHeader({
         <div className="max-w-3xl">
           {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
           <h1 className={clsx("display mt-3", compact ? "text-[2rem] sm:text-[2.75rem]" : "text-[2.25rem] sm:text-[3.25rem]")}>{title}</h1>
-          {lead ? <div className="mt-5 text-lg text-muted sm:text-xl">{lead}</div> : null}
+          {lead ? <div className="mt-5 text-xl text-ink-soft sm:text-2xl">{lead}</div> : null}
           {children}
         </div>
         {Art ? (
-          <div className="rise-in-2 mx-auto hidden w-full max-w-[380px] lg:block">
+          <div className="rise-in-2 float-soft mx-auto hidden w-full max-w-[380px] lg:block">
             <Art />
           </div>
         ) : null}
