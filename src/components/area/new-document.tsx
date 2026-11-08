@@ -7,6 +7,7 @@ import { ArrowRight, FileText, Loader2, Lock, Upload } from "lucide-react";
 import type { SyntheticSample } from "@/fixtures/synthetic";
 import { Stepper } from "@/components/report/stepper";
 import { api, formatDate } from "./api";
+import { UploadBox } from "./upload-box";
 
 export const WORKFLOW_STEPS = ["Documento", "Valori", "Servizio", "Elaborazione", "Report"] as const;
 
@@ -74,23 +75,27 @@ export function NewDocument({ samples, uploadsEnabled }: { samples: SyntheticSam
         </section>
 
         <aside aria-labelledby="upload-titolo">
-          <div className={clsx("rounded-[var(--radius-lg)] border-2 border-dashed p-6 sm:p-8", uploadsEnabled ? "border-teal/50 bg-paper" : "border-line bg-canvas")}>
-            <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-mist">{uploadsEnabled ? <Upload aria-hidden className="h-5 w-5 text-teal" /> : <Lock aria-hidden className="h-5 w-5 text-muted" />}</span>
-              <h2 id="upload-titolo" className="font-serif text-xl">
-                Carica un tuo referto
-              </h2>
+          {uploadsEnabled ? (
+            <UploadBox />
+          ) : (
+            <div className="rounded-[var(--radius-lg)] border-2 border-dashed border-line bg-canvas p-6 sm:p-8">
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-mist">
+                  <Lock aria-hidden className="h-5 w-5 text-muted" />
+                </span>
+                <h2 id="upload-titolo" className="font-serif text-xl">
+                  Carica un tuo referto
+                </h2>
+              </div>
+              <p className="mt-4 text-[0.9375rem] text-muted">
+                Non ancora attivo. Il caricamento di documenti reali si accende solo dopo le verifiche cliniche, legali e di sicurezza: fino ad allora il server rifiuta qualsiasi file, anche se qualcuno provasse ad aggirare questa pagina.
+              </p>
+              <button type="button" className="btn btn-secondary mt-5 w-full" disabled aria-disabled="true">
+                <Upload aria-hidden className="h-4 w-4" /> Carica un file
+              </button>
+              <p className="mt-3 text-center text-xs text-muted">Stato del servizio: in preparazione.</p>
             </div>
-            <p className="mt-4 text-[0.9375rem] text-muted">
-              {uploadsEnabled
-                ? "PDF o foto di un referto di laboratorio."
-                : "Non ancora attivo. Il caricamento di documenti reali si accende solo dopo le verifiche cliniche, legali e di sicurezza: fino ad allora il server rifiuta qualsiasi file, anche se qualcuno provasse ad aggirare questa pagina."}
-            </p>
-            <button type="button" className="btn btn-secondary mt-5 w-full" disabled aria-disabled="true">
-              <Upload aria-hidden className="h-4 w-4" /> Carica un file
-            </button>
-            <p className="mt-3 text-center text-xs text-muted">Stato del servizio: in preparazione.</p>
-          </div>
+          )}
         </aside>
       </div>
     </div>

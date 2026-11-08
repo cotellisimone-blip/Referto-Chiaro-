@@ -7,6 +7,17 @@ test.describe("fail-closed lato server", () => {
     expect(await res.json()).toMatchObject({ error: "capability-disabled", feature: "realUploads" });
   });
 
+  test("upload reale dell'area personale bloccato prima ancora del login", async ({ request }) => {
+    const res = await request.post("/api/v1/area/documents/upload", { multipart: { file: { name: "referto.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4") } } });
+    expect(res.status()).toBe(403);
+    expect(await res.json()).toMatchObject({ error: "capability-disabled", feature: "realUploads" });
+  });
+
+  test("il cron senza segreto risponde 401", async ({ request }) => {
+    expect((await request.get("/api/cron/jobs")).status()).toBe(401);
+    expect((await request.get("/api/cron/jobs", { headers: { authorization: "Bearer indovina" } })).status()).toBe(401);
+  });
+
   test("la configurazione pubblica dichiara tutto spento", async ({ request }) => {
     const res = await request.get("/api/v1/public/config");
     expect(await res.json()).toEqual({

@@ -34,12 +34,16 @@ async function migrate(q: Queryable) {
 async function createDriver(): Promise<Driver> {
   const url = process.env.DATABASE_URL;
   if (url) {
-    const pool = new Pool({ connectionString: url, max: 10 });
-    const c = await pool.connect();
-    try {
-      await migrate(wrapPg(c));
-    } finally {
-      c.release();
+    // Su Vercel ogni istanza ha il suo pool: pochi collegamenti, e connessione «pooled» (PgBouncer) consigliata.
+    const pool = new Pool({ connectionString: url, max: Number(process.env.PG_POOL_MAX) || (process.env.VERCEL ? 3 : 10), idleTimeoutMillis: 10_000 });
+    // Le migrazioni girano al deploy (`npm run db:migrate`). A runtime solo se DB_RUNTIME_MIGRATIONS non è "false".
+    if (process.env.DB_RUNTIME_MIGRATIONS !== "false") {
+      const c = await pool.connect();
+      try {
+        await migrate(wrapPg(c));
+      } finally {
+        c.release();
+      }
     }
     return { kind: "pg", pool };
   }

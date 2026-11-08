@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowRight, FlaskConical, Loader2, MailCheck } from "lucide-react";
 import { api } from "./api";
 
-type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; link?: string; delivery: "on-screen" | "email" | "unavailable" } | { kind: "error"; message: string };
+type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; link?: string; delivery: "on-screen" | "email" | "unavailable" | "email-failed" } | { kind: "error"; message: string };
 
 const CONSENT_KINDS = ["terms", "privacy", "health-data", "subject-declaration"] as const;
 type ConsentKind = (typeof CONSENT_KINDS)[number];
@@ -30,7 +30,7 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
     e.preventDefault();
     setState({ kind: "sending" });
     try {
-      const r = await api<{ ok: true; delivery: "on-screen" | "email" | "unavailable"; link?: string }>("/api/v1/auth/magic-link", {
+      const r = await api<{ ok: true; delivery: "on-screen" | "email" | "unavailable" | "email-failed"; link?: string }>("/api/v1/auth/magic-link", {
         method: "POST",
         body: { email, consents: CONSENT_KINDS.filter((k) => consents[k]) },
       });
@@ -85,7 +85,7 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
         {state.kind === "sent" ? (
           <div role="status" className="mt-6 rounded-2xl bg-mist p-5">
             <p className="flex items-center gap-2 font-semibold text-ink">
-              <MailCheck aria-hidden className="h-5 w-5 text-sage-deep" /> {state.delivery === "unavailable" ? "Link non mostrabile." : "Link pronto."}
+              <MailCheck aria-hidden className="h-5 w-5 text-sage-deep" /> {state.delivery === "unavailable" ? "Link non mostrabile." : state.delivery === "email-failed" ? "Email non inviata." : state.delivery === "email" ? "Controlla la posta." : "Link pronto."}
             </p>
             {state.delivery === "on-screen" && state.link ? (
               <>
@@ -98,6 +98,8 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
               <p className="mt-2 text-sm text-muted">
                 In demo il link si mostra a schermo solo per gli account appena creati o per indirizzi di prova (per esempio <span className="font-mono">nome@esempio.test</span>): così nessuno può entrare nell&apos;account di un&apos;altra persona. Usa un indirizzo di prova oppure l&apos;account demo.
               </p>
+            ) : state.delivery === "email-failed" ? (
+              <p className="mt-2 text-sm text-muted">Non siamo riusciti a inviare l&apos;email in questo momento. Riprova tra qualche minuto.</p>
             ) : (
               <p className="mt-2 text-sm text-muted">Se l&apos;indirizzo è registrato, riceverai il link per posta: è valido 15 minuti.</p>
             )}

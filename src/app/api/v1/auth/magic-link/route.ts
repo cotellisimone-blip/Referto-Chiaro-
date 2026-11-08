@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { requestMagicLink } from "@/lib/auth/service";
-import { clientKey, rateLimit } from "@/lib/rate-limit";
+import { clientKey } from "@/lib/rate-limit";
+import { rateLimitShared } from "@/lib/rate-limit-shared";
 import { json } from "@/lib/api";
 import { readJson } from "@/lib/auth/guard";
 
@@ -12,7 +13,7 @@ const Body = z.object({ email: z.string().max(254), consents: z.array(z.enum(["t
  */
 export async function POST(req: Request) {
   const limit = Number(process.env.AUTH_RATE_LIMIT_PER_10MIN) || 10;
-  const rl = rateLimit(`auth:${clientKey(req)}`, limit, 10 * 60_000);
+  const rl = await rateLimitShared(`auth:${clientKey(req)}`, limit, 10 * 60_000);
   if (!rl.ok) return json({ error: "rate-limited", message: "Troppe richieste. Riprova tra qualche minuto." }, { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } });
   const r = await readJson(req, 2_048);
   if ("response" in r) return r.response;

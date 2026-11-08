@@ -12,9 +12,12 @@ import type { ExplanationProvider, PolicyVersion, VerifiedExtraction } from "./t
 export class DeterministicDemoExplanationProvider implements ExplanationProvider {
   readonly id = "deterministic-demo-v1";
 
+  /** allowRealDocuments: con il caricamento reale attivo ma l'AI spenta, spiega i termini con il solo glossario. */
+  constructor(private readonly opts: { allowRealDocuments?: boolean } = {}) {}
+
   async explain(input: VerifiedExtraction, policy: PolicyVersion): Promise<Explanation | CannotProcess> {
     const { document, confirmedObservationIds } = input;
-    if (!document.isSynthetic) {
+    if (!document.isSynthetic && !this.opts.allowRealDocuments) {
       return { error: "cannot_process", reason: "Il provider demo accetta solo documenti sintetici." };
     }
     const confirmed = new Set(confirmedObservationIds);

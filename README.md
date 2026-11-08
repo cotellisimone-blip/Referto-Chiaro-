@@ -2,7 +2,7 @@
 
 Piattaforma per rendere comprensibili i referti di laboratorio: valori riportati fedelmente, spiegazioni in linguaggio comune, domande da portare al medico. **Uno strumento di comprensione, non una diagnosi.**
 
-> **Stato:** versione dimostrativa. Funziona solo con un referto **inventato** incluso nel codice. Non accetta documenti reali, non elabora dati sanitari, non vende nulla. Vedi [`docs/PRODUCTION_GATES.md`](docs/PRODUCTION_GATES.md).
+> **Stato:** online parte in **modalità demo** (solo referti inventati). Il codice per i servizi reali c'è ed è testato — caricamento cifrato, lettura di PDF e foto, spiegazioni con Claude, email, Stripe live — ma resta spento dietro i gate finché non sono chiusi i requisiti di [`docs/PRODUCTION_GATES.md`](docs/PRODUCTION_GATES.md). Messa online passo per passo: [`docs/DEPLOY.md`](docs/DEPLOY.md). Qualità e sicurezza dell'AI: [`docs/AI_VALUTAZIONE.md`](docs/AI_VALUTAZIONE.md).
 
 ## Avvio locale
 
@@ -20,7 +20,11 @@ Nessuna chiave API o servizio esterno è necessario: senza `DATABASE_URL` il dat
 
 | Comando | Cosa fa |
 |---|---|
+| `npm run setup` | Configurazione in un comando (dipendenze, `.env.local` con chiavi, migrazione, test) |
 | `npm run dev` | Server di sviluppo |
+| `npm run db:migrate` | Migra il PostgreSQL di `DATABASE_URL` (eseguito anche a ogni deploy Vercel) |
+| `npm run keys` | Genera le chiavi segrete |
+| `npm run eval:ai` | Valutazione della pipeline AI → `docs/AI_VALUTAZIONE.md` (`EVAL_LIVE=1` per il modello vero) |
 | `npm run build` / `npm start` | Build e avvio di produzione |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript strict |
@@ -52,11 +56,16 @@ src/
   components/medico, admin  portale medico e pannello admin
   domain/extraction         schema estrazione, parsing numeri e intervalli
   domain/reporting          glossario, schema spiegazione, controllo coerenza, PDF
-  providers/                adapter spiegazione (deterministico), upload/OCR/AI (spenti dai gate)
+  providers/ai              Claude: client, spiegazione con controlli, modello finto per test
+  providers/ocr             lettura PDF (testo), foto (Claude vision), strutturazione ancorata, dati personali nascosti
+  providers/upload          validazione file e archivio cifrato
+  domain/safety             filtro del linguaggio diagnostico/prescrittivo
+  lib/email                 email transazionali (Resend, Postmark, casella di sviluppo)
   fixtures/synthetic        unici documenti accettati dalla demo
   lib                       feature gate, rate limit, helper API
 public/brand                varianti del logo (colore, mono, scura, favicon)
 tests/unit, tests/e2e       test
+tests/ai-eval               valutazione AI: referti sintetici, golden, corpus avversario
 docs/                       decisioni, stato, gate, test, costi, screenshot
 ```
 

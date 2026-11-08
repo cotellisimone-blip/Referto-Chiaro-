@@ -2,12 +2,12 @@ import { z } from "zod";
 import { isUuid, readJson, requireUser } from "@/lib/auth/guard";
 import { json } from "@/lib/api";
 import { createDossier, listDossiers } from "@/domain/pipeline/repository";
-import { runPendingJobs } from "@/domain/pipeline/worker";
+import { tickJobs } from "@/domain/pipeline/worker";
 
 export async function GET() {
   const g = await requireUser();
   if ("response" in g) return g.response;
-  await runPendingJobs(g.user.id);
+  await tickJobs(g.user.id);
   const dossiers = await listDossiers(g.user.id);
   return json({ dossiers: dossiers.map((d) => ({ ...d, content: undefined })) });
 }

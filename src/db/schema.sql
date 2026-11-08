@@ -279,3 +279,53 @@ DROP POLICY IF EXISTS physicians_public ON physicians;
 CREATE POLICY physicians_public ON physicians USING (status = 'verified' OR user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
 
 INSERT INTO schema_migrations(version) VALUES (2) ON CONFLICT DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Schema v3: file caricati (cifrati AES-256-GCM a livello applicativo) e
+-- tracciabilità delle elaborazioni AI (solo metadati: modello, versione, token, esito).
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS document_files (
+  document_id uuid PRIMARY KEY REFERENCES documents(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  mime_type text NOT NULL CHECK (mime_type IN ('application/pdf', 'image/jpeg', 'image/png', 'image/webp')),
+  size_bytes integer NOT NULL CHECK (size_bytes > 0 AND size_bytes <= 4194304),
+  sha256 text NOT NULL,
+  ciphertext bytea NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS ai_runs (
+  id uuid PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  target_id uuid NOT NULL,
+  step text NOT NULL CHECK (step IN ('transcribe', 'structure', 'explain')),
+  model text NOT NULL,
+  prompt_version text NOT NULL,
+  outcome text NOT NULL CHECK (outcome IN ('ok', 'retried-ok', 'sanitized', 'rejected', 'refused', 'error')),
+  input_tokens integer,
+  output_tokens integer,
+  issues jsonb,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ai_runs_created_idx ON ai_runs(created_at DESC);
+
+GRANT SELECT, INSERT, DELETE ON document_files TO app_rls;
+GRANT SELECT, INSERT ON ai_runs TO app_rls;
+ALTER TABLE document_files ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_runs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS document_files_owner ON document_files;
+CREATE POLICY document_files_owner ON document_files USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid) WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
+DROP POLICY IF EXISTS ai_runs_owner ON ai_runs;
+CREATE POLICY ai_runs_owner ON ai_runs USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid) WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
+
+INSERT INTO schema_migrations(version) VALUES (3) ON CONFLICT DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS rate_limits (
+  key text NOT NULL,
+  window_start timestamptz NOT NULL,
+  count integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (key, window_start)
+);
+-- Solo il sistema (ruolo proprietario) la usa: nessun permesso al ruolo applicativo.
+INSERT INTO schema_migrations(version) VALUES (4) ON CONFLICT DO NOTHING;

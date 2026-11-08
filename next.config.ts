@@ -37,7 +37,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   // Driver del database e PDF: restano moduli esterni, non vengono impacchettati nel bundle server.
-  serverExternalPackages: ["@electric-sql/pglite", "pg", "pdf-lib", "@pdf-lib/fontkit"],
+  serverExternalPackages: ["@electric-sql/pglite", "pg", "pdf-lib", "@pdf-lib/fontkit", "unpdf"],
+  // Lo schema SQL viene letto a runtime (migrazione idempotente): va incluso nelle funzioni serverless.
+  outputFileTracingIncludes: { "/**": ["./src/db/schema.sql", "./src/domain/reporting/fonts/**"] },
   partialPrefetching: true,
   async headers() {
     return [{ source: "/(.*)", headers: SECURITY_HEADERS }];

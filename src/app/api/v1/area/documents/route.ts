@@ -3,13 +3,13 @@ import { readJson, requireUser } from "@/lib/auth/guard";
 import { json } from "@/lib/api";
 import { hasHealthDataConsent } from "@/lib/auth/service";
 import { createSyntheticDocument, listDocuments, listReports } from "@/domain/pipeline/repository";
-import { runPendingJobs } from "@/domain/pipeline/worker";
+import { tickJobs } from "@/domain/pipeline/worker";
 import { getSyntheticDocument, listSyntheticSamples } from "@/fixtures/synthetic";
 
 export async function GET() {
   const g = await requireUser();
   if ("response" in g) return g.response;
-  await runPendingJobs(g.user.id);
+  await tickJobs(g.user.id);
   const [documents, reports] = await Promise.all([listDocuments(g.user.id), listReports(g.user.id)]);
   return json({ documents: documents.map((d) => ({ ...d, extracted: undefined, observationCount: d.extracted?.observations.length ?? null })), reports: reports.map((r) => ({ ...r, explanation: undefined })) });
 }

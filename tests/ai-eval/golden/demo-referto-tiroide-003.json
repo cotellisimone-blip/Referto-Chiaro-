@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0",
+  "sourceDocumentId": "demo-referto-tiroide-003",
+  "sourceVerified": true,
+  "summary": "Questo documento riporta 3 valori di laboratorio che hai confermato. Qui trovi i numeri esattamente come sono stampati e una spiegazione generale dei termini. Il riepilogo non valuta la tua situazione clinica.",
+  "items": [
+    {
+      "sourceObservationId": "obs-01",
+      "nameExact": "TSH",
+      "originalValueExact": "2,35",
+      "originalUnitExact": "µUI/mL",
+      "originalReferenceExact": "0,40 - 4,00",
+      "plainLanguageDefinition": "Il TSH è un ormone prodotto dall'ipofisi che regola l'attività della tiroide. Il referto ne riporta la concentrazione nel sangue.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 4,
+        "excerpt": "TSH                           2,35        µUI/mL   0,40 - 4,00"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-02",
+      "nameExact": "FT4 (tiroxina libera)",
+      "originalValueExact": "1,12",
+      "originalUnitExact": "ng/dL",
+      "originalReferenceExact": "0,80 - 1,70",
+      "plainLanguageDefinition": "L'FT4 è la frazione libera della tiroxina, un ormone prodotto dalla tiroide.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 5,
+        "excerpt": "FT4 (tiroxina libera)         1,12        ng/dL    0,80 - 1,70"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-03",
+      "nameExact": "FT3 (triiodotironina libera)",
+      "originalValueExact": "3,1",
+      "originalUnitExact": "pg/mL",
+      "originalReferenceExact": "2,3 - 4,2",
+      "plainLanguageDefinition": "L'FT3 è la frazione libera della triiodotironina, un ormone prodotto dalla tiroide.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 6,
+        "excerpt": "FT3 (triiodotironina libera)  3,1         pg/mL    2,3 - 4,2"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    }
+  ],
+  "excludedObservations": [
+    {
+      "id": "obs-04",
+      "nameExact": "Anticorpi anti-TPO",
+      "reason": "Valore non leggibile con sufficiente affidabilità."
+    }
+  ],
+  "questionsForDoctor": [
+    "Quali informazioni sulla mia storia e sul mio stato di salute servono per leggere correttamente questi risultati?",
+    "Ci sono valori che secondo lei è utile approfondire o confrontare con esami precedenti?",
+    "C'è qualcosa che dovrei chiarire o portare alla prossima visita?"
+  ],
+  "limitations": [
+    "Spiegazione informativa e non clinica: non sostituisce la diagnosi o le indicazioni del medico.",
+    "Gli intervalli sono quelli stampati dal laboratorio sul documento e non sono valori universali.",
+    "In caso di urgenza non usare questo servizio: in Italia chiama il 112."
+  ],
+  "modelAndPromptVersion": "deterministic-demo-v1+policy-informativa-v1"
+}

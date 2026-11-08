@@ -2,6 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { audit, withSystem, withUser } from "@/db/client";
 import { readFlags } from "@/lib/feature-flags";
+import { getEmailProvider, emailFrom, magicLinkEmail, publicUrl, maskEmail } from "@/lib/email";
 import { MAGIC_LINK_TTL_MS, hashToken, newToken, sessionTtlMs } from "./tokens";
 
 export type Role = "user" | "physician" | "admin";
@@ -54,7 +55,7 @@ function rowToUser(r: Record<string, unknown>): User {
  * In demo il link non viene inviato per email (nessun servizio di posta): viene restituito al chiamante,
  * che lo mostra sullo schermo. Fuori dalla demo serve il gate publicSignup e un adattatore email.
  */
-export type MagicLinkDelivery = "on-screen" | "email" | "unavailable";
+export type MagicLinkDelivery = "on-screen" | "email" | "unavailable" | "email-failed";
 
 export async function requestMagicLink(args: { email: string; consents: ConsentKind[] }): Promise<
   { ok: true; delivery: MagicLinkDelivery; link?: string } | { ok: false; code: "invalid-email" | "signup-closed" | "consent-required" }
@@ -64,18 +65,19 @@ export async function requestMagicLink(args: { email: string; consents: ConsentK
   const flags = readFlags();
   const required = REQUIRED_CONSENTS;
   const token = newToken();
-  return withSystem(async (tx) => {
+  const out = await withSystem(async (tx) => {
     // Pulizia periodica: link scaduti, sessioni scadute da oltre 30 giorni, lista d'attesa oltre 12 mesi.
     await tx.query("DELETE FROM magic_links WHERE expires_at < now() - interval '1 day'");
     await tx.query("DELETE FROM sessions WHERE expires_at < now() - interval '30 days'");
     await tx.query("DELETE FROM waitlist WHERE created_at < now() - interval '12 months'");
+    await tx.query("DELETE FROM rate_limits WHERE window_start < now() - interval '1 day'");
     const existing = await tx.query("SELECT * FROM users WHERE email = $1 AND deleted_at IS NULL", [email]);
     let userId: string;
     let isNew = false;
     if (existing.rows[0]) userId = String(existing.rows[0].id);
     else {
-      if (!flags.demoMode && !flags.publicSignup) return { ok: false, code: "signup-closed" as const };
-      if (!required.every((k) => args.consents.includes(k))) return { ok: false, code: "consent-required" as const };
+      if (!flags.demoMode && !flags.publicSignup) return { ok: false as const, code: "signup-closed" as const };
+      if (!required.every((k) => args.consents.includes(k))) return { ok: false as const, code: "consent-required" as const };
       userId = randomUUID();
       await tx.query("INSERT INTO users(id, email, is_demo) VALUES ($1, $2, $3)", [userId, email, flags.demoMode]);
       const recorded = new Set<ConsentKind>([...required, ...args.consents.filter((k) => k in CONSENT_VERSIONS)]);
@@ -93,13 +95,23 @@ export async function requestMagicLink(args: { email: string; consents: ConsentK
       new Date(Date.now() + MAGIC_LINK_TTL_MS).toISOString(),
     ]);
     await audit(tx, { userId, actor: "user", action: "magic-link-requested" });
-    if (!flags.demoMode) return { ok: true as const, delivery: "email" as const }; // qui andrà l'adattatore email
+    if (!flags.demoMode) return { ok: true as const, delivery: "email" as const };
     // In demo il link si mostra a schermo solo quando nessun altro potrebbe rivendicare quell'account:
     // account appena creato, oppure indirizzo di un dominio riservato ai test. Altrimenti niente link.
     const onScreen = isNew || TEST_EMAIL.test(email) || email === DEMO_ACCOUNT_EMAIL;
     if (!onScreen) return { ok: true as const, delivery: "unavailable" as const };
     return { ok: true as const, delivery: "on-screen" as const, link: `/api/v1/auth/verifica?token=${token}` };
   });
+  // Fuori dalla demo il link parte per email, dopo il commit (mai dentro la transazione).
+  if (out.ok && out.delivery === "email") {
+    try {
+      await getEmailProvider().send(magicLinkEmail(email, publicUrl(`/api/v1/auth/verifica?token=${token}`)), emailFrom());
+    } catch (e) {
+      console.error(`[auth] invio link a ${maskEmail(email)} non riuscito: ${e instanceof Error ? e.message : "errore"}`);
+      return { ok: true, delivery: "email-failed" };
+    }
+  }
+  return out;
 }
 
 /** Consuma il link (monouso, scade in 15 minuti) e apre una sessione. Restituisce il token di sessione da mettere nel cookie. */
@@ -204,16 +216,18 @@ export async function revokeSession(sessionToken: string | undefined): Promise<v
 /** Esportazione dei propri dati (GDPR art. 20): tutto in un JSON, senza token né hash. */
 export async function exportUserData(userId: string) {
   return withUser(userId, async (tx) => {
-    const [user, consents, documents, reports, dossiers, orders, cases, auditRows] = await Promise.all([
-      tx.query("SELECT id, email, display_name, is_demo, role, created_at, last_login_at FROM users"),
-      tx.query("SELECT kind, version, granted, recorded_at FROM consents ORDER BY recorded_at"),
-      tx.query("SELECT id, title, source_kind, source_ref, status, extracted, verification, created_at, updated_at FROM documents ORDER BY created_at"),
-      tx.query("SELECT id, document_id, service, status, explanation, policy_version, created_at, generated_at FROM reports ORDER BY created_at"),
-      tx.query("SELECT id, title, document_ids, status, content, created_at, generated_at FROM dossiers ORDER BY created_at"),
-      tx.query("SELECT id, service, amount_cents, currency, status, provider, created_at, paid_at FROM orders ORDER BY created_at"),
-      tx.query("SELECT id, document_id, specialty, question, status, answer, decline_reason, is_simulated, created_at, answered_at FROM cases ORDER BY created_at"),
-      tx.query("SELECT action, target, created_at FROM audit_log ORDER BY created_at"),
-    ]);
+    // In sequenza: una transazione usa una sola connessione, le query non vanno sovrapposte.
+    const q = (sql: string) => tx.query(sql);
+    const user = await q("SELECT id, email, display_name, is_demo, role, created_at, last_login_at FROM users");
+    const consents = await q("SELECT kind, version, granted, recorded_at FROM consents ORDER BY recorded_at");
+    const documents = await q("SELECT id, title, source_kind, source_ref, status, extracted, verification, created_at, updated_at FROM documents ORDER BY created_at");
+    const reports = await q("SELECT id, document_id, service, status, explanation, policy_version, created_at, generated_at FROM reports ORDER BY created_at");
+    const dossiers = await q("SELECT id, title, document_ids, status, content, created_at, generated_at FROM dossiers ORDER BY created_at");
+    const orders = await q("SELECT id, service, amount_cents, currency, status, provider, created_at, paid_at FROM orders ORDER BY created_at");
+    const cases = await q("SELECT id, document_id, specialty, question, status, answer, decline_reason, is_simulated, created_at, answered_at FROM cases ORDER BY created_at");
+    const auditRows = await q("SELECT action, target, created_at FROM audit_log ORDER BY created_at");
+    const files = await q("SELECT document_id, mime_type, size_bytes, sha256, created_at FROM document_files ORDER BY created_at");
+    const aiRuns = await q("SELECT target_id, step, model, prompt_version, outcome, input_tokens, output_tokens, created_at FROM ai_runs ORDER BY created_at");
     await audit(tx, { userId, actor: "user", action: "export-data" });
     return {
       exportedAt: new Date().toISOString(),
@@ -221,6 +235,8 @@ export async function exportUserData(userId: string) {
       consents: consents.rows,
       documents: documents.rows,
       reports: reports.rows,
+      uploadedFiles: files.rows,
+      aiProcessing: aiRuns.rows,
       dossiers: dossiers.rows,
       orders: orders.rows,
       secondOpinionCases: cases.rows,
@@ -236,6 +252,8 @@ async function purgeHealthData(tx: Parameters<Parameters<typeof withSystem>[0]>[
   await tx.query("DELETE FROM cases WHERE user_id = $1", [userId]);
   await tx.query("DELETE FROM dossiers WHERE user_id = $1", [userId]);
   await tx.query("DELETE FROM reports WHERE user_id = $1", [userId]);
+  await tx.query("DELETE FROM document_files WHERE user_id = $1", [userId]);
+  await tx.query("DELETE FROM ai_runs WHERE user_id = $1", [userId]);
   await tx.query("DELETE FROM documents WHERE user_id = $1", [userId]);
 }
 

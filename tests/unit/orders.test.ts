@@ -82,7 +82,7 @@ describe("ordini e pagamenti", () => {
       return Stripe.webhooks.generateTestHeaderString({ payload, secret });
     }
     const event = (id: string, type: string, orderId: string, extra: object = {}) =>
-      JSON.stringify({ id, object: "event", type, data: { object: { id: "cs_test_1", metadata: { orderId }, client_reference_id: orderId, ...extra } } });
+      JSON.stringify({ id, object: "event", type, livemode: false, data: { object: { id: "cs_test_1", metadata: { orderId }, client_reference_id: orderId, ...extra } } });
 
     it("senza segreto, senza firma o con firma errata: 400", async () => {
       const p = event("evt_a", "checkout.session.completed", randomUUID());
@@ -106,6 +106,14 @@ describe("ordini e pagamenti", () => {
       expect((await r2.json()).duplicate).toBe(true);
       const rows = await withUser(alice, (tx) => tx.query("SELECT id FROM reports WHERE document_id = $1", [d]));
       expect(rows.rows.length).toBe(1);
+    });
+
+    it("un evento live non vale con la chiave di test (e viceversa)", async () => {
+      process.env.STRIPE_WEBHOOK_SECRET = secret;
+      const o = await createOrder(alice, { service: "essenziale", documentId: doc, provider: "stripe-test" });
+      const live = JSON.stringify({ id: `evt_${randomUUID()}`, object: "event", type: "checkout.session.completed", livemode: true, data: { object: { id: "cs_live_1", metadata: { orderId: o.id }, payment_status: "paid" } } });
+      expect((await webhook(req(live, signed(live)))).status).toBe(400);
+      expect((await getOrder(alice, o.id))?.status).toBe("pending");
     });
 
     it("expired annulla; completed non pagato non paga", async () => {

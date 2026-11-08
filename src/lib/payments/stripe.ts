@@ -10,6 +10,7 @@ export function stripeProvider(secretKey: string, kind: "stripe-test" | "stripe-
       const name = SERVICES.find((s) => s.id === order.service)?.name ?? order.service;
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
+        locale: "it",
         client_reference_id: order.id,
         metadata: { orderId: order.id },
         line_items: [

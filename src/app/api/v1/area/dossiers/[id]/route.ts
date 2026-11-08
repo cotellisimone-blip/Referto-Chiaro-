@@ -1,14 +1,14 @@
 import { isUuid, requireUser } from "@/lib/auth/guard";
 import { json } from "@/lib/api";
 import { deleteDossier, getDossier } from "@/domain/pipeline/repository";
-import { runPendingJobs } from "@/domain/pipeline/worker";
+import { tickJobs } from "@/domain/pipeline/worker";
 
 export async function GET(_req: Request, ctx: RouteContext<"/api/v1/area/dossiers/[id]">) {
   const g = await requireUser();
   if ("response" in g) return g.response;
   const { id } = await ctx.params;
   if (!isUuid(id)) return json({ error: "not-found" }, { status: 404 });
-  await runPendingJobs(g.user.id);
+  await tickJobs(g.user.id);
   const dossier = await getDossier(g.user.id, id);
   return dossier ? json({ dossier }) : json({ error: "not-found" }, { status: 404 });
 }

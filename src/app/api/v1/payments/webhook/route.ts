@@ -1,4 +1,5 @@
 import { json } from "@/lib/api";
+import { isCapabilityEnabled } from "@/lib/feature-flags";
 import { verifyStripeEvent } from "@/lib/payments/stripe";
 import { isUuid } from "@/lib/auth/guard";
 import { forgetPaymentEvent, markOrderCancelled, markOrderPaid, recordPaymentEvent } from "@/domain/orders/repository";
@@ -20,6 +21,12 @@ export async function POST(req: Request) {
   } catch {
     return json({ error: "invalid-signature" }, { status: 400 });
   }
+
+  // Coerenza modalità: con chiave di test si accettano solo eventi di test, con chiave live solo eventi live
+  // (e solo se il gate dei pagamenti reali è aperto). Evita che un evento di prova sblocchi un ordine reale.
+  const live = process.env.STRIPE_SECRET_KEY?.trim().startsWith("sk_live_") ?? false;
+  if (event.livemode !== live) return json({ error: "mode-mismatch" }, { status: 400 });
+  if (live && !isCapabilityEnabled("livePayments")) return json({ error: "live-payments-disabled" }, { status: 403 });
 
   const obj = event.data.object as { id?: string; metadata?: Record<string, string> | null; client_reference_id?: string | null };
   const candidate = obj.metadata?.orderId ?? obj.client_reference_id ?? null;

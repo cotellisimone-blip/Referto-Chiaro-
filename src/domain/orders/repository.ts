@@ -1,4 +1,6 @@
 import "server-only";
+import { SERVICES } from "@/domain/catalog";
+import { orderPaidEmail, publicUrl, sendEmail } from "@/lib/email";
 import { randomUUID } from "node:crypto";
 import { audit, withSystem, withUser, type Queryable } from "@/db/client";
 import { createReportIn } from "@/domain/pipeline/repository";
@@ -75,8 +77,8 @@ export async function listOrders(userId: string): Promise<OrderRow[]> {
  */
 export async function markOrderPaid(orderId: string, providerRef?: string): Promise<boolean> {
   const row = await withSystem(async (tx) => {
-    const r = await tx.query<{ user_id: string; service: OrderService; document_id: string | null }>(
-      "UPDATE orders SET status = 'paid', paid_at = now(), updated_at = now(), provider_ref = COALESCE($2, provider_ref) WHERE id = $1 AND status = 'pending' RETURNING user_id, service, document_id",
+    const r = await tx.query<{ user_id: string; service: OrderService; document_id: string | null; amount_cents: number; email?: string }>(
+      "UPDATE orders SET status = 'paid', paid_at = now(), updated_at = now(), provider_ref = COALESCE($2, provider_ref) WHERE id = $1 AND status = 'pending' RETURNING user_id, service, document_id, amount_cents, (SELECT email FROM users WHERE users.id = orders.user_id) AS email",
       [orderId, providerRef ?? null],
     );
     if (!r.rows[0]) return null;
@@ -87,6 +89,11 @@ export async function markOrderPaid(orderId: string, providerRef?: string): Prom
     }
     return r.rows[0];
   });
+  if (row?.email && !String(row.email).endsWith(".invalid")) {
+    const name = SERVICES.find((x) => x.id === row.service)?.name ?? row.service;
+    const amount = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(Number(row.amount_cents) / 100);
+    await sendEmail(orderPaidEmail(String(row.email), publicUrl(`/area/ordini/${orderId}`), name, amount));
+  }
   return Boolean(row);
 }
 
