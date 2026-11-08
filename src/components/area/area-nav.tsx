@@ -124,7 +124,7 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
                     <Icon aria-hidden className="h-5 w-5" />
                   </span>
                   <span className="max-w-full truncate">
-                    {label === "Secondo parere" ? "Parere" : label}
+                    {label === "Secondo parere" ? "Parere" : label === "Impostazioni" ? "Profilo" : label}
                     {label === "Nuovo" ? <span className="sr-only"> referto</span> : null}
                   </span>
                 </Link>

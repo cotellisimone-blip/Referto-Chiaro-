@@ -19,7 +19,7 @@ async function Gate({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
   if (!user) redirect("/accedi?next=/area-personale");
   return (
-    <div className="container-rc grid gap-6 pb-28 pt-6 sm:pt-10 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10 lg:pb-16">
+    <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 pb-28 pt-6 sm:pt-10 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10 lg:pb-16">
       <AreaNav email={user.email} displayName={user.displayName} isDemo={user.isDemo} />
       <div className="min-w-0">{children}</div>
     </div>
