@@ -16,7 +16,7 @@ export async function GET(_req: Request, ctx: RouteContext<"/api/v1/area/reports
   return new Response(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="referto-chiaro-${doc.extracted.isSynthetic ? "DEMO-" : ""}${report.id.slice(0, 8)}.pdf"`,
+      "Content-Disposition": `attachment; filename="cura-privata-${doc.extracted.isSynthetic ? "DEMO-" : ""}${report.id.slice(0, 8)}.pdf"`,
       "Cache-Control": "no-store",
     },
   });

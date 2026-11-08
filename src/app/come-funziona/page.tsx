@@ -48,7 +48,7 @@ export default function ComeFunzionaPage() {
           ))}
         </ol>
         <div className="mt-14 text-center">
-          <Link href="/esempio" className="btn btn-primary btn-lg">
+          <Link href="/referti/esempio" className="btn btn-primary btn-lg">
             Provalo con un referto di esempio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
           <p className="mt-4 text-[1.0625rem] text-muted">Due minuti. Nessuna registrazione. Nessun dato personale.</p>

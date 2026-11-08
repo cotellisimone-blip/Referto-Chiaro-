@@ -9,7 +9,7 @@ async function signup(request: APIRequestContext, email: string) {
   expect(body.delivery).toBe("on-screen");
   const v = await request.get(body.link, { maxRedirects: 0 });
   expect(v.status()).toBe(303);
-  expect(v.headers().location).toContain("/area");
+  expect(v.headers().location).toContain("/area-personale");
 }
 
 async function createReadyDocument(request: APIRequestContext, sampleId: string) {
@@ -39,14 +39,14 @@ async function createReadyDocument(request: APIRequestContext, sampleId: string)
 test.describe("area personale", () => {
   test("senza sessione le API rispondono 401 e la pagina rimanda all'accesso", async ({ request, page }) => {
     expect((await request.get("/api/v1/area/documents")).status()).toBe(401);
-    await page.goto("/area");
+    await page.goto("/area-personale");
     await expect(page).toHaveURL(/\/accedi/);
   });
 
   test("percorso completo con l'account demo: nuovo referto → valori → servizio → report → PDF", async ({ page }) => {
     await page.goto("/accedi");
     await page.getByRole("button", { name: "Entra con l'account demo" }).click();
-    await expect(page).toHaveURL(/\/area$/);
+    await expect(page).toHaveURL(/\/area-personale$/);
     await page.getByRole("link", { name: "Nuovo referto" }).first().click();
     await expect(page.getByRole("heading", { name: "Scegli un referto di esempio." })).toBeVisible();
     await page.getByLabel(/Funzionalità tiroidea/).check();
@@ -66,7 +66,7 @@ test.describe("area personale", () => {
     const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
     expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
     const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Scarica il PDF" }).click()]);
-    expect(download.suggestedFilename()).toMatch(/^referto-chiaro-DEMO-.*\.pdf$/);
+    expect(download.suggestedFilename()).toMatch(/^cura-privata-DEMO-.*\.pdf$/);
     // Ricaricando, si riparte dal report (stato nel database, non nel browser)
     await page.reload();
     await expect(page.getByRole("heading", { name: "Il tuo referto, in parole semplici." })).toBeVisible({ timeout: 15_000 });
@@ -94,7 +94,7 @@ test.describe("area personale", () => {
     // Alice ha ancora tutto
     expect((await a.request.get(`/api/v1/area/documents/${docA.id}`)).status()).toBe(200);
     const pageB = await b.newPage();
-    await pageB.goto(`/area/documenti/${docA.id}`);
+    await pageB.goto(`/area-personale/documenti/${docA.id}`);
     await expect(pageB.getByRole("alert").filter({ hasText: /non trovato/i })).toBeVisible({ timeout: 15_000 });
     // L'esportazione di Bob non contiene nulla di Alice
     const exportB = await (await b.request.get("/api/v1/area/export")).json();
@@ -112,7 +112,7 @@ test.describe("area personale", () => {
     expect(c.status()).toBe(201);
     const { id } = await c.json();
     const page = await ctx.newPage();
-    await page.goto(`/area/dossier/${id}`);
+    await page.goto(`/area-personale/dossier/${id}`);
     await expect(page.getByRole("heading", { name: "Visita di dicembre" })).toBeVisible({ timeout: 15_000 });
     await expect(page.getByRole("heading", { name: "Esami confrontabili" })).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText("Colesterolo LDL", { exact: true })).toBeVisible();
@@ -127,7 +127,7 @@ test.describe("area personale", () => {
     const ctx = await browser.newContext();
     const email = `once-${Date.now()}@test.invalid`;
     const r = await (await ctx.request.post("/api/v1/auth/magic-link", { data: { email, consents: ["terms", "privacy", "health-data"] } })).json();
-    expect((await ctx.request.get(r.link, { maxRedirects: 0 })).headers().location).toContain("/area");
+    expect((await ctx.request.get(r.link, { maxRedirects: 0 })).headers().location).toContain("/area-personale");
     expect((await ctx.request.get(r.link, { maxRedirects: 0 })).headers().location).toContain("errore=link");
     expect((await ctx.request.post("/api/v1/documents", { data: {} })).status()).toBe(403);
     expect((await ctx.request.post("/api/v1/area/delete-account", { data: { confirm: "no" } })).status()).toBe(400);

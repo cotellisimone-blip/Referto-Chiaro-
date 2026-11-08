@@ -6,7 +6,7 @@ async function signup(request: APIRequestContext, email: string) {
   const body = await r.json();
   expect(body.delivery).toBe("on-screen");
   expect(body.isNew).toBeUndefined();
-  expect((await request.get(body.link, { maxRedirects: 0 })).headers().location).toContain("/area");
+  expect((await request.get(body.link, { maxRedirects: 0 })).headers().location).toContain("/area-personale");
 }
 
 test.describe("audit GDPR: consensi, revoca, cancellazione", () => {
@@ -68,7 +68,7 @@ test.describe("audit GDPR: consensi, revoca, cancellazione", () => {
   });
 
   test("le pagine legali descrivono dati, durate e diritti", async ({ page }) => {
-    await page.goto("/privacy");
+    await page.goto("/privacy-policy");
     await expect(page.getByRole("heading", { name: "I tuoi diritti" })).toBeVisible();
     await expect(page.getByRole("table")).toContainText("Referti, valori confermati");
     await expect(page.getByText("BOZZA — DA REVISIONARE")).toBeVisible();

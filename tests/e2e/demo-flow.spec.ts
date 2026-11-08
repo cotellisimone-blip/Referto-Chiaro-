@@ -10,7 +10,7 @@ test("demo completa: documento → controllo valori → spiegazione → PDF", as
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
   page.on("pageerror", (e) => errors.push(e.message));
 
-  await page.goto("/esempio");
+  await page.goto("/referti/esempio");
   await expect(page.getByRole("heading", { name: "Questo è il referto di esempio." })).toBeVisible();
   await page.getByRole("button", { name: "Controlla i valori estratti" }).click();
 
@@ -35,14 +35,14 @@ test("demo completa: documento → controllo valori → spiegazione → PDF", as
   await expectNoHorizontalOverflow(page);
 
   const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Scarica il PDF di esempio" }).click()]);
-  expect(download.suggestedFilename()).toBe("referto-chiaro-esempio-DEMO.pdf");
+  expect(download.suggestedFilename()).toBe("cura-privata-esempio-DEMO.pdf");
   await expect(page.getByText("Documento scaricato.")).toBeVisible();
 
   expect(errors).toEqual([]);
 });
 
 test("spiega solo i valori confermati", async ({ page }) => {
-  await page.goto("/esempio");
+  await page.goto("/referti/esempio");
   await page.getByRole("button", { name: "Controlla i valori estratti" }).click();
   await page.getByRole("checkbox", { name: /Glicemia/ }).check();
   await page.getByRole("button", { name: "Genera la spiegazione" }).click();

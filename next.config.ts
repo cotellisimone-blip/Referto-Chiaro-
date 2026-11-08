@@ -41,6 +41,25 @@ const nextConfig: NextConfig = {
   // Lo schema SQL viene letto a runtime (migrazione idempotente): va incluso nelle funzioni serverless.
   outputFileTracingIncludes: { "/**": ["./src/db/schema.sql", "./src/domain/reporting/fonts/**"] },
   partialPrefetching: true,
+  /** Vecchi indirizzi di Referto Chiaro → nuova mappa del sito Cura Privata (redirect permanenti interni). */
+  async redirects() {
+    const moved: [string, string][] = [
+      ["/esempio", "/referti/esempio"],
+      ["/secondo-parere", "/servizi/secondo-parere"],
+      ["/servizi-prezzi", "/servizi"],
+      ["/prezzi", "/servizi"],
+      ["/faq", "/domande-frequenti"],
+      ["/sicurezza", "/sicurezza-e-privacy"],
+      ["/privacy", "/privacy-policy"],
+      ["/cookie", "/cookie-policy"],
+      ["/referti/come-funziona", "/come-funziona"],
+    ];
+    return [
+      ...moved.map(([source, destination]) => ({ source, destination, permanent: true })),
+      { source: "/area", destination: "/area-personale", permanent: true },
+      { source: "/area/:path*", destination: "/area-personale/:path*", permanent: true },
+    ];
+  },
   async headers() {
     return [{ source: "/(.*)", headers: SECURITY_HEADERS }];
   },

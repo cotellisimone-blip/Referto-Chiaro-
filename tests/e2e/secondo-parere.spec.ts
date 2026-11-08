@@ -51,7 +51,7 @@ test.describe("secondo parere e portali riservati", () => {
     expect((await patient.request.post("/api/v1/area/casi", { data: { documentId: docId, specialty: "Medicina interna (simulazione)", question: "Una domanda abbastanza lunga da passare la validazione minima.", acknowledgeSimulation: false, consentToShare: true } })).status()).toBe(400);
 
     const page = await patient.newPage();
-    await page.goto("/area/secondo-parere");
+    await page.goto("/area-personale/secondo-parere");
     await expect(page.getByRole("heading", { name: "Secondo parere" })).toBeVisible();
     await page.getByLabel(/La tua domanda/).fill("Alcuni valori sono fuori dall'intervallo stampato: quali approfondimenti potrei chiedere al mio medico?");
     for (const box of await page.getByRole("checkbox").all()) await box.check(); // simulazione + consenso alla condivisione

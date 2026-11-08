@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(r.body);
   if (!parsed.success) return json({ error: "invalid-request" }, { status: 400 });
   if (parsed.data.kind === "health-data") {
-    if (g.user.email === "demo@esempio.referto-chiaro.invalid") return json({ error: "demo-account", message: "Sull'account demo condiviso non si revoca il consenso." }, { status: 403 });
+    if (g.user.email === "demo@esempio.cura-privata.invalid") return json({ error: "demo-account", message: "Sull'account demo condiviso non si revoca il consenso." }, { status: 403 });
     await withdrawHealthDataConsent(g.user.id);
     return json({ ok: true, purged: true });
   }

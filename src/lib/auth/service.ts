@@ -28,7 +28,7 @@ export const REQUIRED_CONSENTS: ConsentKind[] = ["terms", "privacy", "health-dat
 const TEST_EMAIL = /@([^@]+\.)?(invalid|test|example|localhost)$|@example\.(com|net|org)$/;
 export type ConsentKind = keyof typeof CONSENT_VERSIONS;
 
-export const DEMO_ACCOUNT_EMAIL = "demo@esempio.referto-chiaro.invalid";
+export const DEMO_ACCOUNT_EMAIL = "demo@esempio.cura-privata.invalid";
 
 const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
 
@@ -161,8 +161,8 @@ export async function loginDemoAccount(): Promise<{ ok: true; sessionToken: stri
   });
 }
 
-export const DEMO_PHYSICIAN_EMAIL = "medico-demo@esempio.referto-chiaro.invalid";
-export const DEMO_ADMIN_EMAIL = "admin-demo@esempio.referto-chiaro.invalid";
+export const DEMO_PHYSICIAN_EMAIL = "medico-demo@esempio.cura-privata.invalid";
+export const DEMO_ADMIN_EMAIL = "admin-demo@esempio.cura-privata.invalid";
 
 /**
  * Account di servizio dimostrativi (solo DEMO_MODE): un «medico» e un «admin» con 2FA.

@@ -4,6 +4,6 @@ import type { PaymentProvider } from "./types";
 export const simulatedProvider: PaymentProvider = {
   kind: "simulated",
   async createCheckout(order) {
-    return { checkoutUrl: `/area/ordini/${order.id}`, providerRef: `sim_${order.id}` };
+    return { checkoutUrl: `/area-personale/ordini/${order.id}`, providerRef: `sim_${order.id}` };
   },
 };

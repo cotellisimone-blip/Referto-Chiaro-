@@ -61,7 +61,7 @@ export function DocumentsDashboard() {
           <p className="eyebrow">Il tuo archivio</p>
           <h1 className="display-lg mt-3">Nessun referto, per ora.</h1>
           <p className="mt-4 text-lg text-muted">Aggiungi un referto di esempio e segui il percorso completo: lettura, controllo dei valori, spiegazione e PDF.</p>
-          <Link href="/area/nuovo" className="btn btn-primary mt-6">
+          <Link href="/area-personale/nuovo" className="btn btn-primary mt-6">
             <FilePlus2 aria-hidden className="h-4 w-4" /> Aggiungi un referto
           </Link>
         </div>
@@ -105,7 +105,7 @@ export function DocumentsDashboard() {
               </p>
               {d.errorMessage ? <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{d.errorMessage}</p> : null}
               <div className="mt-auto pt-5">
-                <Link href={`/area/documenti/${d.id}`} className="btn btn-secondary w-full sm:w-auto">
+                <Link href={`/area-personale/documenti/${d.id}`} className="btn btn-secondary w-full sm:w-auto">
                   {d.status === "needs-verification" ? "Controlla i valori" : d.status === "verified" && !active && !ready ? "Scegli il servizio" : ready ? "Apri il report" : "Apri"}
                   <ArrowRight aria-hidden className="h-4 w-4" />
                 </Link>

@@ -2,7 +2,7 @@
  * Impostazioni SEO. L'indicizzazione è SPENTA finché i contenuti non hanno la revisione medica:
  * `ENABLE_INDEXING="true"` (valore esatto) accende robots index, sitemap e canonical.
  */
-export const SITE_URL = (process.env.PUBLIC_BASE_URL ?? "https://referto-chiaro.invalid").replace(/\/$/, "");
+export const SITE_URL = (process.env.PUBLIC_BASE_URL ?? "https://cura-privata.invalid").replace(/\/$/, "");
 
 export function indexingEnabled(env: Record<string, string | undefined> = process.env): boolean {
   return env.ENABLE_INDEXING === "true";

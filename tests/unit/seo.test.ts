@@ -27,7 +27,7 @@ describe("seo", () => {
     expect(urls.some((u) => /\/(area|medico|admin|accedi|api)/.test(u))).toBe(false);
     const r = robots();
     expect(r.sitemap).toBe(absoluteUrl("/sitemap.xml"));
-    expect((r.rules as { disallow: string[] }).disallow).toEqual(expect.arrayContaining(["/area", "/medico", "/admin", "/api/"]));
+    expect((r.rules as { disallow: string[] }).disallow).toEqual(expect.arrayContaining(["/area-personale", "/medico", "/admin", "/api/"]));
   });
 
   it("jsonLd non permette di chiudere lo script; breadcrumb con URL assoluti", () => {

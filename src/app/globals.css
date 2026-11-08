@@ -1,112 +1,128 @@
 @import "tailwindcss";
 
 /*
- * Design tokens — Referto Chiaro
+ * Design tokens — Cura Privata
  * Contrasti verificati su sfondo canvas #FAFBF9:
  *  ink #162D39 ≈ 13.6:1 · teal #225F75 ≈ 6.9:1 · muted #4A5C66 ≈ 6.7:1
  *  sage #5E967E ≈ 3.3:1 → SOLO decorazione o testo ≥ 24px, mai testo piccolo.
  *  sage-deep #3E6E59 ≈ 5.6:1 → testo piccolo di supporto.
  */
 @theme {
-  --color-ink: #162d39;
-  --color-ink-soft: #2b4452;
-  --color-teal: #225f75;
-  --color-teal-deep: #1a4b5d;
-  --color-sage: #5e967e;
-  --color-sage-deep: #3e6e59;
-  --color-canvas: #fafbf9;
+  /*
+   * Design tokens — Cura Privata (petrolio, turchese, menta, carta).
+   * Contrasti verificati su canvas #F5FAF8:
+   *  ink #15313C ≈ 13:1 · teal #00756F ≈ 5.3:1 · muted #4F676E ≈ 5.7:1
+   *  turchese di marca #008F87 ≈ 3.8:1 → solo decorazione, icone o testo ≥ 24px.
+   *  menta #7BE0D2 → solo DIETRO testo scuro (ink su menta ≈ 8.7:1), mai come colore del testo.
+   * I nomi dei token sono rimasti quelli storici (teal, sage, marker…) per non toccare 200 componenti.
+   */
+  --color-ink: #15313c;
+  --color-ink-soft: #2b4a55;
+  --color-teal: #00756f;
+  --color-teal-deep: #005a55;
+  --color-sage: #008f87;
+  --color-sage-deep: #00756f;
+  --color-canvas: #f5faf8;
   --color-paper: #ffffff;
-  --color-mist: #eef4f2;
-  --color-line: #dbe6e5;
-  --color-cream: #f4ecdc;
-  --color-muted: #4a5c66;
-  --color-focus: #225f75;
-  --color-danger: #9b2c2c;
-  --color-warn: #8a5a00;
-  --color-strong: #162d39;
-  --color-strong-soft: #1f3e4e;
+  --color-mist: #e8f4f1;
+  --color-line: #dce9e7;
+  --color-cream: #f4f0e6;
+  --color-muted: #4f676e;
+  --color-focus: #00756f;
+  --color-danger: #b5454c;
+  --color-warn: #8a5a1f;
+  --color-strong: #0c3340;
+  --color-strong-soft: #123f4e;
   --color-on-strong: #ffffff;
-  --color-on-strong-soft: rgb(255 255 255 / 0.78);
-  /* Giro 3: evidenziatore e ambra. Il marker sta solo DIETRO testo scuro (ink su marker ≈ 11:1). */
-  --color-marker: #ffe18a;
-  --color-marker-soft: #fff1c2;
-  --color-amber: #a6600f;
-  --color-glow: rgb(34 95 117 / 0.16);
+  --color-on-strong-soft: rgb(255 255 255 / 0.8);
+  /* Segno di menta: sottolinea le parole chiave dei titoli, come la traccia del simbolo. */
+  --color-marker: #7be0d2;
+  --color-marker-soft: #cff3ec;
+  --color-amber: #a46a2b;
+  --color-glow: rgb(0 143 135 / 0.16);
+  --color-success: #287e67;
+  /* Petrolio del marchio (logo, superfici di marca); nel tema scuro diventa chiaro per restare leggibile. */
+  --color-brand: #0c3340;
 
-  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
-  --font-serif: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  /* Un solo carattere (Manrope, OFL): i titoli usano pesi alti invece di un serif. */
+  --font-serif: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-xl: 26px;
 
-  --shadow-card: 0 1px 2px rgb(22 45 57 / 0.04), 0 8px 24px -12px rgb(22 45 57 / 0.12);
-  --shadow-lift: 0 2px 4px rgb(22 45 57 / 0.05), 0 18px 40px -18px rgb(22 45 57 / 0.22);
-  --shadow-float: 0 1px 0 rgb(255 255 255 / 0.6) inset, 0 2px 6px rgb(22 45 57 / 0.06), 0 30px 60px -24px rgb(22 45 57 / 0.3);
+  --shadow-card: 0 1px 2px rgb(12 51 64 / 0.04), 0 8px 24px -12px rgb(12 51 64 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(12 51 64 / 0.05), 0 18px 40px -18px rgb(12 51 64 / 0.22);
+  --shadow-float: 0 1px 0 rgb(255 255 255 / 0.6) inset, 0 2px 6px rgb(12 51 64 / 0.06), 0 30px 60px -24px rgb(12 51 64 / 0.3);
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /*
  * Tema scuro: ridefiniamo i token (non le utility), così ogni componente eredita.
- * Contrasti su canvas #0f1a20: ink #e9eff1 ≈ 15:1 · muted #a6b7be ≈ 8:1 · teal #8ccbe0 ≈ 10:1 · sage-deep #9ad0b6 ≈ 10:1
+ * Contrasti su canvas #0b1e26: ink #e8f1f2 ≈ 15:1 · muted #9ab4ba ≈ 7.8:1 · teal #5fd3c4 ≈ 9.4:1 · menta #7be0d2 ≈ 10.9:1
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-ink: #e9eff1;
-    --color-ink-soft: #c9d6db;
-    --color-teal: #8ccbe0;
-    --color-teal-deep: #b3dceb;
-    --color-sage: #6fa98d;
-    --color-sage-deep: #9ad0b6;
-    --color-canvas: #0f1a20;
-    --color-paper: #162630;
-    --color-mist: #1b303a;
-    --color-line: #2a434f;
-    --color-cream: #3a3020;
-    --color-muted: #a6b7be;
-    --color-focus: #8ccbe0;
+    --color-ink: #e8f1f2;
+    --color-ink-soft: #c5d7da;
+    --color-teal: #5fd3c4;
+    --color-teal-deep: #7be0d2;
+    --color-sage: #3fb5a9;
+    --color-sage-deep: #7be0d2;
+    --color-canvas: #0b1e26;
+    --color-paper: #102a33;
+    --color-mist: #143440;
+    --color-line: #21434f;
+    --color-cream: #2f2b22;
+    --color-muted: #9ab4ba;
+    --color-focus: #7be0d2;
     --color-danger: #f1a3a3;
     --color-warn: #e8b968;
-    --color-strong: #1f4150;
-    --color-strong-soft: #2a5366;
+    --color-strong: #0f3a47;
+    --color-strong-soft: #16495a;
     --color-on-strong: #f4f8f9;
-    --color-on-strong-soft: rgb(244 248 249 / 0.78);
-    --color-marker: #5a4712;
-    --color-marker-soft: #3d3212;
+    --color-on-strong-soft: rgb(244 248 249 / 0.8);
+    --color-marker: #1f5a55;
+    --color-marker-soft: #173f3d;
     --color-amber: #e8b968;
-    --color-glow: rgb(140 203 224 / 0.14);
+    --color-glow: rgb(95 211 196 / 0.14);
+    --color-success: #7fd0b4;
+  --color-brand: #e8f1f2;
+    --color-brand: #e8f1f2;
     --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
     --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 18px 40px -18px rgb(0 0 0 / 0.7);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --color-ink: #e9eff1;
-  --color-ink-soft: #c9d6db;
-  --color-teal: #8ccbe0;
-  --color-teal-deep: #b3dceb;
-  --color-sage: #6fa98d;
-  --color-sage-deep: #9ad0b6;
-  --color-canvas: #0f1a20;
-  --color-paper: #162630;
-  --color-mist: #1b303a;
-  --color-line: #2a434f;
-  --color-cream: #3a3020;
-  --color-muted: #a6b7be;
-  --color-focus: #8ccbe0;
+  --color-ink: #e8f1f2;
+  --color-ink-soft: #c5d7da;
+  --color-teal: #5fd3c4;
+  --color-teal-deep: #7be0d2;
+  --color-sage: #3fb5a9;
+  --color-sage-deep: #7be0d2;
+  --color-canvas: #0b1e26;
+  --color-paper: #102a33;
+  --color-mist: #143440;
+  --color-line: #21434f;
+  --color-cream: #2f2b22;
+  --color-muted: #9ab4ba;
+  --color-focus: #7be0d2;
   --color-danger: #f1a3a3;
   --color-warn: #e8b968;
-  --color-strong: #1f4150;
-  --color-strong-soft: #2a5366;
+  --color-strong: #0f3a47;
+  --color-strong-soft: #16495a;
   --color-on-strong: #f4f8f9;
-  --color-on-strong-soft: rgb(244 248 249 / 0.78);
-  --color-marker: #5a4712;
-  --color-marker-soft: #3d3212;
+  --color-on-strong-soft: rgb(244 248 249 / 0.8);
+  --color-marker: #1f5a55;
+  --color-marker-soft: #173f3d;
   --color-amber: #e8b968;
-  --color-glow: rgb(140 203 224 / 0.14);
+  --color-glow: rgb(95 211 196 / 0.14);
+  --color-success: #7fd0b4;
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
   --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 18px 40px -18px rgb(0 0 0 / 0.7);
   color-scheme: dark;
@@ -157,9 +173,17 @@
 }
 
 @layer components {
+  /*
+   * Dopo il rebrand «font-serif» punta a Manrope: i titoli che lo usano diventano titoli sans in grassetto.
+   * Sta nel layer components, quindi un font-semibold/font-bold esplicito resta prioritario.
+   */
+  .font-serif {
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
   .container-rc {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1240px;
     margin-inline: auto;
     padding-inline: 16px;
   }
@@ -182,7 +206,7 @@
   .eyebrow::before {
     content: "";
     width: 1.5rem;
-    height: 2px;
+    height: 3px;
     border-radius: 2px;
     background: currentColor;
     opacity: 0.7;
@@ -193,49 +217,46 @@
 
   .display {
     font-family: var(--font-serif);
-    font-weight: 450;
+    font-weight: 750;
     letter-spacing: -0.02em;
     line-height: 1.08;
-    font-variation-settings: "SOFT" 50, "opsz" 96;
   }
   /* Titolo della home: grande ma mai oltre lo schermo, con ottica massima del Fraunces. */
   .display-xl {
     font-family: var(--font-serif);
-    font-weight: 420;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    font-size: clamp(2.875rem, 5.2vw + 1rem, 5.75rem);
-    font-variation-settings: "SOFT" 80, "opsz" 144;
+    font-weight: 780;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    font-size: clamp(2.375rem, 3.6vw + 1.1rem, 4.5rem);
   }
   .display-lg {
     font-family: var(--font-serif);
-    font-weight: 440;
-    letter-spacing: -0.025em;
+    font-weight: 760;
+    letter-spacing: -0.03em;
     line-height: 1.04;
     font-size: clamp(2.125rem, 2.4vw + 1.25rem, 3.5rem);
-    font-variation-settings: "SOFT" 60, "opsz" 120;
   }
+  /* Parola d'accento nei titoli: turchese (testo grande, contrasto ≥ 3:1). */
   .serif-italic {
     font-family: var(--font-serif);
-    font-style: italic;
-    font-variation-settings: "SOFT" 100, "opsz" 144, "WONK" 1;
+    color: var(--color-teal);
   }
   /*
-   * Evidenziatore: la firma visiva di Referto Chiaro. Il prodotto "evidenzia una riga e la spiega",
-   * così il titolo fa lo stesso. Solo sfondo dietro testo scuro: il testo non cambia mai opacità.
+   * Traccia di menta: la firma visiva di Cura Privata, ripresa dalla curva del simbolo.
+   * È una sottolineatura morbida dietro il testo scuro; il testo non cambia mai opacità.
    */
   .marker {
-    background-image: linear-gradient(104deg, transparent 0.4%, var(--color-marker) 1.8%, var(--color-marker) 97.5%, transparent 99%);
+    background-image: linear-gradient(100deg, transparent 0.5%, var(--color-marker) 2%, var(--color-marker) 97%, transparent 99.5%);
     background-repeat: no-repeat;
-    background-size: 100% 0.52em;
-    background-position: 0 78%;
+    background-size: 100% 0.3em;
+    background-position: 0 92%;
     padding: 0 0.08em;
     margin: 0 -0.08em;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
   }
   .marker-animate {
-    background-size: 0% 0.52em;
+    background-size: 0% 0.3em;
     animation: marker-draw 900ms 350ms var(--ease-out-soft) forwards;
   }
   .marker-thick {
@@ -285,7 +306,7 @@
     gap: 0.5rem;
     min-height: 52px;
     padding: 0 1.5rem;
-    border-radius: 999px;
+    border-radius: 14px;
     font-weight: 600;
     font-size: 1.0625rem;
     line-height: 1;
@@ -325,19 +346,20 @@
     opacity: 0.55;
     cursor: not-allowed;
   }
+  /* Primario: turchese profondo (bianco ≈ 5.6:1), più caldo del petrolio usato per le superfici forti. */
   .btn-primary {
-    background: linear-gradient(180deg, var(--color-strong-soft), var(--color-strong));
+    background: linear-gradient(180deg, #00827b, #00756f);
     color: var(--color-on-strong);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.12),
-      0 8px 20px -10px rgb(22 45 57 / 0.55);
+      0 8px 20px -10px rgb(12 51 64 / 0.55);
   }
   .btn-primary:hover:not(:disabled) {
-    background: linear-gradient(180deg, var(--color-strong-soft), var(--color-strong-soft));
+    background: linear-gradient(180deg, #006b65, #005a55);
     transform: translateY(-1px);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.14),
-      0 14px 28px -12px rgb(22 45 57 / 0.55);
+      0 14px 28px -12px rgb(12 51 64 / 0.55);
   }
   .btn-on-strong {
     background: var(--color-on-strong);
@@ -400,7 +422,7 @@
     border-radius: 6px 22px 6px 6px;
     box-shadow:
       0 1px 0 rgb(255 255 255 / 0.5) inset,
-      0 24px 50px -24px rgb(22 45 57 / 0.35);
+      0 24px 50px -24px rgb(12 51 64 / 0.35);
   }
   .sheet::after {
     content: "";
@@ -411,20 +433,18 @@
     height: 22px;
     background: linear-gradient(225deg, var(--color-canvas) 50%, var(--color-mist) 50%);
     border-bottom-left-radius: 6px;
-    box-shadow: -2px 2px 4px rgb(22 45 57 / 0.08);
+    box-shadow: -2px 2px 4px rgb(12 51 64 / 0.08);
   }
   /* Numero di passo editoriale: "01", "02"… */
   .num {
     font-family: var(--font-serif);
-    font-variation-settings: "SOFT" 100, "opsz" 144;
-    font-weight: 400;
+    font-weight: 700;
     letter-spacing: -0.04em;
     line-height: 0.9;
   }
   .stat-num {
     font-family: var(--font-serif);
-    font-variation-settings: "SOFT" 100, "opsz" 144;
-    font-weight: 450;
+    font-weight: 750;
     letter-spacing: -0.03em;
     line-height: 1;
     font-variant-numeric: tabular-nums;
@@ -549,7 +569,7 @@
   }
   .step-number {
     font-family: var(--font-serif);
-    font-variation-settings: "SOFT" 100, "opsz" 144;
+    font-weight: 750;
     line-height: 1;
   }
   /*
@@ -577,7 +597,7 @@
       display: inline-flex;
     }
   }
-  @media (min-width: 1024px) and (max-width: 1279.98px) {
+  @media (min-width: 1024px) and (max-width: 1439.98px) {
     :root[data-size="large"] .hdr-desktop {
       display: none;
     }
@@ -610,7 +630,7 @@
 }
 @keyframes marker-draw {
   to {
-    background-size: 100% 0.52em;
+    background-size: 100% 0.3em;
   }
 }
 @keyframes tilt-in {

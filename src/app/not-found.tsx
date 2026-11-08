@@ -13,7 +13,7 @@ export default function NotFound() {
           <Link href="/" className="btn btn-primary">
             Torna alla home
           </Link>
-          <Link href="/esempio" className="btn btn-secondary">
+          <Link href="/referti/esempio" className="btn btn-secondary">
             Referto di esempio <ArrowRight aria-hidden className="h-4 w-4" />
           </Link>
         </div>

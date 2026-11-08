@@ -26,7 +26,7 @@ export function NewDocument({ samples, uploadsEnabled }: { samples: SyntheticSam
     setError(null);
     try {
       const r = await api<{ id: string }>("/api/v1/area/documents", { method: "POST", body: { sampleId: selected } });
-      router.push(`/area/documenti/${r.id}`);
+      router.push(`/area-personale/documenti/${r.id}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Errore imprevisto.");
       setBusy(false);

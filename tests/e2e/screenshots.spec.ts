@@ -2,25 +2,21 @@ import { test } from "@playwright/test";
 
 /** Screenshot reali per revisione visiva (docs/screenshots). Eseguire con: npm run screenshots */
 const SHOTS = [
-  ["home", "/"],
-  ["prezzi", "/servizi-prezzi"],
-  ["come-funziona", "/come-funziona"],
-  ["secondo-parere-inattivo", "/secondo-parere"],
-  ["inizia", "/inizia"],
-  ["faq", "/faq"],
-  ["errore-404", "/pagina-inesistente"],
-  ["per-le-strutture", "/per-le-strutture"],
-  ["fase4-1-guide-hub", "/guide"],
-  ["fase4-2-guida-tsh", "/guide/tsh"],
-  ["fase4-3-guida-emocromo", "/guide/emocromo"],
-  ["fase4-4-glossario", "/glossario"],
-  ["fase4-5-voce-ferritina", "/glossario/ferritina"],
-  ["round2-1-guide-hub", "/guide"],
-  ["round2-2-guida-risonanza", "/guide/risonanza-magnetica"],
-  ["round2-3-guida-ecg", "/guide/elettrocardiogramma-ecg"],
-  ["round2-4-guida-tac-o-risonanza", "/guide/tac-o-risonanza"],
-  ["round2-5-privacy", "/privacy"],
-  ["round2-6-accedi-consensi", "/accedi"],
+  ["cp-01-home", "/"],
+  ["cp-02-referti", "/referti"],
+  ["cp-03-servizi", "/servizi"],
+  ["cp-04-secondo-parere", "/servizi/secondo-parere"],
+  ["cp-05-archivio", "/servizi/archivio"],
+  ["cp-06-visite", "/servizi/visite-e-consulti"],
+  ["cp-07-prevenzione", "/servizi/prevenzione"],
+  ["cp-08-come-funziona", "/come-funziona"],
+  ["cp-09-sicurezza", "/sicurezza-e-privacy"],
+  ["cp-10-faq", "/domande-frequenti"],
+  ["cp-11-chi-siamo", "/chi-siamo"],
+  ["cp-12-guide", "/guide"],
+  ["cp-13-guida-tsh", "/guide/tsh"],
+  ["cp-14-accedi", "/accedi"],
+  ["cp-15-errore-404", "/pagina-inesistente"],
 ] as const;
 
 /** Porta a termine le animazioni d'ingresso prima dello scatto. */
@@ -51,7 +47,7 @@ test.describe("screenshots", () => {
   }
   test("demo-flusso", async ({ page }, info) => {
     const dir = `docs/screenshots/${info.project.name}`;
-    await page.goto("/esempio");
+    await page.goto("/referti/esempio");
     await settle(page);
     await page.screenshot({ path: `${dir}/demo-1-documento.png`, fullPage: true });
     await page.getByRole("button", { name: "Controlla i valori estratti" }).click();
@@ -70,7 +66,7 @@ test.describe("screenshots", () => {
     await settle(page);
     await page.screenshot({ path: `${dir}/area-1-accedi.png`, fullPage: true });
     await page.getByRole("button", { name: "Entra con l'account demo" }).click();
-    await page.waitForURL(/\/area$/);
+    await page.waitForURL(/\/area-personale$/);
     // Due referti pronti e un dossier, così l'archivio non è vuoto
     const ready = async (sampleId: string) => {
       const { id } = await (await ctx.request.post("/api/v1/area/documents", { data: { sampleId } })).json();
@@ -85,11 +81,11 @@ test.describe("screenshots", () => {
     const d1 = await ready("demo-referto-lab-001");
     const d2 = await ready("demo-referto-lipidico-004");
     const dossier = await (await ctx.request.post("/api/v1/area/dossiers", { data: { title: "Visita di dicembre", documentIds: [d1, d2] } })).json();
-    await page.goto("/area");
+    await page.goto("/area-personale");
     await page.getByRole("list", { name: "Elenco dei referti" }).waitFor();
     await settle(page);
     await page.screenshot({ path: `${dir}/area-2-archivio.png`, fullPage: true });
-    await page.goto("/area/nuovo");
+    await page.goto("/area-personale/nuovo");
     await settle(page);
     await page.screenshot({ path: `${dir}/area-3-nuovo.png`, fullPage: true });
     await page.getByLabel(/Funzionalità tiroidea/).check();
@@ -108,20 +104,20 @@ test.describe("screenshots", () => {
     await page.getByRole("heading", { name: "Il tuo referto, in parole semplici." }).waitFor({ timeout: 20_000 });
     await settle(page);
     await page.screenshot({ path: `${dir}/area-6-report.png`, fullPage: true });
-    await page.goto(`/area/dossier/${dossier.id}`);
+    await page.goto(`/area-personale/dossier/${dossier.id}`);
     await page.getByRole("heading", { name: "Esami confrontabili" }).waitFor({ timeout: 15_000 });
     await settle(page);
     await page.screenshot({ path: `${dir}/area-7-dossier.png`, fullPage: true });
-    await page.goto("/area/impostazioni");
+    await page.goto("/area-personale/impostazioni");
     await settle(page);
     await page.screenshot({ path: `${dir}/area-8-impostazioni.png`, fullPage: true });
     // Tema scuro
     await page.evaluate(() => localStorage.setItem("rc-theme", "dark"));
-    await page.goto("/area");
+    await page.goto("/area-personale");
     await page.getByRole("list", { name: "Elenco dei referti" }).waitFor();
     await settle(page);
     await page.screenshot({ path: `${dir}/scuro-area-archivio.png`, fullPage: true });
-    await page.goto(`/area/dossier/${dossier.id}`);
+    await page.goto(`/area-personale/dossier/${dossier.id}`);
     await page.getByRole("heading", { name: "Esami confrontabili" }).waitFor({ timeout: 15_000 });
     await settle(page);
     await page.screenshot({ path: `${dir}/scuro-area-dossier.png`, fullPage: true });
@@ -139,7 +135,7 @@ test.describe("screenshots", () => {
     const d = await (await ctx.request.get(`/api/v1/area/documents/${id}`)).json();
     const ids = d.document.extracted.observations.filter((o: { valueRaw: string | null }) => o.valueRaw !== null).map((o: { id: string }) => o.id);
     await ctx.request.post(`/api/v1/area/documents/${id}/verification`, { data: { confirmedObservationIds: ids } });
-    await page.goto(`/area/documenti/${id}`);
+    await page.goto(`/area-personale/documenti/${id}`);
     await page.getByRole("heading", { name: "Scegli il servizio." }).waitFor({ timeout: 15_000 });
     await settle(page);
     await page.screenshot({ path: `${dir}/fase3-1-servizio-pagamento.png`, fullPage: true });
@@ -149,7 +145,7 @@ test.describe("screenshots", () => {
     await settle(page);
     await page.screenshot({ path: `${dir}/fase3-2-pagamento-simulato.png`, fullPage: true });
     await ctx.request.post(`/api/v1/area/orders/${ord.id}/simula`, { data: { esito: "pagato" } });
-    await page.goto("/area/ordini");
+    await page.goto("/area-personale/ordini");
     await page.getByRole("heading", { name: /ordini/i }).waitFor({ timeout: 15_000 });
     await settle(page);
     await page.screenshot({ path: `${dir}/fase3-3-ordini.png`, fullPage: true });
@@ -158,7 +154,7 @@ test.describe("screenshots", () => {
     const r = await (await doc.request.post("/api/v1/auth/demo-ruolo", { data: { role: "physician" } })).json();
     const secret = r.mfaEnabled ? (await (await doc.request.get("/api/v1/auth/mfa/verifica")).json()).secret : (await (await doc.request.post("/api/v1/auth/mfa/setup", { data: {} })).json()).secret;
     await doc.request.post(r.mfaEnabled ? "/api/v1/auth/mfa/verifica" : "/api/v1/auth/mfa/conferma", { data: { code: totpCode(secret) } });
-    await page.goto("/area/secondo-parere");
+    await page.goto("/area-personale/secondo-parere");
     await page.getByRole("heading", { name: "Nuova richiesta" }).waitFor({ timeout: 15_000 });
     await settle(page);
     await page.screenshot({ path: `${dir}/fase3-4-secondo-parere-richiesta.png`, fullPage: true });
@@ -170,7 +166,7 @@ test.describe("screenshots", () => {
     await dp.screenshot({ path: `${dir}/fase3-5-medico-caso.png`, fullPage: true });
     await doc.request.post(`/api/v1/medico/casi/${c.id}`, { data: { kind: "accept" } });
     await doc.request.post(`/api/v1/medico/casi/${c.id}`, { data: { kind: "answer", answer: "Parere dimostrativo: i valori riportati vanno letti con il medico curante, che conosce la storia clinica. Questa risposta è una simulazione e non ha valore clinico.", confirmResponsibility: true } });
-    await page.goto(`/area/secondo-parere/${c.id}`);
+    await page.goto(`/area-personale/secondo-parere/${c.id}`);
     await page.getByRole("heading", { name: "Parere", exact: true }).waitFor({ timeout: 15_000 });
     await settle(page);
     await page.screenshot({ path: `${dir}/fase3-6-parere-firmato.png`, fullPage: true });

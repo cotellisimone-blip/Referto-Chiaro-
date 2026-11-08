@@ -1,6 +1,8 @@
-# Referto Chiaro
+# Cura Privata
 
-Piattaforma per rendere comprensibili i referti di laboratorio: valori riportati fedelmente, spiegazioni in linguaggio comune, domande da portare al medico. **Uno strumento di comprensione, non una diagnosi.**
+Marchio ombrello per servizi di salute digitali. Il primo servizio, **«Comprendi i tuoi referti»**, rende comprensibili i referti di laboratorio: valori riportati fedelmente, spiegazioni in linguaggio comune, domande da portare al medico. **Uno strumento informativo, non una diagnosi.** Secondo parere medico, archivio salute, visite e prevenzione sono pagine «In preparazione» con lista d'attesa.
+
+> Nato come «Referto Chiaro»: il rebrand dell'8/11/2026 è documentato in [`docs/cura-privata/`](docs/cura-privata/) (audit, matrice vecchio→nuovo, stato delle funzioni, blocchi legali e clinici, design system, test, confronto con i mockup).
 
 > **Stato:** online parte in **modalità demo** (solo referti inventati). Il codice per i servizi reali c'è ed è testato — caricamento cifrato, lettura di PDF e foto, spiegazioni con Claude, email, Stripe live — ma resta spento dietro i gate finché non sono chiusi i requisiti di [`docs/PRODUCTION_GATES.md`](docs/PRODUCTION_GATES.md). Messa online passo per passo: [`docs/DEPLOY.md`](docs/DEPLOY.md). Qualità e sicurezza dell'AI: [`docs/AI_VALUTAZIONE.md`](docs/AI_VALUTAZIONE.md).
 

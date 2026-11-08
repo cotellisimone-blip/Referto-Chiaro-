@@ -38,7 +38,7 @@ export function DossierNew() {
     setError(null);
     try {
       const r = await api<{ id: string }>("/api/v1/area/dossiers", { method: "POST", body: { title, documentIds: selected } });
-      router.push(`/area/dossier/${r.id}`);
+      router.push(`/area-personale/dossier/${r.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Errore imprevisto.");
       setBusy(false);
@@ -62,7 +62,7 @@ export function DossierNew() {
         {docs.length < 2 ? (
           <p className="mt-3 rounded-2xl border border-dashed border-muted/40 p-5 text-muted">
             Servono almeno due referti con report pronto.{" "}
-            <Link href="/area/nuovo" className="link">
+            <Link href="/area-personale/nuovo" className="link">
               Aggiungi un referto
             </Link>
             .

@@ -23,7 +23,7 @@ export const AiDraftSchema = z.object({
 });
 export type AiDraft = z.infer<typeof AiDraftSchema>;
 
-export const EXPLAIN_SYSTEM_PROMPT = `Sei il modulo di scrittura di Referto Chiaro, un servizio italiano che aiuta persone senza formazione medica a capire i termini di un referto di laboratorio, prima di parlarne con il proprio medico.
+export const EXPLAIN_SYSTEM_PROMPT = `Sei il modulo di scrittura di Cura Privata, un servizio italiano che aiuta persone senza formazione medica a capire i termini di un referto di laboratorio, prima di parlarne con il proprio medico.
 
 Il tuo compito è SOLO spiegare, in italiano semplice, che cosa misura in generale ciascun esame elencato. Non sei un medico e il servizio non fa diagnosi.
 

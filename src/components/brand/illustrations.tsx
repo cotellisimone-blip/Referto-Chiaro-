@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 
 /**
- * Sistema di illustrazioni originali di Referto Chiaro.
+ * Sistema di illustrazioni originali di Cura Privata.
  * Tutte usano i token di tema (teal, sage, cream, line, paper) così cambiano con il tema scuro.
  * Linguaggio: fogli di referto con righe "tecniche" che diventano bolle di dialogo leggibili.
  * Nessuna icona medica da stock, nessun robot: solo carta, righe, bolle e segni di spunta.

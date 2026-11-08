@@ -43,7 +43,7 @@ export function DossierView({ dossierId }: { dossierId: string }) {
   async function remove() {
     if (!window.confirm("Eliminare questo dossier? I referti restano.")) return;
     await api(`/api/v1/area/dossiers/${dossierId}`, { method: "DELETE" });
-    router.push("/area/dossier");
+    router.push("/area-personale/dossier");
     router.refresh();
   }
 
@@ -53,7 +53,7 @@ export function DossierView({ dossierId }: { dossierId: string }) {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <Link href="/area/dossier" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-teal hover:underline">
+        <Link href="/area-personale/dossier" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-teal hover:underline">
           <ArrowLeft aria-hidden className="h-4 w-4" /> Tutti i dossier
         </Link>
         <div className="flex items-center gap-3">

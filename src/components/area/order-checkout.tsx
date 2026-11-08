@@ -67,7 +67,7 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
     try {
       const r = await api<{ order: Order }>(`/api/v1/area/orders/${orderId}/simula`, { method: "POST", body: { esito: outcome } });
       setOrder(r.order);
-      if (outcome === "annullato") router.push(order?.documentId ? `/area/documenti/${order.documentId}` : "/area/ordini");
+      if (outcome === "annullato") router.push(order?.documentId ? `/area-personale/documenti/${order.documentId}` : "/area-personale/ordini");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Errore imprevisto.");
     } finally {
@@ -96,7 +96,7 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
       <div role="alert" className="max-w-xl">
         <h1 className="display text-[1.75rem]">Ordine non trovato.</h1>
         <p className="mt-3 text-muted">Questo ordine non esiste o non è tuo.</p>
-        <Link href="/area/ordini" className="btn btn-secondary mt-5">
+        <Link href="/area-personale/ordini" className="btn btn-secondary mt-5">
           Vai ai tuoi ordini
         </Link>
       </div>
@@ -105,11 +105,11 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
   if (error && !order) return <p role="alert" className="text-danger">{error}</p>;
   if (!order) return <div className="h-64 animate-pulse rounded-2xl bg-mist" aria-busy="true" />;
 
-  const back = order.documentId ? `/area/documenti/${order.documentId}` : "/area/ordini";
+  const back = order.documentId ? `/area-personale/documenti/${order.documentId}` : "/area-personale/ordini";
 
   return (
     <div className="max-w-2xl">
-      <Link href="/area/ordini" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-teal hover:underline">
+      <Link href="/area-personale/ordini" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-teal hover:underline">
         <ArrowLeft aria-hidden className="h-4 w-4" /> Tutti gli ordini
       </Link>
       <h1 className="display mt-3 text-[1.75rem] sm:text-[2.25rem]">Il tuo ordine.</h1>

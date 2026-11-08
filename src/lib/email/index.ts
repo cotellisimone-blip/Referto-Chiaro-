@@ -33,7 +33,7 @@ export function getEmailProvider(env: Env = process.env): EmailProvider {
 }
 
 export function emailFrom(env: Env = process.env): string {
-  return env.EMAIL_FROM?.trim() || "Referto Chiaro <no-reply@refertochiaro.it>";
+  return env.EMAIL_FROM?.trim() || "Cura Privata <no-reply@curaprivata.it>";
 }
 
 /** URL pubblico assoluto (per i link nelle email). */

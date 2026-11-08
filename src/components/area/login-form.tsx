@@ -18,7 +18,7 @@ type ConsentKind = (typeof CONSENT_KINDS)[number];
 export function LoginForm({ demoMode }: { demoMode: boolean }) {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get("next")?.startsWith("/area") ? params.get("next")! : "/area";
+  const next = params.get("next")?.startsWith("/area-personale") ? params.get("next")! : "/area-personale";
   const linkError = params.get("errore") === "link";
   const [email, setEmail] = useState("");
   const [consents, setConsents] = useState<Record<ConsentKind, boolean>>({ terms: false, privacy: false, "health-data": false, "subject-declaration": false });
@@ -138,7 +138,7 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
                 <input type="checkbox" checked={consents.privacy} onChange={toggle("privacy")} className="mt-0.5 h-5 w-5 shrink-0 rounded accent-[var(--color-teal)]" />
                 <span>
                   Ho letto l&apos;
-                  <Link href="/privacy" className="link">
+                  <Link href="/privacy-policy" className="link">
                     informativa privacy
                   </Link>
                   .

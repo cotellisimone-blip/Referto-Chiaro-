@@ -35,7 +35,7 @@ export const SERVICES: Service[] = [
       "Riepilogo PDF stampabile",
     ],
     excludes: ["Diagnosi o valutazioni cliniche", "Consigli su terapie o farmaci", "Lettura di immagini (TAC, RM, ecografie)"],
-    exampleHref: "/esempio",
+    exampleHref: "/referti/esempio",
     exampleLabel: "Vedi un esempio",
   },
   {
@@ -72,7 +72,7 @@ export const SERVICES: Service[] = [
       "Parere scritto sotto la responsabilità del medico",
     ],
     excludes: ["Risposte generate dall'intelligenza artificiale", "Urgenze o casi che richiedono una visita in presenza"],
-    exampleHref: "/secondo-parere",
+    exampleHref: "/servizi/secondo-parere",
     exampleLabel: "Scopri come funzionerà",
   },
 ];

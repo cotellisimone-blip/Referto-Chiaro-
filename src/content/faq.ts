@@ -43,7 +43,7 @@ export const FAQ: FaqItem[] = [
   {
     topic: "pagamenti",
     q: "Quanto costa?",
-    a: "Stiamo validando questi prezzi indicativi: Essenziale 9,90 €, Completo 24,90 €, Secondo parere medico da 99 €. Oggi non è possibile acquistare nulla e nessun pagamento viene richiesto.",
+    a: "Il listino non è ancora definito: lo pubblicheremo quando i servizi saranno attivi, sempre prima di qualsiasi richiesta. Oggi non è possibile acquistare nulla e nessun pagamento viene richiesto.",
   },
   {
     topic: "servizio",

@@ -6,11 +6,11 @@ export const contentType = "image/png";
 export default function AppleIcon() {
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#162D39", borderRadius: 40 }}>
-        <svg width="132" height="132" viewBox="2 6 56 58">
-          <path d="M12 10h30l12 12v22a8 8 0 0 1-8 8H30l-12 9v-9h-6a8 8 0 0 1-8-8V18a8 8 0 0 1 8-8z" fill="#ffffff" />
-          <path d="M42 10v8a4 4 0 0 0 4 4h8z" fill="rgba(255,255,255,0.65)" />
-          <path d="M19 31l7 7 13-14" fill="none" stroke="#162D39" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#0C3340", borderRadius: 40 }}>
+        <svg width="132" height="132" viewBox="4 4 56 56">
+          <path d="M49.09 16.61A23 23 0 1 0 49.09 47.39" fill="none" stroke="#ffffff" strokeWidth="8" strokeLinecap="round" />
+          <path d="M31 20C39.5 20 44 26 44 32C44 38 39.5 44 31 44" fill="none" stroke="#7BE0D2" strokeWidth="7" strokeLinecap="round" />
+          <circle cx="31" cy="32" r="3.6" fill="#7BE0D2" />
         </svg>
       </div>
     ),

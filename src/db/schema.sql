@@ -1,4 +1,4 @@
--- Referto Chiaro — schema v1 (PostgreSQL 16 / PGlite)
+-- Cura Privata — schema v1 (PostgreSQL 16 / PGlite)
 -- Ogni tabella con dati personali ha RLS: un utente vede solo le proprie righe.
 -- L'applicazione apre ogni transazione con: SET LOCAL ROLE app_rls; SET LOCAL app.user_id = '<uuid>'.
 
@@ -204,13 +204,16 @@ CREATE TABLE IF NOT EXISTS payment_events (
 CREATE TABLE IF NOT EXISTS waitlist (
   id uuid PRIMARY KEY,
   email text NOT NULL,
-  interest text NOT NULL CHECK (interest IN ('completo', 'secondo-parere', 'strutture')),
+  interest text NOT NULL CHECK (interest IN ('completo', 'secondo-parere', 'strutture', 'archivio', 'visite', 'prevenzione')),
   organization text,
   note text,
   consent_version text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (email, interest)
 );
+-- Cura Privata (8/11/2026): liste d'attesa per i servizi in preparazione. Idempotente sui database esistenti.
+ALTER TABLE waitlist DROP CONSTRAINT IF EXISTS waitlist_interest_check;
+ALTER TABLE waitlist ADD CONSTRAINT waitlist_interest_check CHECK (interest IN ('completo', 'secondo-parere', 'strutture', 'archivio', 'visite', 'prevenzione'));
 
 -- Medici: profilo collegato a un utente con ruolo 'physician'. Verifica a carico dell'admin.
 CREATE TABLE IF NOT EXISTS physicians (

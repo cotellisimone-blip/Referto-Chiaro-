@@ -32,7 +32,7 @@ export interface CaseRow {
 
 export function CaseChip({ status }: { status: string }) {
   const s = CASE_STATUS[status] ?? { label: status, tone: "muted" as const };
-  const tone = { muted: "bg-mist text-muted", teal: "bg-mist text-teal-deep", sage: "bg-sage/15 text-sage-deep", warn: "bg-cream text-warn", danger: "bg-danger/10 text-danger" }[s.tone];
+  const tone = { muted: "bg-mist text-muted", teal: "bg-mist text-teal-deep", sage: "bg-marker-soft text-teal-deep", warn: "bg-cream text-warn", danger: "bg-danger/10 text-danger" }[s.tone];
   return <span className={`chip ${tone}`}>{s.label}</span>;
 }
 
@@ -41,7 +41,7 @@ export function SimulationNotice() {
     <div role="note" className="rounded-2xl border border-dashed border-warn/60 bg-cream p-5">
       <p className="text-sm font-semibold text-ink">Simulazione, non un servizio medico</p>
       <p className="mt-1 text-sm text-ink-soft">
-        In questa versione nessun medico reale risponde: il «medico dimostrativo» serve a mostrare il percorso su referti inventati. Il servizio vero partirà solo dopo i requisiti descritti in <Link href="/secondo-parere" className="link">Secondo parere</Link>.
+        In questa versione nessun medico reale risponde: il «medico dimostrativo» serve a mostrare il percorso su referti inventati. Il servizio vero partirà solo dopo i requisiti descritti in <Link href="/servizi/secondo-parere" className="link">Secondo parere</Link>.
       </p>
     </div>
   );
@@ -80,7 +80,7 @@ export function CasesPage() {
     setError(null);
     try {
       const r = await api<{ id: string }>("/api/v1/area/casi", { method: "POST", body: { documentId, specialty, question, acknowledgeSimulation: ack, consentToShare: share } });
-      router.push(`/area/secondo-parere/${r.id}`);
+      router.push(`/area-personale/secondo-parere/${r.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Errore");
       setBusy(false);
@@ -109,7 +109,7 @@ export function CasesPage() {
                 <CaseChip status={c.status} />
               </div>
               <p className="mt-3 line-clamp-2 text-[0.9375rem] text-ink-soft">{c.question}</p>
-              <Link href={`/area/secondo-parere/${c.id}`} className="btn btn-secondary mt-4 min-h-11 text-sm">
+              <Link href={`/area-personale/secondo-parere/${c.id}`} className="btn btn-secondary mt-4 min-h-11 text-sm">
                 Apri <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
             </li>
@@ -120,7 +120,7 @@ export function CasesPage() {
         <h2 id="nuova-titolo" className="font-serif text-2xl text-ink">Nuova richiesta</h2>
         {docs.length === 0 ? (
           <p className="mt-3 text-muted">
-            Serve un referto con i valori confermati. <Link href="/area/nuovo" className="link">Aggiungi un referto di esempio</Link>.
+            Serve un referto con i valori confermati. <Link href="/area-personale/nuovo" className="link">Aggiungi un referto di esempio</Link>.
           </p>
         ) : (
           <form onSubmit={submit} className="mt-5 space-y-5">
@@ -195,7 +195,7 @@ export function CaseDetail({ caseId }: { caseId: string }) {
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href="/area/secondo-parere" className="link text-sm">← Tutte le richieste</Link>
+        <Link href="/area-personale/secondo-parere" className="link text-sm">← Tutte le richieste</Link>
         <CaseChip status={c.status} />
       </div>
       <div>
@@ -206,7 +206,7 @@ export function CaseDetail({ caseId }: { caseId: string }) {
       <section className="card p-6" aria-labelledby="domanda-titolo">
         <h2 id="domanda-titolo" className="flex items-center gap-2 text-lg font-semibold text-ink"><MessageSquareText aria-hidden className="h-5 w-5 text-teal" /> La tua domanda</h2>
         <p className="mt-3 whitespace-pre-wrap text-ink-soft">{c.question}</p>
-        {c.documentId ? <Link href={`/area/documenti/${c.documentId}`} className="link mt-3 inline-block text-sm">Apri il referto allegato</Link> : null}
+        {c.documentId ? <Link href={`/area-personale/documenti/${c.documentId}`} className="link mt-3 inline-block text-sm">Apri il referto allegato</Link> : null}
       </section>
       {c.status === "answered" || c.status === "closed" ? (
         c.answer ? (

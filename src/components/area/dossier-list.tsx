@@ -40,7 +40,7 @@ export function DossierList() {
           <h1 className="display text-[2rem] sm:text-[2.5rem]">I tuoi dossier</h1>
           <p className="mt-2 max-w-2xl text-muted">Più referti di date diverse in un solo documento ordinato, con i confronti solo tra esami davvero confrontabili.</p>
         </div>
-        <Link href="/area/dossier/nuovo" className="btn btn-primary">
+        <Link href="/area-personale/dossier/nuovo" className="btn btn-primary">
           <FolderPlus aria-hidden className="h-4 w-4" /> Nuovo dossier
         </Link>
       </div>
@@ -59,7 +59,7 @@ export function DossierList() {
               </p>
               {d.errorMessage ? <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{d.errorMessage}</p> : null}
               <div className="mt-auto pt-5">
-                <Link href={`/area/dossier/${d.id}`} className="btn btn-secondary w-full sm:w-auto">
+                <Link href={`/area-personale/dossier/${d.id}`} className="btn btn-secondary w-full sm:w-auto">
                   Apri il dossier <ArrowRight aria-hidden className="h-4 w-4" />
                 </Link>
               </div>

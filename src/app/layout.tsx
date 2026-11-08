@@ -8,22 +8,15 @@ import { DemoRibbon } from "@/components/site/demo-ribbon";
 import { PREFS_INIT_SCRIPT } from "@/lib/prefs-init";
 import "./globals.css";
 
-const fraunces = localFont({
-  src: "./fonts/fraunces-latin-wght-normal.woff2",
-  variable: "--font-fraunces",
-  weight: "300 700",
-  display: "swap",
-});
-
-const dmSans = localFont({
-  src: "./fonts/dm-sans-latin-wght-normal.woff2",
-  variable: "--font-dm-sans",
-  weight: "300 700",
+const manrope = localFont({
+  src: "./fonts/manrope-latin-wght-normal.woff2",
+  variable: "--font-manrope",
+  weight: "200 800",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: { default: "Referto Chiaro — i tuoi referti, finalmente comprensibili", template: "%s · Referto Chiaro" },
+  title: { default: "Cura Privata — i tuoi referti, finalmente comprensibili", template: "%s · Cura Privata" },
   description:
     "Una spiegazione semplice dei referti di laboratorio, un dossier ordinato e le domande giuste per il tuo medico. Uno strumento di comprensione, non una diagnosi.",
   robots: indexingEnabled() ? { index: true, follow: true } : { index: false, follow: false },
@@ -32,14 +25,14 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAFBF9" },
-    { media: "(prefers-color-scheme: dark)", color: "#0F1A20" },
+    { media: "(prefers-color-scheme: light)", color: "#F5FAF8" },
+    { media: "(prefers-color-scheme: dark)", color: "#0B1E26" },
   ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="it" className={`${fraunces.variable} ${dmSans.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="it" className={`${manrope.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: PREFS_INIT_SCRIPT }} />
       </head>

@@ -11,7 +11,7 @@ export function ReviewNotice({ lastUpdated }: { lastUpdated: string }) {
       </p>
       <p className="mt-1 text-sm text-ink-soft">
         Questa guida spiega che cosa misura un esame e come è fatto un referto. Non dice che cosa significa un valore per te: questo può dirlo solo il tuo medico. In caso di urgenza chiama il 112.{" "}
-        <Link href="/sicurezza" className="link">
+        <Link href="/sicurezza-e-privacy" className="link">
           Come lavoriamo
         </Link>
       </p>

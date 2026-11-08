@@ -5,15 +5,13 @@ import { FOOTER_NAV } from "./nav";
 export function SiteFooter() {
   return (
     <footer className="no-print mt-auto border-t border-line bg-paper">
-      <div className="container-rc grid gap-12 py-16 md:grid-cols-[1.4fr_repeat(3,1fr)]">
+      <div className="container-rc grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div className="max-w-sm">
           <Logo withTld />
-          <p className="mt-5 font-serif text-2xl leading-snug text-ink">
-            Non facciamo diagnosi.
-            <br />
-            Facciamo chiarezza.
+          <p className="mt-5 font-serif text-2xl leading-snug text-ink">La tua salute, più chiara e accessibile.</p>
+          <p className="mt-4 text-[1.0625rem] text-muted">
+            Oggi: capire il linguaggio dei referti e preparare le domande per il medico. Gli altri servizi sono in preparazione e lo diciamo chiaramente.
           </p>
-          <p className="mt-4 text-[1.0625rem] text-muted">Uno strumento per capire i referti e arrivare dal medico con le domande giuste.</p>
           <p className="mt-5 inline-flex items-center gap-3 rounded-xl border border-line bg-canvas px-4 py-3 text-[0.9375rem] text-ink">
             <span className="stat-num text-2xl text-danger">112</span>
             <span>In caso di emergenza non usare questo sito: chiama il 112.</span>
@@ -36,8 +34,8 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-line">
         <div className="container-rc flex flex-col gap-2 py-6 text-[0.9375rem] text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 Referto Chiaro · Progetto in fase dimostrativa.</p>
-          <p>Le spiegazioni sono informative e non sostituiscono il parere di un medico.</p>
+          <p>© 2026 Cura Privata · Progetto in fase dimostrativa.</p>
+          <p>Le spiegazioni informative non sostituiscono una valutazione medica.</p>
         </div>
       </div>
     </footer>

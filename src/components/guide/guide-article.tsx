@@ -110,7 +110,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
           <div className="card p-5">
             <p className="text-sm font-semibold text-ink">Vuoi capire il tuo referto?</p>
             <p className="mt-2 text-sm text-muted">Prova la demo su un referto inventato: valori riportati fedelmente, spiegazioni in parole semplici, domande per la visita.</p>
-            <Link href="/esempio" className="btn btn-primary mt-4 w-full">
+            <Link href="/referti/esempio" className="btn btn-primary mt-4 w-full">
               Prova la demo <ArrowRight aria-hidden className="h-4 w-4" />
             </Link>
           </div>

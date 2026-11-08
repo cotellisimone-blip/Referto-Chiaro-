@@ -27,7 +27,7 @@ export function UploadBox() {
       const res = await fetch("/api/v1/area/documents/upload", { method: "POST", body: fd, credentials: "same-origin", cache: "no-store" });
       const data = (await res.json().catch(() => ({}))) as { id?: string; message?: string };
       if (!res.ok || !data.id) throw new Error(data.message ?? "Caricamento non riuscito. Riprova.");
-      router.push(`/area/documenti/${data.id}`);
+      router.push(`/area-personale/documenti/${data.id}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Caricamento non riuscito. Riprova.");
       setBusy(false);

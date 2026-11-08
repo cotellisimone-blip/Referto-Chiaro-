@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   return new Response(Buffer.from(bytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": 'attachment; filename="referto-chiaro-esempio-DEMO.pdf"',
+      "Content-Disposition": 'attachment; filename="cura-privata-esempio-DEMO.pdf"',
       "Cache-Control": "no-store",
     },
   });

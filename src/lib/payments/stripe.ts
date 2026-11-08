@@ -16,7 +16,7 @@ export function stripeProvider(secretKey: string, kind: "stripe-test" | "stripe-
         line_items: [
           {
             quantity: 1,
-            price_data: { currency: order.currency, unit_amount: order.amountCents, product_data: { name: `${name} — Referto Chiaro` } },
+            price_data: { currency: order.currency, unit_amount: order.amountCents, product_data: { name: `${name} — Cura Privata` } },
           },
         ],
         success_url: successUrl,

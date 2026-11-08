@@ -32,7 +32,7 @@ export function RoleGate({ role, title, children }: { role: "physician" | "admin
           <h1 className="display text-2xl">Accesso non consentito</h1>
           <p className="mt-2 text-muted">L&apos;account {me.email} non ha il ruolo di {ROLE_LABEL[role]}.</p>
           <div className="mt-5 flex flex-wrap gap-3">
-            <Link href="/area" className="btn btn-secondary">Vai all&apos;area personale</Link>
+            <Link href="/area-personale" className="btn btn-secondary">Vai all&apos;area personale</Link>
             <LogoutButton onDone={refresh} />
           </div>
         </div>

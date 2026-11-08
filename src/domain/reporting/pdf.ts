@@ -5,17 +5,19 @@ import path from "node:path";
 import type { ExtractedDocument } from "@/domain/extraction/schema";
 import type { Explanation } from "./explanation-schema";
 
-// Palette coerente con i token del sito (src/app/globals.css).
-const INK = rgb(0x16 / 255, 0x2d / 255, 0x39 / 255);
-const TEAL = rgb(0x22 / 255, 0x5f / 255, 0x75 / 255);
-const SAGE = rgb(0x5e / 255, 0x96 / 255, 0x7e / 255);
-const SAGE_DEEP = rgb(0x3e / 255, 0x6e / 255, 0x59 / 255);
-const MUTED = rgb(0x4a / 255, 0x5c / 255, 0x66 / 255);
-const LINE = rgb(0xdb / 255, 0xe6 / 255, 0xe5 / 255);
-const MIST = rgb(0xee / 255, 0xf4 / 255, 0xf2 / 255);
-const CREAM = rgb(0xf4 / 255, 0xec / 255, 0xdc / 255);
+// Palette Cura Privata, coerente con i token del sito (src/app/globals.css). MARKER = menta chiara dietro testo scuro.
+const INK = rgb(0x15 / 255, 0x31 / 255, 0x3c / 255);
+const TEAL = rgb(0x00 / 255, 0x75 / 255, 0x6f / 255);
+const SAGE = rgb(0x00 / 255, 0x8f / 255, 0x87 / 255);
+const SAGE_DEEP = rgb(0x00 / 255, 0x75 / 255, 0x6f / 255);
+const MUTED = rgb(0x4f / 255, 0x67 / 255, 0x6e / 255);
+const LINE = rgb(0xdc / 255, 0xe9 / 255, 0xe7 / 255);
+const MIST = rgb(0xe8 / 255, 0xf4 / 255, 0xf1 / 255);
+const CREAM = rgb(0xf4 / 255, 0xf0 / 255, 0xe6 / 255);
 const WHITE = rgb(1, 1, 1);
-const MARKER = rgb(0xff / 255, 0xe1 / 255, 0x8a / 255);
+const PETROL = rgb(0x0c / 255, 0x33 / 255, 0x40 / 255);
+const MINT = rgb(0x7b / 255, 0xe0 / 255, 0xd2 / 255);
+const MARKER = rgb(0xcf / 255, 0xf3 / 255, 0xec / 255);
 
 const A4 = { w: 595.28, h: 841.89 };
 const M = 56; // margine
@@ -60,7 +62,7 @@ async function loadSiteFonts(): Promise<Fonts | null> {
       try {
         const dir = path.join(process.cwd(), "src/domain/reporting/fonts");
         const [sans, sansBold, serif, serifBold] = await Promise.all(
-          ["dm-sans-400.ttf", "dm-sans-600.ttf", "fraunces-400.ttf", "fraunces-600.ttf"].map((f) => readFile(path.join(dir, f))),
+          ["manrope-400.ttf", "manrope-600.ttf", "manrope-700.ttf", "manrope-700.ttf"].map((f) => readFile(path.join(dir, f))),
         );
         return { sans, sansBold, serif, serifBold };
       } catch {
@@ -126,15 +128,12 @@ function heading(ctx: Ctx, n: number, s: string) {
 }
 
 function drawMark(page: PDFPage, x: number, y: number, scale: number, inverse = false) {
-  // Simbolo: bolla di dialogo-documento con check (stessa geometria del logo SVG, viewBox 64).
-  page.drawSvgPath("M12 10h30l12 12v22a8 8 0 0 1-8 8H30l-12 9v-9h-6a8 8 0 0 1-8-8V18a8 8 0 0 1 8-8z", {
-    x,
-    y,
-    scale,
-    color: inverse ? WHITE : TEAL,
-  });
-  page.drawSvgPath("M42 10v8a4 4 0 0 0 4 4h8z", { x, y, scale, color: inverse ? MIST : SAGE });
-  page.drawSvgPath("M19 31l7 7 13-14", { x, y, scale, borderColor: inverse ? INK : WHITE, borderWidth: 4.5, borderLineCap: 1 });
+  // Simbolo Cura Privata (stessa geometria del logo SVG, viewBox 64): «C» aperta, curva interna, punto di menta.
+  const outer = inverse ? WHITE : PETROL;
+  const inner = inverse ? MINT : SAGE;
+  page.drawSvgPath("M49.09 16.61A23 23 0 1 0 49.09 47.39", { x, y, scale, borderColor: outer, borderWidth: 8, borderLineCap: 1 });
+  page.drawSvgPath("M31 20C39.5 20 44 26 44 32C44 38 39.5 44 31 44", { x, y, scale, borderColor: inner, borderWidth: 7, borderLineCap: 1 });
+  page.drawCircle({ x: x + 31 * scale, y: y - 32 * scale, size: 3.6 * scale, color: MINT });
 }
 
 function formatDateIt(iso: string): string {
@@ -158,10 +157,10 @@ export async function renderReportPdf(args: {
 }): Promise<Uint8Array> {
   const { document: doc, explanation: exp, generatedAt } = args;
   const pdf = await PDFDocument.create();
-  pdf.setTitle(toWinAnsi(`Referto Chiaro — ${doc.isSynthetic ? "ESEMPIO DEMO" : "Report"}`));
-  pdf.setAuthor("Referto Chiaro");
+  pdf.setTitle(toWinAnsi(`Cura Privata — Comprendi i tuoi referti — ${doc.isSynthetic ? "ESEMPIO DEMO" : "Report"}`));
+  pdf.setAuthor("Cura Privata");
   pdf.setSubject("Spiegazione informativa, non clinica");
-  pdf.setProducer("Referto Chiaro");
+  pdf.setProducer("Cura Privata");
   pdf.setCreationDate(new Date(generatedAt));
 
   const fonts = await loadSiteFonts();
@@ -188,7 +187,7 @@ export async function renderReportPdf(args: {
 
   // ── Copertina editoriale (prima pagina) ──────────────────────────────────
   const coverH = 300;
-  ctx.page.drawRectangle({ x: 0, y: A4.h - coverH, width: A4.w, height: coverH, color: INK });
+  ctx.page.drawRectangle({ x: 0, y: A4.h - coverH, width: A4.w, height: coverH, color: PETROL });
   // Trama di "righe di referto" in trasparenza sulla copertina
   for (let r = 0; r < 7; r++) {
     for (let c = 0; c < 3; c++) {
@@ -204,15 +203,15 @@ export async function renderReportPdf(args: {
     }
   }
   drawMark(ctx.page, M - 2, A4.h - M + 2, 0.5, true);
-  ctx.page.drawText("Referto", { x: M + 32, y: A4.h - M - 20, size: 15, font: serif, color: WHITE });
-  ctx.page.drawText("Chiaro", { x: M + 32 + serif.widthOfTextAtSize("Referto", 15), y: A4.h - M - 20, size: 15, font: serif, color: MIST });
+  ctx.page.drawText("Cura ", { x: M + 32, y: A4.h - M - 20, size: 15, font: serif, color: WHITE });
+  ctx.page.drawText("Privata", { x: M + 32 + serif.widthOfTextAtSize("Cura ", 15), y: A4.h - M - 20, size: 15, font: serif, color: MINT });
 
   let cy = A4.h - M - 76;
   if (ctx.demo) {
     pill(ctx.page, M, cy, toWinAnsi("ESEMPIO DIMOSTRATIVO · DATI SINTETICI · NON È UN DOCUMENTO MEDICO"), sansBold, CREAM, INK);
     cy -= 34;
   }
-  // Titolo in due righe: "in parole semplici" ha l'evidenziatore, la firma visiva del sito.
+  // Titolo in due righe: "in parole semplici" ha la traccia di menta, la firma visiva del sito.
   const titleLines = ["Il tuo referto,", "in parole semplici"];
   titleLines.forEach((l, i) => {
     if (i === 1) {
@@ -352,7 +351,7 @@ export async function renderReportPdf(args: {
     p.drawText(label, { x: A4.w - M - sans.widthOfTextAtSize(label, 7.5), y: M - 14, size: 7.5, font: sans, color: MUTED });
     if (i > 0) {
       drawMark(p, M - 2, A4.h - M + 10, 0.32);
-      p.drawText("Referto Chiaro", { x: M + 20, y: A4.h - M + 2, size: 8.5, font: serif, color: MUTED });
+      p.drawText("Cura Privata · Comprendi i tuoi referti", { x: M + 20, y: A4.h - M + 2, size: 8.5, font: serif, color: MUTED });
       ctx.y = Math.min(ctx.y, A4.h - M);
     }
   });

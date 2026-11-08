@@ -1,30 +1,36 @@
+/** Navigazione Cura Privata (mappa del kit 8/11/2026). I prezzi non sono in menu finché il listino non è approvato. */
 export const MAIN_NAV = [
+  { href: "/referti", label: "Referti" },
+  { href: "/servizi/secondo-parere", label: "Secondo parere" },
+  { href: "/servizi", label: "Servizi" },
   { href: "/come-funziona", label: "Come funziona" },
-  { href: "/servizi-prezzi", label: "Servizi & Prezzi" },
-  { href: "/secondo-parere", label: "Secondo parere" },
-  { href: "/guide", label: "Guide" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/sicurezza-e-privacy", label: "Sicurezza" },
+  { href: "/domande-frequenti", label: "FAQ" },
 ] as const;
 
 export const FOOTER_NAV = {
-  Servizio: [
-    { href: "/esempio", label: "Referto di esempio" },
-    { href: "/accedi", label: "Area personale" },
-    { href: "/come-funziona", label: "Come funziona" },
-    { href: "/servizi-prezzi", label: "Servizi & Prezzi" },
-    { href: "/secondo-parere", label: "Secondo parere medico" },
-    { href: "/faq", label: "Domande frequenti" },
-    { href: "/per-le-strutture", label: "Per le strutture" },
+  Servizi: [
+    { href: "/referti", label: "Comprendi i tuoi referti" },
+    { href: "/referti/esempio", label: "Referto di esempio" },
+    { href: "/servizi/secondo-parere", label: "Secondo parere medico" },
+    { href: "/servizi/archivio", label: "Archivio salute" },
+    { href: "/servizi/visite-e-consulti", label: "Visite e videoconsulti" },
+    { href: "/servizi/prevenzione", label: "Prevenzione" },
+    { href: "/guide", label: "Guide agli esami" },
   ],
-  "Chi siamo": [
-    { href: "/chi-siamo", label: "Il progetto" },
-    { href: "/sicurezza", label: "Sicurezza dei dati" },
+  "Cura Privata": [
+    { href: "/chi-siamo", label: "Chi siamo" },
+    { href: "/come-funziona", label: "Come funziona" },
+    { href: "/sicurezza-e-privacy", label: "Sicurezza e privacy" },
+    { href: "/domande-frequenti", label: "Domande frequenti" },
+    { href: "/per-le-strutture", label: "Per le strutture" },
     { href: "/accessibilita", label: "Accessibilità" },
     { href: "/contatti", label: "Contatti" },
   ],
   "Note legali": [
-    { href: "/privacy", label: "Privacy" },
+    { href: "/privacy-policy", label: "Privacy" },
+    { href: "/cookie-policy", label: "Cookie" },
     { href: "/termini", label: "Termini del servizio" },
-    { href: "/cookie", label: "Cookie" },
+    { href: "/accedi", label: "Area personale" },
   ],
 } as const;

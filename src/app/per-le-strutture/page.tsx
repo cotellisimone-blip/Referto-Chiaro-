@@ -56,7 +56,7 @@ export default function PerLeStrutturePage() {
         </ul>
         <p className="mt-8 text-muted">
           Lo stato dei controlli è descritto nella pagina{" "}
-          <Link href="/sicurezza" className="link">
+          <Link href="/sicurezza-e-privacy" className="link">
             sicurezza dei dati
           </Link>
           .

@@ -1,17 +1,20 @@
 import Link from "next/link";
-import { ArrowRight, BookOpenText, FileCheck2, ListChecks, Lock, MessageSquareText, ScanSearch, ShieldOff, Stethoscope } from "lucide-react";
+import { ArrowRight, BookOpenText, Check, FileCheck2, ListChecks, Lock, MessageSquareText, ScanSearch, ShieldOff, Stethoscope, UserRound, X } from "lucide-react";
 import { HeroDocument } from "@/components/demo/hero-document";
-import { DocumentLinesPattern, IllustrationDialogue, IllustrationMagnify, IllustrationTranslate } from "@/components/brand/illustrations";
+import { IllustrationDialogue, IllustrationMagnify, IllustrationTranslate } from "@/components/brand/illustrations";
 import { Reveal } from "@/components/ui/reveal";
-import { ServiceCards } from "@/components/ui/service-cards";
+import { EcosystemCards } from "@/components/ui/ecosystem-cards";
+import { FaqList } from "@/components/ui/faq-list";
+import { FAQ } from "@/content/faq";
 import { ReportAnatomy } from "@/components/ui/report-anatomy";
 import { GUIDES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 
 /*
- * Home «da ricordare»: poche sezioni, frasi brevi, testo grande, una sola azione per volta.
- * Pensata per chi non ha dimestichezza con i referti e legge dallo smartphone.
- * Firma visiva del giro 3: l'evidenziatore. Il prodotto evidenzia una riga e la spiega; il sito fa lo stesso.
+ * Home di Cura Privata, marchio ombrello. In 5 secondi deve dire che cosa fa OGGI (capire i referti)
+ * senza vendere come disponibili i servizi futuri, che compaiono con l'etichetta «In preparazione».
+ * Testo grande, frasi brevi, una sola azione per volta: pensata anche per chi legge dallo smartphone.
+ * Firma visiva: la traccia di menta e la curva del simbolo.
  */
 
 const STEPS = [
@@ -39,66 +42,135 @@ const FEATURED_GUIDES = [
 ];
 
 export default function Home() {
+  const faqs = FAQ.slice(0, 5);
   return (
     <>
       {/* HERO */}
       <section aria-labelledby="hero-titolo" className="grain relative overflow-hidden">
-        <div aria-hidden className="dots dots-fade absolute inset-x-0 top-0 -z-10 h-[760px] opacity-70" />
-        <div aria-hidden className="glow-cream absolute -left-40 top-24 -z-10 h-[520px] w-[520px] rounded-full" />
-        <div aria-hidden className="glow-teal absolute -right-32 top-10 -z-10 h-[620px] w-[620px] rounded-full" />
-        <div className="container-rc grid items-center gap-14 pb-16 pt-12 sm:pt-16 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16 lg:pb-28 lg:pt-24">
+        <div aria-hidden className="dots dots-fade absolute inset-x-0 top-0 -z-10 h-[760px] opacity-60" />
+        <div aria-hidden className="glow-teal absolute -right-32 top-0 -z-10 h-[680px] w-[680px] rounded-full" />
+        <div className="container-rc grid items-center gap-14 pb-16 pt-12 sm:pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:pb-24 lg:pt-20">
           <div className="max-w-2xl">
-            <p className="eyebrow rise-in">Per chi ha un referto in mano</p>
+            <p className="eyebrow rise-in">Il tuo spazio personale per la salute</p>
             <h1 id="hero-titolo" className="display-xl rise-in mt-5 text-ink">
-              Il tuo referto,
-              <br />
-              finalmente <span className="marker marker-animate">chiaro</span>.
+              La tua salute, <span className="marker marker-animate">più chiara</span> e accessibile.
             </h1>
-            <p className="rise-in-2 mt-7 max-w-xl text-xl text-ink-soft sm:text-2xl sm:leading-snug">
-              Sigle, numeri, asterischi. Li spieghiamo con parole di tutti i giorni e ti prepariamo le domande per il tuo medico.
+            <p className="rise-in-2 mt-7 max-w-xl text-xl text-ink-soft sm:text-[1.375rem] sm:leading-snug">
+              Comprendi meglio il linguaggio dei tuoi referti e prepara le domande per il tuo medico, in uno spazio semplice e riservato.
             </p>
             <div className="rise-in-3 mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-              <Link href="/esempio" className="btn btn-primary btn-lg sm:whitespace-nowrap">
-                Esplora un referto di esempio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              <Link href="/referti/esempio" className="btn btn-primary btn-lg sm:whitespace-nowrap">
+                Prova la demo <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
               <Link href="/come-funziona" className="btn btn-secondary btn-lg sm:whitespace-nowrap">
                 Come funziona
               </Link>
             </div>
-            <p className="rise-in-3 mt-8 flex max-w-lg items-start gap-3 text-[1.0625rem] text-ink-soft">
-              <span aria-hidden className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-sage" />
-              <span>
-                <strong className="font-semibold text-ink">Non facciamo diagnosi: facciamo chiarezza.</strong> Due minuti, nessuna registrazione, nessun dato personale.
-              </span>
-            </p>
+            <ul className="rise-in-3 mt-9 grid max-w-xl gap-x-6 gap-y-3 text-[1.0625rem] text-ink-soft sm:grid-cols-2">
+              {["Su referti inventati, senza registrarti", "Nessun dato personale richiesto", "I numeri restano quelli del documento", "Le conclusioni restano al medico"].map((t) => (
+                <li key={t} className="flex items-start gap-2.5">
+                  <span aria-hidden className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-marker-soft">
+                    <Check className="h-3.5 w-3.5 text-teal-deep" />
+                  </span>
+                  {t}
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="tilt-in">
-            <HeroDocument />
+          <div className="relative">
+            <svg aria-hidden viewBox="0 0 64 64" className="float-slower pointer-events-none absolute -right-16 -top-12 -z-10 hidden h-[560px] w-[560px] opacity-60 lg:block">
+              <path d="M49.09 16.61A23 23 0 1 0 49.09 47.39" fill="none" stroke="var(--color-marker)" strokeWidth="2.2" strokeLinecap="round" />
+              <path d="M31 20C39.5 20 44 26 44 32C44 38 39.5 44 31 44" fill="none" stroke="var(--color-marker-soft)" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+            <div className="tilt-in">
+              <HeroDocument />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FATTI, NON PROMESSE */}
-      <section aria-label="In sintesi" className="border-y border-line/70 bg-paper">
+      {/* CONFINE CHIARO, SUBITO */}
+      <section aria-label="Che cosa fa oggi Cura Privata" className="border-y border-line/70 bg-paper">
+        <div className="container-rc flex flex-col gap-3 py-5 text-[1.0625rem] sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-ink">
+            <strong className="font-bold">Oggi Cura Privata fa una cosa:</strong> ti aiuta a capire i referti di laboratorio. Gli altri servizi sono in preparazione.
+          </p>
+          <p className="flex items-center gap-2 text-muted">
+            <MessageSquareText aria-hidden className="h-5 w-5 shrink-0 text-teal" />
+            Le spiegazioni informative non sostituiscono una valutazione medica.
+          </p>
+        </div>
+      </section>
+
+      {/* SERVIZI */}
+      <section id="servizi" aria-labelledby="servizi-titolo" className="py-20 sm:py-28">
         <div className="container-rc">
-          <ul className="grid divide-y divide-line/70 sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4">
-            {[
-              [`${GUIDES.length}`, "guide agli esami", "scritte in parole semplici, con le fonti", "/guide"],
-              [`${GLOSSARY.length}`, "termini nel glossario", "le sigle del referto, una per una", "/glossario"],
-              ["0", "numeri cambiati", "ogni valore resta identico al documento", "/come-funziona"],
-              ["1", "regola fissa", "le conclusioni restano al tuo medico", "/come-funziona#limiti"],
-            ].map(([n, label, text, href], i) => (
-              <li key={label} className={i % 2 ? "sm:border-l sm:border-line/70" : i ? "lg:border-l lg:border-line/70" : ""}>
-                <Link href={href} className="group flex h-full items-baseline gap-4 px-2 py-6 sm:px-6 lg:py-8">
-                  <span className="stat-num text-[3rem] text-teal sm:text-[3.5rem]">{n}</span>
-                  <span className="min-w-0">
-                    <span className="block text-lg font-semibold text-ink group-hover:text-teal">{label}</span>
-                    <span className="block text-[0.9375rem] text-muted">{text}</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="eyebrow">I servizi di Cura Privata</p>
+              <h2 id="servizi-titolo" className="display-lg mt-4">
+                Si comincia dai referti. <span className="serif-italic">Il resto arriverà.</span>
+              </h2>
+            </div>
+            <p className="max-w-md text-lg text-muted">Ogni servizio dice il suo stato reale. Quelli in preparazione non raccolgono dati sanitari: puoi solo chiedere di essere avvisato.</p>
+          </div>
+          <div className="mt-12">
+            <EcosystemCards />
+          </div>
+        </div>
+      </section>
+
+      {/* DAL REFERTO ALLE DOMANDE GIUSTE */}
+      <section id="prima-dopo" aria-labelledby="prima-dopo-titolo" className="grain relative overflow-hidden bg-mist py-20 sm:py-28">
+        <div className="container-rc">
+          <div className="max-w-2xl">
+            <p className="eyebrow">Dal referto alle domande giuste</p>
+            <h2 id="prima-dopo-titolo" className="display-lg mt-4">
+              Lo stesso dato, <span className="marker">finalmente leggibile</span>.
+            </h2>
+          </div>
+          <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-[1fr_auto_1fr_auto_0.9fr]">
+            <Reveal className="sheet doc-paper flex flex-col p-6 sm:p-8">
+              <p className="flex items-center justify-between gap-3 text-[1.0625rem] font-semibold text-ink">
+                Nel referto <span className="chip bg-cream text-ink">Esempio inventato</span>
+              </p>
+              <p className="tabular mt-8 font-mono text-lg leading-9 text-ink">
+                <span className="marker marker-thick">Emoglobina glicata (HbA1c) &nbsp; 5,1 % &nbsp; [4,0 - 5,6]</span>
+              </p>
+              <p className="tabular mt-2 font-mono text-lg leading-9 text-muted">Colesterolo LDL &nbsp; 134 mg/dL &nbsp; [&lt; 115]</p>
+              <p className="mt-auto pt-6 text-[1.0625rem] text-muted">Pagina 1, riga 5</p>
+            </Reveal>
+            <div aria-hidden className="flex items-center justify-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-strong text-on-strong shadow-[var(--shadow-lift)]">
+                <ArrowRight className="h-6 w-6 rotate-90 lg:rotate-0" />
+              </span>
+            </div>
+            <Reveal delay={140} className="card flex flex-col p-6 sm:p-8">
+              <p className="eyebrow">In parole semplici</p>
+              <p className="mt-5 text-[1.375rem] font-semibold leading-snug text-ink">
+                L&apos;emoglobina glicata racconta l&apos;andamento medio dello zucchero nel sangue nelle ultime settimane, non solo il giorno del prelievo.
+              </p>
+              <p className="mt-5 text-[1.0625rem] text-ink-soft">
+                Il valore è <strong className="tabular text-ink">5,1 %</strong>, dentro l&apos;intervallo stampato dal laboratorio. Che cosa significa per te lo dice il medico.
+              </p>
+            </Reveal>
+            <div aria-hidden className="flex items-center justify-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-strong text-on-strong shadow-[var(--shadow-lift)]">
+                <ArrowRight className="h-6 w-6 rotate-90 lg:rotate-0" />
+              </span>
+            </div>
+            <Reveal delay={280} className="card flex flex-col border-teal/30 bg-[linear-gradient(180deg,var(--color-marker-soft),var(--color-paper))] p-6 sm:p-8">
+              <p className="eyebrow">Da chiedere al medico</p>
+              <ul className="mt-5 space-y-4 text-[1.125rem] font-medium text-ink">
+                <li className="flex gap-3">
+                  <span aria-hidden className="mt-0.5 font-bold text-teal">?</span>Con la mia storia, ogni quanto conviene ripetere questo esame?
+                </li>
+                <li className="flex gap-3">
+                  <span aria-hidden className="mt-0.5 font-bold text-teal">?</span>Il colesterolo LDL sopra il riferimento richiede attenzione nel mio caso?
+                </li>
+              </ul>
+            </Reveal>
+          </div>
         </div>
       </section>
 
@@ -108,19 +180,19 @@ export default function Home() {
           <div className="max-w-2xl">
             <p className="eyebrow">Come funziona</p>
             <h2 id="metodo-titolo" className="display-lg mt-4">
-              Tre passi. <span className="serif-italic text-teal">Nessuna</span> sorpresa.
+              Tre passi. <span className="serif-italic">Nessuna</span> sorpresa.
             </h2>
           </div>
           <ol className="mt-14 grid gap-6 lg:grid-cols-3 lg:gap-8">
             {STEPS.map(({ n, Art, icon: Icon, title, text }, i) => (
               <Reveal as="li" key={n} delay={i * 140} className="card card-lift relative flex flex-col overflow-hidden p-7 sm:p-8">
                 <div className="flex items-start justify-between">
-                  <span aria-hidden className="num text-[4.5rem] text-sage">{n}</span>
-                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-mist">
+                  <span aria-hidden className="num text-[4rem] text-sage">{n}</span>
+                  <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-mist">
                     <Icon aria-hidden className="h-7 w-7 text-teal" />
                   </span>
                 </div>
-                <h3 className="mt-5 font-serif text-[1.75rem] leading-tight text-ink">
+                <h3 className="mt-5 text-[1.625rem] font-bold leading-tight tracking-[-0.015em] text-ink">
                   <span className="sr-only">Passo {i + 1}: </span>
                   {title}
                 </h3>
@@ -132,54 +204,15 @@ export default function Home() {
             ))}
           </ol>
           <div className="mt-12 text-center">
-            <Link href="/esempio" className="btn btn-primary btn-lg">
-              Prova con un esempio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+            <Link href="/referti/esempio" className="btn btn-primary btn-lg">
+              Prova con un referto di esempio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* PRIMA / DOPO */}
-      <section id="prima-dopo" aria-labelledby="prima-dopo-titolo" className="grain relative overflow-hidden bg-mist py-20 sm:py-28">
-        <div className="container-rc">
-          <div className="max-w-2xl">
-            <p className="eyebrow">Prima e dopo</p>
-            <h2 id="prima-dopo-titolo" className="display-lg mt-4">
-              Lo stesso dato, <span className="marker">finalmente leggibile</span>.
-            </h2>
-          </div>
-          <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-[1fr_auto_1fr]">
-            <Reveal className="sheet doc-paper flex flex-col p-6 sm:p-8">
-              <p className="flex items-center justify-between gap-3 text-[1.0625rem] font-semibold text-ink">
-                Nel referto <span className="chip bg-cream text-ink">Esempio inventato</span>
-              </p>
-              <p className="tabular mt-8 font-mono text-lg leading-9 text-ink sm:text-xl">
-                <span className="marker marker-thick">Emoglobina glicata (HbA1c) &nbsp; 5,1 % &nbsp; [4,0 - 5,6]</span>
-              </p>
-              <p className="tabular mt-2 font-mono text-lg leading-9 text-muted/60 sm:text-xl">Colesterolo LDL &nbsp; 134 mg/dL &nbsp; [&lt; 115]</p>
-              <p className="mt-auto pt-6 text-[1.0625rem] text-muted">Pagina 1, riga 5</p>
-            </Reveal>
-            <div aria-hidden className="flex items-center justify-center lg:px-2">
-              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-strong text-on-strong shadow-[var(--shadow-lift)]">
-                <ArrowRight className="h-7 w-7 rotate-90 lg:rotate-0" />
-              </span>
-            </div>
-            <Reveal delay={160} className="card flex flex-col p-6 sm:p-8">
-              <p className="eyebrow">In parole semplici</p>
-              <p className="mt-5 font-serif text-2xl leading-snug text-ink sm:text-[1.75rem]">
-                L&apos;emoglobina glicata racconta l&apos;andamento medio dello zucchero nel sangue nelle ultime settimane, non solo il giorno del prelievo.
-              </p>
-              <p className="mt-5 text-[1.0625rem] text-ink-soft">
-                Il valore è <strong className="tabular text-ink">5,1 %</strong>, dentro l&apos;intervallo stampato dal laboratorio. Che cosa significa per te lo dice il medico.
-              </p>
-              <span aria-hidden className="reveal-bar mt-6 h-1.5 w-24 origin-left rounded-full bg-[linear-gradient(90deg,var(--color-teal),var(--color-sage))]" />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
       {/* COSA RICEVI */}
-      <section id="cosa-ricevi" aria-labelledby="cosa-ricevi-titolo" className="overflow-hidden py-20 sm:py-28">
+      <section id="cosa-ricevi" aria-labelledby="cosa-ricevi-titolo" className="overflow-hidden bg-paper py-20 sm:py-28">
         <div className="container-rc grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>
             <p className="eyebrow">Che cosa ricevi</p>
@@ -196,13 +229,13 @@ export default function Home() {
                 <li key={t} className="flex gap-4">
                   <span className="num mt-0.5 w-10 shrink-0 text-[1.75rem] text-sage">0{i + 1}</span>
                   <span>
-                    <span className="block text-xl font-semibold text-ink">{t}</span>
+                    <span className="block text-xl font-bold text-ink">{t}</span>
                     <span className="block text-lg text-ink-soft">{d}</span>
                   </span>
                 </li>
               ))}
             </ul>
-            <Link href="/esempio" className="btn btn-secondary btn-lg mt-10">
+            <Link href="/referti/esempio" className="btn btn-secondary btn-lg mt-10">
               Vedi il foglio di esempio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
             </Link>
           </div>
@@ -210,6 +243,61 @@ export default function Home() {
             <div aria-hidden className="glow-teal absolute -inset-10 -z-10 rounded-full" />
             <ReportAnatomy />
           </Reveal>
+        </div>
+      </section>
+
+      {/* SPIEGAZIONE INFORMATIVA ≠ MEDICO */}
+      <section id="ai-e-medico" aria-labelledby="ai-medico-titolo" className="py-20 sm:py-28">
+        <div className="container-rc">
+          <div className="max-w-2xl">
+            <p className="eyebrow">Un confine netto</p>
+            <h2 id="ai-medico-titolo" className="display-lg mt-4">
+              Una spiegazione aiuta a capire. <span className="serif-italic">Solo un medico valuta.</span>
+            </h2>
+          </div>
+          <div className="mt-12 grid gap-5 lg:grid-cols-2">
+            <Reveal className="card p-7 sm:p-8">
+              <div className="flex items-center gap-4">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-mist">
+                  <BookOpenText aria-hidden className="h-7 w-7 text-teal" />
+                </span>
+                <h3 className="text-[1.5rem] font-bold leading-tight text-ink">La spiegazione informativa</h3>
+              </div>
+              <ul className="mt-6 space-y-3 text-lg">
+                {["Spiega che cosa misura un esame e che cosa vogliono dire le sigle", "Riporta i valori esattamente come nel documento, con la riga di origine", "Ti aiuta a preparare le domande per la visita"].map((t) => (
+                  <li key={t} className="flex gap-3 text-ink-soft">
+                    <Check aria-hidden className="mt-1 h-5 w-5 shrink-0 text-teal" />
+                    {t}
+                  </li>
+                ))}
+                {["Non dice se stai bene o male", "Non suggerisce terapie, farmaci o esami"].map((t) => (
+                  <li key={t} className="flex gap-3 text-ink-soft">
+                    <X aria-hidden className="mt-1 h-5 w-5 shrink-0 text-danger" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+            <Reveal delay={140} className="card p-7 sm:p-8">
+              <div className="flex items-center gap-4">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-strong">
+                  <UserRound aria-hidden className="h-7 w-7 text-on-strong" />
+                </span>
+                <h3 className="text-[1.5rem] font-bold leading-tight text-ink">Il tuo medico</h3>
+              </div>
+              <ul className="mt-6 space-y-3 text-lg">
+                {["Conosce la tua storia, i farmaci, gli esami precedenti", "Valuta i risultati e decide se servono altri controlli", "È l'unico che può fare una diagnosi o indicare una cura"].map((t) => (
+                  <li key={t} className="flex gap-3 text-ink-soft">
+                    <Check aria-hidden className="mt-1 h-5 w-5 shrink-0 text-teal" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-6 rounded-xl bg-mist px-4 py-3 text-[1.0625rem] text-ink">
+                Il <Link href="/servizi/secondo-parere" className="link">secondo parere</Link> di Cura Privata, quando partirà, sarà scritto da un medico abilitato e identificato. Mai da un&apos;intelligenza artificiale.
+              </p>
+            </Reveal>
+          </div>
         </div>
       </section>
 
@@ -225,11 +313,11 @@ export default function Home() {
           <ul className="mt-14 grid gap-5 sm:grid-cols-2">
             {PROMISES.map(({ icon: Icon, title, text }, i) => (
               <Reveal as="li" key={title} delay={i * 90} className="card card-lift flex gap-5 p-6 sm:p-7">
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-mist">
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-mist">
                   <Icon aria-hidden className="h-7 w-7 text-teal" />
                 </span>
                 <div>
-                  <h3 className="text-xl font-semibold text-ink">{title}</h3>
+                  <h3 className="text-xl font-bold text-ink">{title}</h3>
                   <p className="mt-1 text-lg text-ink-soft">{text}</p>
                 </div>
               </Reveal>
@@ -244,29 +332,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SERVIZI */}
-      <section id="servizi" aria-labelledby="servizi-titolo" className="py-20 sm:py-28">
-        <div className="container-rc">
-          <div className="max-w-2xl">
-            <p className="eyebrow">Servizi</p>
-            <h2 id="servizi-titolo" className="display-lg mt-4">
-              Scegli quanta chiarezza ti serve.
-            </h2>
-            <p className="mt-4 text-lg text-muted">Prezzi indicativi, in fase di validazione. Oggi puoi provare solo l&apos;esempio.</p>
-          </div>
-          <div className="mt-14">
-            <ServiceCards />
-          </div>
-          <div className="mt-8 text-center">
-            <Link href="/servizi-prezzi" className="btn btn-ghost">
-              Confronta i servizi nel dettaglio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* GUIDE */}
-      <section id="guide" aria-labelledby="guide-titolo" className="border-y border-line/70 bg-paper py-20 sm:py-28">
+      <section id="guide" aria-labelledby="guide-titolo" className="py-20 sm:py-28">
         <div className="container-rc grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           <div>
             <p className="eyebrow">Gratis, per tutti</p>
@@ -298,29 +365,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MANIFESTO + CTA FINALE */}
+      {/* FAQ */}
+      <section id="domande" aria-labelledby="faq-titolo" className="border-t border-line/70 bg-paper py-20 sm:py-28">
+        <div className="container-rc grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <div>
+            <p className="eyebrow">Domande frequenti</p>
+            <h2 id="faq-titolo" className="display-lg mt-4">
+              Le risposte, prima di cominciare.
+            </h2>
+            <Link href="/domande-frequenti" className="btn btn-secondary mt-8">
+              Tutte le domande <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+            </Link>
+          </div>
+          <FaqList items={faqs} />
+        </div>
+      </section>
+
+      {/* CTA FINALE */}
       <section aria-labelledby="cta-titolo" className="py-20 sm:py-28">
         <div className="container-rc">
           <div className="grain relative overflow-hidden rounded-[var(--radius-xl)] bg-strong px-6 py-16 text-on-strong sm:px-14 sm:py-24">
-            <DocumentLinesPattern className="text-on-strong opacity-[0.07] [mask-image:linear-gradient(90deg,transparent_35%,black)]" />
-            <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgb(255_255_255/0.12),transparent)]" />
+            <svg aria-hidden viewBox="0 0 64 64" className="pointer-events-none absolute -right-24 -top-16 h-[520px] w-[520px] opacity-25">
+              <path d="M49.09 16.61A23 23 0 1 0 49.09 47.39" fill="none" stroke="#7be0d2" strokeWidth="3" strokeLinecap="round" />
+              <path d="M31 20C39.5 20 44 26 44 32C44 38 39.5 44 31 44" fill="none" stroke="#7be0d2" strokeWidth="2.4" strokeLinecap="round" />
+            </svg>
             <div className="relative max-w-3xl">
-              <p className="eyebrow text-on-strong-soft">La nostra promessa</p>
+              <p className="eyebrow text-on-strong-soft">Comincia da qui</p>
               <h2 id="cta-titolo" className="display-xl mt-5 text-on-strong">
-                Non facciamo diagnosi.
-                <br />
-                Facciamo <span className="serif-italic">chiarezza</span>.
+                Capire è il primo passo per prenderti cura di te.
               </h2>
-              <p className="mt-6 max-w-xl text-xl text-on-strong-soft">Comincia da un esempio: capirai subito come funziona. Senza registrarti.</p>
-              <Link href="/esempio" className="btn btn-on-strong btn-lg mt-10">
-                Esplora un referto di esempio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              <p className="mt-6 max-w-xl text-xl text-on-strong-soft">Prova su un referto di esempio: capirai subito come funziona. Senza registrarti e senza dati personali.</p>
+              <Link href="/referti/esempio" className="btn btn-on-strong btn-lg mt-10">
+                Prova la demo <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
               <p className="mt-10 text-[1.0625rem] text-on-strong-soft">
-                Hai domande?{" "}
-                <Link href="/faq" className="font-semibold text-on-strong underline underline-offset-4">
-                  Leggi le risposte
-                </Link>{" "}
-                · Sei una struttura?{" "}
+                Sei una struttura sanitaria?{" "}
                 <Link href="/per-le-strutture" className="font-semibold text-on-strong underline underline-offset-4">
                   Programma pilota
                 </Link>

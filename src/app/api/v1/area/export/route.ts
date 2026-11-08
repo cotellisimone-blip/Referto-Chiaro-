@@ -7,6 +7,6 @@ export async function GET() {
   if ("response" in g) return g.response;
   const data = await exportUserData(g.user.id);
   return new Response(JSON.stringify(data, null, 2), {
-    headers: { "Content-Type": "application/json", "Content-Disposition": 'attachment; filename="referto-chiaro-miei-dati.json"', "Cache-Control": "no-store" },
+    headers: { "Content-Type": "application/json", "Content-Disposition": 'attachment; filename="cura-privata-miei-dati.json"', "Cache-Control": "no-store" },
   });
 }

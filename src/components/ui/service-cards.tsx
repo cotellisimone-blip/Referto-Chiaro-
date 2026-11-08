@@ -2,13 +2,15 @@ import Link from "next/link";
 import { ArrowRight, Check, Minus } from "lucide-react";
 import { clsx } from "clsx";
 import { SERVICES } from "@/domain/catalog";
+import { publicPricesEnabled } from "@/domain/ecosystem";
 
 /**
  * Card dei servizi. Lo stato va sopra il titolo (non accanto) così i nomi lunghi non vanno a capo
  * schiacciati; la nota "nessun acquisto" compare una sola volta sotto la griglia.
- * La card centrale ha un bordo sfumato (teal → sage → evidenziatore) e il prezzo in Fraunces grande.
+ * La card centrale ha un bordo sfumato. I prezzi si vedono solo con ENABLE_PUBLIC_PRICES="true" (listino approvato).
  */
 export function ServiceCards({ detailed = false }: { detailed?: boolean }) {
+  const showPrices = publicPricesEnabled();
   return (
     <div>
       <ul className="grid gap-5 md:grid-cols-3 md:items-stretch">
@@ -25,13 +27,19 @@ export function ServiceCards({ detailed = false }: { detailed?: boolean }) {
               )}
             >
               <span className={clsx("chip self-start", s.status === "demo-only" ? "bg-mist text-teal-deep" : "bg-cream text-ink")}>{s.statusLabel}</span>
-              <h3 className="mt-5 font-serif text-[1.875rem] leading-tight">{s.name}</h3>
+              <h3 className="mt-5 text-[1.75rem] font-bold leading-tight tracking-[-0.015em]">{s.name}</h3>
               <p className="mt-2 text-lg text-ink-soft">{s.tagline}</p>
-              <p className="mt-7 flex items-baseline gap-2">
-                {fromPrefix ? <span className="text-lg text-muted">da</span> : null}
-                <span className="stat-num text-[3rem]">{fromPrefix ? rest.join(" ") : `${amount} ${rest.join(" ")}`.trim()}</span>
-              </p>
-              <p className="mt-2 text-sm text-muted">{s.priceNote}</p>
+              {showPrices ? (
+                <>
+                  <p className="mt-7 flex items-baseline gap-2">
+                    {fromPrefix ? <span className="text-lg text-muted">da</span> : null}
+                    <span className="stat-num text-[3rem]">{fromPrefix ? rest.join(" ") : `${amount} ${rest.join(" ")}`.trim()}</span>
+                  </p>
+                  <p className="mt-2 text-sm text-muted">{s.priceNote}</p>
+                </>
+              ) : (
+                <p className="mt-6 text-[0.9375rem] font-semibold text-muted">Prezzo in definizione</p>
+              )}
               <ul className="mt-6 space-y-3 border-t border-line pt-6">
                 {s.includes.map((x) => (
                   <li key={x} className="flex gap-3 text-[1.0625rem]">
@@ -65,7 +73,9 @@ export function ServiceCards({ detailed = false }: { detailed?: boolean }) {
           );
         })}
       </ul>
-      <p className="mt-6 text-center text-[0.9375rem] text-muted">Prezzi indicativi in fase di validazione. Nessun acquisto è possibile in questa versione.</p>
+      <p className="mt-6 text-center text-[0.9375rem] text-muted">
+        {showPrices ? "Prezzi indicativi in fase di validazione. " : "Il listino sarà pubblicato quando il servizio sarà attivo. "}Nessun acquisto è possibile in questa versione.
+      </p>
     </div>
   );
 }

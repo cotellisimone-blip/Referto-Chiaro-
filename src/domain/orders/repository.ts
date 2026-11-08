@@ -92,7 +92,7 @@ export async function markOrderPaid(orderId: string, providerRef?: string): Prom
   if (row?.email && !String(row.email).endsWith(".invalid")) {
     const name = SERVICES.find((x) => x.id === row.service)?.name ?? row.service;
     const amount = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(Number(row.amount_cents) / 100);
-    await sendEmail(orderPaidEmail(String(row.email), publicUrl(`/area/ordini/${orderId}`), name, amount));
+    await sendEmail(orderPaidEmail(String(row.email), publicUrl(`/area-personale/ordini/${orderId}`), name, amount));
   }
   return Boolean(row);
 }

@@ -79,14 +79,14 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
         <nav aria-label="Principale" className="hdr-desktop">
           <ul className="flex items-center gap-0.5 xl:gap-1">
             {MAIN_NAV.map((item) => {
-              const active = pathname === item.href;
+              const active = pathname === item.href || (item.href !== "/servizi" && !!pathname?.startsWith(item.href + "/"));
               return (
                 <li key={item.href}>
                   <Link
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={clsx(
-                      "relative whitespace-nowrap rounded-full px-2 py-2.5 text-[0.9375rem] font-medium transition-colors duration-150 xl:px-3.5 xl:text-[1rem]",
+                      "relative whitespace-nowrap rounded-full px-1.5 py-2.5 text-[0.9375rem] font-medium transition-colors duration-150 xl:px-3.5 xl:text-[1rem]",
                       active ? "bg-mist text-ink" : "text-ink-soft hover:bg-mist/70 hover:text-ink",
                     )}
                   >
@@ -101,14 +101,11 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
         <div className="hdr-desktop items-center gap-1.5 xl:gap-2">
           <TextSizeToggle />
           <ThemeToggle />
-          <Link href={signedIn ? "/area" : "/accedi"} className="btn btn-ghost btn-sm whitespace-nowrap">
+          <Link href={signedIn ? "/area-personale" : "/accedi"} className="btn btn-ghost btn-sm whitespace-nowrap">
             {signedIn ? "Area personale" : "Accedi"}
           </Link>
-          <Link href="/esempio" className="btn btn-secondary btn-sm hdr-demo">
+          <Link href="/referti/esempio" className="btn btn-primary btn-sm">
             Prova la demo
-          </Link>
-          <Link href="/inizia" className="btn btn-primary btn-sm">
-            Inizia ora
           </Link>
         </div>
 
@@ -151,13 +148,13 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                 ))}
               </ul>
               <div className="mt-5 grid gap-3 pb-2">
-                <Link href="/inizia" className="btn btn-primary w-full">
-                  Inizia ora
-                </Link>
-                <Link href="/esempio" className="btn btn-secondary w-full">
+                <Link href="/referti/esempio" className="btn btn-primary w-full">
                   Prova la demo
                 </Link>
-                <Link href={signedIn ? "/area" : "/accedi"} className="btn btn-ghost w-full">
+                <Link href="/inizia" className="btn btn-secondary w-full">
+                  Da dove comincio?
+                </Link>
+                <Link href={signedIn ? "/area-personale" : "/accedi"} className="btn btn-ghost w-full">
                   {signedIn ? "Vai all'area personale" : "Accedi all'area personale"}
                 </Link>
               </div>

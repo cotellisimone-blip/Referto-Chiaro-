@@ -50,7 +50,7 @@ export function OrdersList() {
               </div>
               <div className="flex items-center gap-3">
                 <StatusChip status={o.status} kind="order" />
-                <Link href={`/area/ordini/${o.id}`} className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-teal hover:bg-mist">
+                <Link href={`/area-personale/ordini/${o.id}`} className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-teal hover:bg-mist">
                   Dettagli<span className="sr-only"> dell&apos;ordine {SERVICE_NAME[o.service]} del {formatDateTime(o.createdAt)}</span>
                 </Link>
               </div>

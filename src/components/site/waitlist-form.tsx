@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CircleCheck, Loader2 } from "lucide-react";
 import { api } from "@/components/area/api";
 
-type Interest = "completo" | "secondo-parere" | "strutture";
+type Interest = "completo" | "secondo-parere" | "strutture" | "archivio" | "visite" | "prevenzione";
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "done"; already: boolean } | { kind: "error"; message: string };
 
 const INPUT = "mt-1.5 block min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-ink placeholder:text-muted/70 focus:border-teal";
@@ -78,17 +78,20 @@ export function WaitlistForm({ interest }: { interest: Interest }) {
           <input id={`${uid}-org`} type="text" autoComplete="organization" value={organization} onChange={(e) => setOrganization(e.target.value)} className={INPUT} maxLength={120} />
         </div>
       ) : null}
-      <div>
-        <label htmlFor={`${uid}-note`} className="block text-sm font-semibold text-ink">
-          Nota (facoltativa)
-        </label>
-        <textarea id={`${uid}-note`} rows={3} value={note} onChange={(e) => setNote(e.target.value)} className={`${INPUT} min-h-24 py-3`} maxLength={500} />
-      </div>
+      {/* La nota libera c'è solo per le strutture: per i servizi sanitari un campo aperto inviterebbe a scrivere dati di salute. */}
+      {interest === "strutture" ? (
+        <div>
+          <label htmlFor={`${uid}-note`} className="block text-sm font-semibold text-ink">
+            Nota (facoltativa)
+          </label>
+          <textarea id={`${uid}-note`} rows={3} value={note} onChange={(e) => setNote(e.target.value)} className={`${INPUT} min-h-24 py-3`} maxLength={500} />
+        </div>
+      ) : null}
       <label className="flex min-h-11 items-start gap-3 text-sm text-ink">
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 rounded accent-[var(--color-teal)]" />
         <span>
           Ho letto l&apos;
-          <Link href="/privacy" className="link">
+          <Link href="/privacy-policy" className="link">
             informativa privacy
           </Link>{" "}
           (bozza in revisione) e acconsento al trattamento della mia email per la lista d&apos;attesa.

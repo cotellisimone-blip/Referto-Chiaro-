@@ -179,7 +179,7 @@ async function generateReport(userId: string, reportId: string) {
     return u.rows[0] && !u.rows[0].is_demo ? String(u.rows[0].email) : null;
   });
   // Solo per elaborazioni reali (non demo): avviso senza alcun dato sanitario.
-  if (email && !doc.extracted.isSynthetic) await sendEmail(reportReadyEmail(email, publicUrl(`/area/documenti/${report.documentId}`)));
+  if (email && !doc.extracted.isSynthetic) await sendEmail(reportReadyEmail(email, publicUrl(`/area-personale/documenti/${report.documentId}`)));
 }
 
 async function generateDossier(tx: Queryable, dossierId: string) {

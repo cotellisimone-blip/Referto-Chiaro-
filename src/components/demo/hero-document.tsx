@@ -149,7 +149,7 @@ export function HeroDocument() {
       </div>
       <p className="mt-3 text-center text-sm text-muted">
         Valori inventati.{" "}
-        <Link href="/esempio" className="link">
+        <Link href="/referti/esempio" className="link">
           Prova il percorso completo
         </Link>
       </p>

@@ -73,7 +73,7 @@ export function verifyTotp(secret: string, code: string, time = Date.now(), wind
 }
 
 /** URI otpauth:// da mostrare come QR o da copiare nell'app di autenticazione. */
-export function totpUri(secret: string, account: string, issuer = "Referto Chiaro"): string {
+export function totpUri(secret: string, account: string, issuer = "Cura Privata"): string {
   const label = encodeURIComponent(`${issuer}:${account}`);
   return `otpauth://totp/${label}?secret=${secret}&issuer=${encodeURIComponent(issuer)}&algorithm=SHA1&digits=6&period=30`;
 }

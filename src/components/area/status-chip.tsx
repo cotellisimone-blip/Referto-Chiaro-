@@ -9,7 +9,7 @@ export function StatusChip({ status, kind = "document" }: { status: string; kind
         "chip",
         s.tone === "muted" && "bg-mist text-muted",
         s.tone === "teal" && "bg-mist text-teal-deep",
-        s.tone === "sage" && "bg-sage/15 text-sage-deep",
+        s.tone === "sage" && "bg-marker-soft text-teal-deep",
         s.tone === "warn" && "bg-cream text-warn",
         s.tone === "danger" && "bg-danger/10 text-danger",
       )}

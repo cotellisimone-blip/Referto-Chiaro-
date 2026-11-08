@@ -9,5 +9,5 @@ export async function GET(req: Request) {
   const r = await consumeMagicLink(token);
   if (!r.ok) return Response.redirect(new URL("/accedi?errore=link", url), 303);
   (await cookies()).set(sessionCookie(r.sessionToken));
-  return Response.redirect(new URL("/area", url), 303);
+  return Response.redirect(new URL("/area-personale", url), 303);
 }

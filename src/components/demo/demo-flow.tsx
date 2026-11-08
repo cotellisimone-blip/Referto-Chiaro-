@@ -121,7 +121,7 @@ export function DemoFlow() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "referto-chiaro-esempio-DEMO.pdf";
+      a.download = "cura-privata-esempio-DEMO.pdf";
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -286,7 +286,7 @@ export function DemoFlow() {
                 Il servizio per i referti reali non è ancora attivo: stiamo completando le verifiche cliniche, legali e di sicurezza.
               </p>
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                <Link href="/servizi-prezzi" className="btn btn-secondary">
+                <Link href="/servizi" className="btn btn-secondary">
                   Vedi servizi e prezzi
                 </Link>
                 <Link href="/come-funziona" className="btn btn-ghost">

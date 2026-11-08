@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const PAGES = ["/", "/esempio", "/come-funziona", "/servizi-prezzi", "/faq", "/secondo-parere", "/per-le-strutture", "/guide", "/glossario", "/inizia", "/chi-siamo", "/contatti", "/sicurezza", "/accessibilita", "/privacy", "/termini", "/cookie"];
+const PAGES = ["/", "/referti", "/servizi/archivio", "/servizi/visite-e-consulti", "/servizi/prevenzione", "/referti/esempio", "/come-funziona", "/servizi", "/domande-frequenti", "/servizi/secondo-parere", "/per-le-strutture", "/guide", "/glossario", "/inizia", "/chi-siamo", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"];
 
 for (const path of PAGES) {
   test(`pagina ${path}: nessun errore, nessun overflow, accessibilità`, async ({ page }) => {
@@ -42,7 +42,8 @@ test("nessun testo vietato o promessa non verificabile", async ({ page }) => {
   for (const path of PAGES) {
     await page.goto(path);
     const text = (await page.locator("body").innerText()).toLowerCase();
-    for (const banned of ["lorem ipsum", "certificato gdpr", "conforme mdr", "24/7", "approvato da medici", "100%", "garantit"]) {
+    for (const banned of ["lorem ipsum", "certificato gdpr", "conforme mdr", "24/7", "approvato da medici", "100%", "garantit", "conforme al gdpr", "gdpr compliant", "in totale sicurezza", "medici qualificati", "nella norma", "in pochi minuti", "referto chiaro"]) {
+      if (banned === "referto chiaro" && path === "/chi-siamo") continue; // nota storica dichiarata
       expect(text, `${path} contiene "${banned}"`).not.toContain(banned);
     }
   }
@@ -50,11 +51,11 @@ test("nessun testo vietato o promessa non verificabile", async ({ page }) => {
 
 test.describe("tema scuro", () => {
   test.use({ colorScheme: "dark" });
-  for (const path of ["/", "/servizi-prezzi", "/esempio"]) {
+  for (const path of ["/", "/servizi", "/referti/esempio"]) {
     test(`pagina ${path} in tema scuro: accessibilità`, async ({ page }) => {
       await page.goto(path);
       const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-      expect(bg).toBe("rgb(15, 26, 32)");
+      expect(bg).toBe("rgb(11, 30, 38)");
       const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
       expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
     });
@@ -77,7 +78,42 @@ test("menu mobile: si apre, intrappola il fuoco e si chiude con Esc", async ({ p
   await page.getByRole("button", { name: "Apri il menu" }).click();
   const menu = page.locator("#menu-mobile");
   await expect(menu).toBeVisible();
-  await expect(menu.getByRole("link", { name: "Inizia ora" })).toBeVisible();
+  await expect(menu.getByRole("link", { name: "Prova la demo" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(menu).toBeHidden();
+});
+
+test.describe("Cura Privata: mappa, stati e prezzi", () => {
+  test("i vecchi indirizzi rimandano in modo permanente alla nuova mappa", async ({ request }) => {
+    for (const [from, to] of [["/esempio", "/referti/esempio"], ["/secondo-parere", "/servizi/secondo-parere"], ["/servizi-prezzi", "/servizi"], ["/faq", "/domande-frequenti"], ["/sicurezza", "/sicurezza-e-privacy"], ["/privacy", "/privacy-policy"], ["/cookie", "/cookie-policy"], ["/area", "/area-personale"], ["/area/dossier", "/area-personale/dossier"]]) {
+      const res = await request.get(from, { maxRedirects: 0 });
+      expect(res.status(), from).toBe(308);
+      expect(res.headers()["location"], from).toBe(to);
+    }
+  });
+
+  test("nessun prezzo pubblico finché il listino non è approvato", async ({ page }) => {
+    for (const path of ["/", "/servizi", "/referti", "/servizi/secondo-parere", "/domande-frequenti"]) {
+      await page.goto(path);
+      expect(await page.locator("main").innerText(), path).not.toMatch(/\d\s?€|€\s?\d/);
+    }
+  });
+
+  test("i servizi in preparazione lo dicono e non offrono caricamenti, prenotazioni o pagamenti", async ({ page }) => {
+    for (const path of ["/servizi/archivio", "/servizi/visite-e-consulti", "/servizi/prevenzione"]) {
+      await page.goto(path);
+      await expect(page.getByText("Servizio in preparazione", { exact: false }).first()).toBeVisible();
+      await expect(page.locator("main input[type=file]")).toHaveCount(0);
+      const actions = (await page.locator("main a, main button").allInnerTexts()).join(" ").toLowerCase();
+      for (const word of ["prenota", "carica", "paga", "acquista"]) expect(actions, `${path}: ${word}`).not.toContain(word);
+      await expect(page.locator("main textarea")).toHaveCount(0);
+    }
+  });
+
+  test("la home dice in 5 secondi che cosa fa oggi", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La tua salute, più chiara e accessibile\./);
+    await expect(page.getByText("Oggi Cura Privata fa una cosa:")).toBeVisible();
+    await expect(page.getByText("Le spiegazioni informative non sostituiscono una valutazione medica.").first()).toBeVisible();
+  });
 });

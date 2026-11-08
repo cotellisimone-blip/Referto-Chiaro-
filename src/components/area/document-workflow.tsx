@@ -153,7 +153,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `referto-chiaro-${doc?.extracted?.isSynthetic ? "DEMO-" : ""}${reportId.slice(0, 8)}.pdf`;
+      a.download = `cura-privata-${doc?.extracted?.isSynthetic ? "DEMO-" : ""}${reportId.slice(0, 8)}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -167,7 +167,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
   async function remove() {
     if (!window.confirm("Eliminare questo referto e i suoi report? L'operazione non si può annullare.")) return;
     await api(`/api/v1/area/documents/${documentId}`, { method: "DELETE" });
-    router.push("/area");
+    router.push("/area-personale");
     router.refresh();
   }
 
@@ -192,7 +192,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <Link href="/area" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-teal hover:underline">
+        <Link href="/area-personale" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-teal hover:underline">
           <ArrowLeft aria-hidden className="h-4 w-4" /> Tutti i referti
         </Link>
         <div className="flex items-center gap-3">
@@ -234,7 +234,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
                   <RotateCcw aria-hidden className="h-4 w-4" /> Riprova
                 </button>
               ) : null}
-              <Link href="/area/nuovo" className="btn btn-secondary">
+              <Link href="/area-personale/nuovo" className="btn btn-secondary">
                 Aggiungi un altro referto
               </Link>
             </div>
@@ -308,7 +308,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
                     </span>
                     <span className="mt-4 flex items-baseline gap-2">
                       <span className="tabular font-serif text-3xl">{s.priceLabel}</span>
-                      <span className="chip bg-cream text-ink">prova, senza addebito</span>
+                      <span className="chip bg-cream text-ink">importo di prova, senza addebito</span>
                     </span>
                     <ul className="mt-4 space-y-1.5 text-sm text-ink">
                       {s.includes.slice(0, 4).map((x) => (
@@ -383,7 +383,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
                   {pdfState === "done" ? <span className="text-sage-deep">Documento scaricato.</span> : null}
                   {pdfState === "error" ? <span className="text-danger">Download non riuscito. Riprova.</span> : null}
                 </p>
-                <Link href="/area/dossier/nuovo" className="btn btn-secondary mt-2 w-full">
+                <Link href="/area-personale/dossier/nuovo" className="btn btn-secondary mt-2 w-full">
                   <FolderPlus aria-hidden className="h-4 w-4" /> Metti in un dossier
                 </Link>
               </div>

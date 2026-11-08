@@ -35,6 +35,6 @@ describe("scelta del fornitore di pagamento", () => {
 
   it("il checkout simulato è una pagina interna", async () => {
     const r = await simulatedProvider.createCheckout({ id: "abc", service: "essenziale", amountCents: 990, currency: "eur" }, { successUrl: "x", cancelUrl: "y" });
-    expect(r).toEqual({ checkoutUrl: "/area/ordini/abc", providerRef: "sim_abc" });
+    expect(r).toEqual({ checkoutUrl: "/area-personale/ordini/abc", providerRef: "sim_abc" });
   });
 });

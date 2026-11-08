@@ -35,7 +35,7 @@ test.describe("ordini e pagamenti simulati", () => {
     const doc = await verifiedDocument(ctx.request);
     const o = await newOrder(ctx.request, doc);
     expect(o.provider).toBe("simulated");
-    expect(o.checkoutUrl).toBe(`/area/ordini/${o.id}`);
+    expect(o.checkoutUrl).toBe(`/area-personale/ordini/${o.id}`);
     const page = await ctx.newPage();
     await page.goto(o.checkoutUrl);
     await expect(page.getByRole("heading", { name: "Il tuo ordine." })).toBeVisible({ timeout: 15_000 });
@@ -61,7 +61,7 @@ test.describe("ordini e pagamenti simulati", () => {
     // Un ordine non più in attesa non accetta altri esiti
     expect((await ctx.request.post(`/api/v1/area/orders/${o.id}/simula`, { data: { esito: "pagato" } })).status()).toBe(409);
     await page.getByRole("button", { name: "Riprova" }).click();
-    await expect(page).toHaveURL(/\/area\/ordini\/[0-9a-f-]{36}$/);
+    await expect(page).toHaveURL(/\/area-personale\/ordini\/[0-9a-f-]{36}$/);
     await expect(page).not.toHaveURL(new RegExp(o.id));
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
     await expect(page.getByText("Pagamento registrato")).toBeVisible();
@@ -80,11 +80,11 @@ test.describe("ordini e pagamenti simulati", () => {
     const page = await ctx.newPage();
     await page.goto(o.checkoutUrl);
     await page.getByRole("button", { name: "Annulla" }).click();
-    await expect(page).toHaveURL(new RegExp(`/area/documenti/${doc}`));
+    await expect(page).toHaveURL(new RegExp(`/area-personale/documenti/${doc}`));
     const got = (await (await ctx.request.get(`/api/v1/area/orders/${o.id}`)).json()).order;
     expect(got.status).toBe("cancelled");
     expect((await (await ctx.request.get(`/api/v1/area/documents/${doc}`)).json()).reports).toEqual([]);
-    await page.goto("/area/ordini");
+    await page.goto("/area-personale/ordini");
     await expect(page.getByRole("heading", { name: "Ordini" })).toBeVisible();
     await expect(page.getByText("Annullato")).toBeVisible({ timeout: 15_000 });
     const axe = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
@@ -121,7 +121,7 @@ test.describe("ordini e pagamenti simulati", () => {
     expect((await ctx.request.get(`/api/v1/area/orders/${unknown}`)).status()).toBe(404);
     expect((await ctx.request.get("/api/v1/area/orders/non-un-uuid")).status()).toBe(404);
     const page = await ctx.newPage();
-    await page.goto(`/area/ordini/${unknown}`);
+    await page.goto(`/area-personale/ordini/${unknown}`);
     await expect(page.getByRole("heading", { name: "Ordine non trovato." })).toBeVisible({ timeout: 15_000 });
     await ctx.close();
   });
