@@ -1,12 +1,5 @@
 import { test, expect } from "@playwright/test";
-import AxeBuilder from "@axe-core/playwright";
-
-const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
-
-async function expectAccessible(page: import("@playwright/test").Page) {
-  const axe = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
-  expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
-}
+import { expectAccessible } from "./_lib/a11y";
 
 test.describe("guide e glossario", () => {
   test("hub delle guide: categorie, elenco, avviso di revisione", async ({ page }) => {

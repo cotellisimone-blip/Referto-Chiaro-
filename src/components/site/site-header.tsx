@@ -9,6 +9,7 @@ import { Logo } from "@/components/brand/logo";
 import { MAIN_NAV } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
 import { TextSizeToggle } from "./text-size-toggle";
+import { SearchTrigger } from "@/components/search/site-search";
 
 /**
  * Il percorso corrente serve solo a evidenziare la voce attiva. Sulle pagine dinamiche
@@ -99,6 +100,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
         </nav>
 
         <div className="hdr-desktop items-center gap-1.5 xl:gap-2">
+          <SearchTrigger variant="compact" className="hidden xl:inline-flex" />
           <TextSizeToggle />
           <ThemeToggle />
           <Link href={signedIn ? "/area-personale" : "/accedi"} className="btn btn-ghost btn-sm whitespace-nowrap">
@@ -109,12 +111,13 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
           </Link>
         </div>
 
-        <div className="hdr-mobile items-center gap-2">
-          <TextSizeToggle />
-          <ThemeToggle />
+        <div className="hdr-mobile items-center gap-1.5">
+          <SearchTrigger className="h-10 w-10" />
+          <TextSizeToggle className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-line bg-paper px-1.5 font-serif text-ink transition-colors hover:bg-mist" />
+          <ThemeToggle className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:bg-mist" />
           <button
             type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-ink"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-ink"
             aria-expanded={open}
             aria-controls="menu-mobile"
             onClick={() => setOpen((v) => !v)}

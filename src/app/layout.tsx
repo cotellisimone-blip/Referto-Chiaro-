@@ -5,6 +5,8 @@ import { Suspense } from "react";
 import { SiteHeader, SiteHeaderView } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { DemoRibbon } from "@/components/site/demo-ribbon";
+import { SiteSearch } from "@/components/search/site-search";
+import { BackToTop } from "@/components/site/back-to-top";
 import { PREFS_INIT_SCRIPT } from "@/lib/prefs-init";
 import "./globals.css";
 
@@ -51,6 +53,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <SiteFooter />
+        <SiteSearch />
+        <BackToTop />
       </body>
     </html>
   );

@@ -17,6 +17,8 @@ export const FOOTER_NAV = {
     { href: "/servizi/visite-e-consulti", label: "Visite e videoconsulti" },
     { href: "/servizi/prevenzione", label: "Prevenzione" },
     { href: "/guide", label: "Guide agli esami" },
+    { href: "/glossario", label: "Glossario" },
+    { href: "/strumenti/domande-per-il-medico", label: "Domande per il medico" },
   ],
   "Cura Privata": [
     { href: "/chi-siamo", label: "Chi siamo" },

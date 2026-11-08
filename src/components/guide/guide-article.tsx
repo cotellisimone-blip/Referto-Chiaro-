@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, HelpCircle, ListChecks } from "lucide-react";
+import { PrintButton, ReadingProgress, TableOfContents } from "@/components/content/reading-tools";
 import type { Guide } from "@/content/guides/schema";
 import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { getGuide } from "@/content/guides";
@@ -13,14 +14,38 @@ export function GuideArticle({ guide }: { guide: Guide }) {
   const cat = GUIDE_CATEGORIES[guide.category];
   const related = guide.relatedGuides.map(getGuide).filter((g): g is Guide => Boolean(g));
   const terms = guide.glossaryTerms.map(getGlossaryEntry).filter((e): e is NonNullable<typeof e> => Boolean(e));
+  const toc = [
+    { id: "cosa-misura-titolo", label: guide.procedure ? "Che cosa mostra" : "Che cosa misura" },
+    { id: "perche-titolo", label: "Perché viene richiesto" },
+    ...(guide.procedure
+      ? [
+          { id: "preparazione-titolo", label: "Come ci si prepara" },
+          { id: "aspettarsi-titolo", label: "Che cosa aspettarsi" },
+          { id: "dopo-titolo", label: "E dopo l'esame" },
+          { id: "referto-titolo", label: "Che cosa c'è nel referto" },
+        ]
+      : []),
+    { id: "come-leggere-titolo", label: guide.procedure ? "Come leggere il referto" : "Come leggere il risultato" },
+    ...(guide.unitsAndRanges ? [{ id: "unita-titolo", label: "Unità e intervalli" }] : []),
+    { id: "fattori-titolo", label: "Che cosa può influenzare" },
+    { id: "domande-titolo", label: "Domande per il medico" },
+    { id: "faq-titolo", label: "Domande frequenti" },
+  ];
   return (
     <article className="container-rc py-10 sm:py-14">
+      <ReadingProgress />
       <Breadcrumbs items={[{ name: "Guide", path: "/guide" }, { name: cat.title, path: `/guide#${guide.category}` }, { name: guide.examName, path: `/guide/${guide.slug}` }]} />
       <header className="mt-6 max-w-3xl">
         <p className="eyebrow">{cat.title}</p>
         <h1 className="display mt-3 text-[2.25rem] sm:text-[3rem]">{guide.title}</h1>
         <p className="mt-5 text-lg text-ink-soft">{guide.summary}</p>
         {guide.aliases.length ? <p className="mt-3 text-sm text-muted">Altri nomi: {guide.aliases.join(", ")}.</p> : null}
+        <div className="mt-6 flex flex-wrap gap-2">
+          <Link href={`/strumenti/domande-per-il-medico?esami=${guide.slug}`} className="btn btn-primary btn-sm">
+            <ListChecks aria-hidden className="h-4 w-4" /> Prepara le domande per il medico
+          </Link>
+          <PrintButton label="Stampa la guida" />
+        </div>
       </header>
       <div className="mt-8 max-w-3xl">
         <ReviewNotice lastUpdated={guide.lastUpdated} />
@@ -81,6 +106,9 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                 <li key={q}>{q}</li>
               ))}
             </ol>
+            <Link href={`/strumenti/domande-per-il-medico?esami=${guide.slug}`} className="link no-print mt-4 inline-flex items-center gap-1 text-[1.0625rem] font-semibold">
+              Aggiungi altri esami e stampa la lista <ArrowRight aria-hidden className="h-4 w-4" />
+            </Link>
           </section>
           <section aria-labelledby="faq-titolo">
             <h2 id="faq-titolo" className="flex items-center gap-2 font-serif text-2xl text-ink sm:text-3xl">
@@ -107,6 +135,9 @@ export function GuideArticle({ guide }: { guide: Guide }) {
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start" aria-label="Collegamenti">
+          <div className="hidden lg:block">
+            <TableOfContents items={toc} />
+          </div>
           <div className="card p-5">
             <p className="text-sm font-semibold text-ink">Vuoi capire il tuo referto?</p>
             <p className="mt-2 text-sm text-muted">Prova la demo su un referto inventato: valori riportati fedelmente, spiegazioni in parole semplici, domande per la visita.</p>

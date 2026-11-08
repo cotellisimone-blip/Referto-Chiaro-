@@ -597,7 +597,7 @@
       display: inline-flex;
     }
   }
-  @media (min-width: 1024px) and (max-width: 1439.98px) {
+  @media (min-width: 1024px) and (max-width: 1535.98px) {
     :root[data-size="large"] .hdr-desktop {
       display: none;
     }
@@ -680,4 +680,424 @@
   .no-print {
     display: none !important;
   }
+}
+
+/* ───────── Upgrade grafica e funzionalità (8/11/2026): ricerca, strumenti, cruscotto, lettura ───────── */
+@layer components {
+  /* Ricerca del sito: <dialog> nativo centrato in alto, pannello di carta con ombra alta. */
+  .search-dialog {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+  }
+  .search-dialog::backdrop {
+    background: rgb(12 51 64 / 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .search-dialog[open] .search-panel {
+    animation: search-in 220ms var(--ease-out-soft) both;
+  }
+  .search-panel {
+    width: min(100vw - 24px, 720px);
+    margin: 12px auto 0;
+    max-height: calc(100dvh - 24px);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-float);
+    overflow: hidden;
+  }
+  @media (min-width: 640px) {
+    .search-panel {
+      margin-top: 10vh;
+      max-height: min(70vh, 640px);
+    }
+  }
+  .search-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .search-result {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border-radius: 12px;
+    text-align: left;
+    transition: background-color 120ms var(--ease-out-soft);
+  }
+  .search-result:hover,
+  .search-result:focus-visible {
+    background: var(--color-mist);
+    outline: none;
+  }
+  .search-result:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--color-focus);
+  }
+  .search-result:hover svg,
+  .search-result:focus-visible svg {
+    opacity: 1;
+  }
+  .search-mark {
+    background: var(--color-marker);
+    color: inherit;
+    border-radius: 3px;
+    padding: 0 0.06em;
+  }
+  :root[data-theme="dark"] .search-mark {
+    background: var(--color-marker);
+    color: var(--color-ink);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .search-mark {
+      background: var(--color-marker);
+      color: var(--color-ink);
+    }
+  }
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.375rem;
+    padding: 0 0.375rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-line);
+    background: var(--color-canvas);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+  /* Campo "finto" che apre la ricerca: sembra un input, ma è un pulsante (niente tastiera che si apre a vuoto sul telefono). */
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 60px;
+    padding: 0 1.125rem 0 1.25rem;
+    border-radius: 16px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    font-size: 1.0625rem;
+    box-shadow: var(--shadow-card);
+    transition:
+      border-color 160ms var(--ease-out-soft),
+      box-shadow 160ms var(--ease-out-soft),
+      transform 160ms var(--ease-out-soft);
+  }
+  .search-field:hover {
+    border-color: var(--color-teal);
+    box-shadow: var(--shadow-lift);
+    transform: translateY(-1px);
+  }
+  .search-compact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 44px;
+    min-width: 44px;
+    justify-content: center;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    color: var(--color-muted);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition:
+      border-color 160ms var(--ease-out-soft),
+      color 160ms var(--ease-out-soft),
+      background-color 160ms var(--ease-out-soft);
+  }
+  .search-compact:hover {
+    border-color: var(--color-teal);
+    color: var(--color-ink);
+    background: var(--color-mist);
+  }
+
+  /* Card con bagliore di menta in alto al passaggio del mouse (griglie di categorie, tessere del cruscotto). */
+  .card-glow {
+    position: relative;
+    overflow: hidden;
+  }
+  .card-glow::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-teal), var(--color-marker));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 320ms var(--ease-out-soft);
+  }
+  .card-glow:hover::before,
+  .card-glow:focus-within::before {
+    transform: scaleX(1);
+  }
+
+  /* Tessera numerica del cruscotto. */
+  .stat-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.125rem 1.25rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    box-shadow: var(--shadow-card);
+    min-height: 112px;
+  }
+  .stat-tile .stat-num {
+    font-size: 2.25rem;
+  }
+
+  /* Mini avanzamento: 4 tacche che si riempiono (letto, controllato, spiegato, pdf). */
+  .ticks {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 4px;
+  }
+  .ticks > span {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-line);
+  }
+  .ticks > span[data-on="true"] {
+    background: linear-gradient(90deg, var(--color-teal), var(--color-sage));
+  }
+  .ticks > span[data-live="true"] {
+    background: var(--color-teal);
+    animation: tick-pulse 1.2s ease-in-out infinite;
+  }
+
+  /* Barra di avanzamento lettura, sottile, sotto la testata. */
+  .reading-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 45;
+    height: 3px;
+    width: 100%;
+    transform-origin: left;
+    background: linear-gradient(90deg, var(--color-teal), var(--color-marker));
+    pointer-events: none;
+  }
+
+  /* Indice "In questa pagina": voce attiva evidenziata dalla traccia di menta. */
+  .toc-link {
+    display: block;
+    padding: 0.375rem 0 0.375rem 0.875rem;
+    border-left: 2px solid var(--color-line);
+    color: var(--color-muted);
+    font-size: 0.9375rem;
+    transition:
+      color 160ms var(--ease-out-soft),
+      border-color 160ms var(--ease-out-soft);
+  }
+  .toc-link:hover {
+    color: var(--color-ink);
+  }
+  .toc-link[aria-current="true"] {
+    border-color: var(--color-teal);
+    color: var(--color-teal-deep);
+    font-weight: 600;
+  }
+
+  /* Pulsante «Torna su»: appare dopo uno schermo di scorrimento. */
+  .back-to-top {
+    position: fixed;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 35;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-lift);
+    animation: back-to-top-in 220ms var(--ease-out-soft) both;
+  }
+  /* Nell'area personale su mobile c'è la barra in basso: il pulsante sale sopra di lei. */
+  [data-bottom-nav] .back-to-top {
+    bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 1024px) {
+    [data-bottom-nav] .back-to-top {
+      bottom: calc(16px + env(safe-area-inset-bottom));
+    }
+  }
+
+  /* Riga curva di raccordo tra due sezioni: la curva del simbolo, grande e quasi invisibile. */
+  .curve-divider {
+    position: relative;
+    height: 56px;
+    overflow: hidden;
+  }
+  .curve-divider svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Casella di spunta grande, pensata per il dito: lista delle domande per il medico. */
+  .check-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.875rem;
+    align-items: start;
+    padding: 0.875rem 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    cursor: pointer;
+    transition:
+      border-color 160ms var(--ease-out-soft),
+      background-color 160ms var(--ease-out-soft);
+  }
+  .check-row:hover {
+    border-color: var(--color-teal);
+  }
+  .check-row:has(input:checked) {
+    background: var(--color-marker-soft);
+    border-color: color-mix(in oklab, var(--color-teal) 50%, var(--color-line));
+  }
+  .check-row:has(input:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .check-box {
+    appearance: none;
+    width: 26px;
+    height: 26px;
+    margin-top: 1px;
+    border-radius: 8px;
+    border: 2px solid var(--color-sage);
+    background: var(--color-paper);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .check-box::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    transform: scale(0);
+    transition: transform 140ms var(--ease-out-soft);
+    background: var(--color-on-strong);
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+  .check-box:checked {
+    background: var(--color-teal);
+    border-color: var(--color-teal);
+  }
+  .check-box:checked::before {
+    transform: scale(1);
+  }
+  .check-box:focus-visible {
+    outline: none;
+  }
+}
+
+@keyframes search-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes back-to-top-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tick-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .search-dialog[open] .search-panel,
+  .back-to-top,
+  .ticks > span[data-live="true"] {
+    animation: none;
+  }
+}
+
+/* Stampa della lista delle domande: solo il foglio, senza testata né casella interattiva. */
+.print-only {
+  display: none;
+}
+@media print {
+  .print-sheet {
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  .print-only {
+    display: inline-block;
+  }
+  .check-print {
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    border: 1.5px solid #15313c;
+    border-radius: 4px;
+  }
+  .check-row {
+    border-color: transparent !important;
+    background: transparent !important;
+    padding: 0.25rem 0 !important;
+    break-inside: avoid;
+  }
+  .check-row .line-through {
+    text-decoration: none;
+    color: inherit;
+  }
+  .back-to-top,
+  .reading-bar,
+  .search-dialog {
+    display: none !important;
+  }
+}
+
+/* Il campo di ricerca ha già il suo pulsante «cancella»: niente doppione nativo di WebKit. */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
 }

@@ -5,11 +5,13 @@ import {
   IllustrationDossier,
   IllustrationFaq,
   IllustrationMagnify,
+  IllustrationQuestions,
+  IllustrationSearch,
   IllustrationShield,
   IllustrationTranslate,
 } from "@/components/brand/illustrations";
 
-export type HeaderArt = "translate" | "magnify" | "dossier" | "dialogue" | "shield" | "faq" | "none";
+export type HeaderArt = "translate" | "magnify" | "dossier" | "dialogue" | "shield" | "faq" | "search" | "questions" | "none";
 
 const ART = {
   translate: IllustrationTranslate,
@@ -18,6 +20,8 @@ const ART = {
   dialogue: IllustrationDialogue,
   shield: IllustrationShield,
   faq: IllustrationFaq,
+  search: IllustrationSearch,
+  questions: IllustrationQuestions,
 };
 
 /**

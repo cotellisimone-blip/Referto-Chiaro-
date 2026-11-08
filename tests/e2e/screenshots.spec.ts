@@ -17,6 +17,8 @@ const SHOTS = [
   ["cp-13-guida-tsh", "/guide/tsh"],
   ["cp-14-accedi", "/accedi"],
   ["cp-15-errore-404", "/pagina-inesistente"],
+  ["cp-16-glossario", "/glossario"],
+  ["cp-17-domande-per-il-medico", "/strumenti/domande-per-il-medico?esami=tsh,emocromo,glicemia"],
 ] as const;
 
 /** Porta a termine le animazioni d'ingresso prima dello scatto. */

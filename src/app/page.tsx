@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, BookOpenText, Check, FileCheck2, ListChecks, Lock, MessageSquareText, ScanSearch, ShieldOff, Stethoscope, UserRound, X } from "lucide-react";
+import { SearchTrigger } from "@/components/search/site-search";
+import { CategoryTiles } from "@/components/ui/category-tiles";
+import { CurveDivider } from "@/components/ui/curve-divider";
 import { HeroDocument } from "@/components/demo/hero-document";
 import { IllustrationDialogue, IllustrationMagnify, IllustrationTranslate } from "@/components/brand/illustrations";
 import { Reveal } from "@/components/ui/reveal";
@@ -9,6 +12,7 @@ import { FAQ } from "@/content/faq";
 import { ReportAnatomy } from "@/components/ui/report-anatomy";
 import { GUIDES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
+import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 
 /*
  * Home di Cura Privata, marchio ombrello. In 5 secondi deve dire che cosa fa OGGI (capire i referti)
@@ -76,6 +80,12 @@ export default function Home() {
                 </li>
               ))}
             </ul>
+            <div className="rise-in-3 mt-9 max-w-xl">
+              <SearchTrigger variant="field" placeholder="Cerca una sigla del referto: TSH, HbA1c, LDL…" />
+              <p className="mt-2 text-[0.9375rem] text-muted">
+                {GUIDES.length} guide e {GLOSSARY.length} termini, gratis e senza registrazione.
+              </p>
+            </div>
           </div>
           <div className="relative">
             <svg aria-hidden viewBox="0 0 64 64" className="float-slower pointer-events-none absolute -right-16 -top-12 -z-10 hidden h-[560px] w-[560px] opacity-60 lg:block">
@@ -102,8 +112,26 @@ export default function Home() {
         </div>
       </section>
 
+      {/* I NUMERI VERI */}
+      <section aria-label="Che cosa trovi, in numeri" className="py-10 sm:py-12">
+        <ul className="container-rc grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {[
+            [String(GUIDES.length), "guide agli esami", "con le fonti dichiarate"],
+            [String(GLOSSARY.length), "termini spiegati", "in italiano comune"],
+            [String(Object.keys(GUIDE_CATEGORIES).length), "categorie", "dall'emocromo alle endoscopie"],
+            ["0", "diagnosi", "le conclusioni restano al medico"],
+          ].map(([n, label, sub], i) => (
+            <Reveal as="li" key={label} delay={i * 70} className="stat-tile card-glow">
+              <span className="stat-num text-ink">{n}</span>
+              <span className="text-[1.0625rem] font-semibold text-ink">{label}</span>
+              <span className="text-sm text-muted">{sub}</span>
+            </Reveal>
+          ))}
+        </ul>
+      </section>
+
       {/* SERVIZI */}
-      <section id="servizi" aria-labelledby="servizi-titolo" className="py-20 sm:py-28">
+      <section id="servizi" aria-labelledby="servizi-titolo" className="pb-20 pt-10 sm:pb-28 sm:pt-14">
         <div className="container-rc">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
@@ -121,7 +149,8 @@ export default function Home() {
       </section>
 
       {/* DAL REFERTO ALLE DOMANDE GIUSTE */}
-      <section id="prima-dopo" aria-labelledby="prima-dopo-titolo" className="grain relative overflow-hidden bg-mist py-20 sm:py-28">
+      <CurveDivider from="canvas" to="mist" />
+      <section id="prima-dopo" aria-labelledby="prima-dopo-titolo" className="grain relative overflow-hidden bg-mist pb-20 pt-10 sm:pb-28 sm:pt-16">
         <div className="container-rc">
           <div className="max-w-2xl">
             <p className="eyebrow">Dal referto alle domande giuste</p>
@@ -212,7 +241,8 @@ export default function Home() {
       </section>
 
       {/* COSA RICEVI */}
-      <section id="cosa-ricevi" aria-labelledby="cosa-ricevi-titolo" className="overflow-hidden bg-paper py-20 sm:py-28">
+      <CurveDivider from="canvas" to="paper" />
+      <section id="cosa-ricevi" aria-labelledby="cosa-ricevi-titolo" className="overflow-hidden bg-paper pb-20 pt-10 sm:pb-28 sm:pt-16">
         <div className="container-rc grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>
             <p className="eyebrow">Che cosa ricevi</p>
@@ -334,34 +364,61 @@ export default function Home() {
 
       {/* GUIDE */}
       <section id="guide" aria-labelledby="guide-titolo" className="py-20 sm:py-28">
-        <div className="container-rc grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <div>
-            <p className="eyebrow">Gratis, per tutti</p>
-            <h2 id="guide-titolo" className="display-lg mt-4">
-              Hai solo una sigla in testa? Cercala.
-            </h2>
-            <p className="mt-5 text-xl text-ink-soft">
-              {GUIDES.length} guide agli esami e {GLOSSARY.length} termini spiegati, con le fonti. Senza registrarti.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/guide" className="btn btn-primary">
-                Tutte le guide <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-              </Link>
-              <Link href="/glossario" className="btn btn-secondary">
-                Apri il glossario
-              </Link>
-            </div>
-          </div>
-          <ul className="grid gap-3 sm:grid-cols-2">
-            {FEATURED_GUIDES.map(({ slug, label }, i) => (
-              <Reveal as="li" key={slug} delay={i * 50}>
-                <Link href={`/guide/${slug}`} className="card card-lift group flex min-h-16 items-center justify-between gap-3 px-5 py-4 text-lg font-semibold text-ink">
-                  {label}
-                  <ArrowRight aria-hidden className="h-5 w-5 shrink-0 text-teal transition-transform duration-200 group-hover:translate-x-1" />
+        <div className="container-rc">
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+            <div>
+              <p className="eyebrow">Gratis, per tutti</p>
+              <h2 id="guide-titolo" className="display-lg mt-4">
+                Hai solo una sigla in testa? Cercala.
+              </h2>
+              <p className="mt-5 text-xl text-ink-soft">
+                {GUIDES.length} guide agli esami e {GLOSSARY.length} termini spiegati, con le fonti. Senza registrarti.
+              </p>
+              <div className="mt-7">
+                <SearchTrigger variant="field" placeholder="Cerca: emocromo, TSH, ferritina…" />
+              </div>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <Link href="/guide" className="btn btn-primary">
+                  Tutte le guide <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                 </Link>
-              </Reveal>
-            ))}
-          </ul>
+                <Link href="/glossario" className="btn btn-secondary">
+                  Apri il glossario
+                </Link>
+              </div>
+            </div>
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {FEATURED_GUIDES.map(({ slug, label }, i) => (
+                <Reveal as="li" key={slug} delay={i * 50}>
+                  <Link href={`/guide/${slug}`} className="card card-lift group flex min-h-16 items-center justify-between gap-3 px-5 py-4 text-lg font-semibold text-ink">
+                    {label}
+                    <ArrowRight aria-hidden className="h-5 w-5 shrink-0 text-teal transition-transform duration-200 group-hover:translate-x-1" />
+                  </Link>
+                </Reveal>
+              ))}
+            </ul>
+          </div>
+
+          <div className="mt-16 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="eyebrow">Per argomento</p>
+              <h3 className="display-lg mt-4 text-[1.75rem] sm:text-[2.25rem]">Esplora le guide per categoria.</h3>
+            </div>
+            <p className="max-w-md text-lg text-muted">Dalle basi per leggere un referto fino alle endoscopie. Ogni guida dichiara le sue fonti e il suo stato di revisione.</p>
+          </div>
+          <div className="mt-8">
+            <CategoryTiles />
+          </div>
+
+          <Reveal className="card mt-10 grid gap-6 overflow-hidden border-teal/30 bg-[linear-gradient(135deg,var(--color-marker-soft),var(--color-paper)_55%)] p-7 sm:p-9 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+            <div className="min-w-0">
+              <p className="eyebrow">Strumento gratuito</p>
+              <h3 className="mt-3 text-[1.75rem] font-bold leading-tight tracking-[-0.015em] text-ink">Le domande da fare al medico, pronte prima della visita.</h3>
+              <p className="mt-3 max-w-2xl text-lg text-ink-soft">Scegli gli esami che hai fatto: componiamo una lista da stampare o tenere sul telefono. Nessun valore, nessun dato personale.</p>
+            </div>
+            <Link href="/strumenti/domande-per-il-medico" className="btn btn-primary btn-lg lg:whitespace-nowrap">
+              <ListChecks aria-hidden className="h-5 w-5" /> Prepara le domande
+            </Link>
+          </Reveal>
         </div>
       </section>
 

@@ -191,6 +191,49 @@ export function IllustrationFaq(p: IllustrationProps) {
   );
 }
 
+/** Ricerca: una lente che trova la sigla giusta tra tante righe. */
+export function IllustrationSearch(p: IllustrationProps) {
+  return (
+    <Svg {...p}>
+      <ellipse cx="120" cy="162" rx="96" ry="9" fill={mist} />
+      {[0, 1, 2, 3].map((i) => (
+        <rect key={i} x={30} y={30 + i * 30} width={180} height={18} rx={9} fill={i === 2 ? cream : paper} stroke={i === 2 ? teal : line} strokeWidth={2} />
+      ))}
+      <rect x={44} y={36} width={60} height={6} rx={3} fill={line} />
+      <rect x={44} y={66} width={44} height={6} rx={3} fill={line} />
+      <rect x={44} y={96} width={52} height={6} rx={3} fill={teal} />
+      <rect x={44} y={126} width={70} height={6} rx={3} fill={line} />
+      <circle cx="158" cy="98" r="26" fill={paper} fillOpacity={0.6} stroke={teal} strokeWidth={5} />
+      <path d="M177 117l20 20" stroke={teal} strokeWidth={8} strokeLinecap="round" />
+      <circle cx="196" cy="42" r="12" fill={sage} />
+      <path d="M190 42l4 4 8-9" stroke="white" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+/** Domande per il medico: un foglio con caselle spuntate e una bolla con il punto di domanda. */
+export function IllustrationQuestions(p: IllustrationProps) {
+  return (
+    <Svg {...p}>
+      <ellipse cx="120" cy="162" rx="96" ry="9" fill={mist} />
+      <rect x={40} y={20} width={128} height={132} rx={12} fill={paper} stroke={line} strokeWidth={2} />
+      <rect x={56} y={34} width={54} height={7} rx={3.5} fill={ink} opacity={0.5} />
+      {[0, 1, 2, 3].map((i) => (
+        <g key={i}>
+          <rect x={56} y={54 + i * 24} width={16} height={16} rx={5} fill={i < 3 ? teal : paper} stroke={teal} strokeWidth={2} />
+          {i < 3 ? <path d={`M60 ${62 + i * 24}l3 3 6-7`} stroke="white" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" /> : null}
+          <rect x={80} y={59 + i * 24} width={64 - (i % 2) * 14} height={6} rx={3} fill={line} />
+        </g>
+      ))}
+      <rect x={150} y={64} width={64} height={48} rx={14} fill={teal} />
+      <path d="M166 112l-6 12 16-12" fill={teal} />
+      <text x="182" y="98" textAnchor="middle" fontSize="30" fontWeight="800" fill="white" fontFamily="ui-sans-serif, system-ui">
+        ?
+      </text>
+    </Svg>
+  );
+}
+
 /** Trama di sfondo per la CTA finale: righe di referto che sfumano, sostituisce i "blob" sfocati. */
 export function DocumentLinesPattern({ className }: { className?: string }) {
   const rows = [];
