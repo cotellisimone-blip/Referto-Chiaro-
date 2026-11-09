@@ -103,12 +103,20 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
           <SearchTrigger variant="compact" className="hidden xl:inline-flex" />
           <TextSizeToggle />
           <ThemeToggle />
-          <Link href={signedIn ? "/area-personale" : "/accedi"} className="btn btn-ghost btn-sm whitespace-nowrap">
-            {signedIn ? "Area personale" : "Accedi"}
-          </Link>
-          <Link href="/referti/esempio" className="btn btn-primary btn-sm">
-            Prova la demo
-          </Link>
+          {signedIn ? (
+            <Link href="/area-personale" className="btn btn-primary btn-sm whitespace-nowrap">
+              Area personale
+            </Link>
+          ) : (
+            <>
+              <Link href="/accedi" className="btn btn-ghost btn-sm whitespace-nowrap">
+                Accedi
+              </Link>
+              <Link href="/referti/esempio" className="btn btn-primary btn-sm">
+                Prova la demo
+              </Link>
+            </>
+          )}
         </div>
 
         <div className="hdr-mobile items-center gap-1.5">
