@@ -7,14 +7,14 @@ import { StatusChip } from "./status-chip";
 
 interface Order {
   id: string;
-  service: "essenziale" | "completo" | "secondo-parere";
+  service: "essenziale" | "completo" | "secondo-parere" | "videoconsulto";
   amountCents: number;
   status: string;
   provider: string;
   createdAt: string;
 }
 
-export const SERVICE_NAME: Record<Order["service"], string> = { essenziale: "Essenziale", completo: "Completo", "secondo-parere": "Secondo parere" };
+export const SERVICE_NAME: Record<Order["service"], string> = { essenziale: "Capisci il tuo referto", completo: "Capisci più referti", "secondo-parere": "Secondo parere", videoconsulto: "Parla con un medico" };
 
 export function OrdersList() {
   const [orders, setOrders] = useState<Order[] | null>(null);
@@ -28,7 +28,7 @@ export function OrdersList() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="display text-[2rem] sm:text-[2.5rem]">Ordini</h1>
+      <h1 className="display text-[2rem] sm:text-[2.5rem]">Pagamenti</h1>
       <p className="mt-3 text-muted">Lo storico dei tuoi acquisti. In questa versione dimostrativa i pagamenti sono simulati e non viene addebitato nulla.</p>
       {error ? (
         <p role="alert" className="mt-6 text-danger">

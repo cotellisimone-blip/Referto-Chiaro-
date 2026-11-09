@@ -13,11 +13,11 @@ const ICONS: Record<EcosystemService["icon"], typeof FileText> = {
 };
 
 /** Card dei servizi Cura Privata: lo stato reale sta sopra il titolo, in parole, mai solo a colori. */
-export function EcosystemCards({ headingLevel = 3 }: { headingLevel?: 2 | 3 }) {
+export function EcosystemCards({ headingLevel = 3, only }: { headingLevel?: 2 | 3; only?: EcosystemService["status"][] }) {
   const H = headingLevel === 2 ? "h2" : "h3";
   return (
     <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {ECOSYSTEM.map((s) => {
+      {ECOSYSTEM.filter((s) => !only || only.includes(s.status)).map((s) => {
         const Icon = ICONS[s.icon];
         const live = s.status !== "in-preparation";
         return (

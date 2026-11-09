@@ -29,8 +29,9 @@ describe("ordini e pagamenti", () => {
 
   it("l'ordine nasce in attesa, con il prezzo del catalogo in centesimi", async () => {
     const o = await createOrder(alice, { service: "completo", documentId: doc, provider: "simulated" });
-    expect(o).toMatchObject({ status: "pending", amountCents: 2490, currency: "eur", provider: "simulated" });
-    expect((await createOrder(alice, { service: "essenziale", documentId: doc, provider: "simulated" })).amountCents).toBe(990);
+    // Prezzi dall'unica fonte (src/domain/offerta.ts): Capisci 49 €, più referti = 1,5 × Capisci.
+    expect(o).toMatchObject({ status: "pending", amountCents: 7350, currency: "eur", provider: "simulated" });
+    expect((await createOrder(alice, { service: "essenziale", documentId: doc, provider: "simulated" })).amountCents).toBe(4900);
   });
 
   it("pending → paid una sola volta e il report parte solo dopo il pagamento", async () => {

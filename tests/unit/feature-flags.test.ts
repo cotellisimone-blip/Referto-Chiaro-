@@ -5,7 +5,7 @@ describe("feature gate fail-closed", () => {
   it("di default tutto ciò che è sensibile è spento", () => {
     const f = readFlags({});
     expect(f.demoMode).toBe(true);
-    for (const k of ["realUploads", "aiProcessing", "livePayments", "medicalSecondOpinion"] as const) {
+    for (const k of ["realUploads", "aiProcessing", "livePayments", "medicalSecondOpinion", "medicalVideoConsult"] as const) {
       expect(() => requireCapability(k, f)).toThrow(CapabilityDisabledError);
     }
     expect(publicConfig(f).capabilities).toEqual({
@@ -13,6 +13,7 @@ describe("feature gate fail-closed", () => {
       aiProcessing: false,
       livePayments: false,
       medicalSecondOpinion: false,
+      medicalVideoConsult: false,
       publicSignup: false,
     });
   });

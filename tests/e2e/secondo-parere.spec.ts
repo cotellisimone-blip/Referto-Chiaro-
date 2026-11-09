@@ -52,12 +52,18 @@ test.describe("secondo parere e portali riservati", () => {
 
     const page = await patient.newPage();
     await page.goto("/area-personale/secondo-parere");
-    await expect(page.getByRole("heading", { name: "Secondo parere" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "I miei pareri" })).toBeVisible();
     await page.getByLabel(/La tua domanda/).fill("Alcuni valori sono fuori dall'intervallo stampato: quali approfondimenti potrei chiedere al mio medico?");
     for (const box of await page.getByRole("checkbox").all()) await box.check(); // simulazione + consenso alla condivisione
-    await page.getByRole("button", { name: "Invia la richiesta" }).click();
+    await page.getByRole("button", { name: /Continua al pagamento/ }).click();
+    // Percorso B: documentazione → pagamento (simulato) → solo dopo arriva al medico
+    await expect(page.getByRole("heading", { name: "Il tuo ordine." })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("main").getByText("Secondo parere", { exact: true }).first()).toBeVisible();
+    await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
+    await page.getByRole("link", { name: "Vai alla richiesta" }).click();
     await expect(page.getByRole("heading", { name: "Richiesta di secondo parere" })).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText("Inviata", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText("Pagamento registrato", { exact: false }).first()).toBeVisible();
     const axe1 = await new AxeBuilder({ page }).withTags(AXE).analyze();
     expect(axe1.violations.map((v) => v.id)).toEqual([]);
     const caseId = page.url().split("/").pop()!;

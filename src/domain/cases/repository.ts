@@ -2,6 +2,7 @@ import "server-only";
 import { createHash, randomUUID } from "node:crypto";
 import { audit, withPhysician, withSystem, withUser, type Queryable } from "@/db/client";
 import type { ExtractedDocument } from "@/domain/extraction/schema";
+import { refundForRef } from "@/domain/orders/repository";
 
 /**
  * Casi di secondo parere. Finché il gate `medicalSecondOpinion` è chiuso ogni caso è una
@@ -22,6 +23,8 @@ export interface CaseRow {
   answerHash: string | null;
   declineReason: string | null;
   isSimulated: boolean;
+  /** true finché il secondo parere non è pagato: il medico non lo vede. */
+  awaitingPayment: boolean;
   createdAt: string;
   updatedAt: string;
   answeredAt: string | null;
@@ -60,6 +63,7 @@ export function toCase(r: Record<string, unknown>): CaseRow {
     answerHash: (r.answer_hash as string | null) ?? null,
     declineReason: (r.decline_reason as string | null) ?? null,
     isSimulated: Boolean(r.is_simulated),
+    awaitingPayment: Boolean(r.awaiting_payment),
     createdAt: iso(r.created_at)!,
     updatedAt: iso(r.updated_at)!,
     answeredAt: iso(r.answered_at),
@@ -111,7 +115,7 @@ export async function createCase(userId: string, args: { documentId: string; spe
   return withUser(userId, async (tx) => {
     const d = await tx.query("SELECT id, status FROM documents WHERE id = $1", [args.documentId]);
     if (!d.rows[0] || !["verified", "ready"].includes(String(d.rows[0].status))) return { error: "document-not-ready" as const };
-    const n = await tx.query("SELECT count(*)::int AS n FROM cases WHERE status IN ('submitted', 'accepted')");
+    const n = await tx.query("SELECT count(*)::int AS n FROM cases WHERE status IN ('submitted', 'accepted') AND awaiting_payment = false");
     if (Number(n.rows[0].n) >= 5) return { error: "limit-reached" as const };
     // Assegnazione semplice: il medico verificato della specialità con meno casi aperti.
     const p = await tx.query(
@@ -122,11 +126,11 @@ export async function createCase(userId: string, args: { documentId: string; spe
     const physicianId = p.rows[0] ? String(p.rows[0].id) : null;
     const id = randomUUID();
     await tx.query(
-      "INSERT INTO cases(id, user_id, document_id, physician_id, specialty, question, status, is_simulated) VALUES ($1, $2, $3, $4, $5, $6, 'submitted', $7)",
+      "INSERT INTO cases(id, user_id, document_id, physician_id, specialty, question, status, is_simulated, awaiting_payment) VALUES ($1, $2, $3, $4, $5, $6, 'submitted', $7, true)",
       [id, userId, args.documentId, physicianId, args.specialty, args.question, args.isSimulated],
     );
     await tx.query("INSERT INTO consents(id, user_id, kind, version, granted) VALUES (gen_random_uuid(), $1, 'second-opinion', $2, true)", [userId, `caso:${id}`]);
-    await addEvent(tx, id, userId, "submitted", physicianId ? "Assegnato a un medico della specialità richiesta." : "In attesa di assegnazione.");
+    await addEvent(tx, id, userId, "submitted", physicianId ? "Richiesta preparata: sarà inviata al medico della specialità dopo il pagamento." : "Richiesta preparata: in attesa di assegnazione e pagamento.");
     await audit(tx, { userId, actor: "user", action: "case-created", target: id });
     return { id };
   });
@@ -152,7 +156,7 @@ export async function getPhysicianByUser(userId: string): Promise<PhysicianRow |
 }
 
 export async function listPhysicianCases(userId: string, physicianId: string): Promise<CaseRow[]> {
-  return withPhysician(userId, physicianId, async (tx) => (await tx.query("SELECT * FROM cases WHERE physician_id = $1 ORDER BY created_at DESC", [physicianId])).rows.map(toCase));
+  return withPhysician(userId, physicianId, async (tx) => (await tx.query("SELECT * FROM cases WHERE physician_id = $1 AND awaiting_payment = false ORDER BY created_at DESC", [physicianId])).rows.map(toCase));
 }
 
 /**
@@ -161,7 +165,7 @@ export async function listPhysicianCases(userId: string, physicianId: string): P
  */
 export async function getPhysicianCase(userId: string, physicianId: string, caseId: string): Promise<{ case: CaseRow; events: CaseEvent[]; document: { title: string; extracted: ExtractedDocument | null } | null } | null> {
   const found = await withPhysician(userId, physicianId, async (tx) => {
-    const r = await tx.query("SELECT * FROM cases WHERE id = $1 AND physician_id = $2", [caseId, physicianId]);
+    const r = await tx.query("SELECT * FROM cases WHERE id = $1 AND physician_id = $2 AND awaiting_payment = false", [caseId, physicianId]);
     if (!r.rows[0]) return null;
     const ev = await tx.query("SELECT * FROM case_events WHERE case_id = $1 ORDER BY created_at", [caseId]);
     return { case: toCase(r.rows[0]), events: ev.rows.map(toEvent) };
@@ -184,8 +188,8 @@ export async function physicianAct(
   caseId: string,
   action: { kind: "accept" } | { kind: "decline"; reason: string } | { kind: "answer"; answer: string },
 ): Promise<{ ok: true; case: CaseRow } | { ok: false; error: "not-found" | "invalid-state" }> {
-  return withPhysician(userId, physicianId, async (tx) => {
-    const r = await tx.query("SELECT * FROM cases WHERE id = $1 AND physician_id = $2", [caseId, physicianId]);
+  const res = await withPhysician(userId, physicianId, async (tx) => {
+    const r = await tx.query("SELECT * FROM cases WHERE id = $1 AND physician_id = $2 AND awaiting_payment = false", [caseId, physicianId]);
     if (!r.rows[0]) return { ok: false as const, error: "not-found" as const };
     const c = toCase(r.rows[0]);
     let updated;
@@ -208,6 +212,9 @@ export async function physicianAct(
     await audit(tx, { userId, actor: "physician", action: `case-${action.kind}`, target: caseId });
     return { ok: true as const, case: toCase(updated.rows[0]) };
   });
+  // Rifiuto di un caso già pagato: rimborso (fuori dalla transazione del medico, che non vede gli ordini).
+  if (res.ok && action.kind === "decline") await refundForRef(caseId, userId);
+  return res;
 }
 
 // ---------- Admin (solo dopo requireRole admin + 2FA; letture di sistema, registrate) ----------

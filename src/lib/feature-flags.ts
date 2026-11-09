@@ -5,7 +5,7 @@
  * Fail-closed: qualsiasi valore diverso dalla stringa esatta "true" vale false.
  */
 
-export type Feature = "realUploads" | "aiProcessing" | "livePayments" | "medicalSecondOpinion" | "publicSignup";
+export type Feature = "realUploads" | "aiProcessing" | "livePayments" | "medicalSecondOpinion" | "medicalVideoConsult" | "publicSignup";
 
 export interface Flags {
   demoMode: boolean;
@@ -14,6 +14,7 @@ export interface Flags {
   aiProcessing: boolean;
   livePayments: boolean;
   medicalSecondOpinion: boolean;
+  medicalVideoConsult: boolean;
   publicSignup: boolean;
 }
 
@@ -30,12 +31,13 @@ export function readFlags(env: Env = process.env): Flags {
     aiProcessing: strictTrue(env.ENABLE_AI_PROCESSING),
     livePayments: strictTrue(env.ENABLE_LIVE_PAYMENTS),
     medicalSecondOpinion: strictTrue(env.ENABLE_MEDICAL_SECOND_OPINION),
+    medicalVideoConsult: strictTrue(env.ENABLE_MEDICAL_VIDEO_CONSULT),
     publicSignup: strictTrue(env.ENABLE_PUBLIC_SIGNUP),
   };
 }
 
 /** Funzioni che toccano dati sanitari reali, soldi o prestazioni mediche. */
-const COMPLIANCE_GATED: Feature[] = ["realUploads", "aiProcessing", "livePayments", "medicalSecondOpinion"];
+const COMPLIANCE_GATED: Feature[] = ["realUploads", "aiProcessing", "livePayments", "medicalSecondOpinion", "medicalVideoConsult"];
 
 export class CapabilityDisabledError extends Error {
   readonly status = 403;
@@ -73,6 +75,7 @@ export function publicConfig(flags: Flags = readFlags()) {
       aiProcessing: isCapabilityEnabled("aiProcessing", flags),
       livePayments: isCapabilityEnabled("livePayments", flags),
       medicalSecondOpinion: isCapabilityEnabled("medicalSecondOpinion", flags),
+      medicalVideoConsult: isCapabilityEnabled("medicalVideoConsult", flags),
       publicSignup: isCapabilityEnabled("publicSignup", flags),
     },
   } as const;

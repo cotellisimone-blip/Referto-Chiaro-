@@ -80,7 +80,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
         <nav aria-label="Principale" className="hdr-desktop">
           <ul className="flex items-center gap-0.5 xl:gap-1">
             {MAIN_NAV.map((item) => {
-              const active = pathname === item.href || (item.href !== "/servizi" && !!pathname?.startsWith(item.href + "/"));
+              const active = pathname === item.href || !!pathname?.startsWith(item.href + "/");
               return (
                 <li key={item.href}>
                   <Link
@@ -112,8 +112,8 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
               <Link href="/accedi" className="btn btn-ghost btn-sm whitespace-nowrap">
                 Accedi
               </Link>
-              <Link href="/referti/esempio" className="btn btn-primary btn-sm">
-                Prova la demo
+              <Link href="/inizia" className="btn btn-primary btn-sm whitespace-nowrap">
+                Inizia
               </Link>
             </>
           )}
@@ -121,8 +121,8 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
 
         <div className="hdr-mobile items-center gap-1.5">
           <SearchTrigger className="h-10 w-10" />
-          <TextSizeToggle className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-line bg-paper px-1.5 font-serif text-ink transition-colors hover:bg-mist" />
-          <ThemeToggle className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:bg-mist" />
+          <TextSizeToggle className="hdr-wide-only inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-line bg-paper px-1.5 font-serif text-ink transition-colors hover:bg-mist" />
+          <ThemeToggle className="hdr-wide-only inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:bg-mist" />
           <button
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-ink"
@@ -158,12 +158,15 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                   </li>
                 ))}
               </ul>
+              {/* Su schermi molto stretti (sotto 360 px) testo grande e tema stanno qui, non nella testata. */}
+              <div className="hdr-narrow-only mt-5 items-center gap-3">
+                <TextSizeToggle className="inline-flex h-11 min-w-11 items-center justify-center rounded-full border border-line bg-paper px-2 font-serif text-ink" />
+                <ThemeToggle className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-ink" />
+                <span className="text-[0.9375rem] text-muted">Testo grande e tema</span>
+              </div>
               <div className="mt-5 grid gap-3 pb-2">
-                <Link href="/referti/esempio" className="btn btn-primary w-full">
-                  Prova la demo
-                </Link>
-                <Link href="/inizia" className="btn btn-secondary w-full">
-                  Da dove comincio?
+                <Link href="/inizia" className="btn btn-primary w-full">
+                  Scegli il servizio per te
                 </Link>
                 <Link href={signedIn ? "/area-personale" : "/accedi"} className="btn btn-ghost w-full">
                   {signedIn ? "Vai all'area personale" : "Accedi all'area personale"}

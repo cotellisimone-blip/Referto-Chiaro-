@@ -4,6 +4,8 @@ import { createCase, listCases } from "@/domain/cases/repository";
 import { isCapabilityEnabled } from "@/lib/feature-flags";
 import { getDocument } from "@/domain/pipeline/repository";
 import { json } from "@/lib/api";
+import { createServiceOrder } from "@/domain/orders/repository";
+import { openCheckout, providerOrResponse } from "@/lib/payments/checkout";
 
 const Body = z
   .object({
@@ -38,10 +40,16 @@ export async function POST(req: Request) {
   const doc = await getDocument(g.user.id, parsed.data.documentId);
   if (!doc) return json({ error: "not-found", message: "Documento non trovato." }, { status: 404 });
   if (!real && doc.sourceKind !== "synthetic") return json({ error: "capability-disabled", message: "Il secondo parere su documenti reali non è attivo." }, { status: 403 });
+  const pr = providerOrResponse();
+  if ("response" in pr) return pr.response;
   const r = await createCase(g.user.id, { documentId: doc.id, specialty: parsed.data.specialty, question: parsed.data.question, isSimulated: !real });
   if ("error" in r) {
     const msg = r.error === "document-not-ready" ? "Prima conferma i valori del documento." : "Hai già 5 richieste aperte.";
     return json({ error: r.error, message: msg }, { status: 409 });
   }
-  return json({ id: r.id, status: "submitted" }, { status: 201 });
+  // Il caso arriva al medico solo dopo il pagamento: si apre subito il checkout (simulato in demo).
+  const order = await createServiceOrder(g.user.id, { service: "secondo-parere", refId: r.id, documentIds: [doc.id], provider: pr.provider.kind });
+  const c = await openCheckout(req, g.user.id, pr.provider, order);
+  if ("response" in c) return json({ id: r.id, status: "submitted", checkoutUrl: null, paymentError: true }, { status: 201 });
+  return json({ id: r.id, status: "submitted", orderId: order.id, checkoutUrl: c.checkoutUrl }, { status: 201 });
 }

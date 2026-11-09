@@ -15,6 +15,8 @@
 | Pagamenti (Stripe) | DEMO / BLOCCATO live | Listino non approvato, P.IVA, termini e rimborsi | `ENABLE_LIVE_PAYMENTS` + compliance |
 | Prezzi sul sito pubblico | SPENTO | Il titolare deve scegliere il listino (vedi `08_BUSINESS_E_LANCIO` del kit) | `ENABLE_PUBLIC_PRICES` |
 | Secondo parere medico (richiesta, portale medico con 2FA, parere firmato) | DEMO | Nessun medico contrattualizzato; firma qualificata e verifica albo da fare | `ENABLE_MEDICAL_SECOND_OPINION` + compliance |
+| Parla con un medico (prenotazione, pagamento, conferma del medico con link, riepilogo firmato) | DEMO | Nessun medico contrattualizzato; piattaforma video e regole di rimborso da decidere | `ENABLE_MEDICAL_VIDEO_CONSULT` + compliance |
+| Preparati alla visita in 2 minuti | PRONTO | Nessun dato sanitario raccolto | — |
 | Archivio salute | IN PREPARAZIONE | Pagina + lista d'attesa (solo email, nessun campo libero) | — |
 | Visite e videoconsulti | IN PREPARAZIONE | Pagina + lista d'attesa | — |
 | Prevenzione | IN PREPARAZIONE | Pagina + lista d'attesa | — |

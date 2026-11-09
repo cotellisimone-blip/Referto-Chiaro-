@@ -10,12 +10,19 @@ import { SERVICE_NAME } from "./orders-list";
 
 interface Order {
   id: string;
-  service: "essenziale" | "completo" | "secondo-parere";
+  service: "essenziale" | "completo" | "secondo-parere" | "videoconsulto";
   documentId: string | null;
+  refId: string | null;
   amountCents: number;
   status: "pending" | "paid" | "failed" | "cancelled" | "refunded";
   provider: "simulated" | "stripe-test" | "stripe-live";
   createdAt: string;
+}
+
+function backHref(o: Pick<Order, "service" | "refId" | "documentId">): string {
+  if (o.refId && o.service === "secondo-parere") return `/area-personale/secondo-parere/${o.refId}`;
+  if (o.refId && o.service === "videoconsulto") return `/area-personale/appuntamenti/${o.refId}`;
+  return o.documentId ? `/area-personale/documenti/${o.documentId}` : "/area-personale/ordini";
 }
 
 const POLL_MS = 1500;
@@ -67,7 +74,7 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
     try {
       const r = await api<{ order: Order }>(`/api/v1/area/orders/${orderId}/simula`, { method: "POST", body: { esito: outcome } });
       setOrder(r.order);
-      if (outcome === "annullato") router.push(order?.documentId ? `/area-personale/documenti/${order.documentId}` : "/area-personale/ordini");
+      if (outcome === "annullato" && order) router.push(backHref(order));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Errore imprevisto.");
     } finally {
@@ -76,7 +83,12 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
   }
 
   async function retry() {
-    if (!order?.documentId || order.service === "secondo-parere") return;
+    if (!order) return;
+    if (order.refId) {
+      router.push(backHref(order));
+      return;
+    }
+    if (!order.documentId) return;
     setBusy(true);
     setError(null);
     try {
@@ -105,7 +117,14 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
   if (error && !order) return <p role="alert" className="text-danger">{error}</p>;
   if (!order) return <div className="h-64 animate-pulse rounded-2xl bg-mist" aria-busy="true" />;
 
-  const back = order.documentId ? `/area-personale/documenti/${order.documentId}` : "/area-personale/ordini";
+  const back = backHref(order);
+  const backLabel = order.service === "secondo-parere" ? "Vai alla richiesta" : order.service === "videoconsulto" ? "Vai all'appuntamento" : "Torna al referto";
+  const paidText =
+    order.service === "secondo-parere"
+      ? "La richiesta è stata inviata al medico: trovi lo stato e il parere nella pagina della richiesta."
+      : order.service === "videoconsulto"
+        ? "La richiesta è stata inviata al medico: riceverai la conferma di data e collegamento nella pagina dell'appuntamento."
+        : "Stiamo preparando il tuo report: lo trovi nella pagina del referto.";
 
   return (
     <div className="max-w-2xl">
@@ -176,7 +195,7 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
           {order.provider === "stripe-test" ? <p className="mt-2 text-sm text-muted">Modalità di prova del fornitore: nessun addebito reale.</p> : null}
           {!waiting ? (
             <Link href={back} className="btn btn-secondary mt-4">
-              Torna al referto
+              {backLabel}
             </Link>
           ) : null}
         </section>
@@ -187,9 +206,9 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
           <p className="flex items-center gap-2 font-semibold text-sage-deep">
             <CheckCircle2 aria-hidden className="h-5 w-5" /> Pagamento registrato
           </p>
-          <p className="mt-2 text-muted">Stiamo preparando il tuo report: lo trovi nella pagina del referto.{order.provider === "simulated" ? " (Pagamento simulato: nessun addebito.)" : ""}</p>
+          <p className="mt-2 text-muted">{paidText}{order.provider === "simulated" ? " (Pagamento simulato: nessun addebito.)" : ""}</p>
           <Link href={back} className="btn btn-primary mt-4">
-            Torna al referto
+            {backLabel}
           </Link>
         </section>
       ) : null}
@@ -199,13 +218,13 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
           <p className="font-semibold text-danger">Il pagamento non è andato a buon fine.</p>
           <p className="mt-2 text-muted">Non è stato addebitato nulla. Puoi riprovare con un nuovo ordine.</p>
           <div className="mt-4 flex flex-wrap gap-3">
-            {order.documentId && order.service !== "secondo-parere" ? (
+            {order.documentId || order.refId ? (
               <button type="button" className="btn btn-primary" onClick={retry} disabled={busy}>
                 <RotateCcw aria-hidden className="h-4 w-4" /> Riprova
               </button>
             ) : null}
             <Link href={back} className="btn btn-secondary">
-              Torna al referto
+              {backLabel}
             </Link>
           </div>
         </section>
@@ -215,7 +234,7 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
         <section className="mt-6 rounded-2xl border border-line bg-paper p-5 sm:p-6" role="status">
           <p>{order.status === "cancelled" ? "Ordine annullato: nessun addebito." : "Ordine rimborsato."}</p>
           <Link href={back} className="btn btn-secondary mt-4">
-            Torna al referto
+            {backLabel}
           </Link>
         </section>
       ) : null}

@@ -40,7 +40,7 @@ test.describe("ordini e pagamenti simulati", () => {
     await page.goto(o.checkoutUrl);
     await expect(page.getByRole("heading", { name: "Il tuo ordine." })).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText("Pagamento simulato — nessun addebito")).toBeVisible();
-    await expect(page.getByText("9,90")).toBeVisible();
+    await expect(page.getByText(/49,00|49 €/)).toBeVisible();
     await expect(page.getByText("In attesa di pagamento")).toBeVisible();
     const axe = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
     expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
@@ -85,7 +85,7 @@ test.describe("ordini e pagamenti simulati", () => {
     expect(got.status).toBe("cancelled");
     expect((await (await ctx.request.get(`/api/v1/area/documents/${doc}`)).json()).reports).toEqual([]);
     await page.goto("/area-personale/ordini");
-    await expect(page.getByRole("heading", { name: "Ordini" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Pagamenti" })).toBeVisible();
     await expect(page.getByText("Annullato")).toBeVisible({ timeout: 15_000 });
     const axe = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
     expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);

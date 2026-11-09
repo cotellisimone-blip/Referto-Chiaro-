@@ -8,9 +8,9 @@ export function SiteFooter() {
       <div className="container-rc grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,1fr)]">
         <div className="max-w-sm">
           <Logo withTld />
-          <p className="mt-5 font-serif text-2xl leading-snug text-ink">La tua salute, più chiara e accessibile.</p>
+          <p className="mt-5 font-serif text-2xl leading-snug text-ink">Capisci. Chiedi un secondo parere. Parla con un medico.</p>
           <p className="mt-4 text-[1.0625rem] text-muted">
-            Oggi: capire il linguaggio dei referti e preparare le domande per il medico. Gli altri servizi sono in preparazione e lo diciamo chiaramente.
+            Referti, secondo parere e videoconsulti in un unico spazio. Questa è una versione dimostrativa: nessun pagamento e nessun medico sono reali finché non lo diciamo.
           </p>
           <p className="mt-5 inline-flex items-center gap-3 rounded-xl border border-line bg-canvas px-4 py-3 text-[0.9375rem] text-ink">
             <span className="stat-num text-2xl text-danger">112</span>

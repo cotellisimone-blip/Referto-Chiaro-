@@ -3,21 +3,22 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { clsx } from "clsx";
-import { CircleDashed, FilePlus2, Files, FolderOpen, LogOut, Receipt, Settings, Stethoscope } from "lucide-react";
+import { CircleDashed, FilePlus2, Files, FolderOpen, LogOut, Receipt, Settings, Stethoscope, Video } from "lucide-react";
 import { LogoMark } from "@/components/brand/logo";
 import { api } from "./api";
 
+/** Gerarchia ridotta (pacchetto «Memorabile»): documenti, pareri, appuntamenti. Il resto è di supporto. */
 const ITEMS = [
-  { href: "/area-personale", label: "Referti", icon: Files, exact: true },
-  { href: "/area-personale/dossier", label: "Dossier", icon: FolderOpen, exact: false },
-  { href: "/area-personale/secondo-parere", label: "Secondo parere", icon: Stethoscope, exact: false },
-  { href: "/area-personale/ordini", label: "Ordini", icon: Receipt, exact: false },
-  { href: "/area-personale/impostazioni", label: "Impostazioni", icon: Settings, exact: false },
+  { href: "/area-personale", label: "I miei documenti", short: "Documenti", icon: Files, exact: true },
+  { href: "/area-personale/secondo-parere", label: "I miei pareri", short: "Pareri", icon: Stethoscope, exact: false },
+  { href: "/area-personale/appuntamenti", label: "I miei appuntamenti", short: "Visite", icon: Video, exact: false },
+  { href: "/area-personale/dossier", label: "Dossier", short: "Dossier", icon: FolderOpen, exact: false },
+  { href: "/area-personale/ordini", label: "Pagamenti", short: "Pagamenti", icon: Receipt, exact: false },
+  { href: "/area-personale/impostazioni", label: "Impostazioni", short: "Profilo", icon: Settings, exact: false },
 ];
 
 const COMING = [
   { href: "/servizi/archivio", label: "Archivio salute" },
-  { href: "/servizi/visite-e-consulti", label: "Visite e videoconsulti" },
   { href: "/servizi/prevenzione", label: "Prevenzione" },
 ];
 
@@ -111,7 +112,7 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
       </div>
       <nav aria-label="Area personale" className="no-print fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
         <ul className="mx-auto grid max-w-lg grid-cols-5">
-          {[ITEMS[0], ITEMS[1], { href: "/area-personale/nuovo", label: "Nuovo", icon: FilePlus2, exact: true }, ITEMS[2], ITEMS[4]].map(({ href, label, icon: Icon, exact }) => {
+          {[ITEMS[0], ITEMS[1], { href: "/area-personale/nuovo", label: "Nuovo", short: "Nuovo", icon: FilePlus2, exact: true }, ITEMS[2], ITEMS[5]].map(({ href, label, short, icon: Icon, exact }) => {
             const active = isActive(href, exact);
             return (
               <li key={href}>
@@ -124,7 +125,7 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
                     <Icon aria-hidden className="h-5 w-5" />
                   </span>
                   <span className="max-w-full truncate">
-                    {label === "Secondo parere" ? "Parere" : label === "Impostazioni" ? "Profilo" : label}
+                    {short}
                     {label === "Nuovo" ? <span className="sr-only"> referto</span> : null}
                   </span>
                 </Link>

@@ -225,6 +225,7 @@ export async function exportUserData(userId: string) {
     const dossiers = await q("SELECT id, title, document_ids, status, content, created_at, generated_at FROM dossiers ORDER BY created_at");
     const orders = await q("SELECT id, service, amount_cents, currency, status, provider, created_at, paid_at FROM orders ORDER BY created_at");
     const cases = await q("SELECT id, document_id, specialty, question, status, answer, decline_reason, is_simulated, created_at, answered_at FROM cases ORDER BY created_at");
+    const appointments = await q("SELECT id, specialty, reason, preferred_slots, document_ids, status, scheduled_at, summary, decline_reason, is_simulated, created_at, completed_at FROM appointments ORDER BY created_at");
     const auditRows = await q("SELECT action, target, created_at FROM audit_log ORDER BY created_at");
     const files = await q("SELECT document_id, mime_type, size_bytes, sha256, created_at FROM document_files ORDER BY created_at");
     const aiRuns = await q("SELECT target_id, step, model, prompt_version, outcome, input_tokens, output_tokens, created_at FROM ai_runs ORDER BY created_at");
@@ -240,6 +241,7 @@ export async function exportUserData(userId: string) {
       dossiers: dossiers.rows,
       orders: orders.rows,
       secondOpinionCases: cases.rows,
+      videoConsultations: appointments.rows,
       activityLog: auditRows.rows,
     };
   });
@@ -250,6 +252,7 @@ async function purgeHealthData(tx: Parameters<Parameters<typeof withSystem>[0]>[
   await tx.query("DELETE FROM jobs WHERE user_id = $1", [userId]);
   await tx.query("DELETE FROM case_events WHERE case_id IN (SELECT id FROM cases WHERE user_id = $1)", [userId]);
   await tx.query("DELETE FROM cases WHERE user_id = $1", [userId]);
+  await tx.query("DELETE FROM appointments WHERE user_id = $1", [userId]);
   await tx.query("DELETE FROM dossiers WHERE user_id = $1", [userId]);
   await tx.query("DELETE FROM reports WHERE user_id = $1", [userId]);
   await tx.query("DELETE FROM document_files WHERE user_id = $1", [userId]);

@@ -19,8 +19,18 @@
 - [ ] Informativa e cookie rivisti
 - [ ] Dominio curaprivata.it collegato, `PUBLIC_BASE_URL` impostato
 - [ ] Decisione sull'indicizzazione (`ENABLE_INDEXING`)
-- [x] Nessun prezzo pubblico, nessun claim vietato, servizi futuri etichettati (test automatici)
+- [ ] Listino «a partire da» approvato dal titolare (oggi 49 / 149 / 89 €, configurabile)
+- [x] Prezzi da un'unica fonte, nessun claim vietato, nessun medico o recensione inventati, servizi futuri etichettati (test automatici)
 - [x] Demo che rifiuta documenti veri (test automatici)
+
+Firma: ____________________  Data: __________
+
+### Accensione dei videoconsulti veri («Parla con un medico»)
+- [ ] Medici contrattualizzati, iscrizione all'Albo verificata, profili e foto autorizzati in `PUBLIC_PROFESSIONALS`
+- [ ] Piattaforma video scelta (link https, nessun dato sanitario nella piattaforma), informativa aggiornata
+- [ ] Regole di annullamento e rimborso approvate (oggi: rimborso se annulli prima della conferma o se il medico rifiuta)
+- [ ] Fatturazione della prestazione sanitaria e ruolo privacy dei medici chiariti con commercialista e avvocato
+- [ ] `ENABLE_MEDICAL_VIDEO_CONSULT=true` registrato con data e responsabile
 
 Firma: ____________________  Data: __________
 

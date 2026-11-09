@@ -1,5 +1,6 @@
 import "server-only";
 import { SERVICES } from "@/domain/catalog";
+import { orderAmountCents, serviceForOrder, upgradeEnabled } from "@/domain/offerta";
 import { orderPaidEmail, publicUrl, sendEmail } from "@/lib/email";
 import { randomUUID } from "node:crypto";
 import { audit, withSystem, withUser, type Queryable } from "@/db/client";
@@ -7,12 +8,14 @@ import { createReportIn } from "@/domain/pipeline/repository";
 import type { ProviderKind } from "@/lib/payments/types";
 
 export type OrderStatus = "pending" | "paid" | "failed" | "cancelled" | "refunded";
-export type OrderService = "essenziale" | "completo" | "secondo-parere";
+export type OrderService = "essenziale" | "completo" | "secondo-parere" | "videoconsulto";
 
 export interface OrderRow {
   id: string;
   service: OrderService;
   documentId: string | null;
+  /** Caso di secondo parere o appuntamento a cui l'ordine si riferisce. */
+  refId: string | null;
   amountCents: number;
   currency: string;
   status: OrderStatus;
@@ -21,8 +24,8 @@ export interface OrderRow {
   paidAt: string | null;
 }
 
-/** Prezzi in centesimi, coerenti con il catalogo (priceLabel). Ipotesi da validare. */
-export const PRICE_CENTS: Record<"essenziale" | "completo", number> = { essenziale: 990, completo: 2490 };
+/** Prezzi in centesimi: unica fonte src/domain/offerta.ts (configurabile da variabili d'ambiente). */
+export const PRICE_CENTS: Record<"essenziale" | "completo", number> = { essenziale: orderAmountCents("essenziale"), completo: orderAmountCents("completo") };
 
 const iso = (v: unknown) => (v ? new Date(v as string).toISOString() : null);
 
@@ -31,6 +34,7 @@ function toOrder(r: Record<string, unknown>): OrderRow {
     id: String(r.id),
     service: r.service as OrderService,
     documentId: (r.document_id as string | null) ?? null,
+    refId: (r.ref_id as string | null) ?? null,
     amountCents: Number(r.amount_cents),
     currency: String(r.currency),
     status: r.status as OrderStatus,
@@ -52,6 +56,53 @@ export async function createOrder(
     );
     await audit(tx, { userId, actor: "user", action: "order-created", target: id });
     return toOrder(r.rows[0]);
+  });
+}
+
+/**
+ * Ordine per un caso di secondo parere o un videoconsulto. L'importo viene dall'offerta (src/domain/offerta.ts).
+ * Upgrade: se il gate commerciale è acceso e l'utente ha già pagato «Capisci» per uno dei documenti condivisi,
+ * paga solo la differenza. Nessun dato già fornito viene richiesto di nuovo.
+ */
+export async function createServiceOrder(
+  userId: string,
+  input: { service: "secondo-parere" | "videoconsulto"; refId: string; documentIds: string[]; provider: ProviderKind },
+): Promise<OrderRow> {
+  return withUser(userId, async (tx) => {
+    let amount = orderAmountCents(input.service);
+    if (upgradeEnabled() && input.service === "videoconsulto" && input.documentIds.length) {
+      const paid = await tx.query("SELECT amount_cents FROM orders WHERE status = 'paid' AND service = 'essenziale' AND document_id = ANY($1::uuid[]) ORDER BY paid_at DESC LIMIT 1", [input.documentIds]);
+      if (paid.rows[0]) amount = Math.max(0, amount - Number(paid.rows[0].amount_cents));
+    }
+    const id = randomUUID();
+    const r = await tx.query(
+      "INSERT INTO orders(id, user_id, service, document_id, ref_id, amount_cents, currency, status, provider) VALUES ($1, $2, $3, NULL, $4, $5, 'eur', 'pending', $6) RETURNING *",
+      [id, userId, input.service, input.refId, amount, input.provider],
+    );
+    await audit(tx, { userId, actor: "user", action: "order-created", target: id });
+    return toOrder(r.rows[0]);
+  });
+}
+
+/** Ultimo ordine collegato a un caso o appuntamento (per mostrare stato e «riprova»). */
+export async function getOrderForRef(userId: string, refId: string): Promise<OrderRow | null> {
+  return withUser(userId, async (tx) => {
+    const r = await tx.query("SELECT * FROM orders WHERE ref_id = $1 ORDER BY created_at DESC LIMIT 1", [refId]);
+    return r.rows[0] ? toOrder(r.rows[0]) : null;
+  });
+}
+
+/**
+ * Il medico non accetta un caso già pagato: un pagamento simulato diventa «rimborsato»; per un pagamento
+ * reale si registra la necessità di rimborso, che l'amministrazione esegue dal fornitore.
+ */
+export async function refundForRef(refId: string, actorUserId: string): Promise<void> {
+  await withSystem(async (tx) => {
+    const r = await tx.query<{ id: string; provider: string }>("SELECT id, provider FROM orders WHERE ref_id = $1 AND status = 'paid'", [refId]);
+    for (const o of r.rows) {
+      if (o.provider === "simulated") await tx.query("UPDATE orders SET status = 'refunded', updated_at = now() WHERE id = $1", [o.id]);
+      await audit(tx, { userId: actorUserId, actor: "system", action: o.provider === "simulated" ? "order-refunded" : "order-refund-required", target: o.id });
+    }
   });
 }
 
@@ -77,8 +128,8 @@ export async function listOrders(userId: string): Promise<OrderRow[]> {
  */
 export async function markOrderPaid(orderId: string, providerRef?: string): Promise<boolean> {
   const row = await withSystem(async (tx) => {
-    const r = await tx.query<{ user_id: string; service: OrderService; document_id: string | null; amount_cents: number; email?: string }>(
-      "UPDATE orders SET status = 'paid', paid_at = now(), updated_at = now(), provider_ref = COALESCE($2, provider_ref) WHERE id = $1 AND status = 'pending' RETURNING user_id, service, document_id, amount_cents, (SELECT email FROM users WHERE users.id = orders.user_id) AS email",
+    const r = await tx.query<{ user_id: string; service: OrderService; document_id: string | null; ref_id: string | null; amount_cents: number; email?: string }>(
+      "UPDATE orders SET status = 'paid', paid_at = now(), updated_at = now(), provider_ref = COALESCE($2, provider_ref) WHERE id = $1 AND status = 'pending' RETURNING user_id, service, document_id, ref_id, amount_cents, (SELECT email FROM users WHERE users.id = orders.user_id) AS email",
       [orderId, providerRef ?? null],
     );
     if (!r.rows[0]) return null;
@@ -87,10 +138,18 @@ export async function markOrderPaid(orderId: string, providerRef?: string): Prom
     if (r.rows[0].document_id && (r.rows[0].service === "essenziale" || r.rows[0].service === "completo")) {
       await createReportIn(tx, r.rows[0].user_id, r.rows[0].document_id, r.rows[0].service);
     }
+    // Pagato: il caso o l'appuntamento diventa visibile al medico assegnato.
+    if (r.rows[0].ref_id && r.rows[0].service === "secondo-parere") {
+      await tx.query("UPDATE cases SET awaiting_payment = false, updated_at = now() WHERE id = $1 AND user_id = $2", [r.rows[0].ref_id, r.rows[0].user_id]);
+      await tx.query("INSERT INTO case_events(id, case_id, actor_user_id, kind, detail) VALUES ($1, $2, NULL, 'paid', 'Pagamento registrato: la richiesta è stata inviata al medico.')", [randomUUID(), r.rows[0].ref_id]);
+    }
+    if (r.rows[0].ref_id && r.rows[0].service === "videoconsulto") {
+      await tx.query("UPDATE appointments SET awaiting_payment = false, updated_at = now() WHERE id = $1 AND user_id = $2", [r.rows[0].ref_id, r.rows[0].user_id]);
+    }
     return r.rows[0];
   });
   if (row?.email && !String(row.email).endsWith(".invalid")) {
-    const name = SERVICES.find((x) => x.id === row.service)?.name ?? row.service;
+    const name = serviceForOrder(row.service)?.name ?? SERVICES.find((x) => x.id === row.service)?.name ?? row.service;
     const amount = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(Number(row.amount_cents) / 100);
     await sendEmail(orderPaidEmail(String(row.email), publicUrl(`/area-personale/ordini/${orderId}`), name, amount));
   }

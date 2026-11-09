@@ -26,12 +26,50 @@ export interface CaseRow {
   answerHash: string | null;
   declineReason: string | null;
   isSimulated: boolean;
+  awaitingPayment: boolean;
   createdAt: string;
   answeredAt: string | null;
 }
 
-export function CaseChip({ status }: { status: string }) {
-  const s = CASE_STATUS[status] ?? { label: status, tone: "muted" as const };
+/** Va al checkout: interno (simulato) con il router, esterno (Stripe) con una navigazione piena. */
+export function goToCheckout(router: ReturnType<typeof useRouter>, url: string) {
+  if (url.startsWith("/")) router.push(url);
+  else window.location.assign(url);
+}
+
+export function PaymentPending({ payPath, label = "Completa il pagamento" }: { payPath: string; label?: string }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  return (
+    <section role="status" className="rounded-2xl border border-warn/40 bg-cream p-5 sm:p-6">
+      <p className="font-semibold text-ink">Pagamento in sospeso</p>
+      <p className="mt-1 text-ink-soft">La richiesta è pronta ma non è ancora stata inviata al medico: lo sarà appena il pagamento risulta registrato.</p>
+      {error ? <p role="alert" className="mt-3 text-sm text-danger">{error}</p> : null}
+      <button
+        type="button"
+        className="btn btn-primary mt-4"
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          setError(null);
+          try {
+            const r = await api<{ checkoutUrl: string }>(payPath, { method: "POST", body: {} });
+            goToCheckout(router, r.checkoutUrl);
+          } catch (e) {
+            setError(e instanceof Error ? e.message : "Errore");
+            setBusy(false);
+          }
+        }}
+      >
+        {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null} {label}
+      </button>
+    </section>
+  );
+}
+
+export function CaseChip({ status, awaitingPayment = false }: { status: string; awaitingPayment?: boolean }) {
+  const s = awaitingPayment && status === "submitted" ? { label: "Da pagare", tone: "warn" as const } : CASE_STATUS[status] ?? { label: status, tone: "muted" as const };
   const tone = { muted: "bg-mist text-muted", teal: "bg-mist text-teal-deep", sage: "bg-marker-soft text-teal-deep", warn: "bg-cream text-warn", danger: "bg-danger/10 text-danger" }[s.tone];
   return <span className={`chip ${tone}`}>{s.label}</span>;
 }
@@ -48,7 +86,7 @@ export function SimulationNotice() {
 }
 
 /** Elenco delle richieste di secondo parere e modulo per una nuova richiesta. */
-export function CasesPage() {
+export function CasesPage({ price }: { price?: string | null }) {
   const router = useRouter();
   const [cases, setCases] = useState<CaseRow[] | null>(null);
   const [docs, setDocs] = useState<{ id: string; title: string; status: string }[]>([]);
@@ -79,8 +117,9 @@ export function CasesPage() {
     setBusy(true);
     setError(null);
     try {
-      const r = await api<{ id: string }>("/api/v1/area/casi", { method: "POST", body: { documentId, specialty, question, acknowledgeSimulation: ack, consentToShare: share } });
-      router.push(`/area-personale/secondo-parere/${r.id}`);
+      const r = await api<{ id: string; checkoutUrl: string | null }>("/api/v1/area/casi", { method: "POST", body: { documentId, specialty, question, acknowledgeSimulation: ack, consentToShare: share } });
+      if (r.checkoutUrl) goToCheckout(router, r.checkoutUrl);
+      else router.push(`/area-personale/secondo-parere/${r.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Errore");
       setBusy(false);
@@ -90,8 +129,8 @@ export function CasesPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="display text-[2rem] sm:text-[2.5rem]">Secondo parere</h1>
-        <p className="mt-2 text-muted">Una domanda specifica su un referto, a un medico della specialità indicata. Il prezzo reale sarà sempre comunicato prima; in questa versione non c&apos;è alcun addebito.</p>
+        <h1 className="display text-[2rem] sm:text-[2.5rem]">I miei pareri</h1>
+        <p className="mt-2 text-muted">Una domanda specifica sui tuoi documenti, a un medico della specialità indicata. Vedi il prezzo prima di confermare; in questa versione il pagamento è simulato e non c&apos;è alcun addebito.</p>
       </div>
       <SimulationNotice />
       <section aria-labelledby="richieste-titolo">
@@ -106,7 +145,7 @@ export function CasesPage() {
                   <p className="font-semibold text-ink">{c.specialty}</p>
                   <p className="mt-1 text-sm text-muted">{formatDateTime(c.createdAt)}</p>
                 </div>
-                <CaseChip status={c.status} />
+                <CaseChip status={c.status} awaitingPayment={c.awaitingPayment} />
               </div>
               <p className="mt-3 line-clamp-2 text-[0.9375rem] text-ink-soft">{c.question}</p>
               <Link href={`/area-personale/secondo-parere/${c.id}`} className="btn btn-secondary mt-4 min-h-11 text-sm">
@@ -155,7 +194,7 @@ export function CasesPage() {
             </label>
             {error ? <p role="alert" className="rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">{error}</p> : null}
             <button type="submit" disabled={busy} className="btn btn-primary">
-              {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <Stethoscope aria-hidden className="h-4 w-4" />} Invia la richiesta
+              {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <Stethoscope aria-hidden className="h-4 w-4" />} Continua al pagamento{price ? ` (${price})` : ""}
             </button>
           </form>
         )}
@@ -177,7 +216,7 @@ export function CaseDetail({ caseId }: { caseId: string }) {
         const r = await api<typeof data>(`/api/v1/area/casi/${caseId}`);
         if (!alive) return;
         setData(r);
-        if (r && ["submitted", "accepted"].includes(r.case.status)) timer = setTimeout(load, 5000);
+        if (r && ["submitted", "accepted"].includes(r.case.status) && !r.case.awaitingPayment) timer = setTimeout(load, 5000);
       } catch (e) {
         if (alive) setError(e instanceof Error ? e.message : "Errore");
       }
@@ -191,18 +230,19 @@ export function CaseDetail({ caseId }: { caseId: string }) {
   if (error && !data) return <p role="alert" className="text-danger">{error}</p>;
   if (!data) return <div className="h-64 animate-pulse rounded-2xl bg-mist" aria-busy="true" />;
   const c = data.case;
-  const EVENT: Record<string, string> = { submitted: "Richiesta inviata", assigned: "Assegnata a un medico", accepted: "Presa in carico", declined: "Non accettata", answered: "Parere firmato", closed: "Chiusa" };
+  const EVENT: Record<string, string> = { paid: "Pagamento registrato", submitted: "Richiesta preparata", assigned: "Assegnata a un medico", accepted: "Presa in carico", declined: "Non accettata", answered: "Parere firmato", closed: "Chiusa" };
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link href="/area-personale/secondo-parere" className="link text-sm">← Tutte le richieste</Link>
-        <CaseChip status={c.status} />
+        <CaseChip status={c.status} awaitingPayment={c.awaitingPayment} />
       </div>
       <div>
         <h1 className="display text-[2rem] sm:text-[2.5rem]">Richiesta di secondo parere</h1>
         <p className="mt-2 text-muted">{c.specialty} · inviata il {formatDateTime(c.createdAt)}{data.physician ? ` · ${data.physician.fullName}` : ""}</p>
       </div>
       {c.isSimulated ? <SimulationNotice /> : null}
+      {c.awaitingPayment && c.status === "submitted" ? <PaymentPending payPath={`/api/v1/area/casi/${caseId}/pagamento`} /> : null}
       <section className="card p-6" aria-labelledby="domanda-titolo">
         <h2 id="domanda-titolo" className="flex items-center gap-2 text-lg font-semibold text-ink"><MessageSquareText aria-hidden className="h-5 w-5 text-teal" /> La tua domanda</h2>
         <p className="mt-3 whitespace-pre-wrap text-ink-soft">{c.question}</p>
@@ -223,10 +263,10 @@ export function CaseDetail({ caseId }: { caseId: string }) {
         <section className="card border-warn/40 p-6" aria-labelledby="rifiuto-titolo">
           <h2 id="rifiuto-titolo" className="text-lg font-semibold text-ink">Il medico non ha accettato la richiesta</h2>
           <p className="mt-3 text-ink-soft">{c.declineReason}</p>
-          <p className="mt-3 text-sm text-muted">Nessun addebito. Puoi inviare una nuova richiesta, se ha senso, con una domanda diversa.</p>
+          <p className="mt-3 text-sm text-muted">Il pagamento ti viene restituito. Puoi inviare una nuova richiesta, se ha senso, con una domanda diversa.</p>
         </section>
       ) : null}
-      {["submitted", "accepted"].includes(c.status) ? <p className="text-muted" aria-live="polite">In attesa del medico. Questa pagina si aggiorna da sola.</p> : null}
+      {["submitted", "accepted"].includes(c.status) && !c.awaitingPayment ? <p className="text-muted" aria-live="polite">In attesa del medico. Questa pagina si aggiorna da sola.</p> : null}
       <section aria-labelledby="storico-titolo">
         <h2 id="storico-titolo" className="text-lg font-semibold text-ink">Storico</h2>
         <ol className="mt-3 space-y-2 text-sm text-muted">

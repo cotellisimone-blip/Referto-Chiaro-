@@ -1,6 +1,8 @@
+import { formatEuro, orderAmountCents, PRICE_NOTE } from "@/domain/offerta";
+
 /**
- * Catalogo servizi. I prezzi sono IPOTESI DA VALIDARE (strategia 07/11/2026), non tariffe confermate.
- * Lo stato riflette la realtà: in questa versione nessun servizio è acquistabile.
+ * Opzioni acquistabili dal flusso del documento (area personale). I prezzi NON sono scritti qui:
+ * vengono da src/domain/offerta.ts (unica fonte, configurabile da variabili d'ambiente).
  */
 export type ServiceStatus = "demo-only" | "in-preparation";
 
@@ -21,10 +23,10 @@ export interface Service {
 export const SERVICES: Service[] = [
   {
     id: "essenziale",
-    name: "Essenziale",
+    name: "Capisci il tuo referto",
     tagline: "Una spiegazione leggibile di un referto.",
-    priceLabel: "9,90 €",
-    priceNote: "Prezzo indicativo in fase di validazione, IVA e condizioni da definire.",
+    priceLabel: formatEuro(orderAmountCents("essenziale")),
+    priceNote: PRICE_NOTE,
     status: "demo-only",
     statusLabel: "Disponibile solo come esempio",
     includes: [
@@ -40,10 +42,10 @@ export const SERVICES: Service[] = [
   },
   {
     id: "completo",
-    name: "Completo",
+    name: "Capisci più referti",
     tagline: "Più documenti, un unico dossier ordinato.",
-    priceLabel: "24,90 €",
-    priceNote: "Prezzo indicativo in fase di validazione, IVA e condizioni da definire.",
+    priceLabel: formatEuro(orderAmountCents("completo")),
+    priceNote: PRICE_NOTE,
     status: "in-preparation",
     statusLabel: "In preparazione",
     includes: [
@@ -61,7 +63,7 @@ export const SERVICES: Service[] = [
     id: "secondo-parere",
     name: "Secondo parere medico",
     tagline: "Quando serve il confronto con un altro professionista.",
-    priceLabel: "da 99 €",
+    priceLabel: `da ${formatEuro(orderAmountCents("secondo-parere"))}`,
     priceNote: "Indicativo: il prezzo reale dipenderà da specialità e complessità e sarà sempre comunicato prima.",
     status: "in-preparation",
     statusLabel: "Servizio in preparazione",

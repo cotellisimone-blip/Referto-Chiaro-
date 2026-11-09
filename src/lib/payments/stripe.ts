@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { SERVICES } from "@/domain/catalog";
+import { serviceForOrder } from "@/domain/offerta";
 import type { PaymentProvider } from "./types";
 
 export function stripeProvider(secretKey: string, kind: "stripe-test" | "stripe-live"): PaymentProvider {
@@ -7,7 +8,7 @@ export function stripeProvider(secretKey: string, kind: "stripe-test" | "stripe-
   return {
     kind,
     async createCheckout(order, { successUrl, cancelUrl }) {
-      const name = SERVICES.find((s) => s.id === order.service)?.name ?? order.service;
+      const name = serviceForOrder(order.service)?.name ?? SERVICES.find((s) => s.id === order.service)?.name ?? order.service;
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
         locale: "it",

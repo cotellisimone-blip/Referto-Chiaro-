@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ContextualCta } from "@/components/offerta/contextual-cta";
 import { ArrowRight, HelpCircle, ListChecks } from "lucide-react";
 import { PrintButton, ReadingProgress, TableOfContents } from "@/components/content/reading-tools";
 import type { Guide } from "@/content/guides/schema";
@@ -110,6 +111,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
               Aggiungi altri esami e stampa la lista <ArrowRight aria-hidden className="h-4 w-4" />
             </Link>
           </section>
+          <ContextualCta category={guide.category} />
           <section aria-labelledby="faq-titolo">
             <h2 id="faq-titolo" className="flex items-center gap-2 font-serif text-2xl text-ink sm:text-3xl">
               <HelpCircle aria-hidden className="h-6 w-6 text-teal" /> Domande frequenti
@@ -139,10 +141,10 @@ export function GuideArticle({ guide }: { guide: Guide }) {
             <TableOfContents items={toc} />
           </div>
           <div className="card p-5">
-            <p className="text-sm font-semibold text-ink">Vuoi capire il tuo referto?</p>
-            <p className="mt-2 text-sm text-muted">Prova la demo su un referto inventato: valori riportati fedelmente, spiegazioni in parole semplici, domande per la visita.</p>
-            <Link href="/referti/esempio" className="btn btn-primary mt-4 w-full">
-              Prova la demo <ArrowRight aria-hidden className="h-4 w-4" />
+            <p className="text-sm font-semibold text-ink">Hai una visita in programma?</p>
+            <p className="mt-2 text-sm text-muted">In 2 minuti: cosa portare e cosa chiedere. Gratis.</p>
+            <Link href="/strumenti/preparati-alla-visita" className="btn btn-secondary btn-sm mt-4 w-full">
+              Preparati alla visita <ArrowRight aria-hidden className="h-4 w-4" />
             </Link>
           </div>
           {terms.length ? (

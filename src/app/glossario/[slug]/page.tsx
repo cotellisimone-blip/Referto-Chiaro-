@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ContextualCta } from "@/components/offerta/contextual-cta";
 import { notFound } from "next/navigation";
 import { GLOSSARY, getGlossaryEntry } from "@/content/glossario";
 import { getGuide } from "@/content/guides";
@@ -44,6 +45,9 @@ export default async function VocePage({ params }: { params: Promise<{ slug: str
         </div>
         <div className="mt-8">
           <ReviewNotice lastUpdated="2026-11-07" />
+        </div>
+        <div className="mt-10">
+          <ContextualCta category={guides[0]?.category} />
         </div>
         {guides.length ? (
           <section className="mt-10" aria-labelledby="guide-coll">

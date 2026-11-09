@@ -25,7 +25,7 @@ export const STATUS_LABEL: Record<EcosystemStatus, string> = {
 export const ECOSYSTEM: EcosystemService[] = [
   {
     id: "referti",
-    name: "Comprendi i tuoi referti",
+    name: "Capisci il tuo referto",
     short: "Le sigle e i valori del referto di laboratorio spiegati in parole semplici, con le domande da portare al medico.",
     href: "/referti",
     status: "demo",
@@ -41,10 +41,10 @@ export const ECOSYSTEM: EcosystemService[] = [
   },
   {
     id: "secondo-parere",
-    name: "Secondo parere medico",
-    short: "Un medico abilitato e identificato risponde a un quesito specifico sui tuoi documenti. Mai un'intelligenza artificiale.",
+    name: "Chiedi un secondo parere",
+    short: "Un medico abilitato e identificabile risponde per iscritto a un quesito specifico sui tuoi documenti. Mai un'intelligenza artificiale.",
     href: "/servizi/secondo-parere",
-    status: "in-preparation",
+    status: "demo",
     icon: "stethoscope",
   },
   {
@@ -57,10 +57,10 @@ export const ECOSYSTEM: EcosystemService[] = [
   },
   {
     id: "visite",
-    name: "Visite e videoconsulti",
-    short: "Un colloquio con un professionista, in presenza o a distanza, con strutture e medici verificati.",
-    href: "/servizi/visite-e-consulti",
-    status: "in-preparation",
+    name: "Parla con un medico",
+    short: "Un videoconsulto con un medico che ha già letto i documenti che hai scelto di condividere.",
+    href: "/servizi/parla-con-un-medico",
+    status: "demo",
     icon: "video",
   },
   {
@@ -73,7 +73,5 @@ export const ECOSYSTEM: EcosystemService[] = [
   },
 ];
 
-/** I prezzi compaiono sul sito pubblico solo con ENABLE_PUBLIC_PRICES="true" (listino approvato dal titolare). */
-export function publicPricesEnabled(env: Record<string, string | undefined> = process.env): boolean {
-  return env.ENABLE_PUBLIC_PRICES === "true";
-}
+/** Prezzi: unica fonte in src/domain/offerta.ts. */
+export { publicPricesEnabled } from "@/domain/offerta";

@@ -2,7 +2,7 @@ export type ProviderKind = "simulated" | "stripe-test" | "stripe-live";
 
 export interface CheckoutOrder {
   id: string;
-  service: "essenziale" | "completo" | "secondo-parere";
+  service: "essenziale" | "completo" | "secondo-parere" | "videoconsulto";
   amountCents: number;
   currency: string;
 }

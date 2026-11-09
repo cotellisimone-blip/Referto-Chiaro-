@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { expectAccessible } from "./_lib/a11y";
 
-const PAGES = ["/", "/referti", "/servizi/archivio", "/servizi/visite-e-consulti", "/servizi/prevenzione", "/referti/esempio", "/come-funziona", "/servizi", "/domande-frequenti", "/servizi/secondo-parere", "/per-le-strutture", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/inizia", "/chi-siamo", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"];
+const PAGES = ["/", "/referti", "/servizi/archivio", "/servizi/parla-con-un-medico", "/servizi/prevenzione", "/referti/esempio", "/prezzi", "/strumenti/preparati-alla-visita", "/come-funziona", "/servizi", "/domande-frequenti", "/servizi/secondo-parere", "/per-le-strutture", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/inizia", "/chi-siamo", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"];
 
 for (const path of PAGES) {
   test(`pagina ${path}: nessun errore, nessun overflow, accessibilità`, async ({ page }) => {
@@ -78,29 +78,31 @@ test("menu mobile: si apre, intrappola il fuoco e si chiude con Esc", async ({ p
   await page.getByRole("button", { name: "Apri il menu" }).click();
   const menu = page.locator("#menu-mobile");
   await expect(menu).toBeVisible();
-  await expect(menu.getByRole("link", { name: "Prova la demo" })).toBeVisible();
+  await expect(menu.getByRole("link", { name: "Scegli il servizio per te" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(menu).toBeHidden();
 });
 
 test.describe("Cura Privata: mappa, stati e prezzi", () => {
   test("i vecchi indirizzi rimandano in modo permanente alla nuova mappa", async ({ request }) => {
-    for (const [from, to] of [["/esempio", "/referti/esempio"], ["/secondo-parere", "/servizi/secondo-parere"], ["/servizi-prezzi", "/servizi"], ["/faq", "/domande-frequenti"], ["/sicurezza", "/sicurezza-e-privacy"], ["/privacy", "/privacy-policy"], ["/cookie", "/cookie-policy"], ["/area", "/area-personale"], ["/area/dossier", "/area-personale/dossier"]]) {
+    for (const [from, to] of [["/esempio", "/referti/esempio"], ["/secondo-parere", "/servizi/secondo-parere"], ["/servizi-prezzi", "/servizi"], ["/faq", "/domande-frequenti"], ["/sicurezza", "/sicurezza-e-privacy"], ["/privacy", "/privacy-policy"], ["/cookie", "/cookie-policy"], ["/area", "/area-personale"], ["/area/dossier", "/area-personale/dossier"], ["/servizi/visite-e-consulti", "/servizi/parla-con-un-medico"]]) {
       const res = await request.get(from, { maxRedirects: 0 });
       expect(res.status(), from).toBe(308);
       expect(res.headers()["location"], from).toBe(to);
     }
   });
 
-  test("nessun prezzo pubblico finché il listino non è approvato", async ({ page }) => {
-    for (const path of ["/", "/servizi", "/referti", "/servizi/secondo-parere", "/domande-frequenti"]) {
+  test("listino di riferimento: gli stessi prezzi ovunque, con la nota, da un'unica fonte", async ({ page }) => {
+    for (const [path, expected] of [["/", ["49", "149", "89"]], ["/prezzi", ["49", "149", "89"]], ["/referti", ["49"]], ["/servizi/secondo-parere", ["149"]], ["/servizi/parla-con-un-medico", ["89"]]] as const) {
       await page.goto(path);
-      expect(await page.locator("main").innerText(), path).not.toMatch(/\d\s?€|€\s?\d/);
+      const txt = (await page.locator("main").innerText()).replace(/\s/g, " ");
+      for (const n of expected) expect(txt, path).toContain(`${n} €`);
+      expect(txt, path).toContain("Prezzi di riferimento");
     }
   });
 
   test("i servizi in preparazione lo dicono e non offrono caricamenti, prenotazioni o pagamenti", async ({ page }) => {
-    for (const path of ["/servizi/archivio", "/servizi/visite-e-consulti", "/servizi/prevenzione"]) {
+    for (const path of ["/servizi/archivio", "/servizi/prevenzione"]) {
       await page.goto(path);
       await expect(page.getByText("Servizio in preparazione", { exact: false }).first()).toBeVisible();
       await expect(page.locator("main input[type=file]")).toHaveCount(0);
@@ -110,10 +112,22 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     }
   });
 
-  test("la home dice in 5 secondi che cosa fa oggi", async ({ page }) => {
+  test("la home dice in 5 secondi che cosa offre: il payoff è il titolo, i tre servizi subito sotto", async ({ page, isMobile }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La tua salute, più chiara e accessibile\./);
-    await expect(page.getByText("Oggi Cura Privata fa una cosa:")).toBeVisible();
-    await expect(page.getByText("Le spiegazioni informative non sostituiscono una valutazione medica.").first()).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci\.\s*Chiedi un secondo parere\.\s*Parla con un medico\./);
+    for (const name of ["Capisci il tuo referto", "Chiedi un secondo parere", "Parla con un medico"]) await expect(page.getByRole("link", { name }).first()).toBeVisible();
+    // Above the fold: almeno una porta d'ingresso ai servizi è visibile senza scorrere (mobile: le tre tessere)
+    const first = isMobile ? page.getByRole("list", { name: "Vai a un servizio" }) : page.getByRole("link", { name: "Scegli il servizio per te" }).first();
+    const box = await first.boundingBox();
+    expect((box?.y ?? 9999) + (box?.height ?? 0)).toBeLessThan(isMobile ? 844 : 900);
+    await expect(page.getByText("Versione dimostrativa", { exact: false }).first()).toBeVisible();
+  });
+
+  test("nessun medico, recensione o metrica inventata nelle pagine dei servizi", async ({ page }) => {
+    for (const path of ["/", "/prezzi", "/servizi/secondo-parere", "/servizi/parla-con-un-medico", "/referti"]) {
+      await page.goto(path);
+      const txt = (await page.locator("main").innerText()).toLowerCase();
+      for (const bad of ["dott. ", "dr. ", "iscrizione albo: ", "recensioni", "stelle", "pazienti soddisfatti", "professionisti qualificati", "medici qualificati"]) expect(txt, `${path}: ${bad}`).not.toContain(bad);
+    }
   });
 });

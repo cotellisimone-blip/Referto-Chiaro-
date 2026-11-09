@@ -6,15 +6,18 @@ import { Loader2, PenLine } from "lucide-react";
 import { api, formatDateTime } from "@/components/area/api";
 import { CaseChip, CaseDocument, SimulationNotice, type CaseRow } from "@/components/area/cases";
 import type { ExtractedDocument } from "@/domain/extraction/schema";
+import { AppointmentList, type PhysicianAppointmentRow } from "./appointments";
 
 type Physician = { id: string; fullName: string; specialty: string; status: string; registrationRef: string | null };
 
 /** Portale medico: i casi assegnati e il profilo. Tutto è già protetto da ruolo + 2FA nelle API. */
 export function PhysicianDashboard() {
   const [data, setData] = useState<{ cases: CaseRow[]; physician: Physician } | null>(null);
+  const [appointments, setAppointments] = useState<PhysicianAppointmentRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     api<{ cases: CaseRow[]; physician: Physician }>("/api/v1/medico/casi").then(setData).catch((e) => setError(e.message));
+    api<{ appointments: PhysicianAppointmentRow[] }>("/api/v1/medico/appuntamenti").then((r) => setAppointments(r.appointments)).catch(() => {});
   }, []);
   if (error) return <p role="alert" className="text-danger">{error}</p>;
   if (!data) return <div className="h-48 animate-pulse rounded-2xl bg-mist" aria-busy="true" />;
@@ -29,6 +32,7 @@ export function PhysicianDashboard() {
       </div>
       <SimulationNotice />
       <CaseList title="Da gestire" cases={open} empty="Nessun caso in attesa." />
+      <AppointmentList appointments={appointments} />
       <CaseList title="Conclusi" cases={done} empty="Nessun caso concluso." />
     </div>
   );
@@ -108,7 +112,7 @@ export function PhysicianCase({ caseId }: { caseId: string }) {
           {c.status === "submitted" ? (
             <section className="card p-6" aria-labelledby="m-presa">
               <h2 id="m-presa" className="text-lg font-semibold text-ink">Prendere in carico?</h2>
-              <p className="mt-2 text-sm text-muted">Se il caso non è adatto a una consulenza a distanza, rifiuta e spiega perché: la persona non pagherà nulla.</p>
+              <p className="mt-2 text-sm text-muted">Se il caso non è adatto a una consulenza a distanza, rifiuta e spiega perché: il pagamento le verrà restituito.</p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <button type="button" disabled={busy} onClick={() => act({ kind: "accept" })} className="btn btn-primary">Prendo in carico</button>
               </div>

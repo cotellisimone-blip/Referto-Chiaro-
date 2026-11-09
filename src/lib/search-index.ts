@@ -21,12 +21,15 @@ export interface SearchItem {
 }
 
 const PAGE_CONTEXT: Record<string, string> = {
-  "/referti": "Il primo servizio: capire i referti di laboratorio",
-  "/referti/esempio": "Prova la demo su un referto inventato",
+  "/referti": "Capisci il tuo referto: valori e sigle in parole semplici",
+  "/referti/esempio": "Guarda un referto di esempio, inventato",
   "/servizi": "Tutti i servizi e il loro stato reale",
-  "/servizi/secondo-parere": "In preparazione",
+  "/servizi/secondo-parere": "Un medico valuta i tuoi documenti e risponde per iscritto",
+  "/servizi/parla-con-un-medico": "Videoconsulto con un medico, con i documenti già letti",
+  "/prezzi": "I tre servizi a confronto, con prezzi e tempi",
+  "/inizia": "Ti aiutiamo a scegliere il servizio adatto",
+  "/strumenti/preparati-alla-visita": "Gratis: cosa portare e cosa chiedere, in 2 minuti",
   "/servizi/archivio": "In preparazione",
-  "/servizi/visite-e-consulti": "In preparazione",
   "/servizi/prevenzione": "In preparazione",
   "/strumenti/domande-per-il-medico": "Prepara la lista delle domande per la visita",
 };

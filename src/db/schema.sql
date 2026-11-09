@@ -332,3 +332,50 @@ CREATE TABLE IF NOT EXISTS rate_limits (
 );
 -- Solo il sistema (ruolo proprietario) la usa: nessun permesso al ruolo applicativo.
 INSERT INTO schema_migrations(version) VALUES (4) ON CONFLICT DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Schema v5 (pacchetto «Memorabile», 9/11/2026): tre servizi acquistabili.
+--  * ordini collegati a un caso o a un appuntamento (ref_id) e servizio «videoconsulto»;
+--  * il caso di secondo parere arriva al medico solo dopo il pagamento (awaiting_payment);
+--  * appuntamenti di videoconsulto: richiesta → pagamento → conferma del medico → riepilogo.
+-- ---------------------------------------------------------------------------
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS ref_id uuid;
+ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_service_check;
+ALTER TABLE orders ADD CONSTRAINT orders_service_check CHECK (service IN ('essenziale', 'completo', 'secondo-parere', 'videoconsulto'));
+CREATE INDEX IF NOT EXISTS orders_ref_idx ON orders(ref_id);
+ALTER TABLE cases ADD COLUMN IF NOT EXISTS awaiting_payment boolean NOT NULL DEFAULT false;
+ALTER TABLE consents DROP CONSTRAINT IF EXISTS consents_kind_check;
+ALTER TABLE consents ADD CONSTRAINT consents_kind_check CHECK (kind IN ('terms', 'privacy', 'health-data', 'marketing', 'subject-declaration', 'second-opinion', 'video-consult'));
+
+CREATE TABLE IF NOT EXISTS appointments (
+  id uuid PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  physician_id uuid REFERENCES physicians(id) ON DELETE SET NULL,
+  specialty text NOT NULL,
+  reason text NOT NULL,
+  -- Fasce orarie preferite: [{ "day": "2026-11-12", "window": "mattina" | "pomeriggio" | "sera" }]
+  preferred_slots jsonb NOT NULL,
+  document_ids uuid[] NOT NULL DEFAULT '{}',
+  status text NOT NULL CHECK (status IN ('requested', 'confirmed', 'declined', 'completed', 'cancelled')),
+  awaiting_payment boolean NOT NULL DEFAULT true,
+  scheduled_at timestamptz,
+  video_url text,
+  summary text,
+  summary_hash text,
+  decline_reason text,
+  is_simulated boolean NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  completed_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS appointments_user_idx ON appointments(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS appointments_physician_idx ON appointments(physician_id, created_at DESC);
+
+GRANT SELECT, INSERT, UPDATE ON appointments TO app_rls;
+ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS appointments_patient ON appointments;
+CREATE POLICY appointments_patient ON appointments USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid) WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
+DROP POLICY IF EXISTS appointments_physician ON appointments;
+CREATE POLICY appointments_physician ON appointments USING (physician_id IS NOT NULL AND physician_id = NULLIF(current_setting('app.physician_id', true), '')::uuid);
+
+INSERT INTO schema_migrations(version) VALUES (5) ON CONFLICT DO NOTHING;

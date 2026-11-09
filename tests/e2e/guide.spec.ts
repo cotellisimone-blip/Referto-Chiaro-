@@ -82,12 +82,12 @@ test.describe("guide e glossario", () => {
     expect(await sitemap.text()).not.toContain("<loc>");
   });
 
-  test("navigazione: Referti nel menu, header senza a capo né overflow a 1024/1280/1440, anche con testo grande", async ({ page, isMobile }) => {
+  test("navigazione: i tre servizi nel menu, header senza a capo né overflow a 1024/1280/1440, anche con testo grande", async ({ page, isMobile }) => {
     test.skip(isMobile, "solo desktop");
     for (const width of [1024, 1280, 1440]) {
       await page.setViewportSize({ width, height: 800 });
       await page.goto("/");
-      await expect(page.getByRole("navigation", { name: /principale/i }).getByRole("link", { name: "Referti" })).toBeVisible();
+      await expect(page.getByRole("navigation", { name: /principale/i }).getByRole("link", { name: "Capisci il referto" })).toBeVisible();
       for (const large of [false, true]) {
         if (large) await page.getByRole("button", { name: "Testo più grande" }).click();
         const box = await page.locator("header").first().boundingBox();
