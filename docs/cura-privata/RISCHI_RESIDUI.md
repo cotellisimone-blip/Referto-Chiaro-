@@ -11,7 +11,7 @@
 | Script inline consentiti dalla CSP | Medio | Header di sicurezza attivi; limite tracciato | Nonce o hash quando il rendering diventa dinamico |
 | File caricati senza antivirus | Alto (se acceso) | Caricamenti spenti; firma dei byte, limiti, blocco PDF con script | Servizio antivirus prima dell'apertura |
 | Repository solo in archivio locale | Medio | Bundle git e zip nel progetto | Nuovo repository (GitLab o GitHub sbloccato) |
-| Test di accessibilità che a volte misurano durante una transizione | Basso | Ripetizione: 6/6 verdi | Rendere istantanea l'animazione d'ingresso nei test |
+| Test di accessibilità che a volte misuravano durante una transizione | Risolto (9/11) | `tests/e2e/_lib/a11y.ts` aspetta la fine delle animazioni prima di axe | — |
 
 ## Go / no-go (da firmare)
 ### Pubblicazione del sito come vetrina e demo (solo dati inventati)
