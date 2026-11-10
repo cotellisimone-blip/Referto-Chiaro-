@@ -6,10 +6,10 @@ test.describe("guide e glossario", () => {
     await page.goto("/guide");
     await expect(page.getByRole("heading", { level: 1, name: "Gli esami, spiegati uno per uno." })).toBeVisible();
     await expect(page.getByRole("note")).toContainText("revisione medica");
-    await expect(page.getByRole("navigation", { name: "Categorie" }).getByRole("link")).not.toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Le più consultate" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Esami per immagini/ })).toBeVisible();
     const links = page.locator("a[href^='/guide/']");
     expect(await links.count()).toBeGreaterThanOrEqual(85);
-    await expect(page.getByRole("navigation", { name: "Categorie" })).toContainText("Esami per immagini");
     await expectAccessible(page);
   });
 

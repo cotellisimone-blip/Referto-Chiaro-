@@ -20,20 +20,13 @@ export default function SecondoParerePage() {
     <ServiceLanding
       id="secondo-parere"
       secondaryCta={{ href: "/inizia", label: "Non sei sicuro? Ti aiutiamo" }}
-      waitlist="secondo-parere"
-      prerequisites={[
-        "Medici con contratto e iscrizione all'Albo verificata",
-        "Copertura assicurativa e responsabilità professionale definite",
-        "Regole su rimborsi e annullamenti approvate da un legale",
-        "Inquadramento fiscale e sanitario verificato da un consulente",
-      ]}
     >
-      <section aria-labelledby="garanzie-titolo" className="py-16 sm:py-24">
+      <section aria-labelledby="garanzie-titolo" className="py-12 sm:py-20">
         <div className="container-rc">
           <h2 id="garanzie-titolo" className="display-lg text-[2rem] sm:text-[2.5rem]">
             Trasparenza, prima di tutto.
           </h2>
-          <ul className="mt-8 grid gap-5 sm:grid-cols-2">
+          <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {TRANSPARENCY.map(({ icon: Icon, title, text }) => (
               <li key={title} className="card p-6 sm:p-7">
                 <span className="tone-icon h-12 w-12">

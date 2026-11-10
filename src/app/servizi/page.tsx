@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BookOpenText, ClipboardList, ListChecks, Search } from "lucide-react";
 import { Section } from "@/components/ui/section";
-import { EcosystemCards } from "@/components/ui/ecosystem-cards";
 import { ServiceTriad } from "@/components/offerta/service-triad";
 import { FaqList } from "@/components/ui/faq-list";
 import { FAQ } from "@/content/faq";
 
 export const metadata: Metadata = {
   title: "I servizi",
-  description: "Capisci il tuo referto, chiedi un secondo parere, parla con un medico: i servizi di Cura Privata, gli strumenti gratuiti e ciò che è in preparazione.",
+  description: "Capisci il tuo referto, chiedi un secondo parere, parla con un medico: i servizi di Cura Privata, e gli strumenti gratuiti.",
   alternates: { canonical: "/servizi" },
 };
 
@@ -50,6 +49,10 @@ export default function ServiziPage() {
           <Link href="/prezzi" className="link font-semibold">
             Confronta prezzi e tempi
           </Link>
+          <span aria-hidden> · </span>
+          <Link href="/stato-del-progetto" className="link">
+            Stato del progetto
+          </Link>
         </p>
       </div>
       <Section id="gratis" tone="paper" eyebrow="Gratis, per tutti" title="Strumenti e guide, senza registrarti.">
@@ -64,9 +67,6 @@ export default function ServiziPage() {
             </li>
           ))}
         </ul>
-      </Section>
-      <Section id="in-preparazione" eyebrow="In preparazione" title="Arriveranno dopo, quando saranno pronti.">
-        <EcosystemCards only={["in-preparation"]} />
       </Section>
       <Section id="non-facciamo" tone="paper" eyebrow="Per chiarezza" title="Che cosa non facciamo.">
         <ul className="grid gap-3 sm:grid-cols-2">

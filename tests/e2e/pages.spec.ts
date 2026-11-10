@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { expectAccessible } from "./_lib/a11y";
 
-const PAGES = ["/", "/referti", "/servizi/archivio", "/servizi/parla-con-un-medico", "/servizi/prevenzione", "/referti/esempio", "/prezzi", "/strumenti/preparati-alla-visita", "/come-funziona", "/servizi", "/domande-frequenti", "/servizi/secondo-parere", "/per-le-strutture", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/inizia", "/chi-siamo", "/per-i-medici", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"];
+const PAGES = ["/", "/referti", "/servizi/archivio", "/servizi/parla-con-un-medico", "/servizi/prevenzione", "/referti/esempio", "/prezzi", "/strumenti/preparati-alla-visita", "/come-funziona", "/servizi", "/domande-frequenti", "/servizi/secondo-parere", "/per-le-strutture", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/inizia", "/chi-siamo", "/per-i-medici", "/stato-del-progetto", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"];
 
 for (const path of PAGES) {
   test(`pagina ${path}: nessun errore, nessun overflow, accessibilità`, async ({ page }) => {

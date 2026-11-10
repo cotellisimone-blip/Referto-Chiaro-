@@ -20,20 +20,13 @@ export default function ParlaConUnMedicoPage() {
     <ServiceLanding
       id="parla-con-un-medico"
       secondaryCta={{ href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita, gratis" }}
-      waitlist="visite"
-      prerequisites={[
-        "Medici con contratto e iscrizione all'Albo verificata",
-        "Piattaforma video adatta all'uso sanitario e accordi sul trattamento dei dati",
-        "Regole sulla telemedicina applicabili verificate da un consulente",
-        "Disponibilità reali dei medici, prezzi, disdette e rimborsi pubblicati",
-      ]}
     >
-      <section aria-labelledby="differenza-titolo" className="py-16 sm:py-24">
+      <section aria-labelledby="differenza-titolo" className="py-12 sm:py-20">
         <div className="container-rc">
           <h2 id="differenza-titolo" className="display-lg text-[2rem] sm:text-[2.5rem]">
             Che cosa cambia rispetto a una videochiamata qualsiasi
           </h2>
-          <ul className="mt-8 grid gap-5 sm:grid-cols-2">
+          <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {DIFFERENCE.map(({ icon: Icon, title, text }) => (
               <li key={title} className="card p-6 sm:p-7">
                 <span className="tone-icon h-12 w-12">

@@ -157,7 +157,7 @@ export async function renderReportPdf(args: {
 }): Promise<Uint8Array> {
   const { document: doc, explanation: exp, generatedAt } = args;
   const pdf = await PDFDocument.create();
-  pdf.setTitle(toWinAnsi(`Cura Privata — Comprendi i tuoi referti — ${doc.isSynthetic ? "ESEMPIO DEMO" : "Report"}`));
+  pdf.setTitle(toWinAnsi(`Cura Privata — Capisci il tuo referto — ${doc.isSynthetic ? "ESEMPIO DEMO" : "Report"}`));
   pdf.setAuthor("Cura Privata");
   pdf.setSubject("Spiegazione informativa, non clinica");
   pdf.setProducer("Cura Privata");
@@ -351,7 +351,7 @@ export async function renderReportPdf(args: {
     p.drawText(label, { x: A4.w - M - sans.widthOfTextAtSize(label, 7.5), y: M - 14, size: 7.5, font: sans, color: MUTED });
     if (i > 0) {
       drawMark(p, M - 2, A4.h - M + 10, 0.32);
-      p.drawText("Cura Privata · Comprendi i tuoi referti", { x: M + 20, y: A4.h - M + 2, size: 8.5, font: serif, color: MUTED });
+      p.drawText("Cura Privata · Capisci il tuo referto", { x: M + 20, y: A4.h - M + 2, size: 8.5, font: serif, color: MUTED });
       ctx.y = Math.min(ctx.y, A4.h - M);
     }
   });

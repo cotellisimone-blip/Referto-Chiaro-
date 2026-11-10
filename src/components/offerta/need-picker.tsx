@@ -101,7 +101,7 @@ export function NeedPicker({ services, headingId }: { services: PickerService[];
             </div>
           </div>
         ) : (
-          <div className="flex h-full min-h-48 flex-col justify-center gap-5 rounded-[var(--radius-xl)] border border-dashed border-line bg-paper/60 p-6">
+          <div className="flex min-h-48 flex-col justify-center gap-5 rounded-[var(--radius-xl)] border border-dashed border-line bg-paper/60 p-6">
             <div aria-hidden className="grid grid-cols-3 gap-3">
               <div className="tone-capisci overflow-hidden rounded-2xl border border-line -rotate-2"><CapisciScene uid="-np" /></div>
               <div className="tone-parere overflow-hidden rounded-2xl border border-line translate-y-3"><ParereScene uid="-np" /></div>

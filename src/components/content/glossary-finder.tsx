@@ -38,7 +38,7 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
   return (
     <>
       <div className="container-rc py-6">
-        <p role="note" className="max-w-3xl rounded-2xl border border-dashed border-warn/60 bg-cream px-5 py-4 text-sm text-ink-soft">
+        <p role="note" className="max-w-3xl text-[0.9375rem] text-muted">
           Bozze editoriali in attesa di revisione medica. Per le guide complete sugli esami vedi{" "}
           <Link href="/guide" className="link">
             Guide
@@ -67,20 +67,21 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
           <p className="mt-3 text-sm text-muted" aria-live="polite">
             {filtered.length} {filtered.length === 1 ? "termine" : "termini"} per «{query.trim()}»
           </p>
-        ) : (
-          <nav aria-label="Lettere" className="mt-6">
-            <ul className="flex flex-wrap gap-1">
+        ) : null}
+      </div>
+      {filtered ? null : (
+          <nav aria-label="Lettere" className="glossary-letters sticky z-30 border-b border-line/70 bg-canvas/95 py-2 backdrop-blur">
+            <ul className="container-rc flex gap-1 overflow-x-auto sm:flex-wrap">
               {groups.map((g) => (
                 <li key={g.letter}>
-                  <a href={`#lettera-${g.letter}`} className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-mist font-semibold text-ink hover:bg-marker-soft">
+                  <a href={`#lettera-${g.letter}`} className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-mist text-lg font-semibold text-ink hover:bg-marker-soft">
                     {g.letter}
                   </a>
                 </li>
               ))}
             </ul>
           </nav>
-        )}
-      </div>
+      )}
       <div className="container-rc space-y-10 py-10 sm:py-14">
         {filtered ? (
           filtered.length ? (
@@ -100,7 +101,7 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
           )
         ) : (
           groups.map((g) => (
-            <section key={g.letter} id={`lettera-${g.letter}`} aria-labelledby={`lettera-${g.letter}-titolo`} className="scroll-mt-28">
+            <section key={g.letter} id={`lettera-${g.letter}`} aria-labelledby={`lettera-${g.letter}-titolo`} className="scroll-mt-44">
               <h2 id={`lettera-${g.letter}-titolo`} className="font-serif text-3xl text-ink">{g.letter}</h2>
               <dl className="mt-4 divide-y divide-line rounded-[var(--radius-lg)] border border-line bg-paper">
                 {g.entries.map((e) => (
@@ -117,14 +118,14 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
 
 function Row({ e }: { e: TermCard }) {
   return (
-    <div className="grid gap-1 px-5 py-4 sm:grid-cols-[220px_1fr] sm:gap-6">
+    <div className="grid gap-1 px-5 py-4 text-lg sm:grid-cols-[240px_1fr] sm:gap-6">
       <dt className="font-semibold text-ink">
         <Link href={`/glossario/${e.slug}`} className="link">
           {e.term}
         </Link>
-        {e.aliases.length ? <span className="block text-xs font-normal uppercase tracking-wide text-muted">{e.aliases.slice(0, 2).join(" · ")}</span> : null}
+        {e.aliases.length ? <span className="block text-sm font-normal text-muted">{e.aliases.slice(0, 2).join(" · ")}</span> : null}
       </dt>
-      <dd className="text-[0.9375rem] text-ink-soft">{e.definition}</dd>
+      <dd className="text-[1.0625rem] text-ink-soft">{e.definition}</dd>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { GUIDES } from "@/content/guides";
 import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { GLOSSARY } from "@/content/glossario";
-import { MAIN_NAV, FOOTER_NAV } from "@/components/site/nav";
+import { MAIN_NAV, FOOTER_NAV, LEGAL_NAV, EXTRA_PAGES } from "@/components/site/nav";
 
 /**
  * Indice compatto per la ricerca del sito: guide, voci di glossario e pagine.
@@ -59,6 +59,7 @@ export function buildSearchIndex(): SearchItem[] {
   add("/strumenti/domande-per-il-medico", "Domande per il medico", "Strumenti");
   for (const n of MAIN_NAV) add(n.href, n.label, "Cura Privata");
   for (const [section, links] of Object.entries(FOOTER_NAV)) for (const l of links) add(l.href, l.label, section);
+  for (const l of [...EXTRA_PAGES, ...LEGAL_NAV]) add(l.href, l.label, "Cura Privata");
   return [...guides, ...terms, ...pages];
 }
 

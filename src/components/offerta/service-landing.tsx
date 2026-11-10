@@ -4,7 +4,7 @@ import { clsx } from "clsx";
 import { CORE_SERVICES, PRICE_NOTE, coreService, priceLabel, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
 import { VideoSlot } from "./video-slot";
 import { SCENE } from "./scenes";
-import { WaitlistForm } from "@/components/site/waitlist-form";
+import { VIDEOS } from "@/content/media";
 
 const ICON = { file: FileText, stethoscope: Stethoscope, video: Video } as const;
 
@@ -15,15 +15,10 @@ const ICON = { file: FileText, stethoscope: Stethoscope, video: Video } as const
 export function ServiceLanding({
   id,
   secondaryCta,
-  prerequisites,
-  waitlist,
   children,
 }: {
   id: CoreServiceId;
   secondaryCta?: { href: string; label: string };
-  /** Che cosa manca prima del servizio reale (detto chiaramente, non in piccolo). */
-  prerequisites: string[];
-  waitlist?: "secondo-parere" | "visite";
   children?: React.ReactNode;
 }) {
   const s = coreService(id);
@@ -55,17 +50,6 @@ export function ServiceLanding({
                 </Link>
               ) : null}
             </div>
-            {/* I tre passi in breve, come una mini timeline */}
-            <ol aria-label="In tre passi" className="mt-10 grid gap-3 sm:grid-cols-3">
-              {s.steps.map((st, i) => (
-                <li key={st.title} className="flex items-center gap-3 rounded-2xl border border-line bg-paper/80 p-3 shadow-[var(--shadow-soft,0_1px_2px_rgba(0,0,0,0.04))] backdrop-blur">
-                  <span aria-hidden className="tone-icon h-10 w-10 shrink-0 text-lg font-extrabold">
-                    {i + 1}
-                  </span>
-                  <span className="text-[1.0625rem] font-bold leading-snug text-ink">{st.title}</span>
-                </li>
-              ))}
-            </ol>
           </div>
           {/* Riepilogo d'acquisto: prezzo, tempi, chi, cosa ricevi */}
           <aside aria-label="In breve" className="service-card tilt-in shadow-[var(--shadow-float)]">
@@ -113,23 +97,26 @@ export function ServiceLanding({
         </div>
       </section>
 
-      {/* STATO REALE */}
+       {/* STATO REALE: una riga, i dettagli nella pagina «Stato del progetto» */}
       <div className="container-rc">
-        <div role="note" className="mt-8 flex items-start gap-3 rounded-2xl border border-dashed border-warn/50 bg-cream px-5 py-4 text-[1.0625rem] text-ink">
-          <CircleDashed aria-hidden className="mt-1 h-5 w-5 shrink-0 text-warn" />
-          <p>
-            <strong>Versione dimostrativa.</strong> Puoi provare tutto il percorso su documenti inventati: pagamento e medico sono simulati e non c&apos;è alcun addebito. Il servizio reale parte solo dopo le verifiche elencate più sotto.
-          </p>
-        </div>
+        <p role="note" className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-[1.0625rem] text-ink-soft">
+          <CircleDashed aria-hidden className="h-5 w-5 shrink-0 text-warn" />
+          <span>
+            <strong className="text-ink">Versione dimostrativa:</strong> provi tutto su documenti inventati, senza addebiti.
+          </span>
+          <Link href="/stato-del-progetto" className="link font-semibold">
+            Che cosa manca per il servizio reale
+          </Link>
+        </p>
       </div>
 
-      {/* COME FUNZIONA: un solo percorso */}
-      <section aria-labelledby="passi-titolo" className="py-16 sm:py-24">
+      {/* COME FUNZIONA + CHE COSA INCLUDE: una sezione sola */}
+      <section aria-labelledby="passi-titolo" className="py-12 sm:py-20">
         <div className="container-rc">
           <h2 id="passi-titolo" className="display-lg">
             Come funziona, in tre passi.
           </h2>
-          <ol className="relative mt-10 grid gap-5 md:grid-cols-3">
+          <ol className="relative mt-8 grid gap-5 md:grid-cols-3">
             {s.steps.map((st, i) => (
               <li key={st.title} className="card relative p-6 sm:p-7">
                 <span aria-hidden className="tone-icon h-12 w-12 text-xl font-extrabold">
@@ -143,79 +130,48 @@ export function ServiceLanding({
               </li>
             ))}
           </ol>
-        </div>
-      </section>
-
-      {/* INCLUDE / NON È PER */}
-      <section aria-labelledby="include-titolo" className="bg-paper py-16 sm:py-24">
-        <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-2 lg:gap-12">
-          <div>
-            <h2 id="include-titolo" className="display-lg text-[2rem] sm:text-[2.5rem]">
-              Che cosa include
-            </h2>
-            <ul className="mt-6 space-y-4 text-lg text-ink">
-              {s.includes.map((t) => (
-                <li key={t} className="flex gap-3">
-                  <Check aria-hidden className="tone-text mt-1 h-5 w-5 shrink-0" />
-                  {t}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h2 className="display-lg text-[2rem] sm:text-[2.5rem]">Quando non è la strada giusta</h2>
-            <ul className="mt-6 space-y-4 text-lg text-ink-soft">
-              {s.notFor.map((t) => (
-                <li key={t} className="flex gap-3">
-                  <X aria-hidden className="mt-1 h-5 w-5 shrink-0 text-danger" />
-                  {t}
-                </li>
-              ))}
-            </ul>
+          <div className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-2 lg:gap-12">
+            <div>
+              <h2 id="include-titolo" className="text-[1.625rem] font-bold text-ink">
+                Che cosa include
+              </h2>
+              <ul className="mt-4 space-y-3 text-lg text-ink">
+                {s.includes.map((t) => (
+                  <li key={t} className="flex gap-3">
+                    <Check aria-hidden className="tone-text mt-1 h-5 w-5 shrink-0" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-[1.625rem] font-bold text-ink">Quando non è la strada giusta</h2>
+              <ul className="mt-4 space-y-3 text-lg text-ink-soft">
+                {s.notFor.map((t) => (
+                  <li key={t} className="flex gap-3">
+                    <X aria-hidden className="mt-1 h-5 w-5 shrink-0 text-danger" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
       {children}
 
-      {/* VIDEO */}
-      <section aria-label="Video del servizio" className="py-16 sm:py-24">
-        <div className="container-rc max-w-4xl">
-          <VideoSlot id={s.id} />
-        </div>
-      </section>
-
-      {/* PRIMA DEL SERVIZIO REALE */}
-      <section aria-labelledby="prerequisiti-titolo" className="bg-mist py-16 sm:py-20">
-        <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[1fr_1fr] lg:gap-12">
-          <div>
-            <p className="eyebrow">Trasparenza</p>
-            <h2 id="prerequisiti-titolo" className="display-lg mt-4 text-[2rem] sm:text-[2.5rem]">
-              Prima di attivarlo davvero
-            </h2>
-            <ul className="mt-6 space-y-3 text-lg text-ink-soft">
-              {prerequisites.map((p) => (
-                <li key={p} className="flex gap-3">
-                  <CircleDashed aria-hidden className="mt-1 h-5 w-5 shrink-0 text-teal" />
-                  {p}
-                </li>
-              ))}
-            </ul>
+      {/* VIDEO: solo quando il filmato esiste davvero */}
+      {VIDEOS[s.id]?.src ? (
+        <section aria-label="Video del servizio" className="py-12 sm:py-20">
+          <div className="container-rc max-w-4xl">
+            <VideoSlot id={s.id} />
           </div>
-          {waitlist ? (
-            <div>
-              <h2 className="text-2xl font-bold text-ink">Avvisami quando parte</h2>
-              <p className="mt-2 text-lg text-ink-soft">Solo la tua email: nessun dato sanitario.</p>
-              <div className="mt-5">
-                <WaitlistForm interest={waitlist} />
-              </div>
-            </div>
-          ) : null}
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       {/* GLI ALTRI DUE SERVIZI */}
-      <section aria-labelledby="altri-titolo" className="py-16 sm:py-24">
+      <section aria-labelledby="altri-titolo" className="bg-paper py-12 sm:py-20">
         <div className="container-rc">
           <h2 id="altri-titolo" className="display-lg text-[2rem] sm:text-[2.5rem]">
             Gli altri servizi di Cura Privata

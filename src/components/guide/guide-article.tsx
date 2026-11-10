@@ -10,6 +10,18 @@ import { FaqList } from "@/components/ui/faq-list";
 import { ReviewNotice } from "./review-notice";
 import { Breadcrumbs } from "./breadcrumbs";
 
+/** Prima frase di un paragrafo, per il riquadro «In breve» (stesso testo già validato, nessuna parola nuova). */
+function firstSentence(p: string) {
+  const m = p.match(/^(.+?[.!?])(\s|$)/);
+  const first = m ? m[1] : p;
+  if (first.length <= 130) return first;
+  // Frase lunga: ci si ferma alla prima pausa forte (due punti o punto e virgola), senza aggiungere parole.
+  const cut = first.search(/[:;]/);
+  if (cut > 30 && cut <= 130) return `${first.slice(0, cut)}.`;
+  const sp = first.lastIndexOf(" ", 125);
+  return `${first.slice(0, sp > 40 ? sp : 125)}…`;
+}
+
 /** Modello di pagina di una guida: stesse sezioni per tutte, così la lettura è prevedibile. */
 export function GuideArticle({ guide }: { guide: Guide }) {
   const cat = GUIDE_CATEGORIES[guide.category];
@@ -48,9 +60,38 @@ export function GuideArticle({ guide }: { guide: Guide }) {
           <PrintButton label="Stampa la guida" />
         </div>
       </header>
-      <div className="mt-8 max-w-3xl">
+      <section aria-labelledby="in-breve-titolo" className="guide-brief mt-8 max-w-3xl rounded-[var(--radius-lg)] border border-line bg-paper p-6 shadow-[var(--shadow-card)] sm:p-8">
+        <h2 id="in-breve-titolo" className="text-[1.5rem] font-bold text-ink">In breve</h2>
+        <dl className="mt-4 grid gap-4 text-[1.0625rem] sm:grid-cols-3 sm:gap-6">
+          <div>
+            <dt className="font-bold text-teal">{guide.procedure ? "Che cosa mostra" : "Che cosa misura"}</dt>
+            <dd className="mt-1 text-ink-soft">{firstSentence(guide.sections.whatItMeasures[0])}</dd>
+          </div>
+          <div>
+            <dt className="font-bold text-teal">Quando si fa</dt>
+            <dd className="mt-1 text-ink-soft">{firstSentence(guide.sections.whyRequested[0])}</dd>
+          </div>
+          <div>
+            <dt className="font-bold text-teal">Da chiedere al medico</dt>
+            <dd className="mt-1 text-ink-soft">{guide.questionsForDoctor[0]}</dd>
+          </div>
+        </dl>
+      </section>
+      <div className="mt-6 max-w-3xl">
         <ReviewNotice lastUpdated={guide.lastUpdated} />
       </div>
+      <details className="no-print mt-6 max-w-3xl rounded-2xl border border-line bg-paper lg:hidden">
+        <summary className="flex min-h-14 cursor-pointer items-center px-5 text-lg font-bold text-ink">Indice della pagina</summary>
+        <ul className="space-y-1 px-5 pb-4">
+          {toc.map((t) => (
+            <li key={t.id}>
+              <a href={`#${t.id}`} className="link inline-flex min-h-11 items-center text-lg">
+                {t.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
 
       <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="prose-rc max-w-3xl space-y-12">

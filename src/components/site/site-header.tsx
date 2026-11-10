@@ -89,6 +89,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                     className={clsx(
                       "relative whitespace-nowrap rounded-full px-1.5 py-2.5 text-[0.9375rem] font-medium transition-colors duration-150 xl:px-3.5 xl:text-[1rem]",
                       active ? "bg-mist text-ink" : "text-ink-soft hover:bg-mist/70 hover:text-ink",
+                      item.tone && `tone-${item.tone} nav-tone`,
                     )}
                   >
                     {item.label}
@@ -152,7 +153,10 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                         pathname === item.href ? "text-teal" : "text-ink",
                       )}
                     >
-                      {item.label}
+                      <span className={clsx("flex items-center gap-3", item.tone && `tone-${item.tone}`)}>
+                        {item.tone ? <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[var(--tone-accent)]" /> : null}
+                        {item.label}
+                      </span>
                       <ArrowRight aria-hidden className="h-4 w-4 text-muted" />
                     </Link>
                   </li>

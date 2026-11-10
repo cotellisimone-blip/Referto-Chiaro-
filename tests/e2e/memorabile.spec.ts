@@ -39,7 +39,8 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
       await page.goto(path);
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(name);
       await expect(page.getByText("Tempi", { exact: true })).toBeVisible();
-      await expect(page.getByText("Versione dimostrativa.", { exact: false }).first()).toBeVisible();
+      await expect(page.getByRole("note").filter({ hasText: "Versione dimostrativa" }).first()).toBeVisible();
+      await expect(page.getByRole("link", { name: "Che cosa manca per il servizio reale" })).toHaveAttribute("href", "/stato-del-progetto");
       await expect(page.getByRole("link", { name: cta })).toBeVisible();
       await expectAccessible(page);
     }

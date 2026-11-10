@@ -20,7 +20,7 @@ export default function GuideHubPage() {
         art="magnify"
         eyebrow="Guide"
         title="Gli esami, spiegati uno per uno."
-        lead={`${GUIDES.length} guide su esami di laboratorio, immagini, cuore ed endoscopie: che cosa misura un esame, che cosa aspettarsi e che cosa chiedere al medico. Spiegazioni, non diagnosi.`}
+        lead={`${GUIDES.length} esami spiegati in parole semplici: che cosa misurano e che cosa chiedere al medico.`}
       />
       <GuideFinder guides={guides} categories={cats} />
     </>

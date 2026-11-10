@@ -39,14 +39,14 @@ export default function PrezziPage() {
               const Icon = ICON[s.icon];
               return (
                 <li key={s.id} className={`tone-${s.tone}`}>
-                  <article className="service-card p-6 sm:p-8" aria-labelledby={`prezzo-${s.id}`}>
+                  <article className="service-card tone-band p-6 sm:p-8" aria-labelledby={`prezzo-${s.id}`}>
                     <span className="tone-icon h-14 w-14">
                       <Icon aria-hidden className="h-7 w-7" />
                     </span>
-                    <h2 id={`prezzo-${s.id}`} className="mt-5 text-[1.625rem] font-bold leading-tight text-ink">
+                    <h2 id={`prezzo-${s.id}`} className="mt-5 text-[1.625rem] font-bold leading-tight text-ink lg:min-h-[2.5em]">
                       {s.name}
                     </h2>
-                    <p className="mt-2 text-lg text-ink-soft">{s.forWhom}</p>
+                    <p className="mt-2 text-lg text-ink-soft lg:min-h-[4.5em]">{s.forWhom}</p>
                     {prices ? <p className="stat-num mt-6 text-[2.5rem] leading-none text-ink">{priceLabel(s.id)}</p> : null}
                     <p className="mt-4 flex items-start gap-2 text-[1.0625rem] text-ink">
                       <Clock3 aria-hidden className="tone-text mt-1 h-5 w-5 shrink-0" />

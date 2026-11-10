@@ -24,9 +24,9 @@ test("iscrizione con email e consenso: messaggio di conferma senza email inviata
 });
 
 test("senza consenso compare un avviso", async ({ page }) => {
-  await page.goto("/servizi/secondo-parere");
-  await page.getByLabel("Indirizzo email").fill(unique());
-  await page.getByRole("button", { name: /Iscrivimi/ }).click();
+  await page.goto("/stato-del-progetto");
+  await page.getByLabel("Indirizzo email").first().fill(unique());
+  await page.getByRole("button", { name: /Iscrivimi/ }).first().click();
   await expect(page.getByRole("alert").filter({ hasText: "informativa privacy" })).toBeVisible();
 });
 
