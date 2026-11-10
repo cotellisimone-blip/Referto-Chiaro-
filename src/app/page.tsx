@@ -12,10 +12,13 @@ import { ServiceTriad } from "@/components/offerta/service-triad";
 import { Journey, JourneyThread } from "@/components/offerta/journey";
 import { NeedPicker } from "@/components/offerta/need-picker";
 import { HeroVisual, HeroVisualMobile } from "@/components/offerta/hero-visual";
+import { HeroShowcase } from "@/components/offerta/hero-showcase";
+import { PhotoHotspots } from "@/components/offerta/photo-hotspots";
+import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { PrepBanner } from "@/components/offerta/prep-banner";
 import { Professionals } from "@/components/offerta/professionals";
 import { VideoSlot } from "@/components/offerta/video-slot";
-import { CORE_SERVICES, DESCRIPTOR, PRICE_NOTE, pickerServices, publicPricesEnabled } from "@/domain/offerta";
+import { CORE_SERVICES, DESCRIPTOR, PRICE_NOTE, coreService, pickerServices, priceLabel, publicPricesEnabled } from "@/domain/offerta";
 
 /*
  * Home di Cura Privata (pacchetto «Memorabile», 9/11/2026).
@@ -50,7 +53,7 @@ export default function Home() {
       {/* HERO: il payoff è il titolo */}
       <section aria-labelledby="hero-titolo" className="grain bg-ivory-wash relative overflow-hidden">
         <div aria-hidden className="glow-teal absolute -right-40 -top-20 -z-10 h-[720px] w-[720px] rounded-full" />
-        <div className="container-rc grid items-center gap-10 pb-14 pt-10 sm:pt-14 lg:grid-cols-[1.08fr_0.92fr] lg:gap-14 xl:grid-cols-[1.05fr_0.95fr] lg:pb-24 lg:pt-20">
+        <div className="container-rc grid items-center gap-10 pb-14 pt-10 sm:pt-14 lg:min-h-[680px] lg:grid-cols-[1.12fr_0.88fr] lg:gap-14 lg:pb-24 lg:pt-20">
           <div className="max-w-3xl">
             <h1 id="hero-titolo" className="display-xl hero-payoff rise-in text-ink">
               <span className="block">Capisci.</span>
@@ -101,12 +104,18 @@ export default function Home() {
               })}
             </ul>
           </div>
-          <div className="relative hidden lg:block">
-            <div className="tilt-in">
-              <HeroVisual />
-            </div>
-          </div>
+          <div aria-hidden className="hidden lg:block" />
         </div>
+        {SHOW_ILLUSTRATIVE_PHOTOS ? (
+          <HeroShowcase
+            photo={ILLUSTRATIVE_PHOTOS.hero}
+            services={CORE_SERVICES.map((x) => ({ id: x.id, name: x.name, tone: x.tone, href: x.href, price: prices ? priceLabel(x.id).replace("da ", "") : null, timing: x.timing, oneLiner: x.oneLiner }))}
+          />
+        ) : (
+          <div className="pointer-events-none absolute inset-y-0 right-8 hidden w-[42%] items-center lg:flex">
+            <HeroVisual />
+          </div>
+        )}
       </section>
 
       {/* I TRE SERVIZI */}
@@ -148,6 +157,31 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      {/* FOTO INTERATTIVA: dalla scrivania al servizio giusto */}
+      {SHOW_ILLUSTRATIVE_PHOTOS ? (
+        <section aria-labelledby="scrivania-titolo" className="overflow-hidden py-20 sm:py-28">
+          <div className="container-rc">
+            <div className="max-w-2xl">
+              <p className="eyebrow">Tocca i punti sulla foto</p>
+              <h2 id="scrivania-titolo" className="display-lg mt-4">
+                Ogni momento ha <span className="serif-italic">il suo servizio.</span>
+              </h2>
+            </div>
+            <div className="mt-12">
+              <PhotoHotspots
+                photo={ILLUSTRATIVE_PHOTOS.scrivania}
+                spots={[
+                  { id: "referto", x: 28, y: 74, label: "Il referto", title: "Un referto che non capisci? Capiscilo nel suo insieme.", text: coreService("capisci").oneLiner, href: "/referti", cta: "Capisci il tuo referto", price: prices ? priceLabel("capisci").replace("da ", "") : null, tone: "capisci", icon: "file" },
+                  { id: "diagnosi", x: 52, y: 64, label: "La proposta di cura", title: "Hai già una diagnosi? Chiedi un secondo parere.", text: coreService("secondo-parere").oneLiner, href: "/servizi/secondo-parere", cta: "Chiedi un secondo parere", price: prices ? priceLabel("secondo-parere").replace("da ", "") : null, tone: "parere", icon: "file" },
+                  { id: "telefono", x: 75, y: 52, label: "Il telefono", title: "Preferisci parlarne? Un medico, in video.", text: coreService("parla-con-un-medico").oneLiner, href: "/servizi/parla-con-un-medico", cta: "Parla con un medico", price: prices ? priceLabel("parla-con-un-medico").replace("da ", "") : null, tone: "medico", icon: "video" },
+                  { id: "quaderno", x: 25, y: 92, label: "Il quaderno", title: "Prima della visita: le domande giuste, in 2 minuti.", text: "Tre domande pratiche e ottieni la lista di cosa portare e cosa chiedere al medico. Gratis, senza registrarti.", href: "/strumenti/preparati-alla-visita", cta: "Preparati alla visita", price: null, tone: "capisci", icon: "list" },
+                ]}
+              />
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       {/* TI AIUTIAMO A SCEGLIERE */}
       <section id="scegli" aria-labelledby="scegli-titolo" className="scroll-mt-24 py-20 sm:py-28">

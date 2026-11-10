@@ -1316,3 +1316,33 @@ input[type="search"]::-webkit-search-decoration {
   background: var(--color-teal);
   color: #fff;
 }
+
+/* Hero interattiva e punti sulla foto */
+.hero-tab-timer {
+  display: block;
+  width: 1.1rem;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-teal);
+  transform-origin: left;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-tab-timer { animation: hero-timer 5s linear; }
+  .scene-pop { animation: scene-pop 0.5s var(--ease-out-soft); }
+  .hotspot-ring::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border-radius: 999px;
+    border: 2px solid #fff;
+    animation: hotspot 2.2s ease-out infinite;
+  }
+}
+@keyframes hero-timer { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes scene-pop { from { transform: translateY(8px) scale(0.98); } to { transform: none; } }
+@keyframes hotspot { from { transform: scale(0.8); opacity: 0.9; } to { transform: scale(1.7); opacity: 0; } }
+.bubble-active {
+  background: linear-gradient(160deg, var(--color-teal), var(--color-teal-deep));
+  color: #fff;
+  box-shadow: 0 18px 36px -14px color-mix(in srgb, var(--color-teal) 75%, transparent);
+}

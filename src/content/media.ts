@@ -65,5 +65,6 @@ export const AUTHORIZED_PHOTOS: { src: string; alt: string; consentRef: string; 
 export const SHOW_ILLUSTRATIVE_PHOTOS = true;
 export const ILLUSTRATIVE_PHOTOS = {
   hero: { src: "/media/paziente-hero.webp", width: 704, height: 560, alt: "Una donna sorride, pensierosa, a casa sua." },
+  scrivania: { src: "/media/paziente-scrivania.webp", width: 425, height: 914, alt: "Una donna alla scrivania con un referto in mano, il telefono e un quaderno." },
   preparati: { src: "/media/paziente-preparati.webp", width: 425, height: 884, alt: "Una donna legge un referto e controlla il telefono." },
 } as const;

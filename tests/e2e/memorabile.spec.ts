@@ -98,6 +98,22 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
   });
 });
 
+test.describe("home interattiva", () => {
+  test("punti sulla foto, percorso e schede della hero rispondono e restano accessibili", async ({ page, isMobile }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Il telefono" }).first().click();
+    await expect(page.locator("#hotspot-panel")).toContainText("Un medico, in video");
+    await expect(page.locator("#hotspot-panel").getByRole("link", { name: /Parla con un medico/ })).toHaveAttribute("href", "/servizi/parla-con-un-medico");
+    await page.getByRole("button", { name: /Passo 3: Secondo parere/ }).click();
+    await expect(page.locator("#journey-panel")).toContainText("Passo 3 di 5");
+    if (!isMobile) {
+      await page.getByRole("tab", { name: /Parla con un medico/ }).click();
+      await expect(page.getByRole("tabpanel")).toContainText("Parla con un medico");
+    }
+    await expectAccessible(page);
+  });
+});
+
 test.describe("percorsi A, C, D", () => {
   test("A: visitatore → Capisci → pagamento → documento → report", async ({ browser }) => {
     const ctx = await browser.newContext();
