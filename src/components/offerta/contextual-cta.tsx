@@ -27,7 +27,7 @@ export function ContextualCta({ category, variant = "inline" }: { category?: str
   const video = coreService("parla-con-un-medico");
   if (variant === "aside") {
     return (
-      <div className={`tone-${s.tone} service-card no-print p-5`}>
+      <div className={`tone-${s.tone} service-card no-print h-auto p-5`}>
         <span className="tone-icon h-11 w-11">
           <Icon aria-hidden className="h-5 w-5" />
         </span>
@@ -41,7 +41,7 @@ export function ContextualCta({ category, variant = "inline" }: { category?: str
     );
   }
   return (
-    <aside aria-label="Se ti serve un passo in più" className={`tone-${s.tone} service-card no-print p-6 sm:p-8`}>
+    <aside aria-label="Se ti serve un passo in più" className={`tone-${s.tone} service-card no-print h-auto p-6 sm:p-8`}>
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
         <span className="tone-icon h-14 w-14 shrink-0">
           <Icon aria-hidden className="h-7 w-7" />

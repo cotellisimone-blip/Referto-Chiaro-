@@ -1392,3 +1392,20 @@ input[type="search"]::-webkit-search-decoration {
 @media (max-width: 1023px) {
   body:has(.mobile-help-bar) .back-to-top { bottom: 6.25rem; }
 }
+
+/* Titolo della home: tre fasi distinte, ognuna con il colore del suo servizio (10/11/2026). */
+.hero-payoff > span {
+  display: block;
+  padding-left: 0.42em;
+  border-left: 0.1em solid var(--color-teal);
+  line-height: 1.04;
+}
+.hero-payoff > span + span {
+  margin-top: 0.34em;
+}
+.hero-payoff > span:nth-child(2) {
+  border-left-color: var(--color-accent-parere);
+}
+.hero-payoff > span:nth-child(3) {
+  border-left-color: var(--color-accent-medico);
+}

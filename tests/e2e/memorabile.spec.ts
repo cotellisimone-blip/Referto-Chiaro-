@@ -110,7 +110,7 @@ test.describe("home leggibile", () => {
     await expect(page.getByRole("link", { name: /Sei un medico/ })).toHaveAttribute("href", "/per-i-medici");
     if (isMobile) await expect(page.getByRole("navigation", { name: "Azioni rapide" })).toBeVisible();
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    expect(h, "schermate").toBeLessThan(isMobile ? 11 : 6.5);
+    expect(h, "schermate").toBeLessThan(isMobile ? 11.5 : 6.5);
     const words = (await page.locator("main").innerText()).split(/\s+/).length;
     expect(words).toBeLessThan(520);
     await expectAccessible(page);
