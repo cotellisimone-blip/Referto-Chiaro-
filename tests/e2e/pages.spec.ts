@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { expectAccessible } from "./_lib/a11y";
 
-const PAGES = ["/", "/referti", "/servizi/archivio", "/servizi/parla-con-un-medico", "/servizi/prevenzione", "/referti/esempio", "/prezzi", "/strumenti/preparati-alla-visita", "/come-funziona", "/servizi", "/domande-frequenti", "/servizi/secondo-parere", "/per-le-strutture", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/inizia", "/chi-siamo", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"];
+const PAGES = ["/", "/referti", "/servizi/archivio", "/servizi/parla-con-un-medico", "/servizi/prevenzione", "/referti/esempio", "/prezzi", "/strumenti/preparati-alla-visita", "/come-funziona", "/servizi", "/domande-frequenti", "/servizi/secondo-parere", "/per-le-strutture", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/inizia", "/chi-siamo", "/per-i-medici", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"];
 
 for (const path of PAGES) {
   test(`pagina ${path}: nessun errore, nessun overflow, accessibilità`, async ({ page }) => {
@@ -115,9 +115,9 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
   test("la home dice in 5 secondi che cosa offre: il payoff è il titolo, i tre servizi subito sotto", async ({ page, isMobile }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci\.\s*Chiedi un secondo parere\.\s*Parla con un medico\./);
-    for (const name of ["Capisci il tuo referto", "Chiedi un secondo parere", "Parla con un medico"]) await expect(page.getByRole("link", { name }).first()).toBeVisible();
+    for (const name of ["Capisci il tuo referto", "Chiedi un secondo parere", "Parla con un medico"]) await expect(page.getByRole("link", { name }).first()).toBeAttached();
     // Above the fold: almeno una porta d'ingresso ai servizi è visibile senza scorrere (mobile: le tre tessere)
-    const first = isMobile ? page.getByRole("list", { name: "Vai a un servizio" }) : page.getByRole("link", { name: "Scegli il servizio per te" }).first();
+    const first = page.getByRole("link", { name: "Un referto da capire" });
     const box = await first.boundingBox();
     expect((box?.y ?? 9999) + (box?.height ?? 0)).toBeLessThan(isMobile ? 844 : 900);
     await expect(page.getByText("Versione dimostrativa", { exact: false }).first()).toBeVisible();

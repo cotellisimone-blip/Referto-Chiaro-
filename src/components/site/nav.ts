@@ -21,6 +21,7 @@ export const FOOTER_NAV = {
   ],
   "Cura Privata": [
     { href: "/chi-siamo", label: "Chi siamo" },
+    { href: "/per-i-medici", label: "Per i medici" },
     { href: "/come-funziona", label: "Come funziona" },
     { href: "/referti/esempio", label: "Referto di esempio" },
     { href: "/sicurezza-e-privacy", label: "Sicurezza e privacy" },

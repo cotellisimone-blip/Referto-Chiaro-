@@ -145,7 +145,7 @@ test.describe("secondo parere e portali riservati", () => {
     await expect(page.getByRole("heading", { name: "Panoramica" })).toBeVisible({ timeout: 15_000 });
     const axe = await new AxeBuilder({ page }).withTags(AXE).analyze();
     expect(axe.violations.map((v) => v.id)).toEqual([]);
-    await page.getByRole("link", { name: "Medici" }).click();
+    await page.getByRole("link", { name: "Medici", exact: true }).click();
     await expect(page.getByRole("table", { name: "Medici" })).toBeVisible({ timeout: 15_000 });
     await page.getByRole("link", { name: "Registro" }).click();
     await expect(page.getByRole("table", { name: "Registro" })).toBeVisible({ timeout: 15_000 });

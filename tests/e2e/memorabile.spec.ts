@@ -98,19 +98,41 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
   });
 });
 
-test.describe("home interattiva", () => {
-  test("punti sulla foto, percorso e schede della hero rispondono e restano accessibili", async ({ page, isMobile }) => {
+test.describe("home leggibile", () => {
+  test("una domanda sola, il referto prima e dopo, il metodo; corta e senza dati inventati", async ({ page, isMobile }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Il telefono" }).first().click();
-    await expect(page.locator("#hotspot-panel")).toContainText("Un medico, in video");
-    await expect(page.locator("#hotspot-panel").getByRole("link", { name: /Parla con un medico/ })).toHaveAttribute("href", "/servizi/parla-con-un-medico");
-    await page.getByRole("button", { name: /Passo 3: Secondo parere/ }).click();
-    await expect(page.locator("#journey-panel")).toContainText("Passo 3 di 5");
-    if (!isMobile) {
-      await page.getByRole("tab", { name: /Parla con un medico/ }).click();
-      await expect(page.getByRole("tabpanel")).toContainText("Parla con un medico");
-    }
+    await expect(page.getByRole("heading", { name: "Che cosa hai in mano?" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Voglio parlare con un medico" })).toHaveAttribute("href", "/servizi/parla-con-un-medico");
+    const slider = page.getByLabel(/Sposta per confrontare/);
+    await slider.fill("10");
+    await expect(slider).toHaveValue("10");
+    await expect(page.getByRole("heading", { name: /Rigoroso per il tuo medico/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Sei un medico/ })).toHaveAttribute("href", "/per-i-medici");
+    if (isMobile) await expect(page.getByRole("navigation", { name: "Azioni rapide" })).toBeVisible();
+    const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
+    expect(h, "schermate").toBeLessThan(isMobile ? 11 : 6.5);
+    const words = (await page.locator("main").innerText()).split(/\s+/).length;
+    expect(words).toBeLessThan(520);
     await expectAccessible(page);
+  });
+
+  test("cinque compiti dalla home, in pochi clic", async ({ page }) => {
+    await page.goto("/");
+    // 1. Quanto costa il videoconsulto? Visibile in home.
+    await expect(page.locator("main")).toContainText("89");
+    // 2. Capire un referto: un clic porta al servizio
+    await page.getByRole("link", { name: "Un referto da capire" }).click();
+    await expect(page).toHaveURL(/\/referti$/);
+    // 3. Emergenza: il 112 è in home
+    await page.goto("/");
+    await expect(page.locator("main")).toContainText("112");
+    // 4. Sono un medico: un clic
+    await page.getByRole("link", { name: /Sei un medico/ }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Una piattaforma seria");
+    // 5. Prepararsi alla visita: un clic
+    await page.goto("/");
+    await page.getByRole("link", { name: /Preparati alla visita in 2 minuti/ }).click();
+    await expect(page).toHaveURL(/preparati-alla-visita/);
   });
 });
 

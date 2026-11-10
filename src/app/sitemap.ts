@@ -3,7 +3,7 @@ import { GUIDES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import { absoluteUrl, indexingEnabled } from "@/lib/seo";
 
-const PUBLIC = ["/", "/referti", "/come-funziona", "/servizi", "/servizi/archivio", "/servizi/parla-con-un-medico", "/prezzi", "/strumenti/preparati-alla-visita", "/servizi/prevenzione", "/servizi/secondo-parere", "/domande-frequenti", "/inizia", "/chi-siamo", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/per-le-strutture", "/referti/esempio", "/guide", "/glossario", "/strumenti/domande-per-il-medico"];
+const PUBLIC = ["/", "/referti", "/come-funziona", "/servizi", "/servizi/archivio", "/servizi/parla-con-un-medico", "/prezzi", "/strumenti/preparati-alla-visita", "/servizi/prevenzione", "/servizi/secondo-parere", "/domande-frequenti", "/inizia", "/chi-siamo", "/per-i-medici", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/per-le-strutture", "/referti/esempio", "/guide", "/glossario", "/strumenti/domande-per-il-medico"];
 
 /** Sitemap vuota finché l'indicizzazione è spenta: nessun URL viene proposto ai motori. */
 export default function sitemap(): MetadataRoute.Sitemap {
