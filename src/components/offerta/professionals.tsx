@@ -38,9 +38,31 @@ export function Professionals() {
     { icon: ShieldCheck, title: "Accesso solo al tuo caso", text: "Il medico vede soltanto i documenti che scegli, e ogni accesso è registrato." },
   ];
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center">
       <div>
-        <p className="text-xl text-ink-soft">
+        {/* Come sarà un profilo: solo etichette dei campi, nessun dato inventato */}
+        <div aria-hidden className="relative mx-auto max-w-md px-2 pt-3 sm:px-0">
+          <div className="absolute inset-0 -z-10 rounded-[2rem] bg-[radial-gradient(closest-side,var(--color-marker-soft),transparent)]" />
+          <div className="card -rotate-1 p-6 shadow-[var(--shadow-float)]">
+            <div className="flex items-center gap-5">
+              <span className="flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl border-2 border-dashed border-teal/40 bg-mist">
+                <UserRound className="h-11 w-11 text-teal" />
+              </span>
+              <div className="min-w-0 flex-1 space-y-2.5">
+                <p className="text-[0.9375rem] font-bold uppercase tracking-wide text-muted">Nome e cognome</p>
+                <span className="block h-3 w-4/5 rounded-full bg-line" />
+                <p className="text-[0.9375rem] font-bold uppercase tracking-wide text-muted">Specializzazione</p>
+                <span className="block h-3 w-3/5 rounded-full bg-line" />
+              </div>
+            </div>
+            <div className="mt-5 flex items-center gap-3 rounded-2xl bg-mist px-4 py-3">
+              <BadgeCheck className="h-6 w-6 shrink-0 text-teal" />
+              <span className="text-[1.0625rem] font-semibold text-ink">Iscrizione all&apos;Albo: la controlliamo noi</span>
+            </div>
+          </div>
+          <span className="float-chip absolute -top-1 right-0 rounded-full bg-strong px-3.5 py-1.5 text-sm font-bold text-on-strong shadow-[var(--shadow-lift)]">Così sarà ogni profilo</span>
+        </div>
+        <p className="mt-8 text-xl text-ink-soft">
           I profili dei medici compariranno qui <strong className="text-ink">solo dopo la verifica</strong>, con fotografia autorizzata. Non mostriamo profili di esempio, giudizi o numeri che non possiamo dimostrare.
         </p>
       </div>

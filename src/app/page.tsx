@@ -1,16 +1,18 @@
 import Link from "next/link";
-import { ArrowRight, ClipboardList, FileCheck2, FileText, Lock, MessageSquareText, ShieldOff, Stethoscope, UserRound, Video } from "lucide-react";
+import { ArrowRight, FileCheck2, FileText, Lock, MessageSquareText, ShieldOff, Stethoscope, UserRound, Video } from "lucide-react";
 import { SearchTrigger } from "@/components/search/site-search";
 import { CurveDivider } from "@/components/ui/curve-divider";
 import { Reveal } from "@/components/ui/reveal";
+import { CountUp } from "@/components/ui/count-up";
 import { FaqList } from "@/components/ui/faq-list";
 import { FAQ } from "@/content/faq";
 import { GUIDES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import { ServiceTriad } from "@/components/offerta/service-triad";
-import { Journey } from "@/components/offerta/journey";
+import { Journey, JourneyThread } from "@/components/offerta/journey";
 import { NeedPicker } from "@/components/offerta/need-picker";
-import { HeroSpace } from "@/components/offerta/hero-space";
+import { HeroVisual, HeroVisualMobile } from "@/components/offerta/hero-visual";
+import { PrepBanner } from "@/components/offerta/prep-banner";
 import { Professionals } from "@/components/offerta/professionals";
 import { VideoSlot } from "@/components/offerta/video-slot";
 import { CORE_SERVICES, DESCRIPTOR, PRICE_NOTE, pickerServices, publicPricesEnabled } from "@/domain/offerta";
@@ -48,7 +50,7 @@ export default function Home() {
       {/* HERO: il payoff è il titolo */}
       <section aria-labelledby="hero-titolo" className="grain bg-ivory-wash relative overflow-hidden">
         <div aria-hidden className="glow-teal absolute -right-40 -top-20 -z-10 h-[720px] w-[720px] rounded-full" />
-        <div className="container-rc grid items-center gap-10 pb-14 pt-10 sm:pt-14 lg:grid-cols-[1.3fr_0.7fr] lg:gap-10 xl:grid-cols-[1.25fr_0.75fr] lg:pb-24 lg:pt-20">
+        <div className="container-rc grid items-center gap-10 pb-14 pt-10 sm:pt-14 lg:grid-cols-[1.08fr_0.92fr] lg:gap-14 xl:grid-cols-[1.05fr_0.95fr] lg:pb-24 lg:pt-20">
           <div className="max-w-3xl">
             <h1 id="hero-titolo" className="display-xl hero-payoff rise-in text-ink">
               <span className="block">Capisci.</span>
@@ -82,6 +84,7 @@ export default function Home() {
                 );
               })}
             </ul>
+            <HeroVisualMobile />
             <ul className="rise-in-3 mt-8 grid max-w-xl gap-x-6 gap-y-3 text-[1.0625rem] text-ink-soft sm:grid-cols-3">
               {[
                 [UserRound, "Medici abilitati e identificabili"],
@@ -100,7 +103,7 @@ export default function Home() {
           </div>
           <div className="relative hidden lg:block">
             <div className="tilt-in">
-              <HeroSpace />
+              <HeroVisual />
             </div>
           </div>
         </div>
@@ -176,35 +179,31 @@ export default function Home() {
         </div>
       </section>
 
-      {/* VIDEO + PREPARATI ALLA VISITA */}
-      <section aria-labelledby="video-titolo" className="py-20 sm:py-28">
-        <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-2 lg:gap-10">
+      {/* VIDEO: banda scura, grande */}
+      <section aria-labelledby="video-titolo" className="relative overflow-hidden bg-strong py-20 text-on-strong sm:py-28">
+        <JourneyThread className="pointer-events-none absolute -left-20 top-10 h-40 w-[70%] opacity-50" />
+        <div className="container-rc relative grid grid-cols-[minmax(0,1fr)] items-center gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
           <div>
-            <p className="eyebrow">In 90 secondi</p>
-            <h2 id="video-titolo" className="display-lg mt-4 text-[2rem] sm:text-[2.5rem]">
+            <p className="eyebrow text-marker">In 90 secondi</p>
+            <h2 id="video-titolo" className="display-lg mt-4 text-on-strong">
               Come funziona, dall&apos;inizio alla fine.
             </h2>
-            <div className="mt-8">
-              <VideoSlot id="principale" />
-            </div>
-          </div>
-          <Reveal className="service-card tone-capisci p-7 sm:p-9">
-            <p className="eyebrow">Gratis, senza registrarti</p>
-            <h2 className="mt-4 text-[2rem] font-bold leading-tight tracking-[-0.02em] text-ink sm:text-[2.5rem]">
-              Preparati alla visita <span className="marker">in 2 minuti</span>.
-            </h2>
-            <p className="mt-4 text-xl text-ink-soft">Rispondi a poche domande pratiche: ottieni la lista di cosa portare e cosa chiedere al medico. Da stampare o tenere sul telefono.</p>
-            <ul className="mt-6 space-y-3 text-lg text-ink">
-              {["Cosa portare con te", "Le domande da non dimenticare", "Gli appunti da preparare prima"].map((t) => (
-                <li key={t} className="flex gap-3">
-                  <ClipboardList aria-hidden className="tone-text mt-1 h-5 w-5 shrink-0" />
-                  {t}
-                </li>
-              ))}
-            </ul>
-            <Link href="/strumenti/preparati-alla-visita" className="btn btn-primary btn-lg mt-8">
-              Inizia, è gratis <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+            <p className="mt-5 text-xl text-on-strong-soft">Dal referto che non capisci al colloquio con un medico: chi se ne occupa, che cosa ricevi, quanto costa.</p>
+            <Link href="/come-funziona" className="btn btn-lg mt-8 bg-paper text-ink hover:bg-mist">
+              Leggi come funziona <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
             </Link>
+          </div>
+          <Reveal>
+            <VideoSlot id="principale" />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* PREPARATI ALLA VISITA */}
+      <section aria-labelledby="preparati-titolo" className="py-20 sm:py-28">
+        <div className="container-rc">
+          <Reveal>
+            <PrepBanner />
           </Reveal>
         </div>
       </section>
@@ -218,8 +217,22 @@ export default function Home() {
               Hai solo una sigla in testa? Cercala.
             </h2>
             <p className="mt-5 text-xl text-ink-soft">
-              {GUIDES.length} guide agli esami e {GLOSSARY.length} termini spiegati, con le fonti. Senza registrarti.
+              Guide agli esami e termini spiegati, con le fonti. Senza registrarti.
             </p>
+            <dl className="mt-6 grid max-w-md grid-cols-2 gap-4">
+              {[
+                [GUIDES.length, "guide agli esami"],
+                [GLOSSARY.length, "termini spiegati"],
+              ].map(([n, label]) => (
+                <div key={label} className="rounded-2xl border border-line bg-canvas px-5 py-4">
+                  <dt className="sr-only">{label}</dt>
+                  <dd>
+                    <CountUp value={n as number} className="stat-num block text-[2.75rem] leading-none text-teal-deep" />
+                    <span className="mt-1 block text-[1.0625rem] text-ink-soft">{label}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
             <div className="mt-7">
               <SearchTrigger variant="field" placeholder="Cerca: emocromo, TSH, ferritina…" />
             </div>

@@ -3,6 +3,7 @@ import { ArrowRight, Check, CircleDashed, Clock3, FileText, Stethoscope, UserRou
 import { clsx } from "clsx";
 import { CORE_SERVICES, PRICE_NOTE, coreService, priceLabel, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
 import { VideoSlot } from "./video-slot";
+import { SCENE } from "./scenes";
 import { WaitlistForm } from "@/components/site/waitlist-form";
 
 const ICON = { file: FileText, stethoscope: Stethoscope, video: Video } as const;
@@ -27,6 +28,7 @@ export function ServiceLanding({
 }) {
   const s = coreService(id);
   const Icon = ICON[s.icon];
+  const Scene = SCENE[s.id];
   const prices = publicPricesEnabled();
   const others = CORE_SERVICES.filter((x) => x.id !== id);
   return (
@@ -53,9 +55,24 @@ export function ServiceLanding({
                 </Link>
               ) : null}
             </div>
+            {/* I tre passi in breve, come una mini timeline */}
+            <ol aria-label="In tre passi" className="mt-10 grid gap-3 sm:grid-cols-3">
+              {s.steps.map((st, i) => (
+                <li key={st.title} className="flex items-center gap-3 rounded-2xl border border-line bg-paper/80 p-3 shadow-[var(--shadow-soft,0_1px_2px_rgba(0,0,0,0.04))] backdrop-blur">
+                  <span aria-hidden className="tone-icon h-10 w-10 shrink-0 text-lg font-extrabold">
+                    {i + 1}
+                  </span>
+                  <span className="text-[1.0625rem] font-bold leading-snug text-ink">{st.title}</span>
+                </li>
+              ))}
+            </ol>
           </div>
           {/* Riepilogo d'acquisto: prezzo, tempi, chi, cosa ricevi */}
-          <aside aria-label="In breve" className="service-card p-6 sm:p-7">
+          <aside aria-label="In breve" className="service-card tilt-in shadow-[var(--shadow-float)]">
+            <div className="scene-frame">
+              <Scene uid="-hero" />
+            </div>
+            <div className="p-6 sm:p-7">
             <div className="flex items-center gap-4">
               <span className="tone-icon h-14 w-14 shrink-0">
                 <Icon aria-hidden className="h-7 w-7" />
@@ -91,6 +108,7 @@ export function ServiceLanding({
               </div>
             </dl>
             {prices ? <p className="mt-5 border-t border-line pt-4 text-[0.9375rem] text-muted">{PRICE_NOTE}</p> : null}
+            </div>
           </aside>
         </div>
       </section>

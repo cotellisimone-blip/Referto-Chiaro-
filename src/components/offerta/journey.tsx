@@ -18,30 +18,28 @@ export function Journey({ title = "Un percorso solo, dal referto al medico." }: 
       <h2 id="journey-titolo" className="display-lg max-w-3xl">
         {title}
       </h2>
-      <div className="relative mt-12">
-        {/* Linea orizzontale (md+) */}
-        <svg aria-hidden viewBox="0 0 1000 80" preserveAspectRatio="none" className="pointer-events-none absolute inset-x-[6%] top-0 hidden h-14 w-[88%] md:block">
-          <path
-            className="journey-draw"
-            pathLength={1}
-            d="M0 40 C 120 0, 180 80, 250 40 S 380 0, 500 40 S 630 80, 750 40 S 880 0, 1000 40"
-            fill="none"
-            stroke="var(--color-marker)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            vectorEffect="non-scaling-stroke"
-          />
+      <div className="relative mt-14">
+        {/* Linea orizzontale (md+) con un punto che la percorre */}
+        <svg aria-hidden viewBox="0 0 1000 80" preserveAspectRatio="none" className="pointer-events-none absolute inset-x-[8%] top-3 hidden h-16 w-[84%] md:block">
+          <path d={PATH} fill="none" stroke="var(--color-marker-soft)" strokeWidth="10" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+          <path className="journey-draw" pathLength={1} d={PATH} fill="none" stroke="var(--color-marker)" strokeWidth="4" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+          <ellipse className="journey-dot" rx="7" ry="9" fill="var(--color-teal)">
+            <animateMotion dur="7s" repeatCount="indefinite" path={PATH} />
+          </ellipse>
         </svg>
         {/* Linea verticale (mobile) */}
-        <span aria-hidden className="absolute bottom-7 left-7 top-7 w-1 rounded-full bg-[linear-gradient(180deg,var(--color-marker),var(--color-marker-soft))] md:hidden" />
-        <ol className="relative grid gap-6 md:grid-cols-5 md:gap-4" aria-labelledby="journey-titolo">
+        <span aria-hidden className="absolute bottom-10 left-10 top-10 w-1 rounded-full bg-[linear-gradient(180deg,var(--color-marker),var(--color-marker-soft))] md:hidden" />
+        <ol className="relative grid gap-7 md:grid-cols-5 md:gap-4" aria-labelledby="journey-titolo">
           {NODES.map(({ icon: Icon, title: t, text }, i) => (
-            <li key={t} className="flex items-start gap-4 md:flex-col md:items-center md:text-center">
-              <span className="journey-node relative z-10 shrink-0">
-                <Icon aria-hidden className="h-6 w-6" strokeWidth={1.9} />
+            <li key={t} className="bubble-node flex items-center gap-5 md:flex-col md:items-center md:text-center">
+              <span className="bubble-ic relative z-10 shrink-0">
+                <Icon aria-hidden className="h-9 w-9" strokeWidth={1.7} />
+                <span aria-hidden className="absolute -right-1.5 -top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-strong text-sm font-extrabold text-on-strong">
+                  {i + 1}
+                </span>
               </span>
-              <span className="pt-2 md:pt-3">
-                <span className="block text-lg font-bold text-ink">
+              <span className="md:pt-2">
+                <span className="block text-xl font-bold text-ink">
                   <span className="sr-only">Passo {i + 1}: </span>
                   {t}
                 </span>
@@ -54,6 +52,8 @@ export function Journey({ title = "Un percorso solo, dal referto al medico." }: 
     </div>
   );
 }
+
+const PATH = "M0 40 C 120 0, 180 80, 250 40 S 380 0, 500 40 S 630 80, 750 40 S 880 0, 1000 40";
 
 /** La linea del Journey come semplice filo decorativo (separatori, hero, banner). */
 export function JourneyThread({ className = "" }: { className?: string }) {

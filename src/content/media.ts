@@ -56,3 +56,14 @@ export const VIDEOS: Record<"principale" | "capisci" | "secondo-parere" | "parla
 
 /** Foto reali autorizzate (liberatoria scritta). Vuoto: nessuna foto di persone sul sito. */
 export const AUTHORIZED_PHOTOS: { src: string; alt: string; consentRef: string; usage: "hero" | "editorial" }[] = [];
+
+/**
+ * Immagini illustrative di pazienti, ritagliate dal pacchetto «Memorabile» del titolare (senza logo né testo).
+ * Mai medici: nessun volto viene presentato come un professionista reale. Sono marcate «immagine illustrativa».
+ * Per toglierle tutte: SHOW_ILLUSTRATIVE_PHOTOS = false (il sito torna alle composizioni disegnate).
+ */
+export const SHOW_ILLUSTRATIVE_PHOTOS = true;
+export const ILLUSTRATIVE_PHOTOS = {
+  hero: { src: "/media/paziente-hero.webp", width: 704, height: 560, alt: "Una donna sorride, pensierosa, a casa sua." },
+  preparati: { src: "/media/paziente-preparati.webp", width: 425, height: 884, alt: "Una donna legge un referto e controlla il telefono." },
+} as const;
