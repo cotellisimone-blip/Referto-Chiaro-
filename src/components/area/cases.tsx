@@ -104,7 +104,11 @@ export function CasesPage({ price }: { price?: string | null }) {
     api<{ documents: { id: string; title: string; status: string }[] }>("/api/v1/area/documents").then((r) => {
       const ready = r.documents.filter((d) => ["verified", "ready"].includes(d.status));
       setDocs(ready);
-      if (ready[0]) setDocumentId(ready[0].id);
+      // Arrivi dal report? Quel documento è già scelto: non va ricaricato.
+      const pre = new URLSearchParams(window.location.search).get("documento");
+      const fromReport = pre && ready.some((d) => d.id === pre) ? pre : null;
+      if (fromReport ?? ready[0]) setDocumentId((fromReport ?? ready[0].id) as string);
+      if (fromReport) document.getElementById("nuova-titolo")?.scrollIntoView({ block: "start" });
     });
     api<{ specialties: string[] }>("/api/v1/area/medici").then((r) => {
       setSpecialties(r.specialties);
@@ -130,7 +134,7 @@ export function CasesPage({ price }: { price?: string | null }) {
     <div className="space-y-10">
       <div>
         <h1 className="display text-[2rem] sm:text-[2.5rem]">I miei pareri</h1>
-        <p className="mt-2 text-muted">Una domanda specifica sui tuoi documenti, a un medico della specialità indicata. Vedi il prezzo prima di confermare; in questa versione il pagamento è simulato e non c&apos;è alcun addebito.</p>
+        <p className="mt-2 text-muted">Una domanda precisa sui tuoi documenti, a uno specialista della disciplina appropriata, che può chiederti altri documenti o dirti che serve una visita. Vedi il prezzo prima di confermare; in questa versione il pagamento è simulato e non c&apos;è alcun addebito.</p>
       </div>
       <SimulationNotice />
       <section aria-labelledby="richieste-titolo">
@@ -173,7 +177,10 @@ export function CasesPage({ price }: { price?: string | null }) {
             </div>
             <div>
               <label htmlFor="caso-spec" className="text-sm font-semibold text-ink">Specialità</label>
-              <select id="caso-spec" value={specialty} onChange={(e) => setSpecialty(e.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-ink">
+              <p id="caso-spec-aiuto" className="mt-1 text-sm text-muted">
+                Non sai quale specialista ti serve? <Link href="/area-personale/appuntamenti" className="link">Parti da un medico di medicina generale</Link>.
+              </p>
+              <select id="caso-spec" aria-describedby="caso-spec-aiuto" value={specialty} onChange={(e) => setSpecialty(e.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-ink">
                 {specialties.map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}

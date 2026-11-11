@@ -379,3 +379,17 @@ DROP POLICY IF EXISTS appointments_physician ON appointments;
 CREATE POLICY appointments_physician ON appointments USING (physician_id IS NOT NULL AND physician_id = NULLIF(current_setting('app.physician_id', true), '')::uuid);
 
 INSERT INTO schema_migrations(version) VALUES (5) ON CONFLICT DO NOTHING;
+
+-- Evoluzione v2 (11/11/2026): promozione «primo referto» una sola volta per cliente.
+-- Si salva solo un'impronta (SHA-256) dell'email normalizzata, mai l'email: resta anche se l'account
+-- viene cancellato, così la promozione non si riottiene ricreando l'account. Solo sistema (nessuna policy).
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS promo text;
+CREATE TABLE IF NOT EXISTS promo_claims (
+  email_hash text NOT NULL,
+  promo text NOT NULL,
+  order_id uuid,
+  claimed_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (email_hash, promo)
+);
+ALTER TABLE promo_claims ENABLE ROW LEVEL SECURITY;
+INSERT INTO schema_migrations(version) VALUES (6) ON CONFLICT DO NOTHING;

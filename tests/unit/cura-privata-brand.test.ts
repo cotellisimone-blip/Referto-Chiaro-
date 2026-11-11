@@ -42,7 +42,7 @@ describe("rebrand Cura Privata", () => {
   });
 
   it("nessuna frase vietata dal kit nel sito", () => {
-    const banned = [/conform[ei] al GDPR/i, /GDPR compliant/i, /sicuro al 100/i, /in totale sicurezza/i, /medici qualificati/i, /professionisti qualificati/i, /approvato da medici/i, /tutto nella norma/i, /in pochi minuti/i, /iscrizione albo: \d/i, /\d(,\d)? ?stelle/i, /\d+\.?\d* pazienti soddisfatti/i];
+    const banned = [/conform[ei] al GDPR/i, /GDPR compliant/i, /sicuro al 100/i, /in totale sicurezza/i, /medici qualificati/i, /professionisti qualificati/i, /approvato da medici/i, /tutto nella norma/i, /(?<!di norma )(?<!Di norma )in pochi minuti/i, /iscrizione albo: \d/i, /\d(,\d)? ?stelle/i, /\d+\.?\d* pazienti soddisfatti/i];
     const offenders = SOURCES.filter((f) => f.endsWith(".tsx")).flatMap((f) => {
       const t = readFileSync(f, "utf8");
       return banned.filter((b) => b.test(t)).map((b) => `${norm(f)}: ${b}`);

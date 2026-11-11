@@ -3,9 +3,21 @@
  * È l'UNICA fonte per nomi, frasi, tempi e prezzi: home, pagine servizio, /prezzi, selettore, area personale e
  * ordini leggono da qui. Per cambiare un prezzo si cambia una variabile d'ambiente, non decine di componenti.
  *
- * Prezzi di riferimento indicati dal titolare il 9/11/2026, da validare operativamente:
- * Capisci 49 €, Parla con un medico 89 €, Secondo parere 149 € (tutti «da»).
+ * Listino «Evoluzione v2» indicato dal titolare l'11/11/2026 (sostituisce 49/89/149 del 9/11):
+ * - Capisci il tuo referto: primo referto 2,90 € (una volta per cliente), poi 7,90 €. Digitale e automatico,
+ *   NESSUNA revisione umana.
+ * - Parla con un medico: 79 €, medico di medicina generale/internista di orientamento.
+ * - Chiedi un secondo parere: da 149 €, specialista della disciplina appropriata.
+ * Livelli del percorso: CAPISCI → ORIENTATI → APPROFONDISCI (si può entrare da qualunque livello).
  */
+
+/** Prezzi in centesimi: l'unico punto in cui sono scritti. Ognuno è sovrascrivibile da variabile d'ambiente. */
+export const PRICES = {
+  CAPISCI_STANDARD: 790,
+  CAPISCI_FIRST: 290,
+  MEDICO_GENERALISTA: 7900,
+  SECONDO_PARERE_BASE: 14900,
+} as const;
 
 export type CoreServiceId = "capisci" | "secondo-parere" | "parla-con-un-medico";
 
@@ -38,6 +50,12 @@ export interface CoreService {
   steps: { title: string; text: string }[];
   icon: "file" | "stethoscope" | "video";
   tone: "capisci" | "parere" | "medico";
+  /** Livello del percorso Capisci → Orientati → Approfondisci. */
+  level: { n: 1 | 2 | 3; verb: "Capisci" | "Orientati" | "Approfondisci" };
+  /** «fixed» = prezzo esatto; «from» = prezzo base («da»). */
+  priceKind: "fixed" | "from";
+  /** Il bisogno, in prima persona, per il selettore e le pagine. */
+  need: string;
 }
 
 export const CORE_SERVICES: CoreService[] = [
@@ -45,23 +63,24 @@ export const CORE_SERVICES: CoreService[] = [
     id: "capisci",
     verb: "Capisci.",
     name: "Capisci il tuo referto",
-    oneLiner: "Il tuo referto di laboratorio spiegato in parole semplici, con i valori controllati e le domande da portare al medico.",
-    forWhom: "Hai ricevuto un referto e non ti è chiaro che cosa dice.",
+    oneLiner: "Il tuo referto di laboratorio diventa un report ordinato: valori, sigle, spiegazioni in parole semplici e domande utili per il medico.",
+    forWhom: "Hai ricevuto un referto pieno di sigle e valori e vuoi capirlo.",
     href: "/referti",
     startHref: "/area-personale/nuovo",
     startLabel: "Carica il referto",
     orderService: "essenziale",
     envPriceKey: "PRICE_CAPISCI_CENTS",
-    defaultPriceCents: 4900,
-    timing: "Di norma entro 24 ore dal pagamento",
-    who: "Spiegazione informativa preparata con regole controllate; i numeri restano quelli del documento.",
+    defaultPriceCents: PRICES.CAPISCI_STANDARD,
+    timing: "Di norma in pochi minuti dal pagamento",
+    who: "Servizio digitale e automatico, con regole controllate: nessun medico lo rivede. I numeri restano quelli del documento.",
     includes: [
-      "Ogni valore riportato esattamente come nel referto, con pagina e riga",
+      "Ogni valore riportato esattamente come nel referto, con unità, intervallo, pagina e riga",
       "Sigle e termini spiegati in italiano di tutti i giorni",
-      "Le domande da fare al tuo medico",
-      "Un riepilogo PDF da stampare o mostrare in visita",
+      "Dove si colloca ogni valore rispetto all'intervallo stampato, senza giudizi",
+      "Da 3 a 5 domande da fare al tuo medico",
+      "Un report PDF da stampare o mostrare in visita, salvato nella tua area personale",
     ],
-    receives: "Un report chiaro nella tua area personale, che resta tuo.",
+    receives: "Un report chiaro nella tua area personale, che resta tuo e che puoi riusare con un medico.",
     notFor: ["Diagnosi o giudizi sulla tua salute", "Indicazioni su farmaci o terapie", "Immagini diagnostiche, referti istologici o genetici"],
     steps: [
       { title: "Carichi il referto", text: "Un PDF o una foto, dall'area personale." },
@@ -70,92 +89,157 @@ export const CORE_SERVICES: CoreService[] = [
     ],
     icon: "file",
     tone: "capisci",
+    level: { n: 1, verb: "Capisci" },
+    priceKind: "fixed",
+    need: "Ho un referto che non capisco",
   },
   {
     id: "secondo-parere",
     verb: "Chiedi un secondo parere.",
     name: "Chiedi un secondo parere",
-    oneLiner: "Un medico della specialità giusta valuta i tuoi documenti e risponde per iscritto a una domanda precisa.",
-    forWhom: "Hai già una diagnosi o una proposta di cura e vuoi un'altra valutazione.",
+    oneLiner: "Uno specialista della disciplina appropriata valuta i tuoi documenti e risponde per iscritto a una domanda precisa.",
+    forWhom: "Hai già una diagnosi, una proposta di cura o di intervento e vuoi un'altra valutazione.",
     href: "/servizi/secondo-parere",
     startHref: "/area-personale/secondo-parere",
     startLabel: "Richiedi il secondo parere",
     orderService: "secondo-parere",
     envPriceKey: "PRICE_SECONDO_PARERE_CENTS",
-    defaultPriceCents: 14900,
+    defaultPriceCents: PRICES.SECONDO_PARERE_BASE,
     timing: "Di norma entro 5 giorni lavorativi dalla presa in carico",
-    who: "Un medico abilitato e identificabile della specialità richiesta. Mai un'intelligenza artificiale.",
+    who: "Un medico specialista abilitato e identificabile. Mai un'intelligenza artificiale.",
     includes: [
       "Un quesito specifico, scritto da te",
       "Valutazione dei documenti che scegli di condividere",
       "Parere scritto e firmato dal medico, con data e impronta verificabile",
-      "Il medico può chiedere altri documenti o dirti che il caso richiede una visita",
+      "Lo specialista può chiederti altri documenti o dirti che il caso richiede una visita in presenza",
     ],
     receives: "Un parere scritto nella tua area personale, firmato dal medico.",
     notFor: ["Urgenze: in quel caso chiama il 112", "Casi che richiedono una visita in presenza", "Prescrizioni di farmaci"],
     steps: [
-      { title: "Scrivi la tua domanda", text: "Scegli la specialità e i documenti da condividere." },
+      { title: "Scrivi la tua domanda", text: "Indichi la specialità e i documenti da condividere: quelli già caricati non li ricarichi." },
       { title: "Paghi solo se il quadro è chiaro", text: "Prezzo e tempi li vedi prima di confermare." },
       { title: "Ricevi il parere", text: "Scritto e firmato da un medico identificabile." },
     ],
     icon: "stethoscope",
     tone: "parere",
+    level: { n: 3, verb: "Approfondisci" },
+    priceKind: "from",
+    need: "Ho già una diagnosi o una proposta e voglio un'altra valutazione",
   },
   {
     id: "parla-con-un-medico",
     verb: "Parla con un medico.",
     name: "Parla con un medico",
-    oneLiner: "Un videoconsulto con un medico che ha già letto i documenti che hai scelto di condividere.",
-    forWhom: "Preferisci parlarne a voce, con calma, con un professionista.",
+    oneLiner: "Un medico di medicina generale o internista legge prima i tuoi documenti e ti dedica un videoconsulto per chiarire i dubbi e capire il prossimo passo.",
+    forWhom: "Hai dei dubbi e non sai quale specialista ti serve.",
     href: "/servizi/parla-con-un-medico",
     startHref: "/area-personale/appuntamenti",
     startLabel: "Prenota il videoconsulto",
     orderService: "videoconsulto",
     envPriceKey: "PRICE_VIDEOCONSULTO_CENTS",
-    defaultPriceCents: 8900,
+    defaultPriceCents: PRICES.MEDICO_GENERALISTA,
     timing: "Di norma un appuntamento entro 3 giorni lavorativi",
-    who: "Un medico abilitato e identificabile, con i tuoi documenti già davanti.",
+    who: "Un medico di medicina generale o internista, abilitato e identificabile, con i tuoi documenti già davanti. Non devi scegliere tu la specialità.",
     includes: [
-      "Circa 20 minuti di videoconsulto",
+      "Circa 20–25 minuti di videoconsulto",
       "Il medico legge prima i documenti che scegli tu",
+      "Chiarisce i tuoi dubbi e ti orienta sul prossimo passo",
+      "Ti dice se serve una visita in presenza o uno specialista",
       "Un breve riepilogo scritto dopo il colloquio",
-      "Tutto archiviato nella tua area personale",
     ],
     receives: "Un appuntamento confermato, il collegamento video e poi il riepilogo scritto.",
     notFor: ["Urgenze: in quel caso chiama il 112", "Situazioni che richiedono di essere visitati di persona", "Certificati e prescrizioni"],
     steps: [
-      { title: "Scegli quando", text: "Indichi la specialità e due o tre momenti comodi." },
+      { title: "Scegli quando", text: "Indichi il motivo e due o tre momenti comodi. Nessuna specialità da scegliere." },
       { title: "Condividi i documenti", text: "Solo quelli che vuoi: il medico li legge prima." },
       { title: "Parli con il medico", text: "In video, poi ricevi un riepilogo scritto." },
     ],
     icon: "video",
     tone: "medico",
+    level: { n: 2, verb: "Orientati" },
+    priceKind: "fixed",
+    need: "Ho dei dubbi e non so quale specialista mi serve",
   },
 ];
 
 export const PAYOFF = "Capisci. Chiedi un secondo parere. Parla con un medico.";
+/** I tre livelli del percorso, nell'ordine in cui si sale. */
+export const LEVELS = ["capisci", "parla-con-un-medico", "secondo-parere"] as const satisfies readonly CoreServiceId[];
+export const INFORMATIVE_NOTE = "Informativo: non sostituisce la valutazione del medico e non fornisce diagnosi o terapia.";
 export const DESCRIPTOR = "Referti, secondo parere e videoconsulti con medici abilitati e identificabili.";
 
 type Env = Record<string, string | undefined>;
 
-/** Prezzo «da» in centesimi: variabile d'ambiente se valida (intero 0–100000), altrimenti il riferimento. */
-export function priceCents(id: CoreServiceId, env: Env = process.env): number {
-  const s = CORE_SERVICES.find((x) => x.id === id)!;
-  const raw = env[s.envPriceKey]?.trim();
+function envCents(env: Env, key: string, fallback: number): number {
+  const raw = env[key]?.trim();
   if (raw && /^\d{1,6}$/.test(raw)) {
     const n = Number(raw);
     if (n >= 0 && n <= 100_000) return n;
   }
-  return s.defaultPriceCents;
+  return fallback;
 }
 
-/** «49 €» (senza decimali se interi), sempre in formato italiano. */
+/** Prezzo standard in centesimi: variabile d'ambiente se valida (intero 0–100000), altrimenti il listino. */
+export function priceCents(id: CoreServiceId, env: Env = process.env): number {
+  const s = CORE_SERVICES.find((x) => x.id === id)!;
+  return envCents(env, s.envPriceKey, s.defaultPriceCents);
+}
+
+/**
+ * Promozione «primo referto»: attiva salvo FIRST_REFERTO_PROMO="false". Vale una sola volta per cliente
+ * (controllo su un'impronta dell'email normalizzata, vedi src/domain/orders/promo.ts).
+ */
+export function firstPromoEnabled(env: Env = process.env): boolean {
+  return env.FIRST_REFERTO_PROMO !== "false";
+}
+
+/** Prezzo del primo referto in centesimi (PRICE_CAPISCI_FIRST_CENTS), mai superiore al prezzo standard. */
+export function firstRefertoCents(env: Env = process.env): number {
+  return Math.min(envCents(env, "PRICE_CAPISCI_FIRST_CENTS", PRICES.CAPISCI_FIRST), priceCents("capisci", env));
+}
+
+/** Prezzo di «Capisci» per questo cliente: il primo referto in promozione, poi il prezzo standard. */
+export function capisciPriceCents(isFirst: boolean, env: Env = process.env): number {
+  return isFirst && firstPromoEnabled(env) ? firstRefertoCents(env) : priceCents("capisci", env);
+}
+
+/** «7,90 €», «79 €»: senza decimali se interi, sempre in formato italiano. */
 export function formatEuro(cents: number): string {
   const whole = cents % 100 === 0;
   return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: 2 }).format(cents / 100);
 }
 
-export const priceLabel = (id: CoreServiceId, env: Env = process.env) => `da ${formatEuro(priceCents(id, env))}`;
+/** Come mostrare un prezzo: importo principale, eventuale «da», nota sotto (es. «poi 7,90 € per referto»). */
+export interface PriceDisplay {
+  /** Etichetta breve sopra l'importo, es. «Primo referto». */
+  lead: string | null;
+  /** Importo con eventuale «da», es. «2,90 €», «da 149 €». */
+  amount: string;
+  /** Riga sotto, es. «poi 7,90 € per referto». */
+  note: string | null;
+  /** Tutto in una riga, per testi e lettori di schermo. */
+  label: string;
+}
+
+export function priceDisplay(id: CoreServiceId, env: Env = process.env): PriceDisplay {
+  const s = coreService(id);
+  const std = formatEuro(priceCents(id, env));
+  if (id === "capisci" && firstPromoEnabled(env) && firstRefertoCents(env) < priceCents(id, env)) {
+    const first = formatEuro(firstRefertoCents(env));
+    return { lead: "Primo referto", amount: first, note: `poi ${std} per referto`, label: `Primo referto ${first}, poi ${std} per referto` };
+  }
+  if (id === "capisci") return { lead: null, amount: std, note: "per referto", label: `${std} per referto` };
+  const amount = s.priceKind === "from" ? `da ${std}` : std;
+  return { lead: null, amount, note: id === "parla-con-un-medico" ? "videoconsulto di circa 20–25 minuti" : "in base alla specialità e al caso", label: amount };
+}
+
+/** Etichetta in una riga (compatibilità): «Primo referto 2,90 €, poi 7,90 € per referto», «79 €», «da 149 €». */
+export const priceLabel = (id: CoreServiceId, env: Env = process.env) => priceDisplay(id, env).label;
+
+/** Il prezzo più basso di ingresso, per frasi come «Rendilo chiaro da 2,90 €». */
+export function entryPriceLabel(env: Env = process.env): string {
+  return formatEuro(firstPromoEnabled(env) ? firstRefertoCents(env) : priceCents("capisci", env));
+}
 
 export function coreService(id: CoreServiceId): CoreService {
   return CORE_SERVICES.find((s) => s.id === id)!;
@@ -166,15 +250,15 @@ export function serviceForOrder(orderService: string): CoreService | null {
   return CORE_SERVICES.find((s) => s.orderService === orderService) ?? null;
 }
 
-/** Importo in centesimi di un ordine per servizio interno ("completo" resta un'opzione interna non promossa). */
+/** Importo standard in centesimi di un ordine per servizio interno ("completo" resta un'opzione interna non promossa). */
 export function orderAmountCents(orderService: OrderServiceKey | "completo", env: Env = process.env): number {
   if (orderService === "completo") return Math.round(priceCents("capisci", env) * 1.5);
   return priceCents(CORE_SERVICES.find((s) => s.orderService === orderService)!.id, env);
 }
 
 /**
- * Upgrade «Capisci → Parla con un medico»: si paga solo la differenza se il referto è già stato capito
- * con Cura Privata. L'architettura c'è; l'attivazione commerciale è una scelta del titolare (UPGRADE_CREDIT="true").
+ * Credito «Capisci → Parla con un medico / Secondo parere»: si scala quanto già pagato per il referto condiviso.
+ * Predisposto ma SPENTO: l'attivazione commerciale è una scelta del titolare (UPGRADE_CREDIT="true").
  */
 export function upgradeEnabled(env: Env = process.env): boolean {
   return env.UPGRADE_CREDIT === "true";
@@ -220,6 +304,8 @@ export function pickerServices(env: Env = process.env) {
     startHref: s.startHref,
     startLabel: s.startLabel,
     price: prices ? priceLabel(s.id, env) : null,
+    need: s.need,
+    level: s.level,
     timing: s.timing,
   }));
 }

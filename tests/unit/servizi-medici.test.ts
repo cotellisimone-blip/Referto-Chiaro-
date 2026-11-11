@@ -42,13 +42,13 @@ describe("secondo parere e videoconsulto: pagamento prima del medico", () => {
   });
 
   it("C: videoconsulto pagato → conferma → riepilogo firmato; un altro utente non lo vede", async () => {
-    const a = await createAppointment(alice, { specialty: "Medicina interna", reason: "Parlare dei valori del referto.", slots: [{ day: tomorrow, window: "mattina" }], documentIds: [doc], isSimulated: true });
+    const a = await createAppointment(alice, { reason: "Parlare dei valori del referto.", slots: [{ day: tomorrow, window: "mattina" }], documentIds: [doc], isSimulated: true });
     if ("error" in a) throw new Error(a.error);
     expect(await listPhysicianAppointments(doctorUser, physician)).toHaveLength(0);
     expect(await getPhysicianAppointment(doctorUser, physician, a.id)).toBeNull();
 
     const o = await createServiceOrder(alice, { service: "videoconsulto", refId: a.id, documentIds: [doc], provider: "simulated" });
-    expect(o.amountCents).toBe(8900);
+    expect(o.amountCents).toBe(7900);
     await markOrderPaid(o.id);
     const seen = await getPhysicianAppointment(doctorUser, physician, a.id);
     expect(seen?.documents.map((d) => d.id)).toEqual([doc]);
@@ -66,7 +66,7 @@ describe("secondo parere e videoconsulto: pagamento prima del medico", () => {
   });
 
   it("C: annullato dopo il pagamento e prima della conferma → rimborso; dopo la conferma non si annulla", async () => {
-    const a = await createAppointment(alice, { specialty: "Medicina interna", reason: "Un dubbio da chiarire a voce.", slots: [{ day: tomorrow, window: "sera" }], documentIds: [], isSimulated: true });
+    const a = await createAppointment(alice, { reason: "Un dubbio da chiarire a voce.", slots: [{ day: tomorrow, window: "sera" }], documentIds: [], isSimulated: true });
     if ("error" in a) throw new Error(a.error);
     const o = await createServiceOrder(alice, { service: "videoconsulto", refId: a.id, documentIds: [], provider: "simulated" });
     await markOrderPaid(o.id);
@@ -79,11 +79,11 @@ describe("secondo parere e videoconsulto: pagamento prima del medico", () => {
     const prev = process.env.UPGRADE_CREDIT;
     process.env.UPGRADE_CREDIT = "true";
     try {
-      await withSystem((tx) => tx.query("INSERT INTO orders(id, user_id, service, document_id, amount_cents, currency, status, provider, paid_at) VALUES (gen_random_uuid(), $1, 'essenziale', $2, 4900, 'eur', 'paid', 'simulated', now())", [alice, doc]));
-      const a = await createAppointment(alice, { specialty: "Medicina interna", reason: "Continuare con un medico.", slots: [{ day: tomorrow, window: "pomeriggio" }], documentIds: [doc], isSimulated: true });
+      await withSystem((tx) => tx.query("INSERT INTO orders(id, user_id, service, document_id, amount_cents, currency, status, provider, paid_at) VALUES (gen_random_uuid(), $1, 'essenziale', $2, 790, 'eur', 'paid', 'simulated', now())", [alice, doc]));
+      const a = await createAppointment(alice, { reason: "Continuare con un medico.", slots: [{ day: tomorrow, window: "pomeriggio" }], documentIds: [doc], isSimulated: true });
       if ("error" in a) throw new Error(a.error);
       const o = await createServiceOrder(alice, { service: "videoconsulto", refId: a.id, documentIds: [doc], provider: "simulated" });
-      expect(o.amountCents).toBe(4000);
+      expect(o.amountCents).toBe(7110);
     } finally {
       if (prev === undefined) delete process.env.UPGRADE_CREDIT;
       else process.env.UPGRADE_CREDIT = prev;

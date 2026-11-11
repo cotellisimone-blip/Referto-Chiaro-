@@ -29,9 +29,35 @@ describe("ordini e pagamenti", () => {
 
   it("l'ordine nasce in attesa, con il prezzo del catalogo in centesimi", async () => {
     const o = await createOrder(alice, { service: "completo", documentId: doc, provider: "simulated" });
-    // Prezzi dall'unica fonte (src/domain/offerta.ts): Capisci 49 €, più referti = 1,5 × Capisci.
-    expect(o).toMatchObject({ status: "pending", amountCents: 7350, currency: "eur", provider: "simulated" });
-    expect((await createOrder(alice, { service: "essenziale", documentId: doc, provider: "simulated" })).amountCents).toBe(4900);
+    // Prezzi dall'unica fonte (src/domain/offerta.ts): Capisci 7,90 € (primo 2,90 €), più referti = 1,5 × Capisci.
+    expect(o).toMatchObject({ status: "pending", amountCents: 1185, currency: "eur", provider: "simulated" });
+    const first = await createOrder(alice, { service: "essenziale", documentId: doc, provider: "simulated" });
+    expect(first).toMatchObject({ amountCents: 290, promo: "primo-referto" });
+  });
+
+  it("primo referto a 2,90 € una sola volta per persona, anche ricreando l'account con la stessa email", async () => {
+    const { normalizeEmail } = await import("@/domain/orders/promo");
+    expect(normalizeEmail("Mario.Rossi+test@GoogleMail.com")).toBe("mariorossi@gmail.com");
+    expect(normalizeEmail("a.b+x@libero.it")).toBe("a.b@libero.it");
+    const carla = randomUUID();
+    const bobDoc = randomUUID();
+    await withSystem(async (tx) => {
+      await tx.query("INSERT INTO users(id, email) VALUES ($1, 'bob.promo@gmail.com')", [carla]);
+      await tx.query("INSERT INTO documents(id, user_id, title, source_kind, source_ref, status) VALUES ($1, $2, 'Referto', 'synthetic', 'demo-referto-lab-001', 'verified')", [bobDoc, carla]);
+    });
+    const o1 = await createOrder(carla, { service: "essenziale", documentId: bobDoc, provider: "simulated" });
+    expect(o1.amountCents).toBe(290);
+    await markOrderPaid(o1.id);
+    const o2 = await createOrder(carla, { service: "essenziale", documentId: bobDoc, provider: "simulated" });
+    expect(o2).toMatchObject({ amountCents: 790, promo: null });
+    // Stessa persona, nuovo account con l'email «travestita»: niente seconda promozione.
+    const bob2 = randomUUID();
+    const bob2Doc = randomUUID();
+    await withSystem(async (tx) => {
+      await tx.query("INSERT INTO users(id, email) VALUES ($1, 'Bob.Promo+2@gmail.com')", [bob2]);
+      await tx.query("INSERT INTO documents(id, user_id, title, source_kind, source_ref, status) VALUES ($1, $2, 'Referto', 'synthetic', 'demo-referto-lab-001', 'verified')", [bob2Doc, bob2]);
+    });
+    expect((await createOrder(bob2, { service: "essenziale", documentId: bob2Doc, provider: "simulated" })).amountCents).toBe(790);
   });
 
   it("pending → paid una sola volta e il report parte solo dopo il pagamento", async () => {

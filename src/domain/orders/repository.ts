@@ -1,6 +1,7 @@
 import "server-only";
 import { SERVICES } from "@/domain/catalog";
-import { orderAmountCents, serviceForOrder, upgradeEnabled } from "@/domain/offerta";
+import { capisciPriceCents, firstPromoEnabled, orderAmountCents, serviceForOrder, upgradeEnabled } from "@/domain/offerta";
+import { FIRST_REFERTO, claimFirstReferto, isFirstRefertoEligible } from "./promo";
 import { orderPaidEmail, publicUrl, sendEmail } from "@/lib/email";
 import { randomUUID } from "node:crypto";
 import { audit, withSystem, withUser, type Queryable } from "@/db/client";
@@ -22,6 +23,8 @@ export interface OrderRow {
   provider: ProviderKind;
   createdAt: string;
   paidAt: string | null;
+  /** Promozione applicata (es. «primo-referto»), se c'è. */
+  promo: string | null;
 }
 
 /** Prezzi in centesimi: unica fonte src/domain/offerta.ts (configurabile da variabili d'ambiente). */
@@ -41,18 +44,27 @@ function toOrder(r: Record<string, unknown>): OrderRow {
     provider: r.provider as ProviderKind,
     createdAt: iso(r.created_at)!,
     paidAt: iso(r.paid_at),
+    promo: (r.promo as string | null) ?? null,
   };
+}
+
+/** Quanto pagherà questo cliente per «Capisci il tuo referto» adesso (primo referto in promozione o prezzo standard). */
+export async function quoteCapisci(userId: string): Promise<{ amountCents: number; first: boolean }> {
+  const first = firstPromoEnabled() && (await withSystem((tx) => isFirstRefertoEligible(tx, userId)));
+  return { amountCents: capisciPriceCents(first), first };
 }
 
 export async function createOrder(
   userId: string,
   input: { service: "essenziale" | "completo"; documentId: string; provider: ProviderKind },
 ): Promise<OrderRow> {
+  // Il prezzo lo decide sempre il server: il client non può chiedere la promozione.
+  const quote = input.service === "essenziale" ? await quoteCapisci(userId) : { amountCents: PRICE_CENTS[input.service], first: false };
   return withUser(userId, async (tx) => {
     const id = randomUUID();
     const r = await tx.query(
-      "INSERT INTO orders(id, user_id, service, document_id, amount_cents, currency, status, provider) VALUES ($1, $2, $3, $4, $5, 'eur', 'pending', $6) RETURNING *",
-      [id, userId, input.service, input.documentId, PRICE_CENTS[input.service], input.provider],
+      "INSERT INTO orders(id, user_id, service, document_id, amount_cents, currency, status, provider, promo) VALUES ($1, $2, $3, $4, $5, 'eur', 'pending', $6, $7) RETURNING *",
+      [id, userId, input.service, input.documentId, quote.amountCents, input.provider, quote.first ? FIRST_REFERTO : null],
     );
     await audit(tx, { userId, actor: "user", action: "order-created", target: id });
     return toOrder(r.rows[0]);
@@ -128,12 +140,13 @@ export async function listOrders(userId: string): Promise<OrderRow[]> {
  */
 export async function markOrderPaid(orderId: string, providerRef?: string): Promise<boolean> {
   const row = await withSystem(async (tx) => {
-    const r = await tx.query<{ user_id: string; service: OrderService; document_id: string | null; ref_id: string | null; amount_cents: number; email?: string }>(
-      "UPDATE orders SET status = 'paid', paid_at = now(), updated_at = now(), provider_ref = COALESCE($2, provider_ref) WHERE id = $1 AND status = 'pending' RETURNING user_id, service, document_id, ref_id, amount_cents, (SELECT email FROM users WHERE users.id = orders.user_id) AS email",
+    const r = await tx.query<{ user_id: string; service: OrderService; document_id: string | null; ref_id: string | null; amount_cents: number; promo: string | null; email?: string }>(
+      "UPDATE orders SET status = 'paid', paid_at = now(), updated_at = now(), provider_ref = COALESCE($2, provider_ref) WHERE id = $1 AND status = 'pending' RETURNING user_id, service, document_id, ref_id, amount_cents, promo, (SELECT email FROM users WHERE users.id = orders.user_id) AS email",
       [orderId, providerRef ?? null],
     );
     if (!r.rows[0]) return null;
     await audit(tx, { userId: r.rows[0].user_id, actor: "system", action: "order-paid", target: orderId });
+    if (r.rows[0].promo === FIRST_REFERTO) await claimFirstReferto(tx, r.rows[0].user_id, orderId);
     // Stessa transazione: se la richiesta del report fallisce, l'ordine non resta «pagato» senza report.
     if (r.rows[0].document_id && (r.rows[0].service === "essenziale" || r.rows[0].service === "completo")) {
       await createReportIn(tx, r.rows[0].user_id, r.rows[0].document_id, r.rows[0].service);

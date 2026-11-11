@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, Check, CircleDashed, Clock3, FileText, Stethoscope, UserRound, Video, X } from "lucide-react";
 import { clsx } from "clsx";
-import { CORE_SERVICES, PRICE_NOTE, coreService, priceLabel, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
+import { CORE_SERVICES, PRICE_NOTE, coreService, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
+import { PriceTag } from "./price-tag";
 import { VideoSlot } from "./video-slot";
 import { SCENE } from "./scenes";
 import { VIDEOS } from "@/content/media";
@@ -62,10 +63,7 @@ export function ServiceLanding({
                 <Icon aria-hidden className="h-7 w-7" />
               </span>
               {prices ? (
-                <p>
-                  <span className="block text-[0.9375rem] text-muted">Prezzo</span>
-                  <span className="stat-num block text-[2rem] leading-none text-ink">{priceLabel(s.id)}</span>
-                </p>
+                <PriceTag id={s.id} />
               ) : null}
             </div>
             <dl className="mt-6 space-y-4 text-[1.0625rem]">

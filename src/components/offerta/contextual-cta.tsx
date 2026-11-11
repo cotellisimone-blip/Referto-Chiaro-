@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, FileText, Stethoscope, Video } from "lucide-react";
-import { coreService, priceLabel, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
+import { coreService, formatEuro, priceCents, priceLabel, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
 
 /**
  * CTA contestuale nelle guide e nel glossario: prima la risposta utile, poi UNA proposta pertinente, senza fretta.
@@ -13,17 +13,22 @@ export function ctaForCategory(category: string | null | undefined): CoreService
   return category && PROCEDURAL.has(category) ? "secondo-parere" : "capisci";
 }
 
-const COPY: Record<"capisci" | "secondo-parere", { title: string; text: string; icon: typeof FileText }> = {
-  capisci: { title: "Hai già il tuo referto? Capiscilo nel suo insieme.", text: "Tutti i valori del tuo documento spiegati in parole semplici, con le domande da fare al medico.", icon: FileText },
-  "secondo-parere": { title: "Hai già ricevuto una diagnosi o un'indicazione? Puoi chiedere un secondo parere.", text: "Un medico della specialità giusta legge i tuoi documenti e risponde per iscritto.", icon: Stethoscope },
-};
+function copy(id: "capisci" | "secondo-parere", prices: boolean): { title: string; text: string; icon: typeof FileText } {
+  if (id === "capisci")
+    return {
+      title: prices ? `Hai già il tuo referto? Rendilo chiaro per ${formatEuro(priceCents("capisci"))}.` : "Hai già il tuo referto? Rendilo chiaro.",
+      text: "Tutti i valori del tuo documento in un report ordinato, in parole semplici, con le domande da fare al medico. Di norma in pochi minuti.",
+      icon: FileText,
+    };
+  return { title: "Hai già ricevuto una diagnosi o un'indicazione? Puoi chiedere un secondo parere.", text: "Uno specialista della disciplina appropriata legge i tuoi documenti e risponde per iscritto.", icon: Stethoscope };
+}
 
 export function ContextualCta({ category, variant = "inline" }: { category?: string | null; variant?: "inline" | "aside" }) {
   const id = ctaForCategory(category) as "capisci" | "secondo-parere";
   const s = coreService(id);
-  const c = COPY[id];
-  const Icon = c.icon;
   const prices = publicPricesEnabled();
+  const c = copy(id, prices);
+  const Icon = c.icon;
   const video = coreService("parla-con-un-medico");
   if (variant === "aside") {
     return (
@@ -54,7 +59,7 @@ export function ContextualCta({ category, variant = "inline" }: { category?: str
               {s.name} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
             </Link>
             <Link href={video.href} className="inline-flex min-h-11 items-center gap-2 font-semibold text-teal hover:underline">
-              <Video aria-hidden className="h-5 w-5" /> Preferisci parlarne? Prenota un videoconsulto
+              <Video aria-hidden className="h-5 w-5" /> Preferisci parlarne? Un medico di medicina generale{prices ? `, ${priceLabel("parla-con-un-medico")}` : ""}
             </Link>
           </div>
         </div>

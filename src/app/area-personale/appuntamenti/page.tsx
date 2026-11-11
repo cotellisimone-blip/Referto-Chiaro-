@@ -5,5 +5,5 @@ import { priceLabel, publicPricesEnabled } from "@/domain/offerta";
 export const metadata: Metadata = { title: "I miei appuntamenti" };
 
 export default function AppuntamentiPage() {
-  return <AppointmentsPage price={publicPricesEnabled() ? priceLabel("parla-con-un-medico").replace("da ", "") : null} />;
+  return <AppointmentsPage price={publicPricesEnabled() ? priceLabel("parla-con-un-medico") : null} />;
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
-import { CORE_SERVICES, PUBLIC_PROFESSIONALS, formatEuro, orderAmountCents, priceCents, priceLabel, upgradeCostCents, upgradeEnabled } from "@/domain/offerta";
+import { CORE_SERVICES, PRICES, PUBLIC_PROFESSIONALS, capisciPriceCents, entryPriceLabel, firstPromoEnabled, firstRefertoCents, formatEuro, orderAmountCents, priceCents, priceLabel, upgradeCostCents, upgradeEnabled } from "@/domain/offerta";
 import { buildVisitPlan, parseVisitParams } from "@/content/preparati-visita";
 import { ctaForCategory } from "@/components/offerta/contextual-cta";
 import { isSafeVideoUrl } from "@/domain/appointments/repository";
@@ -20,32 +20,59 @@ describe("offerta: tre servizi, prezzi da un'unica fonte", () => {
     expect(CORE_SERVICES.map((s) => s.name)).toEqual(["Capisci il tuo referto", "Chiedi un secondo parere", "Parla con un medico"]);
   });
 
-  it("prezzi di riferimento: 49 / 149 / 89 €", () => {
-    expect(priceCents("capisci", {})).toBe(4900);
+  it("listino Evoluzione v2: primo referto 2,90 €, poi 7,90 € · medico 79 € · secondo parere da 149 €", () => {
+    expect(PRICES).toEqual({ CAPISCI_STANDARD: 790, CAPISCI_FIRST: 290, MEDICO_GENERALISTA: 7900, SECONDO_PARERE_BASE: 14900 });
+    expect(priceCents("capisci", {})).toBe(790);
     expect(priceCents("secondo-parere", {})).toBe(14900);
-    expect(priceCents("parla-con-un-medico", {})).toBe(8900);
+    expect(priceCents("parla-con-un-medico", {})).toBe(7900);
+    expect(capisciPriceCents(true, {})).toBe(290);
+    expect(capisciPriceCents(false, {})).toBe(790);
     const sp = (x: string) => x.replace(/\s/g, " ");
-    expect(sp(priceLabel("capisci", {}))).toBe("da 49 €");
+    expect(sp(priceLabel("capisci", {}))).toBe("Primo referto 2,90 €, poi 7,90 € per referto");
+    expect(sp(priceLabel("parla-con-un-medico", {}))).toBe("79 €");
+    expect(sp(priceLabel("secondo-parere", {}))).toBe("da 149 €");
+    expect(sp(entryPriceLabel({}))).toBe("2,90 €");
     expect(sp(formatEuro(990))).toBe("9,90 €");
   });
 
+  it("la promozione del primo referto si spegne da configurazione e non supera mai il prezzo standard", () => {
+    expect(capisciPriceCents(true, { FIRST_REFERTO_PROMO: "false" })).toBe(790);
+    expect(priceLabel("capisci", { FIRST_REFERTO_PROMO: "false" }).replace(/\s/g, " ")).toBe("7,90 € per referto");
+    expect(firstRefertoCents({ PRICE_CAPISCI_FIRST_CENTS: "5000" })).toBe(790);
+    expect(firstRefertoCents({ PRICE_CAPISCI_FIRST_CENTS: "190" })).toBe(190);
+    expect(firstPromoEnabled({})).toBe(true);
+  });
+
+  it("Capisci è automatico: nessun medico, nessuna revisione umana promessa", () => {
+    const c = CORE_SERVICES.find((s) => s.id === "capisci")!;
+    const txt = [c.oneLiner, c.who, c.timing, ...c.includes, ...c.steps.map((x) => x.text)].join(" ").toLowerCase();
+    expect(c.who).toMatch(/nessun medico/i);
+    expect(txt).not.toMatch(/un medico (ti )?(aiuta|rivede|controlla)|revisione (umana|medica)|entro 24 ore/);
+  });
+
+  it("Parla con un medico: generalista/internista, senza scegliere la specialità", () => {
+    const m = CORE_SERVICES.find((s) => s.id === "parla-con-un-medico")!;
+    expect(m.who).toMatch(/medicina generale o internista/);
+    expect(m.steps.map((s) => s.text).join(" ")).not.toMatch(/Indichi la specialità/);
+  });
+
   it("si cambiano da variabile d'ambiente; valori non validi tornano al riferimento", () => {
-    expect(priceCents("capisci", { PRICE_CAPISCI_CENTS: "3900" })).toBe(3900);
-    expect(priceCents("capisci", { PRICE_CAPISCI_CENTS: "-1" })).toBe(4900);
-    expect(priceCents("capisci", { PRICE_CAPISCI_CENTS: "49€" })).toBe(4900);
-    expect(priceCents("capisci", { PRICE_CAPISCI_CENTS: "9999999" })).toBe(4900);
+    expect(priceCents("capisci", { PRICE_CAPISCI_CENTS: "990" })).toBe(990);
+    expect(priceCents("capisci", { PRICE_CAPISCI_CENTS: "-1" })).toBe(790);
+    expect(priceCents("capisci", { PRICE_CAPISCI_CENTS: "7,90€" })).toBe(790);
+    expect(priceCents("capisci", { PRICE_CAPISCI_CENTS: "9999999" })).toBe(790);
     expect(orderAmountCents("videoconsulto", { PRICE_VIDEOCONSULTO_CENTS: "9900" })).toBe(9900);
   });
 
   it("upgrade Capisci → medico: si paga la differenza, ed è spento salvo UPGRADE_CREDIT=true", () => {
-    expect(upgradeCostCents("capisci", "parla-con-un-medico", {})).toBe(4000);
+    expect(upgradeCostCents("capisci", "parla-con-un-medico", {})).toBe(7110);
     expect(upgradeEnabled({})).toBe(false);
     expect(upgradeEnabled({ UPGRADE_CREDIT: "true" })).toBe(true);
   });
 
   it("nessun prezzo scritto a mano nei componenti: passano tutti da offerta.ts", () => {
     const files = walk("src/components").concat(walk("src/app")).filter((f) => !f.includes(`${path.sep}api${path.sep}`));
-    const hits = files.filter((f) => /(?:da |€ ?)(?:49|89|149)\b|\b(?:49|89|149) ?€/.test(readFileSync(f, "utf8")));
+    const hits = files.filter((f) => /(?:da |€ ?)(?:2,90|7,90|49|79|89|149)\b|\b(?:2,90|7,90|49|79|89|149) ?€/.test(readFileSync(f, "utf8")));
     expect(hits).toEqual([]);
   });
 

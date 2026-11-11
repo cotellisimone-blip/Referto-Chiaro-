@@ -70,8 +70,6 @@ export function AppointmentsPage({ price }: { price: string | null }) {
   const router = useRouter();
   const [items, setItems] = useState<AppointmentRow[] | null>(null);
   const [docs, setDocs] = useState<{ id: string; title: string }[]>([]);
-  const [specialties, setSpecialties] = useState<string[]>([]);
-  const [specialty, setSpecialty] = useState("");
   const [reason, setReason] = useState("");
   const [slots, setSlots] = useState<{ day: string; window: Window }[]>([{ day: isoDay(2), window: "mattina" }]);
   const [chosen, setChosen] = useState<string[]>([]);
@@ -87,11 +85,12 @@ export function AppointmentsPage({ price }: { price: string | null }) {
     api<{ documents: { id: string; title: string; status: string }[] }>("/api/v1/area/documents").then((r) => {
       const ready = r.documents.filter((d) => ["verified", "ready"].includes(d.status));
       setDocs(ready);
-      if (ready[0]) setChosen([ready[0].id]);
-    });
-    api<{ specialties: string[] }>("/api/v1/area/medici").then((r) => {
-      setSpecialties(r.specialties);
-      if (r.specialties[0]) setSpecialty(r.specialties[0]);
+      // Arrivi dal report? Quel documento è già scelto: non va ricaricato.
+      const pre = new URLSearchParams(window.location.search).get("documento");
+      const fromReport = pre && ready.some((d) => d.id === pre) ? pre : null;
+      if (fromReport) setChosen([fromReport]);
+      else if (ready[0]) setChosen([ready[0].id]);
+      if (fromReport) document.getElementById("nuovo-app-titolo")?.scrollIntoView({ block: "start" });
     });
   }, []);
 
@@ -102,7 +101,7 @@ export function AppointmentsPage({ price }: { price: string | null }) {
     try {
       const r = await api<{ id: string; checkoutUrl: string | null }>("/api/v1/area/appuntamenti", {
         method: "POST",
-        body: { specialty, reason, slots, documentIds: chosen, acknowledgeSimulation: ack, consentToShare: share },
+        body: { reason, slots, documentIds: chosen, acknowledgeSimulation: ack, consentToShare: share },
       });
       if (r.checkoutUrl) goToCheckout(router, r.checkoutUrl);
       else router.push(`/area-personale/appuntamenti/${r.id}`);
@@ -116,7 +115,7 @@ export function AppointmentsPage({ price }: { price: string | null }) {
     <div className="space-y-10">
       <div>
         <h1 className="display text-[2rem] sm:text-[2.5rem]">I miei appuntamenti</h1>
-        <p className="mt-2 text-muted">Videoconsulti con un medico che legge prima i documenti che scegli. Vedi il prezzo prima di confermare.</p>
+        <p className="mt-2 text-muted">Videoconsulti di circa 20–25 minuti con un medico di medicina generale o internista, che legge prima i documenti che scegli. Vedi il prezzo prima di confermare.</p>
       </div>
       <VideoSimulationNotice />
       <section aria-labelledby="appuntamenti-titolo">
@@ -148,18 +147,9 @@ export function AppointmentsPage({ price }: { price: string | null }) {
           Prenota un videoconsulto
         </h2>
         <form onSubmit={submit} className="mt-5 space-y-6">
-          <div>
-            <label htmlFor="app-spec" className="text-sm font-semibold text-ink">
-              Specialità
-            </label>
-            <select id="app-spec" value={specialty} onChange={(e) => setSpecialty(e.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-ink">
-              {specialties.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
+          <p className="rounded-xl bg-mist px-4 py-3 text-ink">
+            Parlerai con un <strong>medico di medicina generale o internista</strong>: non devi sapere quale specialista ti serve. Se serve uno specialista o una visita in presenza, te lo dice lui.
+          </p>
           <div>
             <label htmlFor="app-motivo" className="text-sm font-semibold text-ink">
               Di che cosa vuoi parlare? (da 10 a 300 caratteri)
@@ -266,7 +256,7 @@ export function AppointmentsPage({ price }: { price: string | null }) {
               {error}
             </p>
           ) : null}
-          <button type="submit" disabled={busy || !specialty} className="btn btn-primary">
+          <button type="submit" disabled={busy} className="btn btn-primary">
             {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <CalendarClock aria-hidden className="h-4 w-4" />} Continua al pagamento{price ? ` (${price})` : ""}
           </button>
         </form>

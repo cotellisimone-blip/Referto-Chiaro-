@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, Clock3, FileText, Stethoscope, UserRound, Video } from "lucide-react";
-import { CORE_SERVICES, PRICE_NOTE, formatEuro, priceLabel, publicPricesEnabled, upgradeCostCents, upgradeEnabled } from "@/domain/offerta";
+import { CORE_SERVICES, PRICE_NOTE, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled, upgradeCostCents, upgradeEnabled } from "@/domain/offerta";
+import { PriceTag } from "@/components/offerta/price-tag";
 
 export const metadata: Metadata = {
   title: "Prezzi",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 const ICON = { file: FileText, stethoscope: Stethoscope, video: Video } as const;
 
 const PAY_FAQ = [
+  ["Perché il primo referto costa meno?", `Per farti provare il servizio: il primo referto che rendi chiaro costa ${formatEuro(firstRefertoCents())}, una sola volta per persona. Dal secondo, ${formatEuro(priceCents("capisci"))} per referto. Nessun abbonamento.`],
   ["Quando pago?", "Solo alla fine del percorso di richiesta, dopo aver visto prezzo e tempi. Nessun abbonamento e nessun rinnovo automatico."],
   ["E se il medico non può accettare il mio caso?", "Se il medico ritiene che la documentazione non basti o che serva una visita in presenza, il caso non viene preso in carico e il pagamento ti viene restituito. Le condizioni complete saranno pubblicate prima del lancio."],
   ["Posso passare da un servizio all'altro?", "Sì: i documenti che hai già caricato restano nella tua area personale e non li ricarichi. Se inizi con «Capisci il tuo referto» e poi vuoi parlarne con un medico, riparti da dove eri."],
@@ -47,7 +49,7 @@ export default function PrezziPage() {
                       {s.name}
                     </h2>
                     <p className="mt-2 text-lg text-ink-soft lg:min-h-[4.5em]">{s.forWhom}</p>
-                    {prices ? <p className="stat-num mt-6 text-[2.5rem] leading-none text-ink">{priceLabel(s.id)}</p> : null}
+                    {prices ? <PriceTag id={s.id} size="lg" className="mt-6" /> : null}
                     <p className="mt-4 flex items-start gap-2 text-[1.0625rem] text-ink">
                       <Clock3 aria-hidden className="tone-text mt-1 h-5 w-5 shrink-0" />
                       {s.timing}
@@ -80,7 +82,7 @@ export default function PrezziPage() {
           <p className="mt-6 text-[1.0625rem] text-muted">{PRICE_NOTE}</p>
           {upgrade && prices ? (
             <p className="mt-4 rounded-2xl bg-mist px-5 py-4 text-lg text-ink">
-              Hai già usato «Capisci il tuo referto»? Per parlarne con un medico paghi solo la differenza: {formatEuro(upgradeCostCents("capisci", "parla-con-un-medico"))}.
+              Hai già usato «Capisci il tuo referto»? Per parlarne con un medico ti scaliamo quanto pagato per il referto: {formatEuro(upgradeCostCents("capisci", "parla-con-un-medico"))}.
             </p>
           ) : null}
         </div>

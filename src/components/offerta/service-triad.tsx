@@ -2,7 +2,8 @@ import Link from "next/link";
 import { ArrowRight, Clock3, FileText, Stethoscope, Video } from "lucide-react";
 import { clsx } from "clsx";
 import { SCENE } from "./scenes";
-import { CORE_SERVICES, priceLabel, publicPricesEnabled, type CoreService } from "@/domain/offerta";
+import { CORE_SERVICES, publicPricesEnabled, type CoreService } from "@/domain/offerta";
+import { PriceTag } from "./price-tag";
 
 export const SERVICE_ICON: Record<CoreService["icon"], typeof FileText> = { file: FileText, stethoscope: Stethoscope, video: Video };
 
@@ -33,12 +34,7 @@ export function ServiceTriad({ headingLevel = 3, compact = false }: { headingLev
                 <span className="tone-icon h-14 w-14">
                   <Icon aria-hidden className="h-7 w-7" strokeWidth={1.75} />
                 </span>
-                {prices ? (
-                  <p className="text-right">
-                    <span className="block text-[0.9375rem] text-muted">a partire da</span>
-                    <span className="stat-num block text-[1.75rem] leading-none text-ink">{priceLabel(s.id).replace("da ", "")}</span>
-                  </p>
-                ) : null}
+                {prices ? <PriceTag id={s.id} size="sm" align="right" /> : null}
               </div>
               <H className="mt-5 text-[1.625rem] font-bold leading-tight tracking-[-0.015em] text-ink">
                 <Link href={s.href} className="after:absolute after:inset-0 focus-visible:outline-none">

@@ -11,7 +11,7 @@ import { Facsimile, revealFacsimileLine } from "@/components/report/facsimile";
 import { VerificationList, isReadableObs } from "@/components/report/verification-list";
 import { ExplanationView } from "@/components/report/explanation-view";
 import { Stepper } from "@/components/report/stepper";
-import { SERVICES } from "@/domain/catalog";
+import { INFORMATIVE_NOTE, coreService } from "@/domain/offerta";
 import { api, formatDate } from "./api";
 import { StatusChip } from "./status-chip";
 import { WORKFLOW_STEPS } from "./new-document";
@@ -41,6 +41,38 @@ const ACTIVE = new Set(["queued", "extracting", "processing"]);
  * lettura → controllo valori → scelta del servizio → elaborazione → report.
  * Ricaricando la pagina si riparte esattamente da dove si era.
  */
+const CAPISCI = coreService("capisci");
+
+interface Quote {
+  amount: string;
+  first: boolean;
+  standard: string;
+  medico: string | null;
+  parere: string | null;
+}
+
+/**
+ * Il prossimo passo dopo il report, senza spinte: parlarne con un medico (Orientati) o, se c'è già una diagnosi,
+ * un secondo parere (Approfondisci). Il documento è già qui: non va ricaricato.
+ */
+function NextStep({ documentId, prices }: { documentId: string; prices: Quote | null }) {
+  return (
+    <div className="card p-5 sm:p-6" data-testid="prossimo-passo">
+      <h2 className="font-serif text-xl">Vuoi parlarne con un medico?</h2>
+      <p className="mt-2 text-[0.9375rem] text-muted">Un medico di medicina generale legge questo referto prima del videoconsulto e ti aiuta a capire il prossimo passo. Non devi ricaricare nulla.</p>
+      <Link href={`/area-personale/appuntamenti?documento=${documentId}`} className="btn btn-secondary mt-4 w-full">
+        Parla con un medico{prices?.medico ? ` · ${prices.medico}` : ""}
+      </Link>
+      <p className="mt-4 text-[0.9375rem] text-muted">
+        Hai già una diagnosi o una proposta di cura?{" "}
+        <Link href={`/area-personale/secondo-parere?documento=${documentId}`} className="link font-semibold">
+          Chiedi un secondo parere{prices?.parere ? ` (${prices.parere})` : ""}
+        </Link>
+      </p>
+    </div>
+  );
+}
+
 export function DocumentWorkflow({ documentId }: { documentId: string }) {
   const router = useRouter();
   const [doc, setDoc] = useState<Doc | null>(null);
@@ -49,7 +81,8 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
   const [confirmed, setConfirmed] = useState<string[]>([]);
   const [highlight, setHighlight] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
-  const [chosenService, setChosenService] = useState<"essenziale" | "completo">("essenziale");
+  const chosenService = "essenziale" as const;
+  const [quote, setQuote] = useState<Quote | null>(null);
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [view, setView] = useState<"auto" | "verify">("auto");
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -86,6 +119,12 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
       if (timer) clearTimeout(timer);
     };
   }, [load]);
+
+  // Prezzo personale di «Capisci» (primo referto o standard), calcolato dal server.
+  useEffect(() => {
+    if (!doc || !["verified", "ready"].includes(doc.status) || quote) return;
+    api<Quote>("/api/v1/area/orders/preventivo").then(setQuote).catch(() => setQuote(null));
+  }, [doc?.status, quote]);
 
   const reveal = (line: number) => revealFacsimileLine(setHighlight, line);
   const focusHeading = () => requestAnimationFrame(() => headingRef.current?.focus({ preventScroll: true }));
@@ -286,41 +325,28 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
       ) : null}
 
       {phase === "service" ? (
-        <section className="mt-10" aria-labelledby="step-titolo">
+        <section className="mt-10 tone-capisci" aria-labelledby="step-titolo">
           <div className="max-w-2xl">
             <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="display text-[1.75rem] outline-none sm:text-[2.25rem]">
-              Scegli il servizio.
+              Rendi chiaro il tuo referto.
             </h1>
-            <p className="mt-4 text-lg text-muted">I prezzi indicati sono ipotesi in validazione. In questa versione dimostrativa nessun addebito reale.</p>
+            <p className="mt-4 text-lg text-muted">Valori confermati. Dopo il pagamento il report è pronto di norma in pochi minuti.</p>
           </div>
-          <ul className="mt-8 grid gap-4 md:grid-cols-2" aria-label="Servizi disponibili">
-            {SERVICES.filter((s) => s.id !== "secondo-parere").map((s) => {
-              const active = chosenService === s.id;
-              return (
-                <li key={s.id}>
-                  <label className={clsx("flex h-full cursor-pointer flex-col rounded-2xl border bg-paper p-5 transition-colors sm:p-6", active ? "border-teal/60 shadow-[var(--shadow-card)]" : "border-line hover:border-teal/40")}>
-                    <span className="flex items-start gap-3">
-                      <input type="radio" name="service" value={s.id} checked={active} onChange={() => setChosenService(s.id as "essenziale" | "completo")} className="mt-1.5 h-5 w-5 shrink-0 accent-[var(--color-teal)]" />
-                      <span className="min-w-0">
-                        <span className="block font-serif text-2xl">{s.name}</span>
-                        <span className="mt-1 block text-muted">{s.tagline}</span>
-                      </span>
-                    </span>
-                    <span className="mt-4 flex items-baseline gap-2">
-                      <span className="tabular font-serif text-3xl">{s.priceLabel}</span>
-                      <span className="chip bg-cream text-ink">importo di prova, senza addebito</span>
-                    </span>
-                    <ul className="mt-4 space-y-1.5 text-sm text-ink">
-                      {s.includes.slice(0, 4).map((x) => (
-                        <li key={x}>· {x}</li>
-                      ))}
-                    </ul>
-                    {s.id === "completo" ? <span className="mt-3 block text-sm text-muted">Il dossier con più referti si crea dalla sezione Dossier, dopo aver generato i report.</span> : null}
-                  </label>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="service-card mt-8 max-w-2xl p-6 sm:p-8" data-testid="capisci-offerta">
+            <p className="text-lg font-bold text-ink">{CAPISCI.name}</p>
+            <p className="mt-1 text-ink-soft">{CAPISCI.oneLiner}</p>
+            <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              {quote?.first ? <span className="tone-text text-base font-bold">Primo referto</span> : null}
+              <span className="stat-num text-[2.5rem] leading-none text-ink" data-testid="prezzo-capisci">{quote ? quote.amount : "…"}</span>
+              {quote?.first ? <span className="text-muted">poi {quote.standard} per referto</span> : quote ? <span className="text-muted">per referto</span> : null}
+            </p>
+            <ul className="mt-5 space-y-1.5 text-ink">
+              {CAPISCI.includes.map((x) => (
+                <li key={x}>· {x}</li>
+              ))}
+            </ul>
+            <p className="mt-5 text-sm text-muted">{INFORMATIVE_NOTE} Nessun medico rivede questo report: se vuoi parlarne con un medico, dopo puoi farlo senza ricaricare il documento.</p>
+          </div>
           {error ? (
             <p role="alert" className="mt-4 rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">
               {error}
@@ -331,9 +357,9 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
               <ArrowLeft aria-hidden className="h-4 w-4" /> Torna al controllo valori
             </button>
             <div className="flex flex-col items-stretch gap-2 sm:items-end">
-              <button type="button" className="btn btn-primary" onClick={proceedToPayment} disabled={busy} aria-describedby="nota-pagamento">
+              <button type="button" className="btn btn-primary" onClick={proceedToPayment} disabled={busy || !quote} aria-describedby="nota-pagamento">
                 {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null}
-                Procedi al pagamento ({SERVICES.find((x) => x.id === chosenService)?.priceLabel}) <ArrowRight aria-hidden className="h-4 w-4" />
+                Paga {quote?.amount ?? ""} e ricevi il report <ArrowRight aria-hidden className="h-4 w-4" />
               </button>
               <p id="nota-pagamento" className="text-center text-sm text-muted sm:text-right">
                 Versione di prova: nessun addebito reale.
@@ -365,7 +391,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
             Il tuo referto, in parole semplici.
           </h1>
           <p className="mt-2 text-sm text-muted">
-            {doc.title} · servizio {readyReport.service === "completo" ? "Completo" : "Essenziale"} · generato il {readyReport.generatedAt ? formatDate(readyReport.generatedAt) : ""}
+            {doc.title} · Capisci il tuo referto · generato il {readyReport.generatedAt ? formatDate(readyReport.generatedAt) : ""}
           </p>
           <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start [&>*]:min-w-0">
             <ExplanationView explanation={readyReport.explanation} onReveal={reveal} />
@@ -387,6 +413,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
                   <FolderPlus aria-hidden className="h-4 w-4" /> Metti in un dossier
                 </Link>
               </div>
+              <NextStep documentId={documentId} prices={quote} />
               <Facsimile doc={extracted} highlightLine={highlight} compact />
               <button type="button" className="btn btn-ghost w-full" onClick={reopenVerification}>
                 <RotateCcw aria-hidden className="h-4 w-4" /> Rivedi i valori confermati

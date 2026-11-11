@@ -11,7 +11,8 @@ const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 const Body = z
   .object({
-    specialty: z.string().min(2).max(80),
+    /** Ignorata: il videoconsulto è sempre con un medico di medicina generale o internista. */
+    specialty: z.string().max(80).optional(),
     /** Motivo breve, in parole proprie: non è un questionario clinico. */
     reason: z.string().min(10).max(300),
     slots: z.array(z.object({ day: z.string().regex(DAY), window: z.enum(["mattina", "pomeriggio", "sera"]) }).strict()).min(1).max(3),
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
   }
   const pr = providerOrResponse();
   if ("response" in pr) return pr.response;
-  const r = await createAppointment(g.user.id, { specialty: parsed.data.specialty, reason: parsed.data.reason, slots: parsed.data.slots, documentIds: docs, isSimulated: !real });
+  const r = await createAppointment(g.user.id, { reason: parsed.data.reason, slots: parsed.data.slots, documentIds: docs, isSimulated: !real });
   if ("error" in r) return json({ error: r.error, message: r.error === "limit-reached" ? "Hai già 3 appuntamenti aperti." : "Documento non trovato." }, { status: r.error === "limit-reached" ? 409 : 404 });
   const order = await createServiceOrder(g.user.id, { service: "videoconsulto", refId: r.id, documentIds: docs, provider: pr.provider.kind });
   const c = await openCheckout(req, g.user.id, pr.provider, order);

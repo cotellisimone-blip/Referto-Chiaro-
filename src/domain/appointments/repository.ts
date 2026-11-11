@@ -92,9 +92,12 @@ export async function getAppointment(userId: string, id: string): Promise<{ appo
   });
 }
 
+/** Specialità registrata per ogni videoconsulto «Parla con un medico». */
+export const GENERALIST_SPECIALTY = "Medicina generale o interna";
+
 export async function createAppointment(
   userId: string,
-  args: { specialty: string; reason: string; slots: Slot[]; documentIds: string[]; isSimulated: boolean },
+  args: { reason: string; slots: Slot[]; documentIds: string[]; isSimulated: boolean },
 ): Promise<{ id: string } | { error: "document-not-found" | "limit-reached" }> {
   return withUser(userId, async (tx) => {
     if (args.documentIds.length) {
@@ -103,17 +106,17 @@ export async function createAppointment(
     }
     const n = await tx.query("SELECT count(*)::int AS n FROM appointments WHERE status IN ('requested', 'confirmed')");
     if (Number(n.rows[0].n) >= 3) return { error: "limit-reached" as const };
-    // Assegnazione semplice: il medico verificato della specialità con meno appuntamenti aperti.
+    // «Parla con un medico» è sempre un medico di medicina generale o internista: l'utente non sceglie la specialità.
+    // Assegnazione semplice: il medico verificato con meno appuntamenti aperti.
     const p = await tx.query(
-      `SELECT p.id FROM physicians p WHERE p.status = 'verified' AND p.specialty = $1
+      `SELECT p.id FROM physicians p WHERE p.status = 'verified' AND (p.specialty ILIKE 'Medicina generale%' OR p.specialty ILIKE 'Medicina interna%')
        ORDER BY (SELECT count(*) FROM appointments a WHERE a.physician_id = p.id AND a.status IN ('requested', 'confirmed')) ASC, p.created_at ASC LIMIT 1`,
-      [args.specialty],
     );
     const id = randomUUID();
     await tx.query(
       `INSERT INTO appointments(id, user_id, physician_id, specialty, reason, preferred_slots, document_ids, status, awaiting_payment, is_simulated)
        VALUES ($1, $2, $3, $4, $5, $6, $7::uuid[], 'requested', true, $8)`,
-      [id, userId, p.rows[0] ? String(p.rows[0].id) : null, args.specialty, args.reason, JSON.stringify(args.slots), args.documentIds, args.isSimulated],
+      [id, userId, p.rows[0] ? String(p.rows[0].id) : null, GENERALIST_SPECIALTY, args.reason, JSON.stringify(args.slots), args.documentIds, args.isSimulated],
     );
     await tx.query("INSERT INTO consents(id, user_id, kind, version, granted) VALUES (gen_random_uuid(), $1, 'video-consult', $2, true)", [userId, `appuntamento:${id}`]);
     await audit(tx, { userId, actor: "user", action: "appointment-created", target: id });
