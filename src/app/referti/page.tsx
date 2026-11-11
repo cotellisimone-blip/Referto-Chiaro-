@@ -5,6 +5,7 @@ import { ReportAnatomy } from "@/components/ui/report-anatomy";
 import { FaqList } from "@/components/ui/faq-list";
 import { FAQ } from "@/content/faq";
 import { ServiceLanding } from "@/components/offerta/service-landing";
+import { BeforeAfter } from "@/components/offerta/before-after";
 
 export const metadata: Metadata = {
   title: "Capisci il tuo referto",
@@ -17,8 +18,19 @@ export default function RefertiPage() {
   return (
     <ServiceLanding
       id="capisci"
-      secondaryCta={{ href: "/referti/esempio", label: "Guarda un esempio" }}
+      secondaryCta={{ href: "/referti/esempio", label: "Guarda un report di esempio" }}
     >
+      <section aria-labelledby="differenza-titolo" className="bg-mist py-14 sm:py-20">
+        <div className="container-rc">
+          <h2 id="differenza-titolo" className="display-lg text-center text-[2rem] sm:text-[2.5rem]">
+            Lo stesso referto, prima e dopo.
+          </h2>
+          <p className="mt-3 text-center text-xl text-ink-soft">Sposta il cursore.</p>
+          <div className="mt-8">
+            <BeforeAfter />
+          </div>
+        </div>
+      </section>
       <section id="cosa-ricevi" aria-labelledby="cosa-ricevi-titolo" className="grain overflow-hidden bg-[var(--tone-bg)] py-16 sm:py-24">
         <div className="container-rc grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>

@@ -32,9 +32,9 @@ async function loginPhysician(ctx: BrowserContext) {
 test.describe("i tre servizi e i percorsi pubblici", () => {
   test("le tre pagine servizio: una frase, tempi, prezzo, un'azione principale; 0 violazioni axe", async ({ page }) => {
     for (const [path, name, cta] of [
-      ["/referti", "Capisci il tuo referto", "Carica il referto"],
-      ["/servizi/secondo-parere", "Chiedi un secondo parere", "Richiedi il secondo parere"],
-      ["/servizi/parla-con-un-medico", "Parla con un medico", "Prenota il videoconsulto"],
+      ["/referti", "Il tuo referto, finalmente leggibile.", "Rendi chiaro il mio referto"],
+      ["/servizi/secondo-parere", "Quando vuoi un'altra valutazione, da uno specialista.", "Richiedi un secondo parere"],
+      ["/servizi/parla-con-un-medico", "Non sai quale specialista ti serve? Parti da un medico.", "Prenota il videoconsulto"],
     ] as const) {
       await page.goto(path);
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(name);
@@ -49,9 +49,9 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
   test("Ti aiutiamo a scegliere: dal bisogno al servizio, senza domande cliniche", async ({ page }) => {
     await page.goto("/inizia");
     await expect(page.getByText("Non ti chiediamo sintomi né dati sanitari", { exact: false })).toBeVisible();
-    await page.getByLabel("Ho già una diagnosi o una proposta di cura").check();
+    await page.getByLabel("Ho già una diagnosi o una proposta e voglio un'altra valutazione").check();
     await expect(page.getByText("Chiedi un secondo parere", { exact: true }).first()).toBeVisible();
-    await page.getByLabel("Voglio parlare direttamente con un medico").check();
+    await page.getByLabel("Ho dei dubbi e non so quale specialista mi serve").check();
     await expect(page.getByRole("link", { name: "Scopri il servizio" })).toHaveAttribute("href", "/servizi/parla-con-un-medico");
     await page.getByLabel("Ho una visita e voglio arrivare preparato").check();
     await expect(page.getByRole("link", { name: /Inizia, è gratis/ })).toHaveAttribute("href", "/strumenti/preparati-alla-visita");
@@ -83,7 +83,7 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
     await expect(page.getByText(/Hai già il tuo referto\? Rendilo chiaro per 7,90/)).toBeVisible();
     await page.goto("/guide/risonanza-magnetica");
     await expect(page.getByText(/Hai già ricevuto una diagnosi o un'indicazione\? Puoi chiedere un secondo parere\./)).toBeVisible();
-    await expect(page.getByRole("link", { name: /Preferisci parlarne\? Prenota un videoconsulto/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Preferisci parlarne\? Un medico di medicina generale/ })).toBeVisible();
   });
 
   test("mobile: nessuno scorrimento orizzontale sulle pagine nuove (320–430 px)", async ({ page, isMobile }) => {
@@ -99,30 +99,56 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
   });
 });
 
-test.describe("home leggibile", () => {
-  test("una domanda sola, il referto prima e dopo, il metodo; corta e senza dati inventati", async ({ page, isMobile }) => {
+test.describe("home «Evoluzione v2»", () => {
+  test("due azioni nella hero, il referto come ingresso, due livelli umani distinti, tre livelli; corta e senza dati inventati", async ({ page, isMobile }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Che cosa hai in mano?" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Voglio parlare con un medico" })).toHaveAttribute("href", "/servizi/parla-con-un-medico");
-    const slider = page.getByLabel(/Sposta per confrontare/);
-    await slider.fill("10");
-    await expect(slider).toHaveValue("10");
+    const main = page.locator("main");
+    // Hero: una primaria e una secondaria, non tre azioni equivalenti
+    await expect(main.getByRole("link", { name: "Ho un referto" })).toHaveAttribute("href", "/referti");
+    await expect(main.getByRole("link", { name: "Scopri tutti i servizi" })).toHaveAttribute("href", "/servizi");
+    // Il prodotto d'ingresso domina la seconda sezione, con il prezzo in HTML
+    await expect(page.getByRole("heading", { name: "Parti dal tuo referto." })).toBeVisible();
+    await expect(page.locator("#referto")).toContainText("Primo referto");
+    await expect(page.locator("#referto")).toContainText("2,90 €");
+    await expect(page.locator("#referto")).toContainText("poi 7,90 € per referto");
+    await expect(page.locator("#referto").getByRole("link", { name: "Rendi chiaro il mio referto" })).toHaveAttribute("href", "/referti");
+    // I due livelli umani, distinti dal bisogno
+    await expect(page.getByRole("heading", { name: "Se una spiegazione non basta." })).toBeVisible();
+    await expect(page.locator("#servizi")).toContainText("non so quale specialista mi serve");
+    await expect(page.locator("#servizi")).toContainText("voglio un'altra valutazione");
+    await expect(page.locator("#servizi").getByRole("link", { name: "Chiedi un secondo parere" })).toHaveAttribute("href", "/servizi/secondo-parere");
+    // I tre livelli e la fiducia
+    await expect(page.getByRole("heading", { name: "Tre livelli. Scegli tu fin dove arrivare." })).toBeVisible();
+    for (const verb of ["Capisci", "Orientati", "Approfondisci"]) await expect(page.locator(".levels")).toContainText(verb);
     await expect(page.getByRole("heading", { name: /Rigoroso per il tuo medico/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /Sei un medico/ })).toHaveAttribute("href", "/per-i-medici");
-    if (isMobile) await expect(page.getByRole("navigation", { name: "Azioni rapide" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Hai già un referto\?\s*Rendilo chiaro da 2,90 €\./ })).toBeVisible();
+    // Mai un medico che rivede «Capisci», mai conti alla rovescia
+    const text = (await main.innerText()).toLowerCase();
+    for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra"]) expect(text).not.toContain(bad);
+    // Barra d'aiuto mobile: nascosta sulla hero (non compete con le due azioni), visibile scorrendo
+    if (isMobile) {
+      const bar = page.getByRole("navigation", { name: "Azioni rapide" });
+      await expect(bar).toBeHidden();
+      await page.evaluate(() => window.scrollTo(0, window.innerHeight * 2));
+      await expect(bar).toBeVisible();
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await expect(bar).toBeHidden();
+    }
+    expect(await main.locator("section").count()).toBeLessThanOrEqual(7);
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    expect(h, "schermate").toBeLessThan(isMobile ? 11.5 : 6.5);
-    const words = (await page.locator("main").innerText()).split(/\s+/).length;
-    expect(words).toBeLessThan(520);
+    expect(h, "schermate").toBeLessThan(isMobile ? 12.5 : 7);
+    const words = (await main.innerText()).split(/\s+/).length;
+    expect(words).toBeLessThan(560);
     await expectAccessible(page);
   });
 
   test("cinque compiti dalla home, in pochi clic", async ({ page }) => {
     await page.goto("/");
     // 1. Quanto costa il videoconsulto? Visibile in home.
-    await expect(page.locator("main")).toContainText("89");
+    await expect(page.locator("main")).toContainText("79 €");
     // 2. Capire un referto: un clic porta al servizio
-    await page.getByRole("link", { name: "Un referto da capire" }).click();
+    await page.locator("main").getByRole("link", { name: "Ho un referto" }).click();
     await expect(page).toHaveURL(/\/referti$/);
     // 3. Emergenza: il 112 è in home
     await page.goto("/");
@@ -132,7 +158,7 @@ test.describe("home leggibile", () => {
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Una piattaforma seria");
     // 5. Prepararsi alla visita: un clic
     await page.goto("/");
-    await page.getByRole("link", { name: /Preparati alla visita in 2 minuti/ }).click();
+    await page.getByRole("link", { name: "Prepara la mia lista" }).click();
     await expect(page).toHaveURL(/preparati-alla-visita/);
   });
 });

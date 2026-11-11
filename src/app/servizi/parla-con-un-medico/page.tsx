@@ -21,19 +21,21 @@ export default function ParlaConUnMedicoPage() {
       id="parla-con-un-medico"
       secondaryCta={{ href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita, gratis" }}
     >
-      <section aria-labelledby="differenza-titolo" className="py-12 sm:py-20">
+      <section aria-labelledby="differenza-titolo" className="stage-warm py-14 sm:py-24">
         <div className="container-rc">
-          <h2 id="differenza-titolo" className="display-lg text-[2rem] sm:text-[2.5rem]">
-            Che cosa cambia rispetto a una videochiamata qualsiasi
+          <h2 id="differenza-titolo" className="display-lg max-w-3xl">
+            Non una videochiamata qualsiasi.
           </h2>
-          <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="mt-10 grid gap-5 sm:grid-cols-2">
             {DIFFERENCE.map(({ icon: Icon, title, text }) => (
-              <li key={title} className="card p-6 sm:p-7">
-                <span className="tone-icon h-12 w-12">
-                  <Icon aria-hidden className="h-6 w-6" />
+              <li key={title} className="flex gap-5 rounded-[1.75rem] bg-paper/80 p-6 shadow-[var(--shadow-card)] sm:p-7">
+                <span className="tone-icon h-14 w-14 shrink-0">
+                  <Icon aria-hidden className="h-7 w-7" strokeWidth={1.7} />
                 </span>
-                <h3 className="mt-5 text-xl font-semibold text-ink">{title}</h3>
-                <p className="mt-2 text-lg text-ink-soft">{text}</p>
+                <div>
+                  <h3 className="text-[1.375rem] font-bold leading-snug text-ink">{title}</h3>
+                  <p className="mt-1.5 text-lg text-ink-soft">{text}</p>
+                </div>
               </li>
             ))}
           </ul>

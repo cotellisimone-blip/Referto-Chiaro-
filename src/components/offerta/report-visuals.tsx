@@ -62,19 +62,19 @@ export function ReportTransform({ className }: { className?: string }) {
       <div className="transform-doc p-4 pb-16 sm:p-5 sm:pb-6">
         <p className="text-xs font-bold uppercase tracking-widest text-[#5b6b70]">Laboratorio analisi · referto</p>
         <div className="mt-3 border-y border-[#d9dfe0] py-1 text-sm">
-          <p className="grid grid-cols-[1.5fr_0.7fr_0.9fr] gap-2 border-b border-dashed border-[#d9dfe0] py-1.5 font-bold">
+          <p className="grid grid-cols-[1fr_0.7fr_1.2fr] gap-2 border-b border-dashed border-[#d9dfe0] py-1.5 font-bold">
             <span>ESAME</span>
             <span>RIS.</span>
             <span>VAL. RIF.</span>
           </p>
           {VALUES.map((v) => (
-            <p key={v.name} className="grid grid-cols-[1.5fr_0.7fr_0.9fr] gap-2 py-2">
+            <p key={v.name} className="grid grid-cols-[1fr_0.7fr_1.2fr] gap-2 py-2">
               <span className="uppercase">{v.name === "Emoglobina" ? "HGB" : v.name === "Glicemia" ? "GLU" : v.name}</span>
               <span className="font-bold">
                 {v.value}
                 {"out" in v ? "*" : ""}
               </span>
-              <span>{v.range}</span>
+              <span className="whitespace-nowrap">{v.range}</span>
             </p>
           ))}
         </div>
@@ -93,7 +93,9 @@ export function ReportTransform({ className }: { className?: string }) {
           <span className="rounded-full bg-mist px-2.5 py-0.5 text-sm font-semibold text-ink-soft">Dati inventati</span>
         </p>
         <div className="space-y-2.5">
-          <ValueRow v={VALUES[0]} />
+          <div className="hidden sm:block">
+            <ValueRow v={VALUES[0]} />
+          </div>
           <ValueRow v={VALUES[1]} />
         </div>
         <p className="mt-3 flex items-center gap-2.5 rounded-2xl bg-mist px-4 py-3 text-[1.0625rem] font-bold text-ink">
