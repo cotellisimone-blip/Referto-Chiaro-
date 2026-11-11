@@ -43,6 +43,11 @@ test("nessun testo vietato o promessa non verificabile", async ({ page }) => {
     await page.goto(path);
     const text = (await page.locator("body").innerText()).toLowerCase();
     for (const banned of ["lorem ipsum", "certificato gdpr", "conforme mdr", "24/7", "approvato da medici", "100%", "garantit", "conforme al gdpr", "gdpr compliant", "in totale sicurezza", "medici qualificati", "nella norma", "in pochi minuti", "referto chiaro"]) {
+      if (banned === "in pochi minuti") {
+        // Ammesso solo come «di norma in pochi minuti», per il servizio automatico «Capisci».
+        expect(text.replaceAll("di norma in pochi minuti", ""), `${path} contiene "${banned}"`).not.toContain(banned);
+        continue;
+      }
       if (banned === "referto chiaro" && path === "/chi-siamo") continue; // nota storica dichiarata
       expect(text, `${path} contiene "${banned}"`).not.toContain(banned);
     }
@@ -93,10 +98,11 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
   });
 
   test("listino di riferimento: gli stessi prezzi ovunque, con la nota, da un'unica fonte", async ({ page }) => {
-    for (const [path, expected] of [["/", ["49", "149", "89"]], ["/prezzi", ["49", "149", "89"]], ["/referti", ["49"]], ["/servizi/secondo-parere", ["149"]], ["/servizi/parla-con-un-medico", ["89"]]] as const) {
+    for (const [path, expected] of [["/", ["2,90", "7,90", "149", "79"]], ["/prezzi", ["2,90", "7,90", "149", "79"]], ["/referti", ["2,90", "7,90"]], ["/servizi/secondo-parere", ["149"]], ["/servizi/parla-con-un-medico", ["79"]]] as const) {
       await page.goto(path);
       const txt = (await page.locator("main").innerText()).replace(/\s/g, " ");
       for (const n of expected) expect(txt, path).toContain(`${n} €`);
+      for (const old of ["49 €", "89 €"]) expect(txt.replace(/1(49|89) €/g, ""), path).not.toContain(old);
       expect(txt, path).toContain("Prezzi di riferimento");
     }
   });

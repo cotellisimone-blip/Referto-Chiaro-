@@ -65,7 +65,7 @@ function Frame({ title, lead, error, children }: { title: string; lead?: string;
 function Table({ head, rows, label }: { head: string[]; rows: React.ReactNode[][]; label: string }) {
   if (rows.length === 0) return <p className="text-muted">Nessun elemento.</p>;
   return (
-    <div className="overflow-x-auto rounded-2xl border border-line">
+    <div className="overflow-x-auto rounded-2xl border border-line" tabIndex={0} role="region" aria-label={label}>
       <table className="w-full min-w-[640px] text-sm">
         <caption className="sr-only">{label}</caption>
         <thead className="bg-mist/60 text-left text-muted">
