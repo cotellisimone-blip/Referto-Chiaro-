@@ -1,10 +1,10 @@
 # Cura Privata
 
-Marchio ombrello per servizi di salute digitali. Il primo servizio, **«Comprendi i tuoi referti»**, rende comprensibili i referti di laboratorio: valori riportati fedelmente, spiegazioni in linguaggio comune, domande da portare al medico. **Uno strumento informativo, non una diagnosi.** Secondo parere medico, archivio salute, visite e prevenzione sono pagine «In preparazione» con lista d'attesa.
+Servizio digitale italiano che rende comprensibili i referti e, se serve, porta a un medico vero: **Punto di Partenza** (gratis), **Capisci il tuo referto** (primo 2,90 €, poi 7,90 €), **Parla con un medico** (79 €), **Chiedi un secondo parere** (da 149 €). **Uno strumento informativo, non una diagnosi.**
 
-> Nato come «Referto Chiaro»: il rebrand dell'8/11/2026 è documentato in [`docs/cura-privata/`](docs/cura-privata/) (audit, matrice vecchio→nuovo, stato delle funzioni, blocchi legali e clinici, design system, test, confronto con i mockup).
+> **Da leggere per primi:** [`PROJECT_STATE.md`](PROJECT_STATE.md) (com'è il progetto oggi), [`EVOLUTION_LOG.md`](EVOLUTION_LOG.md) (che cosa è cambiato e quando), [`PRODUCT_ROADMAP.md`](PRODUCT_ROADMAP.md) (che cosa viene dopo).
 
-> **Stato:** online parte in **modalità demo** (solo referti inventati). Il codice per i servizi reali c'è ed è testato — caricamento cifrato, lettura di PDF e foto, spiegazioni con Claude, email, Stripe live — ma resta spento dietro i gate finché non sono chiusi i requisiti di [`docs/PRODUCTION_GATES.md`](docs/PRODUCTION_GATES.md). Messa online passo per passo: [`docs/DEPLOY.md`](docs/DEPLOY.md). Qualità e sicurezza dell'AI: [`docs/AI_VALUTAZIONE.md`](docs/AI_VALUTAZIONE.md).
+> **Stato:** demo con soli referti inventati. Il codice per i servizi reali c'è ed è testato, ma resta spento dietro i gate finché non sono chiusi i requisiti di [`docs/PRODUCTION_GATES.md`](docs/PRODUCTION_GATES.md). Pubblicazione come vetrina: [`docs/cura-privata/LANCIO_VETRINA.md`](docs/cura-privata/LANCIO_VETRINA.md); messa online passo per passo: [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 ## Avvio locale
 
@@ -73,16 +73,16 @@ docs/                       decisioni, stato, gate, test, costi, screenshot
 
 ## Come funziona la demo
 
-1. `/esempio` mostra il facsimile del referto sintetico (`src/fixtures/synthetic/referto-lab-001.json`).
+1. `/referti/esempio` mostra il facsimile del referto sintetico (`src/fixtures/synthetic/referto-lab-001.json`).
 2. L'utente conferma i valori estratti; quello illeggibile (riga 8) non è confermabile.
 3. `POST /api/v1/demo/report` genera la spiegazione con il provider deterministico e la passa al **controllo di coerenza** (`src/domain/reporting/consistency.ts`): valori, unità, intervalli e citazioni devono coincidere con il documento, e nel testo libero non possono comparire numeri assenti. Se il controllo fallisce, nessun report.
 4. `POST /api/v1/demo/report/pdf` produce il PDF A4 con filigrana *DEMO – DATI SINTETICI*.
 
 ## Documentazione
 
-- [`docs/STATUS_IMPLEMENTAZIONE.md`](docs/STATUS_IMPLEMENTAZIONE.md) — cosa funziona davvero e cosa manca
-- [`docs/DECISION_LOG.md`](docs/DECISION_LOG.md) — decisioni prese e perché
+- [`PROJECT_STATE.md`](PROJECT_STATE.md), [`EVOLUTION_LOG.md`](EVOLUTION_LOG.md), [`PRODUCT_ROADMAP.md`](PRODUCT_ROADMAP.md) — stato, storia, priorità
 - [`docs/PRODUCTION_GATES.md`](docs/PRODUCTION_GATES.md) — cosa impedisce l'uso con pazienti reali
-- [`docs/TEST_REPORT.md`](docs/TEST_REPORT.md) — test eseguiti e risultati
-- [`docs/AUDIT_ESTERNO.md`](docs/AUDIT_ESTERNO.md) — audit sicurezza/GDPR/codice e correzioni
-- [`docs/COSTI_OPERATIVI.md`](docs/COSTI_OPERATIVI.md) — costi noti e da stimare
+- [`docs/cura-privata/STATO_FUNZIONI.md`](docs/cura-privata/STATO_FUNZIONI.md) e [`RISCHI_RESIDUI.md`](docs/cura-privata/RISCHI_RESIDUI.md) — funzioni, rischi, go/no-go
+- [`docs/cura-privata/`](docs/cura-privata/) — design system, blocchi legali e clinici, pacchetti Memorabile, Evoluzione v2, Punto di Partenza V3, lancio vetrina
+- [`docs/AUDIT_ESTERNO.md`](docs/AUDIT_ESTERNO.md), [`docs/AI_VALUTAZIONE.md`](docs/AI_VALUTAZIONE.md), [`docs/COSTI_OPERATIVI.md`](docs/COSTI_OPERATIVI.md), [`docs/DEPLOY.md`](docs/DEPLOY.md)
+- [`docs/archivio/`](docs/archivio/) — documenti superati, tenuti solo come storico
