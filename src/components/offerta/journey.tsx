@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { clsx } from "clsx";
 import { LEVELS, coreService, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
 
 /** Una riga per livello: che cosa succede, detto dal punto di vista di chi lo usa. */
@@ -14,10 +15,28 @@ const LINE = {
  * Su desktop è una scala che sale da sinistra a destra; su telefono una colonna. È una lista ordinata vera,
  * e ogni gradino è un link: si può entrare da qualunque livello. Nomi, livelli e prezzi da src/domain/offerta.ts.
  */
-export function Journey() {
+export function Journey({ withStart = false }: { withStart?: boolean }) {
   const prices = publicPricesEnabled();
   return (
-    <ol className="levels grid gap-4 lg:grid-cols-3 lg:items-stretch lg:gap-6">
+    <ol className={clsx("levels grid gap-4 lg:items-stretch lg:gap-6", withStart ? "sm:grid-cols-2 xl:grid-cols-4" : "lg:grid-cols-3")}>
+      {withStart ? (
+        // Ingresso gratuito (V3): un passo prima dei tre livelli, non un livello clinico.
+        <li className="tone-partenza">
+          <Link href="/punto-di-partenza" data-track="cta-pdp" className="level-step group">
+            <span className="flex items-start justify-between gap-4">
+              <span aria-hidden className="level-num">
+                0
+              </span>
+              {prices ? <span className="stat-num block text-right text-[1.75rem] text-ink">Gratis</span> : null}
+            </span>
+            <span className="mt-5 block text-[1.75rem] font-extrabold uppercase leading-none tracking-[0.02em] text-ink">Parti</span>
+            <span className="mt-3 block text-xl leading-snug text-ink-soft">Una scheda per sapere di che cosa parlare con il medico.</span>
+            <span className="tone-text mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-lg font-bold">
+              Punto di Partenza <ArrowRight aria-hidden className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
+            </span>
+          </Link>
+        </li>
+      ) : null}
       {LEVELS.map((id) => {
         const s = coreService(id);
         const p = priceDisplay(id);

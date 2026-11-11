@@ -2,6 +2,7 @@ import { GUIDES } from "@/content/guides";
 import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { GLOSSARY } from "@/content/glossario";
 import { MAIN_NAV, FOOTER_NAV, LEGAL_NAV, EXTRA_PAGES } from "@/components/site/nav";
+import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 
 /**
  * Indice compatto per la ricerca del sito: guide, voci di glossario e pagine.
@@ -28,10 +29,16 @@ const PAGE_CONTEXT: Record<string, string> = {
   "/servizi/parla-con-un-medico": "Videoconsulto con un medico, con i documenti già letti",
   "/prezzi": "I tre servizi a confronto, con prezzi e tempi",
   "/inizia": "Ti aiutiamo a scegliere il servizio adatto",
+  "/punto-di-partenza": "Gratis: 10 aree da conoscere e una scheda da portare al medico",
   "/strumenti/preparati-alla-visita": "Gratis: cosa portare e cosa chiedere, in 2 minuti",
   "/servizi/archivio": "In preparazione",
   "/servizi/prevenzione": "In preparazione",
   "/strumenti/domande-per-il-medico": "Prepara la lista delle domande per la visita",
+};
+
+/** Parole con cui si cerca una pagina senza conoscerne il nome. */
+const PAGE_ALIASES: Record<string, string[]> = {
+  "/punto-di-partenza": ["check-up", "checkup", "prevenzione", "controlli", "da dove partire", "esami da fare", "scheda per il medico"],
 };
 
 export function buildSearchIndex(): SearchItem[] {
@@ -53,8 +60,9 @@ export function buildSearchIndex(): SearchItem[] {
   const pages: SearchItem[] = [];
   const add = (href: string, label: string, section: string) => {
     if (seen.has(href)) return;
+    if (href === "/punto-di-partenza" && !puntoDiPartenzaEnabled()) return;
     seen.add(href);
-    pages.push({ kind: "pagina", title: label, href, context: PAGE_CONTEXT[href] ?? section, aliases: [] });
+    pages.push({ kind: "pagina", title: label, href, context: PAGE_CONTEXT[href] ?? section, aliases: PAGE_ALIASES[href] ?? [] });
   };
   add("/strumenti/domande-per-il-medico", "Domande per il medico", "Strumenti");
   for (const n of MAIN_NAV) add(n.href, n.label, "Cura Privata");

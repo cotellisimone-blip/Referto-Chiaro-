@@ -17,6 +17,7 @@ export const FOOTER_NAV = {
     { href: "/inizia", label: "Ti aiutiamo a scegliere" },
   ],
   Gratis: [
+    { href: "/punto-di-partenza", label: "Punto di Partenza" },
     { href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita" },
     { href: "/guide", label: "Guide agli esami" },
     { href: "/glossario", label: "Glossario" },

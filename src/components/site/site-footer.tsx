@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 import { FOOTER_NAV, LEGAL_NAV } from "./nav";
+import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 
 export function SiteFooter() {
+  const pdp = puntoDiPartenzaEnabled();
   return (
     <footer className="no-print mt-auto border-t border-line bg-paper">
       <div className="container-rc grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.6fr_repeat(3,1fr)]">
@@ -19,7 +21,7 @@ export function SiteFooter() {
           <nav key={title} aria-label={title}>
             <h2 className="eyebrow eyebrow-plain">{title}</h2>
             <ul className="mt-4 space-y-1">
-              {links.map((l) => (
+              {links.filter((l) => pdp || l.href !== "/punto-di-partenza").map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="underline-grow inline-flex min-h-11 items-center text-[1.0625rem] text-ink-soft hover:text-teal">
                     {l.label}

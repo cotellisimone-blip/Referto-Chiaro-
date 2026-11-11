@@ -1,6 +1,7 @@
 import "server-only";
 import { audit, withSystem } from "@/db/client";
 import { publicConfig, readFlags } from "@/lib/feature-flags";
+import { PDP_EVENTS } from "@/domain/metrics/funnel";
 
 /** Letture di sistema riservate all'admin (dopo requireRole + 2FA). Ogni lettura è registrata. */
 export async function adminOverview(adminId: string) {
@@ -81,6 +82,7 @@ export async function adminFunnel(adminId: string, days = 30) {
         "cta-capisci": counters["cta-capisci"] ?? 0,
         "cta-medico": counters["cta-medico"] ?? 0,
         "cta-parere": counters["cta-parere"] ?? 0,
+        ...Object.fromEntries(PDP_EVENTS.map((e) => [e, counters[e] ?? 0])),
         uploads: await one(`SELECT count(*)::int AS n FROM documents d JOIN users u ON u.id = d.user_id WHERE ${real} AND d.created_at >= ${since}`),
         checkoutCapisci: await one(`SELECT count(*)::int AS n FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'essenziale' AND o.created_at >= ${since}`),
         paidCapisci: await one(`SELECT count(*)::int AS n FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'essenziale' AND o.status = 'paid' AND o.created_at >= ${since}`),

@@ -10,10 +10,13 @@ import { PrepBanner } from "@/components/offerta/prep-banner";
 import { PriceTag } from "@/components/offerta/price-tag";
 import { MobileHelpBar } from "@/components/site/mobile-help-bar";
 import { TrackView } from "@/components/site/track";
+import { DualEntry } from "@/components/punto-di-partenza/dual-entry";
+import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { DESCRIPTOR, PRICE_NOTE, coreService, entryPriceLabel, publicPricesEnabled } from "@/domain/offerta";
 
 /*
  * Home di Cura Privata, «Evoluzione v2» (11/11/2026). Sette blocchi, chiari e forti alternati:
+ * V3 (11/11/2026): dopo la hero il doppio ingresso «Punto di Partenza, gratis» / «Hai già un referto?».
  * 1 hero (payoff, due sole azioni, fotografia + un pezzo vero di prodotto) · 2 il prodotto d'ingresso, «Parti dal tuo
  * referto» · 3 «Se una spiegazione non basta»: i due livelli umani, diversi tra loro · 4 i tre livelli ·
  * 5 fiducia · 6 lo strumento gratuito · 7 chiusura con il 112.
@@ -35,6 +38,7 @@ export default function Home() {
   const photo = ILLUSTRATIVE_PHOTOS.hero;
   const square = ILLUSTRATIVE_PHOTOS.heroSquare;
   const capisci = coreService("capisci");
+  const pdp = puntoDiPartenzaEnabled();
   return (
     <>
       <TrackView event="visita-home" />
@@ -76,6 +80,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 1b · DOPPIO INGRESSO (V3): senza esami → Punto di Partenza, gratis; con un referto → Capisci */}
+      {pdp ? <DualEntry /> : null}
+
       {/* 2 · IL PRODOTTO D'INGRESSO */}
       <section id="referto" aria-labelledby="referto-titolo" className="scope-strong tone-capisci stage-petrol overflow-hidden py-14 sm:py-24">
         <div className="container-rc">
@@ -85,7 +92,7 @@ export default function Home() {
                 Livello {capisci.level.n} · {capisci.level.verb}
               </p>
               <h2 id="referto-titolo" className="display-lg mt-4 text-[2.5rem] sm:text-[3.75rem]">
-                Parti dal tuo referto.
+                {pdp ? "Come diventa chiaro un referto." : "Parti dal tuo referto."}
               </h2>
               <p className="mt-5 max-w-lg text-xl text-ink-soft">Pieno di sigle e valori? Diventa un report chiaro e ordinato, utile da portare al medico.</p>
               {prices ? <PriceTag id="capisci" size="hero" className="mt-8" /> : null}
@@ -151,7 +158,7 @@ export default function Home() {
         <div className="container-rc">
           <div className="lg:flex lg:items-start lg:justify-between lg:gap-10">
             <h2 id="livelli-titolo" className="display-lg max-w-xl">
-              Tre livelli. Scegli tu fin dove arrivare.
+              {pdp ? "Parti gratis. Poi scegli tu fin dove arrivare." : "Tre livelli. Scegli tu fin dove arrivare."}
             </h2>
             <p className="mt-4 max-w-xs text-xl text-ink-soft lg:mt-2 lg:text-right">
               Puoi iniziare dal livello che ti serve.{" "}
@@ -161,7 +168,7 @@ export default function Home() {
             </p>
           </div>
           <div className="mt-10 lg:-mt-6">
-            <Journey />
+            <Journey withStart={pdp} />
           </div>
         </div>
       </section>
@@ -184,17 +191,30 @@ export default function Home() {
       <section aria-labelledby="chiusura-titolo" className="scope-strong stage-teal py-14 sm:py-24">
         <div className="container-rc grid grid-cols-[minmax(0,1fr)] items-end gap-10 lg:grid-cols-[1.3fr_0.7fr]">
           <div>
-            <h2 id="chiusura-titolo" className="display-xl">
-              Hai già un referto?
-              <span className="mt-2 block text-[#7be0d2]">Rendilo chiaro{prices ? ` da ${entryPriceLabel()}` : ""}.</span>
-            </h2>
+            {pdp ? (
+              <h2 id="chiusura-titolo" className="display-lg">
+                Prima capisci da dove parti.
+                <span className="mt-2 block text-[#7be0d2]">Poi, quando arrivano i risultati, ti aiutiamo a leggerli.</span>
+              </h2>
+            ) : (
+              <h2 id="chiusura-titolo" className="display-xl">
+                Hai già un referto?
+                <span className="mt-2 block text-[#7be0d2]">Rendilo chiaro{prices ? ` da ${entryPriceLabel()}` : ""}.</span>
+              </h2>
+            )}
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link href={capisci.href} data-track="cta-capisci" className="btn btn-mint btn-lg">
                 Rendi chiaro il mio referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
-              <Link href="/inizia" className="btn btn-secondary btn-lg">
-                Ti aiutiamo a scegliere
-              </Link>
+              {pdp ? (
+                <Link href="/punto-di-partenza" data-track="cta-pdp" className="btn btn-secondary btn-lg">
+                  Inizia gratis dal Punto di Partenza
+                </Link>
+              ) : (
+                <Link href="/inizia" className="btn btn-secondary btn-lg">
+                  Ti aiutiamo a scegliere
+                </Link>
+              )}
             </div>
           </div>
           <p className="flex items-start gap-4 rounded-2xl border border-white/25 bg-black/15 p-5 text-lg text-ink">

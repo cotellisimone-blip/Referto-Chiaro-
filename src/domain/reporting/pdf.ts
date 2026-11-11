@@ -4,36 +4,13 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { ExtractedDocument } from "@/domain/extraction/schema";
 import type { Explanation } from "./explanation-schema";
+import { INK, TEAL, SAGE, SAGE_DEEP, MUTED, LINE, MIST, CREAM, WHITE, PETROL, MINT, MARKER, toWinAnsi, drawMark } from "./pdf-brand";
 
-// Palette Cura Privata, coerente con i token del sito (src/app/globals.css). MARKER = menta chiara dietro testo scuro.
-const INK = rgb(0x15 / 255, 0x31 / 255, 0x3c / 255);
-const TEAL = rgb(0x00 / 255, 0x75 / 255, 0x6f / 255);
-const SAGE = rgb(0x00 / 255, 0x8f / 255, 0x87 / 255);
-const SAGE_DEEP = rgb(0x00 / 255, 0x75 / 255, 0x6f / 255);
-const MUTED = rgb(0x4f / 255, 0x67 / 255, 0x6e / 255);
-const LINE = rgb(0xdc / 255, 0xe9 / 255, 0xe7 / 255);
-const MIST = rgb(0xe8 / 255, 0xf4 / 255, 0xf1 / 255);
-const CREAM = rgb(0xf4 / 255, 0xf0 / 255, 0xe6 / 255);
-const WHITE = rgb(1, 1, 1);
-const PETROL = rgb(0x0c / 255, 0x33 / 255, 0x40 / 255);
-const MINT = rgb(0x7b / 255, 0xe0 / 255, 0xd2 / 255);
-const MARKER = rgb(0xcf / 255, 0xf3 / 255, 0xec / 255);
+export { toWinAnsi } from "./pdf-brand";
 
 const A4 = { w: 595.28, h: 841.89 };
 const M = 56; // margine
 const CONTENT_W = A4.w - 2 * M;
-
-/**
- * Con i font incorporati gestiamo i caratteri latini estesi; i simboli fuori dal sottoinsieme
- * (es. «▒» dei dati illeggibili) vengono sostituiti invece di far fallire la generazione.
- */
-export function toWinAnsi(s: string): string {
-  return s
-    .replace(/[≤]/g, "<=")
-    .replace(/[≥]/g, ">=")
-    .replace(/[→]/g, "->")
-    .replace(/[^\x20-\x7E\xA0-\xFF—–’‘“”•€\n]/g, "?");
-}
 
 interface Ctx {
   pdf: PDFDocument;
@@ -125,15 +102,6 @@ function heading(ctx: Ctx, n: number, s: string) {
   ctx.y -= 24;
   ctx.page.drawLine({ start: { x: M, y: ctx.y }, end: { x: A4.w - M, y: ctx.y }, thickness: 0.6, color: LINE });
   ctx.y -= 12;
-}
-
-function drawMark(page: PDFPage, x: number, y: number, scale: number, inverse = false) {
-  // Simbolo Cura Privata (stessa geometria del logo SVG, viewBox 64): «C» aperta, curva interna, punto di menta.
-  const outer = inverse ? WHITE : PETROL;
-  const inner = inverse ? MINT : SAGE;
-  page.drawSvgPath("M49.09 16.61A23 23 0 1 0 49.09 47.39", { x, y, scale, borderColor: outer, borderWidth: 8, borderLineCap: 1 });
-  page.drawSvgPath("M31 20C39.5 20 44 26 44 32C44 38 39.5 44 31 44", { x, y, scale, borderColor: inner, borderWidth: 7, borderLineCap: 1 });
-  page.drawCircle({ x: x + 31 * scale, y: y - 32 * scale, size: 3.6 * scale, color: MINT });
 }
 
 function formatDateIt(iso: string): string {

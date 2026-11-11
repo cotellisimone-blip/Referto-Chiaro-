@@ -5,7 +5,7 @@
  * Fail-closed: qualsiasi valore diverso dalla stringa esatta "true" vale false.
  */
 
-export type Feature = "realUploads" | "aiProcessing" | "livePayments" | "medicalSecondOpinion" | "medicalVideoConsult" | "publicSignup";
+export type Feature = "realUploads" | "aiProcessing" | "livePayments" | "medicalSecondOpinion" | "medicalVideoConsult" | "publicSignup" | "puntoDiPartenza" | "puntoDiPartenzaSave";
 
 export interface Flags {
   demoMode: boolean;
@@ -16,6 +16,15 @@ export interface Flags {
   medicalSecondOpinion: boolean;
   medicalVideoConsult: boolean;
   publicSignup: boolean;
+  /**
+   * Punto di Partenza (V3): strumento gratuito, tutto nel browser, nessun dato salvato. Acceso di base (come il listino
+   * pubblico, le pagine sono statiche e leggono la variabile alla build); ENABLE_PUNTO_DI_PARTENZA="false" lo spegne
+   * ovunque: pagina, ingresso in home, fondo pagina, ricerca, sitemap. Il lancio reale resta legato al gate di revisione
+   * medica in docs/PRODUCTION_GATES.md.
+   */
+  puntoDiPartenza: boolean;
+  /** Salvataggio delle risposte nell'area personale: predisposto, resta spento fino al gate privacy/clinico. */
+  puntoDiPartenzaSave: boolean;
 }
 
 type Env = Record<string, string | undefined>;
@@ -33,11 +42,13 @@ export function readFlags(env: Env = process.env): Flags {
     medicalSecondOpinion: strictTrue(env.ENABLE_MEDICAL_SECOND_OPINION),
     medicalVideoConsult: strictTrue(env.ENABLE_MEDICAL_VIDEO_CONSULT),
     publicSignup: strictTrue(env.ENABLE_PUBLIC_SIGNUP),
+    puntoDiPartenza: env.ENABLE_PUNTO_DI_PARTENZA !== "false",
+    puntoDiPartenzaSave: strictTrue(env.ENABLE_PUNTO_DI_PARTENZA_SAVE),
   };
 }
 
 /** Funzioni che toccano dati sanitari reali, soldi o prestazioni mediche. */
-const COMPLIANCE_GATED: Feature[] = ["realUploads", "aiProcessing", "livePayments", "medicalSecondOpinion", "medicalVideoConsult"];
+const COMPLIANCE_GATED: Feature[] = ["realUploads", "aiProcessing", "livePayments", "medicalSecondOpinion", "medicalVideoConsult", "puntoDiPartenzaSave"];
 
 export class CapabilityDisabledError extends Error {
   readonly status = 403;
@@ -79,4 +90,9 @@ export function publicConfig(flags: Flags = readFlags()) {
       publicSignup: isCapabilityEnabled("publicSignup", flags),
     },
   } as const;
+}
+
+/** Punto di Partenza visibile (pagina, ingresso in home, fondo pagina, ricerca). */
+export function puntoDiPartenzaEnabled(env: Env = process.env): boolean {
+  return readFlags(env).puntoDiPartenza;
 }
