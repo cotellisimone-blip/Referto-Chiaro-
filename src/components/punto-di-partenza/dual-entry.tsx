@@ -42,7 +42,6 @@ export function DualEntry() {
                 <span className="btn btn-primary btn-lg">
                   Inizia gratis <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                 </span>
-                <span className="entry-meta">10 aree · circa 3–5 minuti · senza registrazione</span>
               </span>
             </Link>
           </li>
@@ -72,7 +71,6 @@ export function DualEntry() {
                 <span className="btn btn-secondary btn-lg">
                   Rendi chiaro il referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                 </span>
-                <span className="entry-meta">Report ordinato · domande per il medico</span>
               </span>
             </Link>
           </li>

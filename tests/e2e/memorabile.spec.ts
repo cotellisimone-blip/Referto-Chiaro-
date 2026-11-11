@@ -107,7 +107,8 @@ test.describe("home «Evoluzione v2»", () => {
     await expect(main.getByRole("link", { name: "Ho un referto" })).toHaveAttribute("href", "/referti");
     await expect(main.getByRole("link", { name: "Scopri tutti i servizi" })).toHaveAttribute("href", "/servizi");
     // Il prodotto d'ingresso domina la seconda sezione, con il prezzo in HTML
-    await expect(page.getByRole("heading", { name: "Parti dal tuo referto." })).toBeVisible();
+    // V3: il titolo diventa «Come diventa chiaro un referto.» (il doppio ingresso sopra dice già «Hai già un referto?»)
+    await expect(page.getByRole("heading", { name: "Come diventa chiaro un referto." })).toBeVisible();
     await expect(page.locator("#referto")).toContainText("Primo referto");
     await expect(page.locator("#referto")).toContainText("2,90 €");
     await expect(page.locator("#referto")).toContainText("poi 7,90 € per referto");
@@ -118,11 +119,11 @@ test.describe("home «Evoluzione v2»", () => {
     await expect(page.locator("#servizi")).toContainText("voglio un'altra valutazione");
     await expect(page.locator("#servizi").getByRole("link", { name: "Chiedi un secondo parere" })).toHaveAttribute("href", "/servizi/secondo-parere");
     // I tre livelli e la fiducia
-    await expect(page.getByRole("heading", { name: "Tre livelli. Scegli tu fin dove arrivare." })).toBeVisible();
-    for (const verb of ["Capisci", "Orientati", "Approfondisci"]) await expect(page.locator(".levels")).toContainText(verb);
+    await expect(page.getByRole("heading", { name: "Parti gratis. Poi scegli tu fin dove arrivare." })).toBeVisible();
+    for (const verb of ["Parti", "Capisci", "Orientati", "Approfondisci"]) await expect(page.locator(".levels")).toContainText(verb);
     await expect(page.getByRole("heading", { name: /Rigoroso per il tuo medico/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /Sei un medico/ })).toHaveAttribute("href", "/per-i-medici");
-    await expect(page.getByRole("heading", { name: /Hai già un referto\?\s*Rendilo chiaro da 2,90 €\./ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Prima capisci da dove parti\./ })).toBeVisible();
     // Mai un medico che rivede «Capisci», mai conti alla rovescia
     const text = (await main.innerText()).toLowerCase();
     for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra"]) expect(text).not.toContain(bad);
@@ -135,11 +136,14 @@ test.describe("home «Evoluzione v2»", () => {
       await page.evaluate(() => window.scrollTo(0, 0));
       await expect(bar).toBeHidden();
     }
-    expect(await main.locator("section").count()).toBeLessThanOrEqual(7);
+    // V3: sette blocchi + il doppio ingresso dopo la hero.
+    expect(await main.locator("section").count()).toBeLessThanOrEqual(8);
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    expect(h, "schermate").toBeLessThan(isMobile ? 12.5 : 7);
+    // V3: il doppio ingresso aggiunge circa mezza schermata (una su telefono), in parte recuperata accorciando il blocco del referto.
+    expect(h, "schermate").toBeLessThan(isMobile ? 14 : 7.5);
     const words = (await main.innerText()).split(/\s+/).length;
-    expect(words).toBeLessThan(560);
+    // V3: il doppio ingresso porta circa 55 parole, in parte compensate togliendo le rassicurazioni del blocco referto.
+    expect(words).toBeLessThan(630);
     await expectAccessible(page);
   });
 

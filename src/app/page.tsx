@@ -84,7 +84,7 @@ export default function Home() {
       {pdp ? <DualEntry /> : null}
 
       {/* 2 · IL PRODOTTO D'INGRESSO */}
-      <section id="referto" aria-labelledby="referto-titolo" className="scope-strong tone-capisci stage-petrol overflow-hidden py-14 sm:py-24">
+      <section id="referto" aria-labelledby="referto-titolo" className={`scope-strong tone-capisci stage-petrol overflow-hidden ${pdp ? "py-12 sm:py-16" : "py-14 sm:py-24"}`}>
         <div className="container-rc">
           <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16">
             <div>
@@ -119,6 +119,8 @@ export default function Home() {
               </ol>
             </Reveal>
           </div>
+          {/* V3: con il doppio ingresso sopra, il blocco si accorcia (le rassicurazioni stanno già nelle due card) */}
+          {pdp ? null : (
           <ul className="mt-14 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-7 lg:grid-cols-4">
             {MICROTRUST.map(({ icon: Icon, text }) => (
               <li key={text} className="flex items-center gap-3 text-lg font-semibold leading-tight text-ink">
@@ -127,6 +129,7 @@ export default function Home() {
               </li>
             ))}
           </ul>
+          )}
         </div>
       </section>
 
