@@ -9,7 +9,7 @@ Pubblico: adulti italiani con un referto in mano, molti sopra i 55 anni (testo g
 | Servizio | Prezzo (unica fonte: `src/domain/offerta.ts`) | Chi | Stato nel codice |
 |---|---|---|---|
 | Punto di Partenza | Gratis | Regole fisse, tutto nel browser | Attivo (`ENABLE_PUNTO_DI_PARTENZA`) |
-| Guide (90), glossario (139), Preparati alla visita | Gratis | Contenuti in bozza, da revisionare | Attivi, `noindex` |
+| Guide (91), glossario (139), Preparati alla visita | Gratis | Contenuti in bozza, da revisionare | Attivi, `noindex` |
 | Capisci il tuo referto | Primo 2,90 €, poi 7,90 € | Automatico, nessun medico | Demo; il motore reale è spento dai gate |
 | Parla con un medico | 79 € | Medico di medicina generale/internista, video 20–25 min | Demo |
 | Chiedi un secondo parere | da 149 € | Specialista | Demo |
@@ -39,7 +39,7 @@ Foto: solo pazienti, sempre con «Immagine illustrativa»; **mai foto di medici*
 - Nulla è online: mancano titolare, P.IVA, dominio, informativa rivista, account (Neon, Vercel, Resend, Stripe, Anthropic). Vedi `docs/PRODUCTION_GATES.md`.
 - Guide, glossario e Punto di Partenza non hanno revisione medica.
 - Nessun medico contrattualizzato.
-- Valutazione AI dal vivo mai eseguita: costo e qualità per referto non misurati (serve una chiave Anthropic).
+- Valutazione AI dal vivo mai eseguita: costo e qualità per referto solo stimati in `docs/COSTI_OPERATIVI.md` (serve una chiave Anthropic per misurarli).
 - Antivirus sui caricamenti assente; CSP con `script-src 'unsafe-inline'`; nessun penetration test.
 - Circa 700 KB di JavaScript (non compresso) anche su pagine quasi statiche.
 
