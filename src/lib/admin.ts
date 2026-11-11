@@ -2,6 +2,7 @@ import "server-only";
 import { audit, withSystem } from "@/db/client";
 import { publicConfig, readFlags } from "@/lib/feature-flags";
 import { PDP_EVENTS } from "@/domain/metrics/funnel";
+import { summarizeAiRuns } from "@/domain/costi-ai";
 
 /** Letture di sistema riservate all'admin (dopo requireRole + 2FA). Ogni lettura è registrata. */
 export async function adminOverview(adminId: string) {
@@ -92,5 +93,17 @@ export async function adminFunnel(adminId: string, days = 30) {
         returning: await one(`SELECT count(*)::int AS n FROM (SELECT o.user_id FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'essenziale' AND o.status = 'paid' AND o.created_at >= ${since} GROUP BY o.user_id HAVING count(*) >= 2) x`),
       } as Record<string, number>,
     };
+  });
+}
+
+/** Costo AI degli ultimi N giorni, calcolato dai token registrati in `ai_runs`. Account demo esclusi. */
+export async function adminAiCosts(adminId: string, days = 30) {
+  return withSystem(async (tx) => {
+    await audit(tx, { userId: adminId, actor: "admin", action: "ai-costs-viewed" });
+    const r = await tx.query<{ model: string; target_id: string; input_tokens: number | null; output_tokens: number | null }>(
+      "SELECT a.model, a.target_id, a.input_tokens, a.output_tokens FROM ai_runs a JOIN users u ON u.id = a.user_id WHERE NOT u.is_demo AND a.created_at >= now() - make_interval(days => $1::int)",
+      [days],
+    );
+    return { days, ...summarizeAiRuns(r.rows) };
   });
 }

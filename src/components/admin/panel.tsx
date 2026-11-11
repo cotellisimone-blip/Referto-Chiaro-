@@ -84,7 +84,7 @@ function Table({ head, rows, label }: { head: string[]; rows: React.ReactNode[][
 const euro = (c: number) => (c / 100).toLocaleString("it-IT", { style: "currency", currency: "EUR" });
 
 export function AdminOverview() {
-  const { data, error } = useLoad<{ overview: Record<string, number>; funnel?: { days: number; steps: Record<string, number> } }>("/api/v1/admin/panoramica");
+  const { data, error } = useLoad<{ overview: Record<string, number>; funnel?: { days: number; steps: Record<string, number> }; aiCosts?: { days: number; runs: number; documents: number; inputTokens: number; outputTokens: number; usd: number; usdPerDocument: number } }>("/api/v1/admin/panoramica");
   const o = data?.overview;
   const items: [string, string][] = o
     ? [
@@ -115,6 +115,23 @@ export function AdminOverview() {
           <h2 id="funnel-titolo" className="font-serif text-2xl text-ink">Funnel, ultimi {data.funnel.days} giorni</h2>
           <p className="mt-1 text-sm text-muted">Visite e clic sono contatori anonimi per giorno; gli altri passi vengono dai dati del sito. Account demo esclusi.</p>
           <Table label="Funnel" head={["Passo", "Numero"]} rows={Object.entries(data.funnel.steps).map(([k, v]) => [FUNNEL_LABELS[k] ?? k, String(v)])} />
+        </section>
+      ) : null}
+      {data?.aiCosts ? (
+        <section aria-labelledby="costi-ai-titolo" className="mt-10" data-testid="admin-costi-ai">
+          <h2 id="costi-ai-titolo" className="font-serif text-2xl text-ink">Costo AI, ultimi {data.aiCosts.days} giorni</h2>
+          <p className="mt-1 text-sm text-muted">Calcolato dai token registrati per ogni passo e dalle tariffe pubblicate. Account demo esclusi.</p>
+          <Table
+            label="Costo AI"
+            head={["Voce", "Valore"]}
+            rows={[
+              ["Documenti elaborati", String(data.aiCosts.documents)],
+              ["Chiamate al modello", String(data.aiCosts.runs)],
+              ["Token in ingresso / in uscita", `${data.aiCosts.inputTokens} / ${data.aiCosts.outputTokens}`],
+              ["Costo totale", `$${data.aiCosts.usd.toFixed(2)}`],
+              ["Costo medio per documento", `$${data.aiCosts.usdPerDocument.toFixed(3)}`],
+            ]}
+          />
         </section>
       ) : null}
     </Frame>

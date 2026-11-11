@@ -26,7 +26,7 @@ export const PREREQUISITES: Record<CoreServiceId, string[]> = {
 };
 
 export const WAITLIST_INTEREST: Partial<Record<CoreServiceId, "completo" | "secondo-parere" | "visite">> = {
-  // «completo» è il nome storico (Referto Chiaro) dell'interesse per il servizio sui referti: oggi è «Capisci il tuo referto».
+  // «completo» è il nome storico dell'interesse per il servizio sui referti: oggi è «Capisci il tuo referto».
   capisci: "completo",
   "secondo-parere": "secondo-parere",
   "parla-con-un-medico": "visite",

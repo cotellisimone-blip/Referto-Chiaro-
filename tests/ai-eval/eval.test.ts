@@ -14,6 +14,7 @@ import { createAnthropicClient, readAiConfig } from "@/providers/ai/config";
 import { parseColumnLines } from "@/providers/ocr/heuristic-parser";
 import { groundObservations, STRUCTURE_SYSTEM, StructureSchema } from "@/providers/ocr/reader";
 import { redactLines } from "@/providers/ocr/redact";
+import { aiCostUsd } from "@/domain/costi-ai";
 import { CASES, type EvalCase, type Golden } from "./cases";
 import { SAFE_TEXTS, TAMPERS, UNSAFE_TEXTS } from "./adversarial";
 
@@ -27,7 +28,6 @@ import { SAFE_TEXTS, TAMPERS, UNSAFE_TEXTS } from "./adversarial";
 const ROOT = path.resolve(__dirname, "../..");
 const GOLDEN_DIR = path.join(__dirname, "golden");
 const LIVE = process.env.EVAL_LIVE === "1" && Boolean(process.env.ANTHROPIC_API_KEY);
-const PRICES: Record<string, [number, number]> = { "claude-opus-5-5": [4, 20], "claude-sonnet-5-5": [2, 10], "claude-haiku-5-5": [0.1, 0.5] };
 
 const metrics: Record<string, unknown> = {};
 
@@ -228,8 +228,7 @@ describe.runIf(LIVE)("valutazione AI — modello reale", () => {
       for (const leak of k.mustNotLeak ?? []) if (JSON.stringify(out).includes(leak)) leaks++;
       if (samples.length < 4) samples.push(`- **${out.items[0].nameExact}** — ${out.items[0].plainLanguageDefinition}`);
     }
-    const [pin, pout] = PRICES[cfg.model] ?? [4, 20];
-    const cost = (usage.input * pin + usage.output * pout) / 1e6;
+    const cost = aiCostUsd(cfg.model, { inputTokens: usage.input, outputTokens: usage.output });
     metrics.liveExplain = { model: cfg.model, effort: cfg.effort, outcomes, consistent: `${consistent}/${CASES.length}`, coverage: pct(explained, readable), firstAttemptViolations: violations, leaks, samples, usage: { ...usage }, costUsd: cost.toFixed(4), costPerCaseUsd: (cost / CASES.length).toFixed(4) };
     expect(leaks).toBe(0);
     expect(consistent).toBe(CASES.length - (outcomes.refused ?? 0) - (outcomes.error ?? 0) - (outcomes.rejected ?? 0));
