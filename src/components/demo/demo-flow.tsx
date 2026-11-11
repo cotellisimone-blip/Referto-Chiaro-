@@ -9,6 +9,7 @@ import { Facsimile as FacsimileBase, revealFacsimileLine } from "@/components/re
 import { VerificationList, isReadableObs, type VerifiableObservation } from "@/components/report/verification-list";
 import { ExplanationView } from "@/components/report/explanation-view";
 import { Stepper as StepperBase } from "@/components/report/stepper";
+import { track } from "@/components/site/track";
 
 const DOC = lab001 as Omit<typeof lab001, "observations"> & { observations: VerifiableObservation[] };
 const readable = isReadableObs;
@@ -103,6 +104,7 @@ export function DemoFlow() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message ?? "Non è stato possibile generare la spiegazione.");
       setReport({ status: "ready", explanation: data.explanation, generatedAt: data.generatedAt });
+      track("esempio-completato");
     } catch (e) {
       setReport({ status: "error", message: e instanceof Error ? e.message : "Errore imprevisto." });
     }
@@ -127,6 +129,7 @@ export function DemoFlow() {
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 2000);
       setPdfState("done");
+      track("esempio-pdf");
     } catch {
       setPdfState("error");
     }

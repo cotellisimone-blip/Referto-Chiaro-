@@ -37,7 +37,8 @@ Il resto segue `docs/DEPLOY.md` (passi 1–6). Nessuna chiave Stripe, Anthropic 
 - [ ] Aprire home, `/prezzi`, `/referti`, `/punto-di-partenza`, `/stato-del-progetto` da telefono e computer
 - [ ] Iscriversi a una lista d'attesa e verificarla nel pannello admin (`/admin/lista-attesa`)
 - [ ] Controllare `/robots.txt` e `/sitemap.xml`
-- [ ] Ogni settimana: funnel anonimo in `/admin` (visite, click su Capisci, Punto di Partenza completati, iscrizioni per servizio)
+- [ ] Ogni settimana: tabella «Vetrina» in `/admin` (per settimana, per sorgente, per servizio) e funnel anonimo
+- [ ] In ogni post, annuncio o messaggio usare un link con la sorgente: `?utm_source=facebook`, `instagram`, `tiktok`, `whatsapp`, `email`, `google`, `medico` (per i link dati ai medici). Valori diversi finiscono in «Altro»; senza parametro vale il sito di provenienza. Nessun cookie: la sorgente resta in memoria finché la scheda è aperta
 
 ## Quando passare oltre
 La vetrina non diventa un servizio vero cambiando un interruttore: per i referti reali servono i punti B di `docs/PRODUCTION_GATES.md`, per i medici i punti D e il go/no-go in `RISCHI_RESIDUI.md`.

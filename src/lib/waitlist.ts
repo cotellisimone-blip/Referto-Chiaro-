@@ -1,6 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import { withSystem } from "@/db/client";
+import { SOURCES } from "@/domain/metrics/funnel";
 
 /** Versione dell'informativa privacy (bozza) a cui si riferisce il consenso alla lista d'attesa. */
 export const WAITLIST_CONSENT_VERSION = "bozza-2026-11";
@@ -22,6 +23,7 @@ export const WaitlistEntry = z
     interest: z.enum(WAITLIST_INTERESTS),
     organization: optionalText(120),
     note: optionalText(500),
+    source: z.enum(SOURCES).optional(),
   })
   .strict();
 
@@ -42,10 +44,10 @@ export async function addToWaitlist(input: WaitlistInput): Promise<{ ok: true; a
   const d = WaitlistEntry.parse(input);
   const r = await withSystem((tx) =>
     tx.query(
-      `INSERT INTO waitlist(id, email, interest, organization, note, consent_version)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5)
+      `INSERT INTO waitlist(id, email, interest, organization, note, consent_version, source)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6)
        ON CONFLICT (email, interest) DO NOTHING`,
-      [d.email, d.interest, d.organization ?? null, d.note ?? null, WAITLIST_CONSENT_VERSION],
+      [d.email, d.interest, d.organization ?? null, d.note ?? null, WAITLIST_CONSENT_VERSION, d.source ?? null],
     ),
   );
   return r.rowCount === 0 ? { ok: true, already: true } : { ok: true };

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { json } from "@/lib/api";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 import { WAITLIST_INTERESTS, addToWaitlist } from "@/lib/waitlist";
+import { SOURCES } from "@/domain/metrics/funnel";
 
 const MAX_BYTES = 4_096;
 
@@ -12,6 +13,8 @@ const Body = z
     organization: z.string().max(120).optional(),
     note: z.string().max(500).optional(),
     consent: z.literal(true),
+    // Ciclo 2: sorgente della visita, dallo stesso elenco chiuso del funnel (facoltativa).
+    source: z.enum(SOURCES).optional(),
   })
   .strict();
 

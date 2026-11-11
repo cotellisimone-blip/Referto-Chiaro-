@@ -404,3 +404,17 @@ CREATE TABLE IF NOT EXISTS funnel_daily (
 );
 ALTER TABLE funnel_daily ENABLE ROW LEVEL SECURITY;
 INSERT INTO schema_migrations(version) VALUES (7) ON CONFLICT DO NOTHING;
+
+-- Ciclo 2, fase 2 (misurare la vetrina): gli stessi contatori anonimi, divisi per sorgente della visita
+-- (elenco chiuso in src/domain/metrics/funnel.ts). Giorno, sorgente, evento, conteggio: niente altro. Solo sistema.
+CREATE TABLE IF NOT EXISTS funnel_source_daily (
+  day date NOT NULL,
+  source text NOT NULL CHECK (source IN ('diretto', 'google', 'facebook', 'instagram', 'tiktok', 'whatsapp', 'email', 'medico', 'altro')),
+  event text NOT NULL,
+  count integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (day, source, event)
+);
+ALTER TABLE funnel_source_daily ENABLE ROW LEVEL SECURITY;
+-- Sorgente dell'iscrizione alla lista d'attesa (stesso elenco chiuso; vuota per le iscrizioni precedenti).
+ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS source text CHECK (source IS NULL OR source IN ('diretto', 'google', 'facebook', 'instagram', 'tiktok', 'whatsapp', 'email', 'medico', 'altro'));
+INSERT INTO schema_migrations(version) VALUES (8) ON CONFLICT DO NOTHING;

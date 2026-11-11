@@ -1,6 +1,6 @@
 "use client";
 
-import { FUNNEL_LABELS } from "@/domain/metrics/funnel";
+import { FUNNEL_LABELS, SOURCE_LABELS, toSource } from "@/domain/metrics/funnel";
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
@@ -83,8 +83,60 @@ function Table({ head, rows, label }: { head: string[]; rows: React.ReactNode[][
 
 const euro = (c: number) => (c / 100).toLocaleString("it-IT", { style: "currency", currency: "EUR" });
 
+type VetrinaRow = { visits: number; ctas: number; examples: number; signups: number };
+type VetrinaData = {
+  days: number;
+  weeks: (VetrinaRow & { week: string })[];
+  bySource: (VetrinaRow & { source: string })[];
+  byService: { service: string; visits: number; ctas: number; signups: number }[];
+};
+
+const SERVICE_NAMES: Record<string, string> = { capisci: "Capisci il tuo referto", "parla-con-un-medico": "Parla con un medico", "secondo-parere": "Secondo parere" };
+
+/** Percentuale leggibile: «—» quando il denominatore è zero, mai una divisione per zero. */
+function pct(n: number, d: number): string {
+  if (!d) return "—";
+  return `${((n / d) * 100).toLocaleString("it-IT", { maximumFractionDigits: 1 })}%`;
+}
+
+const weekLabel = (iso: string) => {
+  const [y, m, d] = iso.split("-");
+  return `dal ${d}/${m}/${y}`;
+};
+
+/** Ciclo 2, fase 2: la vetrina in tre tabelle. Le soglie di decisione sono ipotesi scritte in PRODUCT_ROADMAP.md. */
+function VetrinaSection({ v }: { v: VetrinaData }) {
+  return (
+    <section aria-labelledby="vetrina-titolo" className="mt-10" data-testid="admin-vetrina">
+      <h2 id="vetrina-titolo" className="font-serif text-2xl text-ink">Vetrina: chi arriva e chi chiede di essere avvisato</h2>
+      <p className="mt-1 text-sm text-muted">
+        Contatori anonimi (nessun cookie, nessun IP) e iscrizioni alla lista d&apos;attesa dei tre servizi. «Iscrizioni su visite» è il numero da guardare ogni settimana; le soglie
+        per decidere sono in PRODUCT_ROADMAP.md.
+      </p>
+      <h3 className="mt-6 text-lg font-semibold text-ink">Per settimana</h3>
+      <Table
+        label="Vetrina per settimana"
+        head={["Settimana", "Visite", "Clic sui servizi", "Esempio completato", "Iscrizioni", "Iscrizioni su visite"]}
+        rows={v.weeks.map((w) => [weekLabel(w.week), String(w.visits), String(w.ctas), String(w.examples), String(w.signups), pct(w.signups, w.visits)])}
+      />
+      <h3 className="mt-6 text-lg font-semibold text-ink">Per sorgente, ultimi {v.days} giorni</h3>
+      <Table
+        label="Vetrina per sorgente"
+        head={["Da dove arrivano", "Visite", "Clic sui servizi", "Esempio completato", "Iscrizioni", "Iscrizioni su visite"]}
+        rows={v.bySource.map((r) => [SOURCE_LABELS[toSource(r.source)], String(r.visits), String(r.ctas), String(r.examples), String(r.signups), pct(r.signups, r.visits)])}
+      />
+      <h3 className="mt-6 text-lg font-semibold text-ink">Per servizio, ultimi {v.days} giorni</h3>
+      <Table
+        label="Vetrina per servizio"
+        head={["Servizio", "Visite alla pagina", "Clic sull'azione", "Iscrizioni", "Iscrizioni su visite"]}
+        rows={v.byService.map((r) => [SERVICE_NAMES[r.service] ?? r.service, String(r.visits), String(r.ctas), String(r.signups), pct(r.signups, r.visits)])}
+      />
+    </section>
+  );
+}
+
 export function AdminOverview() {
-  const { data, error } = useLoad<{ overview: Record<string, number>; funnel?: { days: number; steps: Record<string, number> }; aiCosts?: { days: number; runs: number; documents: number; inputTokens: number; outputTokens: number; usd: number; usdPerDocument: number } }>("/api/v1/admin/panoramica");
+  const { data, error } = useLoad<{ overview: Record<string, number>; funnel?: { days: number; steps: Record<string, number> }; vetrina?: VetrinaData; aiCosts?: { days: number; runs: number; documents: number; inputTokens: number; outputTokens: number; usd: number; usdPerDocument: number } }>("/api/v1/admin/panoramica");
   const o = data?.overview;
   const items: [string, string][] = o
     ? [
@@ -117,6 +169,7 @@ export function AdminOverview() {
           <Table label="Funnel" head={["Passo", "Numero"]} rows={Object.entries(data.funnel.steps).map(([k, v]) => [FUNNEL_LABELS[k] ?? k, String(v)])} />
         </section>
       ) : null}
+      {data?.vetrina ? <VetrinaSection v={data.vetrina} /> : null}
       {data?.aiCosts ? (
         <section aria-labelledby="costi-ai-titolo" className="mt-10" data-testid="admin-costi-ai">
           <h2 id="costi-ai-titolo" className="font-serif text-2xl text-ink">Costo AI, ultimi {data.aiCosts.days} giorni</h2>

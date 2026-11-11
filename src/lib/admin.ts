@@ -1,7 +1,7 @@
 import "server-only";
 import { audit, withSystem } from "@/db/client";
 import { publicConfig, readFlags } from "@/lib/feature-flags";
-import { PDP_EVENTS } from "@/domain/metrics/funnel";
+import { PDP_EVENTS, VETRINA_EVENTS } from "@/domain/metrics/funnel";
 import { summarizeAiRuns } from "@/domain/costi-ai";
 
 /** Letture di sistema riservate all'admin (dopo requireRole + 2FA). Ogni lettura è registrata. */
@@ -84,6 +84,7 @@ export async function adminFunnel(adminId: string, days = 30) {
         "cta-medico": counters["cta-medico"] ?? 0,
         "cta-parere": counters["cta-parere"] ?? 0,
         ...Object.fromEntries(PDP_EVENTS.map((e) => [e, counters[e] ?? 0])),
+        ...Object.fromEntries(VETRINA_EVENTS.map((e) => [e, counters[e] ?? 0])),
         uploads: await one(`SELECT count(*)::int AS n FROM documents d JOIN users u ON u.id = d.user_id WHERE ${real} AND d.created_at >= ${since}`),
         checkoutCapisci: await one(`SELECT count(*)::int AS n FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'essenziale' AND o.created_at >= ${since}`),
         paidCapisci: await one(`SELECT count(*)::int AS n FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'essenziale' AND o.status = 'paid' AND o.created_at >= ${since}`),
@@ -92,6 +93,58 @@ export async function adminFunnel(adminId: string, days = 30) {
         reportToParere: await one(`SELECT count(DISTINCT o.id)::int AS n FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'secondo-parere' AND o.status = 'paid' AND o.created_at >= ${since} AND EXISTS (SELECT 1 FROM reports r WHERE r.user_id = o.user_id AND r.status = 'ready' AND r.created_at < o.created_at)`),
         returning: await one(`SELECT count(*)::int AS n FROM (SELECT o.user_id FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'essenziale' AND o.status = 'paid' AND o.created_at >= ${since} GROUP BY o.user_id HAVING count(*) >= 2) x`),
       } as Record<string, number>,
+    };
+  });
+}
+
+/**
+ * Ciclo 2, fase 2: cruscotto della vetrina. Tre viste dai contatori anonimi e dalla lista d'attesa:
+ * per settimana (ultime 8), per sorgente e per servizio (ultimi N giorni). Nessun dato personale: solo conteggi.
+ */
+export async function adminVetrina(adminId: string, days = 30) {
+  return withSystem(async (tx) => {
+    await audit(tx, { userId: adminId, actor: "admin", action: "vetrina-viewed" });
+    const VISITS = "event LIKE 'visita-%'";
+    const CTAS = "event IN ('cta-capisci', 'cta-medico', 'cta-parere')";
+    const SERVICE_INTERESTS = "('completo', 'visite', 'secondo-parere')";
+    const weeks = await tx.query<{ week: string; visits: number; ctas: number; examples: number; signups: number }>(
+      `WITH w AS (SELECT generate_series(date_trunc('week', current_date) - interval '7 weeks', date_trunc('week', current_date), interval '1 week')::date AS week)
+       SELECT to_char(w.week, 'YYYY-MM-DD') AS week,
+         COALESCE((SELECT sum(count) FROM funnel_daily f WHERE date_trunc('week', f.day)::date = w.week AND ${VISITS}), 0)::int AS visits,
+         COALESCE((SELECT sum(count) FROM funnel_daily f WHERE date_trunc('week', f.day)::date = w.week AND ${CTAS}), 0)::int AS ctas,
+         COALESCE((SELECT sum(count) FROM funnel_daily f WHERE date_trunc('week', f.day)::date = w.week AND event = 'esempio-completato'), 0)::int AS examples,
+         (SELECT count(*) FROM waitlist l WHERE date_trunc('week', l.created_at)::date = w.week AND l.interest IN ${SERVICE_INTERESTS})::int AS signups
+       FROM w ORDER BY w.week DESC`,
+    );
+    const bySource = await tx.query<{ source: string; visits: number; ctas: number; examples: number; signups: number }>(
+      `WITH s AS (
+         SELECT source,
+           sum(count) FILTER (WHERE ${VISITS}) AS visits,
+           sum(count) FILTER (WHERE ${CTAS}) AS ctas,
+           sum(count) FILTER (WHERE event = 'esempio-completato') AS examples
+         FROM funnel_source_daily WHERE day >= current_date - $1::int GROUP BY source),
+       l AS (SELECT source, count(*) AS signups FROM waitlist WHERE source IS NOT NULL AND interest IN ${SERVICE_INTERESTS} AND created_at >= now() - make_interval(days => $1::int) GROUP BY source)
+       SELECT COALESCE(s.source, l.source) AS source, COALESCE(s.visits, 0)::int AS visits, COALESCE(s.ctas, 0)::int AS ctas,
+         COALESCE(s.examples, 0)::int AS examples, COALESCE(l.signups, 0)::int AS signups
+       FROM s FULL OUTER JOIN l ON l.source = s.source ORDER BY visits DESC, signups DESC`,
+      [days],
+    );
+    const counters = Object.fromEntries(
+      (await tx.query<{ event: string; n: number }>("SELECT event, sum(count)::int AS n FROM funnel_daily WHERE day >= current_date - $1::int GROUP BY event", [days])).rows.map((r) => [r.event, Number(r.n)]),
+    );
+    const signups = Object.fromEntries(
+      (await tx.query<{ interest: string; n: number }>(`SELECT interest, count(*)::int AS n FROM waitlist WHERE created_at >= now() - make_interval(days => $1::int) GROUP BY interest`, [days])).rows.map((r) => [r.interest, Number(r.n)]),
+    );
+    const byService = [
+      { service: "capisci", visits: counters["visita-capisci"] ?? 0, ctas: counters["cta-capisci"] ?? 0, signups: signups["completo"] ?? 0 },
+      { service: "parla-con-un-medico", visits: counters["visita-medico"] ?? 0, ctas: counters["cta-medico"] ?? 0, signups: signups["visite"] ?? 0 },
+      { service: "secondo-parere", visits: counters["visita-parere"] ?? 0, ctas: counters["cta-parere"] ?? 0, signups: signups["secondo-parere"] ?? 0 },
+    ];
+    return {
+      days,
+      weeks: weeks.rows.map((r) => ({ ...r, visits: Number(r.visits), ctas: Number(r.ctas), examples: Number(r.examples), signups: Number(r.signups) })),
+      bySource: bySource.rows.map((r) => ({ ...r, visits: Number(r.visits), ctas: Number(r.ctas), examples: Number(r.examples), signups: Number(r.signups) })),
+      byService,
     };
   });
 }

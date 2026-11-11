@@ -4,9 +4,12 @@ import { useId, useState } from "react";
 import Link from "next/link";
 import { CircleCheck, Loader2 } from "lucide-react";
 import { api } from "@/components/area/api";
+import { currentSource, track } from "@/components/site/track";
 
 type Interest = "completo" | "secondo-parere" | "strutture" | "archivio" | "visite" | "prevenzione";
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "done"; already: boolean } | { kind: "error"; message: string };
+
+const AVVISAMI_EVENT: Partial<Record<Interest, string>> = { completo: "avvisami-capisci", visite: "avvisami-medico", "secondo-parere": "avvisami-parere" };
 
 const INPUT = "mt-1.5 block min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-ink placeholder:text-muted/70 focus:border-teal";
 
@@ -38,8 +41,12 @@ export function WaitlistForm({ interest }: { interest: Interest }) {
           ...(interest === "strutture" && organization.trim() ? { organization: organization.trim() } : {}),
           ...(note.trim() ? { note: note.trim() } : {}),
           consent: true,
+          source: currentSource(),
         },
       });
+      // Ciclo 2: conteggio anonimo dell'iscrizione per servizio (solo il nome dell'evento e la sorgente).
+      const ev = AVVISAMI_EVENT[interest];
+      if (ev && !r.already) track(ev);
       setState({ kind: "done", already: Boolean(r.already) });
     } catch (err) {
       setState({ kind: "error", message: err instanceof Error ? err.message : "Errore imprevisto." });

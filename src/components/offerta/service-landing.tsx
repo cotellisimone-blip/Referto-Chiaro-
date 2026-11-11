@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { CORE_SERVICES, INFORMATIVE_NOTE, PRICE_NOTE, VETRINA_TRY, coreService, priceDisplay, publicPricesEnabled, serviceStart, type CoreServiceId } from "@/domain/offerta";
 import { WAITLIST_INTEREST } from "@/content/stato-progetto";
 import { WaitlistForm } from "@/components/site/waitlist-form";
+import { TrackView } from "@/components/site/track";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS, VIDEOS } from "@/content/media";
 import { PriceTag } from "./price-tag";
 import { readFlags } from "@/lib/feature-flags";
@@ -17,6 +18,8 @@ import { CallCard, OpinionSheet } from "./next-levels";
  * Secondo parere = autorevole, fondo blu profondo. Titolo e azione dal copy «Evoluzione v2»;
  * nome, frase, tempi, prezzo e contenuti restano quelli di src/domain/offerta.ts.
  */
+const VIEW_EVENT: Record<CoreServiceId, string> = { capisci: "visita-capisci", "parla-con-un-medico": "visita-medico", "secondo-parere": "visita-parere" };
+
 const IDENTITY: Record<CoreServiceId, { headline: string; cta: string; hero: string; strong: boolean; track: string }> = {
   capisci: { headline: "Il tuo referto, finalmente leggibile.", cta: "Rendi chiaro il mio referto", hero: "stage-mint", strong: false, track: "cta-capisci" },
   "parla-con-un-medico": { headline: "Non sai quale specialista ti serve? Parti da un medico.", cta: "Prenota il videoconsulto", hero: "stage-warm", strong: false, track: "cta-medico" },
@@ -84,6 +87,7 @@ export function ServiceLanding({
   ];
   return (
     <div className={`tone-${s.tone}`}>
+      <TrackView event={VIEW_EVENT[id]} />
       {/* HERO del servizio */}
       <section aria-labelledby="servizio-titolo" className={clsx("relative overflow-hidden", `tone-${s.tone}`, look.hero)}>
         <div className={clsx("container-rc grid grid-cols-[minmax(0,1fr)] items-center gap-12 pb-16 pt-10 sm:pt-14 lg:gap-16 lg:pb-24 lg:pt-20", id === "capisci" ? "lg:grid-cols-[0.92fr_1.08fr]" : "lg:grid-cols-[1.12fr_0.88fr]")}>
