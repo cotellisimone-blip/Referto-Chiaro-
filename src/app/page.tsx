@@ -1,50 +1,48 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, ClipboardList, FileText, Phone, Stethoscope, Video } from "lucide-react";
+import { ArrowRight, Ban, Clock3, FolderHeart, Phone, Sparkles } from "lucide-react";
 import { Reveal } from "@/components/ui/reveal";
-import { GUIDES } from "@/content/guides";
-import { GLOSSARY } from "@/content/glossario";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
-import { ServiceTriad } from "@/components/offerta/service-triad";
-import { BeforeAfter } from "@/components/offerta/before-after";
-import { Method } from "@/components/offerta/method";
+import { MiniReport, ReportTransform } from "@/components/offerta/report-visuals";
+import { NextLevels } from "@/components/offerta/next-levels";
+import { Journey } from "@/components/offerta/journey";
+import { Trust } from "@/components/offerta/trust";
+import { PrepBanner } from "@/components/offerta/prep-banner";
+import { PriceTag } from "@/components/offerta/price-tag";
 import { MobileHelpBar } from "@/components/site/mobile-help-bar";
-import { DESCRIPTOR, PRICE_NOTE, publicPricesEnabled } from "@/domain/offerta";
+import { TrackView } from "@/components/site/track";
+import { DESCRIPTOR, PRICE_NOTE, coreService, entryPriceLabel, publicPricesEnabled } from "@/domain/offerta";
 
 /*
- * Home di Cura Privata, versione «leggibile» (10/11/2026). Sei blocchi, una idea per blocco:
- * 1 hero con foto e una domanda sola · 2 i tre servizi · 3 come funziona, con il referto prima e dopo ·
- * 4 il metodo (autorevolezza) · 5 gli strumenti gratuiti · 6 chiusura con aiuto ed emergenze.
- * Testo grande, righe corte, nessun dato inventato. La foto è illustrativa (una paziente, mai un medico).
+ * Home di Cura Privata, «Evoluzione v2» (11/11/2026). Sette blocchi, chiari e forti alternati:
+ * 1 hero (payoff, due sole azioni, fotografia + un pezzo vero di prodotto) · 2 il prodotto d'ingresso, «Parti dal tuo
+ * referto» · 3 «Se una spiegazione non basta»: i due livelli umani, diversi tra loro · 4 i tre livelli ·
+ * 5 fiducia · 6 lo strumento gratuito · 7 chiusura con il 112.
+ * Testo grande, righe corte, nessun dato inventato. Le foto sono illustrative (pazienti, mai medici).
+ * Prezzi e nomi arrivano da src/domain/offerta.ts.
  */
 
-const ENTRY = [
-  { icon: FileText, label: "Un referto da capire", href: "/referti", tone: "capisci" },
-  { icon: Stethoscope, label: "Una diagnosi da confermare", href: "/servizi/secondo-parere", tone: "parere" },
-  { icon: Video, label: "Voglio parlare con un medico", href: "/servizi/parla-con-un-medico", tone: "medico" },
+const MICROTRUST = [
+  { icon: Sparkles, text: "Digitale e automatico" },
+  { icon: Clock3, text: "Di norma pochi minuti" },
+  { icon: FolderHeart, text: "PDF e area personale" },
+  { icon: Ban, text: "Nessuna diagnosi" },
 ];
 
-const STEPS = [
-  { n: 1, title: "Carichi il documento", text: "Un PDF o una foto. Lo vedi solo tu." },
-  { n: 2, title: "Lo capisci", text: "Ogni valore in parole semplici." },
-  { n: 3, title: "Se serve, un medico", text: "Un parere scritto o un videoconsulto." },
-];
+const STEPS = ["Carichi il referto", "Controlli i valori", "Ricevi il report"];
 
 export default function Home() {
   const prices = publicPricesEnabled();
   const photo = ILLUSTRATIVE_PHOTOS.hero;
+  const square = ILLUSTRATIVE_PHOTOS.heroSquare;
+  const capisci = coreService("capisci");
   return (
     <>
-      {/* 1 · HERO: foto in cima, titolo e una sola domanda */}
-      <section aria-labelledby="hero-titolo" className="home-hero relative overflow-hidden bg-ivory">
-        {SHOW_ILLUSTRATIVE_PHOTOS ? (
-          <figure className="home-hero-photo">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} fetchPriority="high" className="photo-drift h-full w-full object-cover" />
-            <figcaption className="absolute right-3 top-3 rounded-full bg-black/45 px-2.5 py-0.5 text-xs text-white">Immagine illustrativa</figcaption>
-          </figure>
-        ) : null}
+      <TrackView event="visita-home" />
+
+      {/* 1 · HERO */}
+      <section aria-labelledby="hero-titolo" className="hero2">
         <div className="container-rc relative">
-          <div className="home-hero-text max-w-[40rem] pb-10 pt-6 lg:py-20">
+          <div className="pt-10 lg:max-w-[52%] lg:py-20">
             <h1 id="hero-titolo" className="display-xl hero-payoff text-ink">
               <span className="block">Capisci.</span>
               <span className="block">Chiedi un secondo parere.</span>
@@ -52,41 +50,93 @@ export default function Home() {
                 <span className="marker marker-animate">Parla con un medico.</span>
               </span>
             </h1>
-            <p className="mt-5 max-w-xl text-xl text-ink-soft sm:text-[1.375rem] sm:leading-snug">{DESCRIPTOR}</p>
-            <h2 id="ingresso-titolo" className="mt-8 text-[1.375rem] font-bold text-ink">
-              Che cosa hai in mano?
-            </h2>
-            <ul aria-labelledby="ingresso-titolo" className="mt-3 grid gap-3">
-              {ENTRY.map(({ icon: Icon, label, href, tone }) => (
-                <li key={href} className={`tone-${tone}`}>
-                  <Link href={href} className="entry-btn group">
-                    <span className="tone-icon h-11 w-11 shrink-0 rounded-xl">
-                      <Icon aria-hidden className="h-6 w-6" />
-                    </span>
-                    <span className="flex-1">{label}</span>
-                    <ArrowRight aria-hidden className="h-6 w-6 text-teal transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-5 text-lg text-ink-soft">
-              Non sai ancora? <Link href="/referti/esempio" className="link font-semibold">Guarda un referto di esempio</Link>, senza registrarti.
-            </p>
+            <p className="mt-6 max-w-[30rem] text-xl text-ink-soft sm:text-[1.375rem] sm:leading-snug">{DESCRIPTOR}</p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link href={capisci.href} data-track="cta-capisci" className="btn btn-primary btn-lg">
+                Ho un referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              </Link>
+              <Link href="/servizi" className="btn btn-secondary btn-lg">
+                Scopri tutti i servizi
+              </Link>
+            </div>
           </div>
+        </div>
+        {/* Una sola immagine: ritaglio 1:1 su telefono (sotto le azioni), fotografia larga che esce dal margine su desktop */}
+        <div className="hero2-visual">
+          {SHOW_ILLUSTRATIVE_PHOTOS ? (
+            <figure className="hero2-photo">
+              <picture>
+                <source media="(min-width: 1024px)" srcSet={photo.src} width={photo.width} height={photo.height} />
+                <img src={square.src} width={square.width} height={square.height} alt={square.alt} fetchPriority="high" decoding="async" />
+              </picture>
+              <figcaption className="caption-illus right-4 top-4">Immagine illustrativa</figcaption>
+            </figure>
+          ) : null}
+          <MiniReport className="hero2-card" />
         </div>
       </section>
 
-      {/* 2 · I TRE SERVIZI */}
-      <section id="servizi" aria-labelledby="servizi-titolo" className="py-12 sm:py-24">
+      {/* 2 · IL PRODOTTO D'INGRESSO */}
+      <section id="referto" aria-labelledby="referto-titolo" className="scope-strong tone-capisci stage-petrol overflow-hidden py-14 sm:py-24">
         <div className="container-rc">
-          <h2 id="servizi-titolo" className="display-lg max-w-2xl">
-            Tre servizi. Un prezzo chiaro, prima di pagare.
-          </h2>
+          <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16">
+            <div>
+              <p className="eyebrow">
+                Livello {capisci.level.n} · {capisci.level.verb}
+              </p>
+              <h2 id="referto-titolo" className="display-lg mt-4 text-[2.5rem] sm:text-[3.75rem]">
+                Parti dal tuo referto.
+              </h2>
+              <p className="mt-5 max-w-lg text-xl text-ink-soft">Pieno di sigle e valori? Diventa un report chiaro e ordinato, utile da portare al medico.</p>
+              {prices ? <PriceTag id="capisci" size="hero" className="mt-8" /> : null}
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                <Link href={capisci.href} data-track="cta-capisci" className="btn btn-mint btn-lg sm:whitespace-nowrap">
+                  Rendi chiaro il mio referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                </Link>
+                <Link href="/referti/esempio" className="btn btn-ghost btn-lg sm:whitespace-nowrap">
+                  Guarda un esempio
+                </Link>
+              </div>
+            </div>
+            <Reveal>
+              <ReportTransform />
+              <ol className="mt-9 grid gap-x-4 gap-y-3 sm:grid-cols-3">
+                {STEPS.map((t, i) => (
+                  <li key={t} className="flex items-center gap-3 text-lg font-bold text-ink">
+                    <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#7be0d2] text-base font-extrabold text-[#0c3340]">
+                      {i + 1}
+                    </span>
+                    {t}
+                  </li>
+                ))}
+              </ol>
+            </Reveal>
+          </div>
+          <ul className="mt-14 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-7 lg:grid-cols-4">
+            {MICROTRUST.map(({ icon: Icon, text }) => (
+              <li key={text} className="flex items-center gap-3 text-lg font-semibold leading-tight text-ink">
+                <Icon aria-hidden className="h-6 w-6 shrink-0 text-teal" strokeWidth={1.8} />
+                {text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* 3 · SE UNA SPIEGAZIONE NON BASTA */}
+      <section id="servizi" aria-labelledby="servizi-titolo" className="py-14 sm:py-24">
+        <div className="container-rc">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <h2 id="servizi-titolo" className="display-lg max-w-2xl">
+              Se una spiegazione non basta.
+            </h2>
+            <p className="max-w-sm text-xl text-ink-soft lg:text-right">Due persone diverse, per due bisogni diversi.</p>
+          </div>
           <div className="mt-10">
-            <ServiceTriad compact />
+            <NextLevels />
           </div>
           {prices ? (
-            <p className="mt-6 flex flex-col gap-2 text-lg text-muted sm:flex-row sm:items-center sm:justify-between">
+            <p className="mt-6 flex flex-col gap-2 text-[1.0625rem] text-muted sm:flex-row sm:items-center sm:justify-between">
               <span>{PRICE_NOTE}</span>
               <Link href="/prezzi" className="link font-semibold">
                 Confronta i servizi
@@ -96,103 +146,63 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3 · COME FUNZIONA, con il prodotto davanti */}
-      <section aria-labelledby="come-titolo" className="bg-mist py-12 sm:py-24">
+      {/* 4 · TRE LIVELLI */}
+      <section aria-labelledby="livelli-titolo" className="bg-mist py-14 sm:py-24">
         <div className="container-rc">
-          <h2 id="come-titolo" className="display-lg max-w-2xl">
-            Come funziona, in tre passi.
-          </h2>
-          <ol className="mt-10 grid gap-5 md:grid-cols-3">
-            {STEPS.map((s) => (
-              <li key={s.n} className="flex gap-4 md:flex-col">
-                <span aria-hidden className="bubble-ic bubble-active shrink-0 text-2xl font-extrabold">
-                  {s.n}
-                </span>
-                <span>
-                  <span className="block text-[1.375rem] font-bold text-ink">
-                    <span className="sr-only">Passo {s.n}: </span>
-                    {s.title}
-                  </span>
-                  <span className="mt-1 block text-lg text-ink-soft">{s.text}</span>
-                </span>
-              </li>
-            ))}
-          </ol>
-          <h3 className="mt-12 text-center text-[1.625rem] font-bold text-ink">Guarda la differenza: sposta il cursore.</h3>
-          <Reveal className="mt-6">
-            <BeforeAfter />
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 4 · IL METODO: autorevolezza per pazienti e medici */}
-      <section aria-labelledby="metodo-titolo" className="bg-strong py-16 text-on-strong sm:py-24">
-        <div className="container-rc">
-          <Method />
-        </div>
-      </section>
-
-      {/* 5 · GRATIS, SENZA REGISTRARTI */}
-      <section aria-labelledby="gratis-titolo" className="py-12 sm:py-24">
-        <div className="container-rc">
-          <h2 id="gratis-titolo" className="display-lg max-w-2xl">
-            Gratis, senza registrarti.
-          </h2>
-          <ul className="mt-10 grid gap-5 md:grid-cols-2">
-            <li className="tone-capisci">
-              <Link href="/strumenti/preparati-alla-visita" className="service-card group p-7 sm:p-8">
-                <span className="tone-icon h-14 w-14">
-                  <ClipboardList aria-hidden className="h-7 w-7" />
-                </span>
-                <span className="mt-5 block text-[1.625rem] font-bold leading-tight text-ink">Preparati alla visita in 2 minuti</span>
-                <span className="mt-2 block text-lg text-ink-soft">Cosa portare e cosa chiedere al medico.</span>
-                <span className="tone-text mt-auto inline-flex items-center gap-2 pt-6 text-lg font-bold">
-                  Inizia <ArrowRight aria-hidden className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </span>
+          <div className="lg:flex lg:items-start lg:justify-between lg:gap-10">
+            <h2 id="livelli-titolo" className="display-lg max-w-xl">
+              Tre livelli. Scegli tu fin dove arrivare.
+            </h2>
+            <p className="mt-4 max-w-xs text-xl text-ink-soft lg:mt-2 lg:text-right">
+              Puoi iniziare dal livello che ti serve.{" "}
+              <Link href="/inizia" className="link font-semibold">
+                Ti aiutiamo a scegliere
               </Link>
-            </li>
-            <li className="tone-parere">
-              <Link href="/guide" className="service-card group p-7 sm:p-8">
-                <span className="tone-icon h-14 w-14">
-                  <BookOpen aria-hidden className="h-7 w-7" />
-                </span>
-                <span className="mt-5 block text-[1.625rem] font-bold leading-tight text-ink">
-                  {GUIDES.length} guide agli esami, {GLOSSARY.length} termini
-                </span>
-                <span className="mt-2 block text-lg text-ink-soft">Emocromo, TSH, colesterolo e altri, con le fonti.</span>
-                <span className="tone-text mt-auto inline-flex items-center gap-2 pt-6 text-lg font-bold">
-                  Apri le guide <ArrowRight aria-hidden className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      {/* 6 · CHIUSURA: un'azione, l'aiuto, le emergenze */}
-      <section aria-labelledby="chiusura-titolo" className="pb-28 lg:pb-24">
-        <div className="container-rc">
-          <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-8 rounded-[2rem] bg-[linear-gradient(120deg,var(--color-ivory),var(--color-tint-capisci))] p-8 sm:p-12 lg:grid-cols-[1.2fr_0.8fr]">
-            <div>
-              <h2 id="chiusura-titolo" className="display-lg text-[2.25rem] sm:text-[3rem]">
-                Hai un referto o un dubbio? Partiamo da lì.
-              </h2>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href="/inizia" className="btn btn-primary btn-lg">
-                  Scegli il servizio per te <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-                </Link>
-                <Link href="/domande-frequenti" className="btn btn-secondary btn-lg">
-                  Domande frequenti
-                </Link>
-              </div>
-            </div>
-            <p className="flex items-start gap-4 rounded-2xl border border-danger/25 bg-paper p-5 text-lg text-ink">
-              <Phone aria-hidden className="mt-1 h-6 w-6 shrink-0 text-danger" />
-              <span>
-                <strong>Non per le emergenze.</strong> Se stai male adesso chiama il <strong>112</strong>.
-              </span>
             </p>
           </div>
+          <div className="mt-10 lg:-mt-6">
+            <Journey />
+          </div>
+        </div>
+      </section>
+
+      {/* 5 · FIDUCIA */}
+      <section aria-labelledby="fiducia-titolo" className="scope-strong bg-strong py-14 sm:py-24">
+        <div className="container-rc">
+          <Trust />
+        </div>
+      </section>
+
+      {/* 6 · LO STRUMENTO GRATUITO */}
+      <section aria-labelledby="preparati-titolo" className="bg-ivory py-14 sm:py-24">
+        <div className="container-rc">
+          <PrepBanner />
+        </div>
+      </section>
+
+      {/* 7 · CHIUSURA */}
+      <section aria-labelledby="chiusura-titolo" className="scope-strong stage-teal py-14 sm:py-24">
+        <div className="container-rc grid grid-cols-[minmax(0,1fr)] items-end gap-10 lg:grid-cols-[1.3fr_0.7fr]">
+          <div>
+            <h2 id="chiusura-titolo" className="display-xl">
+              Hai già un referto?
+              <span className="mt-2 block text-[#7be0d2]">Rendilo chiaro{prices ? ` da ${entryPriceLabel()}` : ""}.</span>
+            </h2>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link href={capisci.href} data-track="cta-capisci" className="btn btn-mint btn-lg">
+                Rendi chiaro il mio referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              </Link>
+              <Link href="/inizia" className="btn btn-secondary btn-lg">
+                Ti aiutiamo a scegliere
+              </Link>
+            </div>
+          </div>
+          <p className="flex items-start gap-4 rounded-2xl border border-white/25 bg-black/15 p-5 text-lg text-ink">
+            <Phone aria-hidden className="mt-1 h-6 w-6 shrink-0 text-danger" />
+            <span>
+              <strong>Non per le emergenze.</strong> Se stai male adesso chiama il <strong>112</strong>.
+            </span>
+          </p>
         </div>
       </section>
 

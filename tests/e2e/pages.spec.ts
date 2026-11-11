@@ -41,7 +41,8 @@ test("pagina inesistente mostra un 404 curato", async ({ page }) => {
 test("nessun testo vietato o promessa non verificabile", async ({ page }) => {
   for (const path of PAGES) {
     await page.goto(path);
-    const text = (await page.locator("body").innerText()).toLowerCase();
+    // «in pochi minuti» è ammesso solo come «di norma in pochi minuti» (tempi indicativi di Capisci)
+    const text = (await page.locator("body").innerText()).toLowerCase().replaceAll("di norma in pochi minuti", "");
     for (const banned of ["lorem ipsum", "certificato gdpr", "conforme mdr", "24/7", "approvato da medici", "100%", "garantit", "conforme al gdpr", "gdpr compliant", "in totale sicurezza", "medici qualificati", "nella norma", "in pochi minuti", "referto chiaro"]) {
       if (banned === "in pochi minuti") {
         // Ammesso solo come «di norma in pochi minuti», per il servizio automatico «Capisci».
@@ -123,7 +124,7 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci\.\s*Chiedi un secondo parere\.\s*Parla con un medico\./);
     for (const name of ["Capisci il tuo referto", "Chiedi un secondo parere", "Parla con un medico"]) await expect(page.getByRole("link", { name }).first()).toBeAttached();
     // Above the fold: almeno una porta d'ingresso ai servizi è visibile senza scorrere (mobile: le tre tessere)
-    const first = page.getByRole("link", { name: "Un referto da capire" });
+    const first = page.locator("main").getByRole("link", { name: "Ho un referto" });
     const box = await first.boundingBox();
     expect((box?.y ?? 9999) + (box?.height ?? 0)).toBeLessThan(isMobile ? 844 : 900);
     await expect(page.getByText("Versione dimostrativa", { exact: false }).first()).toBeVisible();

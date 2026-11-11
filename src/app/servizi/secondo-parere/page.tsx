@@ -21,19 +21,20 @@ export default function SecondoParerePage() {
       id="secondo-parere"
       secondaryCta={{ href: "/inizia", label: "Non sei sicuro? Ti aiutiamo" }}
     >
-      <section aria-labelledby="garanzie-titolo" className="py-12 sm:py-20">
+      <section aria-labelledby="garanzie-titolo" className="scope-strong tone-parere stage-blue py-14 sm:py-24">
         <div className="container-rc">
-          <h2 id="garanzie-titolo" className="display-lg text-[2rem] sm:text-[2.5rem]">
+          <p className="eyebrow !text-[var(--tone-accent)]">Chi risponde, e come</p>
+          <h2 id="garanzie-titolo" className="display-lg mt-4">
             Trasparenza, prima di tutto.
           </h2>
-          <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="mt-10 grid gap-x-12 sm:grid-cols-2">
             {TRANSPARENCY.map(({ icon: Icon, title, text }) => (
-              <li key={title} className="card p-6 sm:p-7">
-                <span className="tone-icon h-12 w-12">
-                  <Icon aria-hidden className="h-6 w-6" />
-                </span>
-                <h3 className="mt-5 text-xl font-semibold text-ink">{title}</h3>
-                <p className="mt-2 text-lg text-ink-soft">{text}</p>
+              <li key={title} className="flex gap-5 border-t border-line py-7">
+                <Icon aria-hidden className="mt-1 h-8 w-8 shrink-0 text-[var(--tone-accent)]" strokeWidth={1.6} />
+                <div>
+                  <h3 className="text-[1.375rem] font-bold leading-snug text-ink">{title}</h3>
+                  <p className="mt-2 text-lg text-ink-soft">{text}</p>
+                </div>
               </li>
             ))}
           </ul>

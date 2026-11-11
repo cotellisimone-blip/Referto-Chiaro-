@@ -66,5 +66,9 @@ export const SHOW_ILLUSTRATIVE_PHOTOS = true;
 export const ILLUSTRATIVE_PHOTOS = {
   hero: { src: "/media/paziente-hero.webp", width: 704, height: 560, alt: "Una donna sorride, pensierosa, a casa sua." },
   scrivania: { src: "/media/paziente-scrivania.webp", width: 425, height: 914, alt: "Una donna alla scrivania con un referto in mano, il telefono e un quaderno." },
+  /** Ritagli pensati per il telefono (1:1 e 4:5): mai un taglio casuale della versione desktop. */
+  heroSquare: { src: "/media/paziente-hero-1x1.webp", width: 544, height: 544, alt: "Una donna sorride, pensierosa, a casa sua." },
+  scrivaniaPortrait: { src: "/media/paziente-scrivania-4x5.webp", width: 424, height: 530, alt: "Una donna con gli occhiali guarda il telefono, con un referto in mano." },
+  preparatiPortrait: { src: "/media/paziente-preparati-4x5.webp", width: 424, height: 530, alt: "Una donna con gli occhiali legge il telefono, con un referto in mano." },
   preparati: { src: "/media/paziente-preparati.webp", width: 425, height: 884, alt: "Una donna legge un referto e controlla il telefono." },
 } as const;
