@@ -221,6 +221,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 </h2>
               </legend>
               <p className="mt-2 text-lg text-muted">Una sola scelta: serve a dare un ordine alla scheda.</p>
+              <div className="pdp-stage">
               <div className="mt-5 grid gap-3">
                 {GOALS.map((g) => {
                   const Icon = GOAL_ICON[g.id];
@@ -239,6 +240,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 })}
               </div>
               <Nav next={() => go(2)} disabled={!a.goal} />
+              </div>
             </fieldset>
           ) : null}
 
@@ -250,6 +252,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 </h2>
               </legend>
               <p className="mt-2 text-lg text-muted">Spunta quello che hai, anche se non ricordi i valori. Nessun numero, nessun dettaglio.</p>
+              <div className="pdp-stage">
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 {HAVE.map((h) => (
                   <label key={h.id} className={clsx("pdp-option", a.have.includes(h.id) && "is-on")}>
@@ -259,6 +262,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 ))}
               </div>
               <Nav back={() => go(1)} next={() => go(3)} />
+              </div>
             </fieldset>
           ) : null}
 
@@ -268,6 +272,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 Un po&apos; di contesto
               </h2>
               <p className="mt-2 text-lg text-muted">Cinque domande veloci. Puoi sempre scegliere di non rispondere.</p>
+              <div className="pdp-stage">
               <div className="mt-6 grid gap-4">
                 {CONTEXT_QUESTIONS.map((q) => (
                   <fieldset key={q.key} className="pdp-ctx">
@@ -284,6 +289,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 ))}
               </div>
               <Nav back={() => go(2)} next={() => go(4)} />
+              </div>
             </div>
           ) : null}
 
@@ -293,6 +299,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 Le 10 aree da conoscere
               </h2>
               <p className="mt-2 max-w-2xl text-lg text-muted">Per ogni area, segna se hai già informazioni recenti. L&apos;etichetta dice di che tipo di tema si tratta, non come stai.</p>
+              <div className="pdp-stage">
               <ul className="mt-6 grid gap-4 md:grid-cols-2">
                 {AREAS.map((ar) => {
                   const on = isDocumented(a, ar.id);
@@ -347,6 +354,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 })}
               </ul>
               <Nav back={() => go(3)} next={() => go(5)} nextLabel="Crea la mia scheda" />
+              </div>
             </div>
           ) : null}
 

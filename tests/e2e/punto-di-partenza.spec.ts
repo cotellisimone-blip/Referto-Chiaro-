@@ -99,6 +99,25 @@ test("landing: nessun overflow a 390 px, accessibile, anche in tema scuro", asyn
   await axe(page);
 });
 
+test("fase 3: la guida sta subito sotto la hero e la barra «Avanti» non copre mai la domanda", async ({ page }) => {
+  await page.goto("/punto-di-partenza");
+  const vh = page.viewportSize()?.height ?? 900;
+  const top = await page.locator("#guida").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+  expect(top, "inizio della guida").toBeLessThan(vh * 1.25);
+  // Le spiegazioni restano, sotto la guida.
+  for (const h of ["Tre passaggi, una scheda.", "Dieci aree, una sola scheda.", "Più esami non significa più prevenzione."]) {
+    const y = await page.getByRole("heading", { name: h }).evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    expect(y, h).toBeGreaterThan(top);
+  }
+  const hint = page.getByText("Una sola scelta: serve a dare un ordine alla scheda.");
+  const next = page.getByRole("button", { name: "Avanti" });
+  for (const offset of [0.95, 0.8, 0.6, 0.4, 0.15]) {
+    await hint.evaluate((el, o) => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - window.innerHeight * o), offset);
+    const [a, b] = [await hint.boundingBox(), await next.boundingBox()];
+    expect(b!.y, `pulsante sotto la domanda (offset ${offset})`).toBeGreaterThanOrEqual(a!.y + a!.height);
+  }
+});
+
 test("ricerca interna: «check-up» trova Punto di Partenza", async ({ request }) => {
   const r = await request.get("/api/v1/public/ricerca");
   const { items } = (await r.json()) as { items: { href: string; aliases: string[] }[] };

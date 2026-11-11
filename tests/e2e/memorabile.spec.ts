@@ -140,7 +140,8 @@ test.describe("home «Evoluzione v2»", () => {
     expect(await main.locator("section").count()).toBeLessThanOrEqual(8);
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
     // V3: il doppio ingresso aggiunge circa mezza schermata (una su telefono), in parte recuperata accorciando il blocco del referto.
-    expect(h, "schermate").toBeLessThan(isMobile ? 14 : 7.5);
+    // Fase 3: obiettivo 11 schermate su telefono e 6 su desktop (mezzo schermo di margine per i font).
+    expect(h, "schermate").toBeLessThan(isMobile ? 11.5 : 6.5);
     const words = (await main.innerText()).split(/\s+/).length;
     // V3: il doppio ingresso porta circa 55 parole, in parte compensate togliendo le rassicurazioni del blocco referto.
     expect(words).toBeLessThan(630);

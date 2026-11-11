@@ -12,12 +12,12 @@ const QUESTIONS = ["Che cosa significa il mio referto?", "Servono altri esami?",
 export function PrepBanner() {
   const photo = ILLUSTRATIVE_PHOTOS.preparatiPortrait;
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+    <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
       <div className="order-2 lg:order-1">
         <div className="relative mx-auto max-w-[30rem] pb-10 pr-[18%] lg:mx-0">
           <span aria-hidden className="absolute -left-6 -top-6 h-40 w-40 rounded-full bg-[radial-gradient(closest-side,var(--color-marker),transparent)] opacity-60" />
           {SHOW_ILLUSTRATIVE_PHOTOS ? (
-            <figure className="relative aspect-[4/3] overflow-hidden rounded-[2.25rem] shadow-[var(--shadow-float)] sm:aspect-[4/5] lg:aspect-square">
+            <figure className="relative aspect-square overflow-hidden rounded-[2.25rem] shadow-[var(--shadow-float)] sm:aspect-[4/5] lg:aspect-square">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} loading="lazy" decoding="async" className="h-full w-full object-cover" />
               <figcaption className="caption-illus left-3 top-3">Immagine illustrativa</figcaption>
@@ -52,7 +52,7 @@ export function PrepBanner() {
           <Link href="/strumenti/preparati-alla-visita" className="btn btn-primary btn-lg">
             Prepara la mia lista <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
-          <Link href="/guide" className="btn btn-ghost btn-lg">
+          <Link href="/guide" className="btn btn-secondary btn-lg">
             Guide agli esami
           </Link>
         </div>

@@ -21,7 +21,7 @@ export function Trust() {
     ? [{ icon: Building2, q: "Chi c'è dietro", a: `${t.name}, P.IVA ${t.vat}${t.address ? `, ${t.address}` : ""}.` }, ...POINTS]
     : POINTS;
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
       <div className="lg:sticky lg:top-28 lg:self-start">
         <p className="eyebrow">Fiducia</p>
         <h2 id="fiducia-titolo" className="display-lg mt-4 text-ink">

@@ -7,13 +7,15 @@ import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { AREAS, CATEGORY_HINT, NOT_ROUTINE, NOT_ROUTINE_SOURCE, type AreaCategory } from "@/content/punto-di-partenza";
 import { coreService, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, indexingEnabled, NOINDEX_DRAFT } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Punto di Partenza — Conosci meglio la tua salute. Gratis.",
   description:
     "Strumento gratuito: un percorso guidato in 10 aree per raccogliere ciò che sai già, capire cosa discutere con il medico e prepararti ai prossimi controlli. Informativo, non diagnostico.",
   alternates: { canonical: absoluteUrl("/punto-di-partenza") },
+  // Finché le 10 aree non hanno la revisione medica, la pagina resta fuori dai motori anche con l'indicizzazione accesa.
+  ...(indexingEnabled() && !AREAS.every((a) => a.reviewStatus === "revisionato") ? { robots: NOINDEX_DRAFT } : {}),
 };
 
 const PASSI = [
@@ -49,7 +51,8 @@ export default function PuntoDiPartenzaPage() {
   const capisci = coreService("capisci");
   const medico = coreService("parla-con-un-medico");
   const cp = priceDisplay("capisci");
-  const photo = ILLUSTRATIVE_PHOTOS.scrivaniaPortrait;
+  // Fase 3: non la stessa paziente di «Parla con un medico» e delle sezioni della home.
+  const photo = ILLUSTRATIVE_PHOTOS.heroSquare;
   const prices: PdpPrices = {
     capisci: showPrices ? { lead: cp.lead, amount: cp.amount } : null,
     medico: showPrices ? priceDisplay("parla-con-un-medico").amount : null,
@@ -59,7 +62,7 @@ export default function PuntoDiPartenzaPage() {
     <>
       {/* HERO */}
       <section aria-labelledby="pdp-titolo" className="no-print tone-partenza pdp-hero">
-        <div className="container-rc grid items-center gap-10 pb-14 pt-10 sm:pt-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:pb-20">
+        <div className="container-rc grid items-center gap-10 pb-8 pt-10 sm:pb-12 sm:pt-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:pb-16">
           <div>
             <p className="eyebrow">Gratis · Punto di Partenza</p>
             <h1 id="pdp-titolo" className="display-xl mt-5">
@@ -88,7 +91,7 @@ export default function PuntoDiPartenzaPage() {
           <div className="pdp-hero-visual">
             {SHOW_ILLUSTRATIVE_PHOTOS ? (
               <figure className="pdp-hero-photo">
-                <img src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} decoding="async" />
+                <img src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} decoding="async" style={{ objectPosition: "38% 0%" }} />
                 <figcaption className="caption-illus right-4 top-4">Immagine illustrativa</figcaption>
               </figure>
             ) : null}
@@ -112,33 +115,16 @@ export default function PuntoDiPartenzaPage() {
         </div>
       </section>
 
-      {/* LE 10 AREE, IN ANTEPRIMA */}
-      <section aria-labelledby="pdp-aree" className="no-print pdp-areas-wrap">
+      {/* LA GUIDA: subito sotto la hero (Fase 3). Le spiegazioni vengono dopo. */}
+      <section id="guida" aria-labelledby="pdp-guida" className="pdp-guide-section scroll-mt-24 pb-12 pt-8 sm:pb-16 sm:pt-12">
         <div className="container-rc">
-          <Reveal className="pdp-areas-panel">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-2xl">
-                <p className="eyebrow">Le 10 aree del percorso</p>
-                <h2 id="pdp-aree" className="display-lg mt-3 text-[2rem] sm:text-[2.5rem]">
-                  Dieci aree, una sola scheda.
-                </h2>
-                <p className="mt-3 text-lg text-ink-soft sm:text-xl">Per ognuna: perché conta, di che cosa parlare con il medico e se hai già informazioni recenti.</p>
-              </div>
-              <p className="flex flex-wrap items-center gap-2 text-[1.0625rem] text-ink-soft">
-                <CategoryChip category="base" /> <CategoryChip category="contextual" />
-                <span className="w-full sm:w-auto">L&apos;etichetta descrive il tema, non te.</span>
-              </p>
-            </div>
-            <ul className="pdp-tiles mt-7">
-              {AREAS.map((a) => (
-                <li key={a.id} className="pdp-tile">
-                  <AreaIcon id={a.id} category={a.category} />
-                  <span className="pdp-tile-title">{a.title}</span>
-                  <CategoryChip category={a.category} />
-                </li>
-              ))}
-            </ul>
-          </Reveal>
+          <div className="no-print mb-7 max-w-3xl">
+            <p className="eyebrow">Guida interattiva</p>
+            <h2 id="pdp-guida" className="display-lg mt-3 text-[2rem] sm:text-[2.5rem]">
+              Costruiamo il tuo Punto di Partenza.
+            </h2>
+          </div>
+          <PuntoDiPartenzaGuide prices={prices} capisciHref={capisci.href} medicoHref={medico.href} />
         </div>
       </section>
 
@@ -165,6 +151,39 @@ export default function PuntoDiPartenzaPage() {
               </Reveal>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* LE 10 AREE, IN ANTEPRIMA */}
+      <section aria-labelledby="pdp-aree" className="no-print pdp-areas-wrap pdp-areas-below">
+        <div className="container-rc">
+          <Reveal className="pdp-areas-panel">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <p className="eyebrow">Le 10 aree del percorso</p>
+                <h2 id="pdp-aree" className="display-lg mt-3 text-[2rem] sm:text-[2.5rem]">
+                  Dieci aree, una sola scheda.
+                </h2>
+                <p className="mt-3 text-lg text-ink-soft sm:text-xl">Per ognuna: perché conta, di che cosa parlare con il medico e se hai già informazioni recenti.</p>
+              </div>
+              <p className="flex flex-wrap items-center gap-2 text-[1.0625rem] text-ink-soft">
+                <CategoryChip category="base" /> <CategoryChip category="contextual" />
+                <span className="w-full sm:w-auto">L&apos;etichetta descrive il tema, non te.</span>
+              </p>
+            </div>
+            <details className="pdp-details pdp-details-block mt-4">
+              <summary>Vedi le 10 aree</summary>
+              <ul className="pdp-tiles mt-4">
+              {AREAS.map((a) => (
+                <li key={a.id} className="pdp-tile">
+                  <AreaIcon id={a.id} category={a.category} />
+                  <span className="pdp-tile-title">{a.title}</span>
+                  <CategoryChip category={a.category} />
+                </li>
+              ))}
+            </ul>
+            </details>
+          </Reveal>
         </div>
       </section>
 
@@ -195,7 +214,7 @@ export default function PuntoDiPartenzaPage() {
               })}
             </ul>
           </div>
-          <aside aria-labelledby="pdp-non-routine" className="pdp-panel pdp-panel-not">
+          <aside aria-labelledby="pdp-non-routine" className="pdp-panel pdp-panel-not lg:self-start">
             <p>
               <CategoryChip category="not-routine" />
             </p>
@@ -203,7 +222,9 @@ export default function PuntoDiPartenzaPage() {
               Più esami non significa più prevenzione.
             </h2>
             <p className="mt-3 text-lg text-ink-soft">Esempi di controlli che non vanno proposti in modo automatico a chi non ha disturbi:</p>
-            <ul className="pdp-not-list mt-4">
+            <details className="pdp-details pdp-details-block mt-2">
+              <summary>Vedi gli esempi e la fonte</summary>
+            <ul className="pdp-not-list mt-3">
               {NOT_ROUTINE.map((x) => (
                 <li key={x.id} className="text-lg leading-snug text-ink">
                   <strong>{x.title}.</strong> <span className="text-ink-soft">{x.why}</span>
@@ -216,20 +237,8 @@ export default function PuntoDiPartenzaPage() {
                 {NOT_ROUTINE_SOURCE.sourceLabel}
               </a>
             </p>
+            </details>
           </aside>
-        </div>
-      </section>
-
-      {/* LA GUIDA */}
-      <section id="guida" aria-labelledby="pdp-guida" className="pdp-guide-section scroll-mt-24 py-12 sm:py-16">
-        <div className="container-rc">
-          <div className="no-print mb-7 max-w-3xl">
-            <p className="eyebrow">Guida interattiva</p>
-            <h2 id="pdp-guida" className="display-lg mt-3 text-[2rem] sm:text-[2.5rem]">
-              Costruiamo il tuo Punto di Partenza.
-            </h2>
-          </div>
-          <PuntoDiPartenzaGuide prices={prices} capisciHref={capisci.href} medicoHref={medico.href} />
         </div>
       </section>
 

@@ -31,7 +31,7 @@ export function Journey({ withStart = false }: { withStart?: boolean }) {
             </span>
             <span className="level-verb mt-3 block sm:mt-5 text-[1.75rem] font-extrabold uppercase leading-none tracking-[0.02em] text-ink">Parti</span>
             <span className="mt-3 hidden text-xl leading-snug text-ink-soft sm:block">Una scheda per sapere di che cosa parlare con il medico.</span>
-            <span className="tone-text mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-lg font-bold">
+            <span className="tone-text mt-auto inline-flex min-h-11 items-center gap-2 pt-3 text-lg font-bold sm:pt-5">
               Punto di Partenza <ArrowRight aria-hidden className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
             </span>
           </Link>
@@ -59,7 +59,7 @@ export function Journey({ withStart = false }: { withStart?: boolean }) {
                 {s.level.verb}
               </span>
               <span className="mt-3 hidden text-xl leading-snug text-ink-soft sm:block">{LINE[id]}</span>
-              <span className="tone-text mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-lg font-bold">
+              <span className="tone-text mt-auto inline-flex min-h-11 items-center gap-2 pt-3 text-lg font-bold sm:pt-5">
                 {s.name} <ArrowRight aria-hidden className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
               </span>
             </Link>

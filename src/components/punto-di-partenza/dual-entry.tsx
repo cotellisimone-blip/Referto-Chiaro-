@@ -4,7 +4,7 @@ import { coreService, entryPriceLabel, publicPricesEnabled } from "@/domain/offe
 
 /**
  * Doppio ingresso della home (V3): chi non ha ancora esami parte gratis da «Punto di Partenza»,
- * chi ha un referto lo rende chiaro. Due card di pari peso, impilate su telefono.
+ * chi ha un referto lo rende chiaro. Due card di pari peso (stesso pulsante primario), impilate su telefono.
  */
 export function DualEntry() {
   const capisci = coreService("capisci");
@@ -68,7 +68,7 @@ export function DualEntry() {
                 </span>
               </span>
               <span className="entry-foot">
-                <span className="btn btn-secondary btn-lg">
+                <span className="btn btn-primary btn-lg">
                   Rendi chiaro il referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                 </span>
               </span>

@@ -101,14 +101,14 @@ export default function Home() {
       {pdp ? <DualEntry /> : null}
 
       {/* 2 · IL PRODOTTO D'INGRESSO */}
-      <section id="referto" aria-labelledby="referto-titolo" className={`scope-strong tone-capisci stage-petrol overflow-hidden ${pdp ? "py-12 sm:py-16" : "py-12 sm:py-[4.5rem]"}`}>
+      <section id="referto" aria-labelledby="referto-titolo" className={`scope-strong tone-capisci stage-petrol overflow-hidden py-10 sm:py-14`}>
         <div className="container-rc">
           <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16">
             <div>
               <p className="eyebrow">
                 Livello {capisci.level.n} · {capisci.level.verb}
               </p>
-              <h2 id="referto-titolo" className="display-lg mt-4 text-[2.5rem] sm:text-[3.75rem]">
+              <h2 id="referto-titolo" className="display-lg mt-4 text-[2.25rem] sm:text-[3.25rem]">
                 {pdp ? "Come diventa chiaro un referto." : "Parti dal tuo referto."}
               </h2>
               <p className="mt-5 max-w-lg text-xl text-ink-soft">Pieno di sigle e valori? Diventa un report chiaro e ordinato, utile da portare al medico.</p>
@@ -117,7 +117,7 @@ export default function Home() {
                 <Link href={capisci.href} data-track="cta-capisci" className="btn btn-mint btn-lg sm:whitespace-nowrap">
                   Rendi chiaro il mio referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                 </Link>
-                <Link href="/referti/esempio" className="btn btn-ghost btn-lg sm:whitespace-nowrap">
+                <Link href="/referti/esempio" className="btn btn-secondary btn-lg sm:whitespace-nowrap">
                   Guarda un esempio
                 </Link>
               </div>
@@ -151,14 +151,14 @@ export default function Home() {
       </section>
 
       {/* 3 · SE UNA SPIEGAZIONE NON BASTA */}
-      <section id="servizi" aria-labelledby="servizi-titolo" className="py-12 sm:py-[4.5rem]">
+      <section id="servizi" aria-labelledby="servizi-titolo" className="py-10 sm:py-14">
         <div className="container-rc">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <h2 id="servizi-titolo" className="display-lg max-w-2xl">
               Se una spiegazione non basta.
             </h2>
           </div>
-          <div className="mt-10">
+          <div className="mt-7">
             <NextLevels />
           </div>
           {prices ? (
@@ -173,7 +173,7 @@ export default function Home() {
       </section>
 
       {/* 4 · TRE LIVELLI */}
-      <section aria-labelledby="livelli-titolo" className="bg-mist py-12 sm:py-[4.5rem]">
+      <section aria-labelledby="livelli-titolo" className="bg-mist py-10 sm:py-14">
         <div className="container-rc">
           <div className="lg:flex lg:items-start lg:justify-between lg:gap-10">
             <h2 id="livelli-titolo" className="display-lg max-w-xl">
@@ -185,29 +185,29 @@ export default function Home() {
               </Link>
             </p>
           </div>
-          <div className="mt-10 lg:-mt-6">
+          <div className="mt-7 lg:-mt-6">
             <Journey withStart={pdp} />
           </div>
         </div>
       </section>
 
       {/* 5 · FIDUCIA */}
-      <section aria-labelledby="fiducia-titolo" className="scope-strong bg-strong py-12 sm:py-[4.5rem]">
+      <section aria-labelledby="fiducia-titolo" className="scope-strong bg-strong py-10 sm:py-14">
         <div className="container-rc">
           <Trust />
         </div>
       </section>
 
       {/* 6 · LO STRUMENTO GRATUITO */}
-      <section aria-labelledby="preparati-titolo" className="bg-ivory py-12 sm:py-[4.5rem]">
+      <section aria-labelledby="preparati-titolo" className="bg-ivory py-10 sm:py-14">
         <div className="container-rc">
           <PrepBanner />
         </div>
       </section>
 
       {/* 7 · CHIUSURA */}
-      <section aria-labelledby="chiusura-titolo" className="scope-strong stage-teal py-12 sm:py-[4.5rem]">
-        <div className="container-rc grid grid-cols-[minmax(0,1fr)] items-end gap-10 lg:grid-cols-[1.3fr_0.7fr]">
+      <section aria-labelledby="chiusura-titolo" className="scope-strong stage-teal py-10 sm:py-14">
+        <div className="container-rc grid grid-cols-[minmax(0,1fr)] items-end gap-8 lg:grid-cols-[1.3fr_0.7fr]">
           <div>
             {pdp ? (
               <h2 id="chiusura-titolo" className="display-lg">

@@ -22,6 +22,7 @@ test.describe("fail-closed lato server", () => {
     const res = await request.get("/api/v1/public/config");
     expect(await res.json()).toEqual({
       mode: "demo",
+      profile: "standard",
       capabilities: { realUploads: false, aiProcessing: false, livePayments: false, medicalSecondOpinion: false, medicalVideoConsult: false, publicSignup: false },
     });
   });
