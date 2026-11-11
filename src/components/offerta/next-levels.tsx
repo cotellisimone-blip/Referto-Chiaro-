@@ -84,7 +84,8 @@ export function NextLevels() {
               <figcaption className="caption-illus right-3 top-3">Immagine illustrativa</figcaption>
             </figure>
           ) : null}
-          <CallCard className="relative sm:absolute sm:bottom-6 sm:left-[-2.5rem] sm:right-6" />
+          {/* Ciclo 2, fase 3: su telefono la scheda illustrativa ripete il testo sopra; resta da 640 px. */}
+          <CallCard className="relative hidden sm:block sm:absolute sm:bottom-6 sm:left-[-2.5rem] sm:right-6" />
         </div>
       </article>
 

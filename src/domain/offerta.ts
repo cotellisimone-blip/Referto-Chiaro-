@@ -1,5 +1,5 @@
 /**
- * L'offerta di Cura Privata: i tre servizi protagonisti («Capisci. Chiedi un secondo parere. Parla con un medico.»).
+ * L'offerta di Cura Privata: i tre servizi protagonisti («Capisci. Parla con un medico. Chiedi un secondo parere.»).
  * È l'UNICA fonte per nomi, frasi, tempi e prezzi: home, pagine servizio, /prezzi, selettore, area personale e
  * ordini leggono da qui. Per cambiare un prezzo si cambia una variabile d'ambiente, non decine di componenti.
  *
@@ -162,7 +162,9 @@ export const CORE_SERVICES: CoreService[] = [
   },
 ];
 
-export const PAYOFF = "Capisci. Chiedi un secondo parere. Parla con un medico.";
+/** Ciclo 2, fase 3 (approvata da Simone l'11/11): il payoff segue l'ordine dei servizi e dei prezzi, come menu e livelli. */
+export const PAYOFF = "Capisci. Parla con un medico. Chiedi un secondo parere.";
+export const PAYOFF_LINES = ["Capisci.", "Parla con un medico.", "Chiedi un secondo parere."] as const;
 /** I tre livelli del percorso, nell'ordine in cui si sale. */
 export const LEVELS = ["capisci", "parla-con-un-medico", "secondo-parere"] as const satisfies readonly CoreServiceId[];
 export const INFORMATIVE_NOTE = "Informativo: non sostituisce la valutazione del medico e non fornisce diagnosi o terapia.";

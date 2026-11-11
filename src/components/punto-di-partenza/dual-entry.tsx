@@ -49,7 +49,8 @@ export function DualEntry() {
             <Link href={capisci.href} data-track="cta-capisci" className="entry-card entry-card-plain group">
               <span className="entry-top">
                 <span className="eyebrow eyebrow-plain">Hai già un referto?</span>
-                {prices ? <span className="entry-badge entry-badge-soft">Primo referto {entryPriceLabel()}</span> : null}
+                {/* Ciclo 2, fase 3: su telefono il prezzo è già sotto il titolo della pagina; il badge resta da 640 px. */}
+                {prices ? <span className="entry-badge entry-badge-soft hidden sm:inline-flex">Primo referto {entryPriceLabel()}</span> : null}
               </span>
               <span className="entry-body">
                 <span aria-hidden className="pdp-art pdp-art-report entry-art">

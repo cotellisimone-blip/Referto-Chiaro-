@@ -121,7 +121,14 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
 
   test("la home dice in 5 secondi che cosa offre: il payoff è il titolo, i tre servizi subito sotto", async ({ page, isMobile }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci\.\s*Chiedi un secondo parere\.\s*Parla con un medico\./);
+    // Ciclo 2, fase 3: il payoff segue l'ordine dei servizi, come menu e fondo pagina.
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci\.\s*Parla con un medico\.\s*Chiedi un secondo parere\./);
+    await expect(page.locator("footer").getByText("Capisci. Parla con un medico. Chiedi un secondo parere.")).toBeVisible();
+    // Nessun «.it» accanto al logo finché il sito non gira su un dominio vero (PUBLIC_BASE_URL).
+    await expect(page.locator("footer").getByText(".it", { exact: true })).toHaveCount(0);
+    const menu = (await page.locator("header").getByRole("link").allInnerTexts()).map((t) => t.trim());
+    const order = ["Capisci il referto", "Parla con un medico", "Secondo parere"].map((n) => menu.indexOf(n));
+    if (!isMobile) expect(order).toEqual([...order].sort((a, b) => a - b));
     for (const name of ["Capisci il tuo referto", "Chiedi un secondo parere", "Parla con un medico"]) await expect(page.getByRole("link", { name }).first()).toBeAttached();
     // Above the fold: almeno una porta d'ingresso ai servizi è visibile senza scorrere (mobile: le tre tessere)
     const first = page.locator("main").getByRole("link", { name: "Ho un referto" });

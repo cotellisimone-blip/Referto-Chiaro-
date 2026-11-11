@@ -566,7 +566,10 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                   </span>
                   <span>Aree già documentate</span>
                 </dt>
-                <dd className="stat-num">{documentedCount}/10</dd>
+                {/* Ciclo 2, fase 3: «3 su 10 aree», non «3/10»: niente che sembri un punteggio. */}
+                <dd className="stat-num">
+                  {documentedCount} <span className="text-[0.75em] font-semibold">su 10</span>
+                </dd>
               </div>
               <div>
                 <dt>
@@ -575,7 +578,9 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                   </span>
                   <span>Da discutere con il medico</span>
                 </dt>
-                <dd className="stat-num">{discussCount}/10</dd>
+                <dd className="stat-num">
+                  {discussCount} <span className="text-[0.75em] font-semibold">su 10</span>
+                </dd>
               </div>
               <div>
                 <dt>

@@ -3,6 +3,8 @@ import { Logo } from "@/components/brand/logo";
 import { FOOTER_NAV, LEGAL_NAV } from "./nav";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { readTitolare } from "@/domain/titolare";
+import { PAYOFF } from "@/domain/offerta";
+import { SITE_URL } from "@/lib/seo";
 
 /** Titolare in una riga, solo se configurato (nome + P.IVA): mai un segnaposto. */
 function OwnerLine() {
@@ -22,8 +24,9 @@ export function SiteFooter() {
     <footer className="no-print mt-auto border-t border-line bg-paper">
       <div className="container-rc grid grid-cols-2 gap-x-6 gap-y-10 py-12 sm:py-16 md:grid-cols-3 lg:grid-cols-[1.6fr_repeat(3,1fr)] lg:gap-12">
         <div className="col-span-2 max-w-sm md:col-span-3 lg:col-span-1">
-          <Logo withTld />
-          <p className="mt-5 font-serif text-2xl leading-snug text-ink">Capisci. Chiedi un secondo parere. Parla con un medico.</p>
+          {/* Ciclo 2, fase 3: «.it» solo quando il sito gira davvero su un dominio .it (PUBLIC_BASE_URL). */}
+          <Logo withTld={SITE_URL.endsWith(".it")} />
+          <p className="mt-5 font-serif text-2xl leading-snug text-ink">{PAYOFF}</p>
           <OwnerLine />
           <p className="mt-5 inline-flex items-center gap-3 rounded-xl border border-line bg-canvas px-4 py-3 text-[0.9375rem] text-ink">
             <span className="stat-num text-2xl text-danger">112</span>

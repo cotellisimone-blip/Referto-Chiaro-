@@ -1407,10 +1407,10 @@ input[type="search"]::-webkit-search-decoration {
   margin-top: 0.34em;
 }
 .hero-payoff > span:nth-child(2) {
-  border-left-color: var(--color-accent-parere);
+  border-left-color: var(--color-accent-medico);
 }
 .hero-payoff > span:nth-child(3) {
-  border-left-color: var(--color-accent-medico);
+  border-left-color: var(--color-accent-parere);
 }
 
 /* Glossario: barra delle lettere fissa sotto la testata. */
@@ -1557,7 +1557,13 @@ input[type="search"]::-webkit-search-decoration {
   .hero2-visual { position: absolute; inset: 0 0 0 auto; width: min(47%, 760px); max-width: none; margin: 0; padding: 0; }
   .hero2-photo { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0 0 0 9rem; box-shadow: none; }
   .hero2-photo img { object-position: 30% 0%; }
-  .hero2-card { position: absolute; left: -4.75rem; bottom: 2.5rem; width: 21.5rem; margin: 0; transform: rotate(-2deg); }
+  /* Ciclo 2, fase 3: la scheda sta in basso a destra, sulla spalla, e non copre più il viso della paziente. */
+  .hero2-card { position: absolute; right: 2rem; bottom: 2rem; width: 21.5rem; margin: 0; transform: rotate(2deg); }
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .hero2-card { right: 1rem; bottom: 1.25rem; width: 17.5rem; }
+  /* Tra 1024 e 1279 px la riga più lunga del titolo toccava la foto: qui va a capo. */
+  .hero-payoff > span { white-space: normal !important; }
 }
 .caption-illus {
   position: absolute;
@@ -1927,6 +1933,10 @@ input[type="search"]::-webkit-search-decoration {
 .trust-list > div { padding-block: 1rem; }
 @media (max-width: 639px) {
   .level-step { padding: 1.1rem 1.25rem; }
+  /* Ciclo 2, fase 3: gradini e lista della fiducia più compatti su telefono (home sotto gli 8.000 px). */
+  .level-step .level-num { font-size: 2.5rem; }
+  .levels { gap: 0.75rem; }
+  .trust-list > div { padding-block: 0.75rem; }
 }
 @media (min-width: 640px) { .dual-entry { padding-block: 3rem; } }
 @media (min-width: 1280px) {

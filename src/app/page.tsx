@@ -12,7 +12,7 @@ import { MobileHelpBar } from "@/components/site/mobile-help-bar";
 import { TrackView } from "@/components/site/track";
 import { DualEntry } from "@/components/punto-di-partenza/dual-entry";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
-import { HERO_SUBTITLE, PRICE_NOTE, coreService, entryPriceLabel, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
+import { HERO_SUBTITLE, PAYOFF_LINES, PRICE_NOTE, coreService, entryPriceLabel, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
 
 /*
  * Home di Cura Privata, «Evoluzione v2» (11/11/2026). Sette blocchi, chiari e forti alternati:
@@ -49,11 +49,11 @@ export default function Home() {
         <div className="container-rc relative">
           <div className="pt-10 lg:max-w-[52%] lg:py-20">
             <h1 id="hero-titolo" className="display-xl hero-payoff text-ink">
-              <span className="block">Capisci.</span>
-              <span className="block">Chiedi un secondo parere.</span>
+              <span className="block">{PAYOFF_LINES[0]}</span>
               <span className="block">
-                <span className="marker marker-animate">Parla con un medico.</span>
+                <span className="marker marker-animate">{PAYOFF_LINES[1]}</span>
               </span>
+              <span className="block">{PAYOFF_LINES[2]}</span>
             </h1>
             <p className="mt-6 max-w-[32rem] text-xl text-ink-soft sm:text-[1.375rem] sm:leading-snug">{HERO_SUBTITLE}</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -101,7 +101,7 @@ export default function Home() {
       {pdp ? <DualEntry /> : null}
 
       {/* 2 · IL PRODOTTO D'INGRESSO */}
-      <section id="referto" aria-labelledby="referto-titolo" className={`scope-strong tone-capisci stage-petrol overflow-hidden py-10 sm:py-14`}>
+      <section id="referto" aria-labelledby="referto-titolo" className={`scope-strong tone-capisci stage-petrol overflow-hidden py-8 sm:py-14`}>
         <div className="container-rc">
           <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16">
             <div>
@@ -122,7 +122,8 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <Reveal>
+            {/* Ciclo 2, fase 3: su telefono la scheda «Il tuo report» è già nella prima schermata; qui solo da 640 px. */}
+            <Reveal className="hidden sm:block">
               <ReportTransform />
               <ol className="mt-9 hidden gap-x-4 gap-y-3 sm:grid sm:grid-cols-3">
                 {STEPS.map((t, i) => (
@@ -151,7 +152,7 @@ export default function Home() {
       </section>
 
       {/* 3 · SE UNA SPIEGAZIONE NON BASTA */}
-      <section id="servizi" aria-labelledby="servizi-titolo" className="py-10 sm:py-14">
+      <section id="servizi" aria-labelledby="servizi-titolo" className="py-8 sm:py-14">
         <div className="container-rc">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <h2 id="servizi-titolo" className="display-lg max-w-2xl">
@@ -173,7 +174,7 @@ export default function Home() {
       </section>
 
       {/* 4 · TRE LIVELLI */}
-      <section aria-labelledby="livelli-titolo" className="bg-mist py-10 sm:py-14">
+      <section aria-labelledby="livelli-titolo" className="bg-mist py-8 sm:py-14">
         <div className="container-rc">
           <div className="lg:flex lg:items-start lg:justify-between lg:gap-10">
             <h2 id="livelli-titolo" className="display-lg max-w-xl">
@@ -192,21 +193,21 @@ export default function Home() {
       </section>
 
       {/* 5 · FIDUCIA */}
-      <section aria-labelledby="fiducia-titolo" className="scope-strong bg-strong py-10 sm:py-14">
+      <section aria-labelledby="fiducia-titolo" className="scope-strong bg-strong py-8 sm:py-14">
         <div className="container-rc">
           <Trust />
         </div>
       </section>
 
       {/* 6 · LO STRUMENTO GRATUITO */}
-      <section aria-labelledby="preparati-titolo" className="bg-ivory py-10 sm:py-14">
+      <section aria-labelledby="preparati-titolo" className="bg-ivory py-8 sm:py-14">
         <div className="container-rc">
           <PrepBanner />
         </div>
       </section>
 
       {/* 7 · CHIUSURA */}
-      <section aria-labelledby="chiusura-titolo" className="scope-strong stage-teal py-10 sm:py-14">
+      <section aria-labelledby="chiusura-titolo" className="scope-strong stage-teal py-8 sm:py-14">
         <div className="container-rc grid grid-cols-[minmax(0,1fr)] items-end gap-8 lg:grid-cols-[1.3fr_0.7fr]">
           <div>
             {pdp ? (
