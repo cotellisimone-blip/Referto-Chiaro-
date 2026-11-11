@@ -73,7 +73,7 @@ export const GuideSchema = z
 export type Guide = z.infer<typeof GuideSchema>;
 
 /** Domini ammessi per le fonti: istituzioni sanitarie e risorse divulgative riconosciute. */
-export const SOURCE_DOMAINS = ["iss.it", "epicentro.iss.it", "salute.gov.it", "aifa.gov.it", "who.int", "nhs.uk", "medlineplus.gov", "labtestsonline.it", "labtestsonline.org", "issalute.it"];
+export const SOURCE_DOMAINS = ["iss.it", "epicentro.iss.it", "salute.gov.it", "aifa.gov.it", "who.int", "nhs.uk", "medlineplus.gov", "labtestsonline.it", "labtestsonline.org", "issalute.it", "fascicolosanitario.gov.it", "regione.sicilia.it"];
 
 /**
  * Espressioni vietate: diagnosi, giudizi su «normale/anormale», terapie, promesse.

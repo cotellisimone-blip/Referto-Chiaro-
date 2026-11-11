@@ -1,6 +1,7 @@
 import { TrackClicks } from "@/components/site/track";
 import type { Metadata, Viewport } from "next";
-import { SITE_URL, indexingEnabled } from "@/lib/seo";
+import { SITE_URL, indexingEnabled, jsonLd, organizationLd } from "@/lib/seo";
+import { readTitolare } from "@/domain/titolare";
 import localFont from "next/font/local";
 import { Suspense } from "react";
 import { SiteHeader, SiteHeaderView } from "@/components/site/site-header";
@@ -21,7 +22,7 @@ const manrope = localFont({
 export const metadata: Metadata = {
   title: { default: "Cura Privata — i tuoi referti, finalmente comprensibili", template: "%s · Cura Privata" },
   description:
-    "Una spiegazione semplice dei referti di laboratorio, un dossier ordinato e le domande giuste per il tuo medico. Uno strumento di comprensione, non una diagnosi.",
+    "Il tuo referto spiegato valore per valore, in parole semplici. Se serve, un videoconsulto con un medico o un secondo parere. Uno strumento informativo, non una diagnosi.",
   robots: indexingEnabled() ? { index: true, follow: true } : { index: false, follow: false },
   metadataBase: new URL(SITE_URL),
 };
@@ -34,10 +35,12 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  const org = organizationLd(readTitolare());
   return (
     <html lang="it" className={`${manrope.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: PREFS_INIT_SCRIPT }} />
+        {org ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(org) }} /> : null}
       </head>
       <body className="flex min-h-full flex-col">
         <a

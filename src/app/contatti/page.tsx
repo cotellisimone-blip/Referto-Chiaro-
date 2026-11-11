@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Prose } from "@/components/ui/draft-notice";
 import { readTitolare } from "@/domain/titolare";
 
-export const metadata: Metadata = { title: "Contatti" };
+export const metadata: Metadata = { title: "Contatti", description: "Come contattare Cura Privata. Per le emergenze chiama il 112: questo sito non è adatto alle urgenze." };
 
 export default function Page() {
   const t = readTitolare();

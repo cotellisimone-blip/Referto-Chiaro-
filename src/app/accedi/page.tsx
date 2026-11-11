@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { LoginForm } from "@/components/area/login-form";
 import { readFlags } from "@/lib/feature-flags";
 
-export const metadata: Metadata = { title: "Accedi" };
+export const metadata: Metadata = { title: "Accedi", description: "Accedi all'area personale di Cura Privata con un link via email, senza password." };
 
 /** I flag si leggono a ogni richiesta, mai al build: la pagina non deve «ricordare» l'ambiente di compilazione. */
 async function LoginAtRequest() {

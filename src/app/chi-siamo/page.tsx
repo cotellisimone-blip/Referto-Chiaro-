@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Prose } from "@/components/ui/draft-notice";
 
-export const metadata: Metadata = { title: "Il progetto" };
+export const metadata: Metadata = { title: "Il progetto", description: "Chi siamo e perché Cura Privata esiste: rendere chiari i referti e portarti da un medico vero quando serve. Che cosa facciamo e che cosa non facciamo." };
 
 export default function Page() {
   return (

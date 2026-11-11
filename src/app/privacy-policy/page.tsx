@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { DraftNotice, Prose } from "@/components/ui/draft-notice";
 
-export const metadata: Metadata = { title: "Informativa privacy" };
+export const metadata: Metadata = { title: "Informativa privacy", description: "Come Cura Privata tratta i dati personali e sanitari: finalità, basi giuridiche, conservazione, diritti e come esercitarli." };
 
 /*
  * Bozza di informativa (art. 13 GDPR). Descrive ciò che il software fa davvero oggi;

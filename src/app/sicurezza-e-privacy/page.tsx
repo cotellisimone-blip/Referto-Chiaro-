@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { Prose } from "@/components/ui/draft-notice";
 
-export const metadata: Metadata = { title: "Sicurezza dei dati" };
+export const metadata: Metadata = { title: "Sicurezza dei dati", description: "Come proteggiamo i tuoi documenti: cifratura, accessi registrati, medici che vedono solo ciò che scegli, nessun dato venduto o usato per pubblicità." };
 
 export default function Page() {
   return (

@@ -38,3 +38,34 @@ describe("feature gate fail-closed", () => {
     expect(() => requireCapability("aiProcessing", f)).not.toThrow();
   });
 });
+
+describe("profilo vetrina (ciclo 1)", () => {
+  it("spegne tutto ciò che tocca dati reali, soldi o medici, anche con gli interruttori accesi per errore", () => {
+    const f = readFlags({
+      SITE_PROFILE: "vetrina",
+      DEMO_MODE: "false",
+      PRODUCTION_COMPLIANCE_APPROVED: "true",
+      ENABLE_REAL_UPLOADS: "true",
+      ENABLE_AI_PROCESSING: "true",
+      ENABLE_LIVE_PAYMENTS: "true",
+      ENABLE_MEDICAL_SECOND_OPINION: "true",
+      ENABLE_MEDICAL_VIDEO_CONSULT: "true",
+      ENABLE_PUBLIC_SIGNUP: "true",
+      ENABLE_PUNTO_DI_PARTENZA_SAVE: "true",
+    });
+    expect(f.vetrina).toBe(true);
+    expect(f.demoMode).toBe(true);
+    expect(f.productionComplianceApproved).toBe(false);
+    for (const k of ["realUploads", "aiProcessing", "livePayments", "medicalSecondOpinion", "medicalVideoConsult", "publicSignup", "puntoDiPartenzaSave"] as const) {
+      expect(f[k]).toBe(false);
+      expect(() => requireCapability(k, f)).toThrow(CapabilityDisabledError);
+    }
+    expect(f.puntoDiPartenza).toBe(true);
+    expect(publicConfig(f).profile).toBe("vetrina");
+  });
+  it("si attiva solo con il valore «vetrina»", () => {
+    expect(readFlags({}).vetrina).toBe(false);
+    expect(readFlags({ SITE_PROFILE: "standard" }).vetrina).toBe(false);
+    expect(readFlags({ SITE_PROFILE: " Vetrina " }).vetrina).toBe(true);
+  });
+});

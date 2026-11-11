@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { DraftNotice, Prose } from "@/components/ui/draft-notice";
 
-export const metadata: Metadata = { title: "Accessibilità" };
+export const metadata: Metadata = { title: "Accessibilità", description: "Accessibilità di Cura Privata: testo grande, contrasto, navigazione da tastiera, tema scuro e come segnalarci un problema." };
 
 export default function Page() {
   return (

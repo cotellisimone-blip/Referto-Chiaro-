@@ -25,6 +25,13 @@ export interface Flags {
   puntoDiPartenza: boolean;
   /** Salvataggio delle risposte nell'area personale: predisposto, resta spento fino al gate privacy/clinico. */
   puntoDiPartenzaSave: boolean;
+  /**
+   * Profilo «vetrina» (ciclo 1, SITE_PROFILE="vetrina"): il sito può andare online prima della conformità.
+   * Forza la modalità dimostrativa e spegne tutto ciò che tocca dati sanitari reali, soldi veri o medici,
+   * anche se un interruttore fosse acceso per errore. Restano aperti pagine informative, strumenti gratuiti,
+   * referto di esempio e liste d'attesa. Vedi docs/cura-privata/LANCIO_VETRINA.md.
+   */
+  vetrina: boolean;
 }
 
 type Env = Record<string, string | undefined>;
@@ -32,7 +39,7 @@ type Env = Record<string, string | undefined>;
 const strictTrue = (v: string | undefined) => v === "true";
 
 export function readFlags(env: Env = process.env): Flags {
-  return {
+  const flags: Flags = {
     // Demo: "true" esplicito; senza variabile è attiva solo fuori produzione (in produzione resta spenta).
     demoMode: env.DEMO_MODE === "true" || (env.DEMO_MODE === undefined && env.NODE_ENV !== "production"),
     productionComplianceApproved: strictTrue(env.PRODUCTION_COMPLIANCE_APPROVED),
@@ -44,7 +51,23 @@ export function readFlags(env: Env = process.env): Flags {
     publicSignup: strictTrue(env.ENABLE_PUBLIC_SIGNUP),
     puntoDiPartenza: env.ENABLE_PUNTO_DI_PARTENZA !== "false",
     puntoDiPartenzaSave: strictTrue(env.ENABLE_PUNTO_DI_PARTENZA_SAVE),
+    vetrina: env.SITE_PROFILE?.trim().toLowerCase() === "vetrina",
   };
+  if (flags.vetrina) {
+    return {
+      ...flags,
+      demoMode: true,
+      productionComplianceApproved: false,
+      realUploads: false,
+      aiProcessing: false,
+      livePayments: false,
+      medicalSecondOpinion: false,
+      medicalVideoConsult: false,
+      publicSignup: false,
+      puntoDiPartenzaSave: false,
+    };
+  }
+  return flags;
 }
 
 /** Funzioni che toccano dati sanitari reali, soldi o prestazioni mediche. */
@@ -81,6 +104,7 @@ export function requireCapability(feature: Feature, flags: Flags = readFlags()):
 export function publicConfig(flags: Flags = readFlags()) {
   return {
     mode: flags.demoMode ? "demo" : flags.productionComplianceApproved ? "production" : "sandbox",
+    profile: flags.vetrina ? "vetrina" : "standard",
     capabilities: {
       realUploads: isCapabilityEnabled("realUploads", flags),
       aiProcessing: isCapabilityEnabled("aiProcessing", flags),

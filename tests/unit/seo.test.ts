@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { indexingEnabled, absoluteUrl, jsonLd, breadcrumbLd } from "@/lib/seo";
+import { indexingEnabled, absoluteUrl, jsonLd, breadcrumbLd, guideIndexable } from "@/lib/seo";
 import sitemap from "@/app/sitemap";
 import robots from "@/app/robots";
 
@@ -18,12 +18,15 @@ describe("seo", () => {
     expect(robots()).toEqual({ rules: { userAgent: "*", disallow: "/" } });
   });
 
-  it("con indicizzazione accesa: sitemap con guide e glossario, aree riservate escluse", () => {
+  it("con indicizzazione accesa: pagine pubbliche e guide pratiche sì; bozze cliniche, glossario e aree riservate no", () => {
     vi.stubEnv("ENABLE_INDEXING", "true");
     const urls = sitemap().map((e) => e.url);
     expect(urls).toContain(absoluteUrl("/guide"));
-    expect(urls.some((u) => u.includes("/guide/come-leggere-un-referto-di-laboratorio"))).toBe(true);
-    expect(urls.some((u) => u.includes("/glossario/"))).toBe(true);
+    expect(urls).toContain(absoluteUrl("/guide/fascicolo-sanitario-elettronico"));
+    // Ciclo 1: contenuti sanitari senza revisione medica fuori dagli indici
+    expect(urls.some((u) => u.includes("/guide/come-leggere-un-referto-di-laboratorio"))).toBe(false);
+    expect(urls.some((u) => u.includes("/glossario/"))).toBe(false);
+    expect(urls).not.toContain(absoluteUrl("/punto-di-partenza"));
     expect(urls.some((u) => /\/(area|medico|admin|accedi|api)/.test(u))).toBe(false);
     const r = robots();
     expect(r.sitemap).toBe(absoluteUrl("/sitemap.xml"));
@@ -34,5 +37,14 @@ describe("seo", () => {
     expect(jsonLd({ a: "</script>" })).not.toContain("</script>");
     const b = breadcrumbLd([{ name: "Guide", path: "/guide" }]);
     expect(b.itemListElement[0].item).toMatch(/^https:\/\/.+\/guide$/);
+  });
+});
+
+describe("indicizzazione per pagina (ciclo 1)", () => {
+  it("una guida clinica in bozza non è indicizzabile neanche con l'indicizzazione accesa; quella pratica sì", () => {
+    const on = { ENABLE_INDEXING: "true" };
+    expect(guideIndexable({ slug: "emocromo", reviewStatus: "draft-needs-clinical-review" }, on)).toBe(false);
+    expect(guideIndexable({ slug: "fascicolo-sanitario-elettronico", reviewStatus: "draft-needs-clinical-review" }, on)).toBe(true);
+    expect(guideIndexable({ slug: "fascicolo-sanitario-elettronico", reviewStatus: "draft-needs-clinical-review" }, {})).toBe(false);
   });
 });

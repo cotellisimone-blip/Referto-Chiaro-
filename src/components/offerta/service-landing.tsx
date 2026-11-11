@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import { CORE_SERVICES, INFORMATIVE_NOTE, PRICE_NOTE, coreService, priceDisplay, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS, VIDEOS } from "@/content/media";
 import { PriceTag } from "./price-tag";
+import { readFlags } from "@/lib/feature-flags";
 import { VideoSlot } from "./video-slot";
 import { ReportTransform } from "./report-visuals";
 import { CallCard, OpinionSheet } from "./next-levels";
@@ -70,6 +71,7 @@ export function ServiceLanding({
   const s = coreService(id);
   const look = IDENTITY[id];
   const prices = publicPricesEnabled();
+  const vetrina = readFlags().vetrina;
   const others = CORE_SERVICES.filter((x) => x.id !== id).sort((a, b) => a.level.n - b.level.n);
   const facts = [
     { icon: Clock3, label: "Tempi", text: s.timing },
@@ -101,6 +103,15 @@ export function ServiceLanding({
               <p className="mt-5">
                 <Link href={secondaryCta.href} className="link inline-flex min-h-11 items-center text-lg font-semibold">
                   {secondaryCta.label}
+                </Link>
+              </p>
+            ) : null}
+            {vetrina ? (
+              // Profilo vetrina: il servizio non è ancora aperto. Lo diciamo accanto all'azione, con la lista d'attesa.
+              <p className="mt-4 max-w-xl text-lg text-ink-soft" data-testid="vetrina-avviso">
+                Il servizio non è ancora aperto: puoi provarlo su un esempio inventato.{" "}
+                <Link href={`/stato-del-progetto#stato-${id}`} className="link font-semibold">
+                  Avvisami quando parte
                 </Link>
               </p>
             ) : null}

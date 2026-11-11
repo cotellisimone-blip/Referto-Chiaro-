@@ -16,8 +16,9 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 describe("offerta: tre servizi, prezzi da un'unica fonte", () => {
-  it("i tre servizi protagonisti, nell'ordine del payoff", () => {
-    expect(CORE_SERVICES.map((s) => s.name)).toEqual(["Capisci il tuo referto", "Chiedi un secondo parere", "Parla con un medico"]);
+  it("i tre servizi protagonisti, nell'ordine dei livelli e dei prezzi (ciclo 1)", () => {
+    expect(CORE_SERVICES.map((s) => s.name)).toEqual(["Capisci il tuo referto", "Parla con un medico", "Chiedi un secondo parere"]);
+    expect(CORE_SERVICES.map((s) => s.level.n)).toEqual([1, 2, 3]);
   });
 
   it("listino Evoluzione v2: primo referto 2,90 €, poi 7,90 € · medico 79 € · secondo parere da 149 €", () => {

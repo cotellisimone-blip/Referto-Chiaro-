@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { WaitlistForm } from "@/components/site/waitlist-form";
 
-export const metadata: Metadata = { title: "Per le strutture" };
+export const metadata: Metadata = { title: "Per le strutture", description: "Cura Privata per laboratori, poliambulatori e strutture sanitarie: referti più comprensibili per i pazienti. Lascia un contatto per saperne di più." };
 
 const OFFER = [
   { title: "Spiegazioni in linguaggio semplice", text: "Accanto al referto, una spiegazione generale di che cosa misura ciascun esame, consegnata insieme ai risultati." },

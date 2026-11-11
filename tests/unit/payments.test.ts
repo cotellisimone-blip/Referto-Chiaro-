@@ -4,6 +4,11 @@ import { simulatedProvider } from "@/lib/payments/simulated";
 import { readFlags, CapabilityDisabledError } from "@/lib/feature-flags";
 
 describe("scelta del fornitore di pagamento", () => {
+  it("profilo vetrina: sempre simulato, anche con una chiave di test o live", () => {
+    expect(getPaymentProvider({ SITE_PROFILE: "vetrina", STRIPE_SECRET_KEY: "sk_test_abc" }).kind).toBe("simulated");
+    expect(getPaymentProvider({ SITE_PROFILE: "vetrina", STRIPE_SECRET_KEY: "sk_live_abc" }).kind).toBe("simulated");
+  });
+
   it("senza chiave: simulato", () => {
     expect(getPaymentProvider({}).kind).toBe("simulated");
     expect(getPaymentProvider({ STRIPE_SECRET_KEY: "  " }).kind).toBe("simulated");

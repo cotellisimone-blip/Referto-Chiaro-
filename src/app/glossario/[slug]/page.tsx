@@ -6,7 +6,7 @@ import { GLOSSARY, getGlossaryEntry } from "@/content/glossario";
 import { getGuide } from "@/content/guides";
 import { Breadcrumbs } from "@/components/guide/breadcrumbs";
 import { ReviewNotice } from "@/components/guide/review-notice";
-import { absoluteUrl, breadcrumbLd, jsonLd } from "@/lib/seo";
+import { NOINDEX_DRAFT, absoluteUrl, breadcrumbLd, glossaryIndexable, indexingEnabled, jsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
   return GLOSSARY.map((e) => ({ slug: e.slug }));
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const e = getGlossaryEntry(slug);
   if (!e) return {};
-  return { title: `${e.term}: che cos'è`, description: e.definition.slice(0, 158), alternates: { canonical: absoluteUrl(`/glossario/${e.slug}`) } };
+  return { title: `${e.term}: che cos'è`, description: e.definition.slice(0, 158), alternates: { canonical: absoluteUrl(`/glossario/${e.slug}`) }, ...(indexingEnabled() && !glossaryIndexable() ? { robots: NOINDEX_DRAFT } : {}) };
 }
 
 export default async function VocePage({ params }: { params: Promise<{ slug: string }> }) {

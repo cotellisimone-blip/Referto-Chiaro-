@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { FaqFinder } from "@/components/ui/faq-finder";
 import { FAQ } from "@/content/faq";
 
-export const metadata: Metadata = { title: "Domande frequenti" };
+export const metadata: Metadata = { title: "Domande frequenti", description: "Domande frequenti su Cura Privata: come funziona la spiegazione dei referti, prezzi, privacy, quando interviene un medico e che cosa non facciamo." };
 
 const GROUPS = [
   { key: "servizio", title: "Il servizio" },

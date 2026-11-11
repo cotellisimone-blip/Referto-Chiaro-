@@ -316,4 +316,71 @@ export const GUIDE_COME_LEGGERE: Guide[] = [
     lastUpdated: "2026-11-07",
     reviewStatus: "draft-needs-clinical-review",
   },
+  {
+    slug: "fascicolo-sanitario-elettronico",
+    title: "Fascicolo Sanitario Elettronico: trovare e leggere i referti",
+    metaDescription: "Come entrare nel Fascicolo Sanitario Elettronico con SPID, CIE o CNS, dove trovare i referti, come scaricarli in PDF e prepararli per il medico.",
+    category: "come-leggere",
+    examName: "Fascicolo Sanitario Elettronico",
+    aliases: ["FSE", "fascicolo sanitario", "referti online", "scaricare referto"],
+    summary: "Il Fascicolo Sanitario Elettronico raccoglie in un unico posto online i documenti sanitari: referti di laboratorio, di radiologia, lettere di dimissione e altro. Si consulta dal portale della propria Regione con SPID, CIE o CNS e i referti si possono scaricare in PDF.",
+    sections: {
+      whatItMeasures: [
+        "Il Fascicolo Sanitario Elettronico (FSE) non misura nulla: è l'archivio digitale dei tuoi documenti sanitari. Può contenere referti di laboratorio, di radiologia, di visite specialistiche e di anatomia patologica, verbali di pronto soccorso, lettere di dimissione, prescrizioni, vaccinazioni e il profilo sanitario sintetico compilato dal medico di famiglia.",
+        "Ogni Regione ha il proprio portale, collegato a un'infrastruttura nazionale. Non tutti i documenti sono ancora presenti per tutte le strutture: alcune stanno ancora collegando i loro sistemi, per cui un referto recente può mancare.",
+      ],
+      whyRequested: [
+        "Il Fascicolo serve a te e ai professionisti che ti curano: invece di cercare fogli di carta, trovi i referti in un solo posto, anche a distanza di anni. Se dai il consenso, il medico che ti segue può consultarlo; puoi anche oscurare singoli documenti e vedere chi ha fatto accesso.",
+      ],
+      howToRead: [
+        "Un referto scaricato dal Fascicolo è lo stesso documento firmato dalla struttura che ha eseguito l'esame: contiene i dati del laboratorio, il nome degli esami, i risultati, le unità di misura e gli intervalli di riferimento. Si legge come qualsiasi referto di laboratorio, partendo dal nome dell'esame, dal numero e dall'unità.",
+        "Conserva il PDF originale senza modificarlo: è il documento che fa fede. Se vuoi confrontare esami fatti in momenti diversi, scarica i referti precedenti dallo stesso Fascicolo e controlla che l'unità di misura e il laboratorio siano gli stessi.",
+      ],
+      factors: [
+        "La struttura che ha eseguito l'esame potrebbe non essere ancora collegata al Fascicolo.",
+        "Tra l'esame e la comparsa del referto può passare qualche giorno.",
+        "Senza SPID, CIE o CNS attivi non si può accedere al portale.",
+        "Il consenso alla consultazione da parte dei medici è una scelta tua, modificabile.",
+        "I documenti oscurati restano visibili a te ma non ai professionisti.",
+      ],
+    },
+    procedure: {
+      preparation: [
+        "Ti servono un'identità digitale attiva (SPID), oppure la Carta d'Identità Elettronica (CIE) con il suo PIN, oppure la Tessera Sanitaria attivata come Carta Nazionale dei Servizi (CNS) con lettore. Il portale si apre anche da smartphone.",
+      ],
+      whatToExpect: [
+        "Dal sito nazionale del Fascicolo scegli la tua Regione ed entri nel portale regionale con SPID, CIE o CNS. Nella sezione dei documenti trovi i referti divisi per tipo e per data; ogni documento si apre o si scarica in PDF.",
+        "Nella sezione dedicata alla privacy puoi dare o revocare il consenso alla consultazione da parte dei professionisti sanitari, oscurare singoli documenti e vedere l'elenco degli accessi.",
+      ],
+      duration: "Pochi minuti, se hai già SPID, CIE o CNS attivi.",
+      afterwards: [
+        "Salva il PDF in una cartella che ritrovi facilmente e portalo alla visita, stampato o sul telefono. Se vuoi capirlo prima, puoi usare le nostre guide agli esami o preparare le domande da fare al medico.",
+      ],
+      reportContains: [
+        "Dati della struttura e data dell'esame.",
+        "Nome di ogni esame, spesso con una sigla.",
+        "Risultato, unità di misura e intervallo di riferimento del laboratorio.",
+        "Eventuali note sul campione o sul metodo.",
+        "Firma digitale della struttura che ha emesso il referto.",
+      ],
+    },
+    questionsForDoctor: [
+      "Riesce a consultare il mio Fascicolo, o preferisce che le porti il PDF?",
+      "Quali referti precedenti è utile confrontare con questi?",
+      "Ci sono documenti che dovrei avere e che non trovo nel Fascicolo?",
+    ],
+    faq: [
+      { q: "Non trovo un referto recente nel Fascicolo: che cosa faccio?", a: "Può volerci qualche giorno, oppure la struttura che ha eseguito l'esame non è ancora collegata. Chiedi direttamente alla struttura la copia del referto: hai diritto ad averla." },
+      { q: "Il medico può vedere tutto il mio Fascicolo?", a: "Solo se hai dato il consenso alla consultazione, e solo i documenti che non hai oscurato. Puoi cambiare queste scelte quando vuoi dalla sezione privacy del portale della tua Regione." },
+      { q: "Posso usare il PDF del Fascicolo con Cura Privata?", a: "Quando il servizio sarà aperto, sì: è il formato più adatto, perché il testo si legge senza errori. Oggi il sito è una versione dimostrativa e non accetta documenti reali." },
+    ],
+    relatedGuides: ["come-leggere-un-referto-di-laboratorio", "intervalli-di-riferimento", "cosa-chiedere-al-medico"],
+    glossaryTerms: ["intervallo-di-riferimento", "unita-di-misura"],
+    sources: [
+      { title: "Fascicolo Sanitario Elettronico — portale nazionale", url: "https://www.fascicolosanitario.gov.it/" },
+      { title: "Fascicolo Sanitario Elettronico: domande frequenti — Regione Siciliana", url: "https://www.regione.sicilia.it/istituzioni/regione/strutture-regionali/assessorato-salute/dipartimento-pianificazione-strategica/fascicolo-sanitario-elettronico-domande-frequenti" },
+    ],
+    lastUpdated: "2026-11-11",
+    reviewStatus: "draft-needs-clinical-review",
+  },
 ];

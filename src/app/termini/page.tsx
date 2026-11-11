@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { DraftNotice, Prose } from "@/components/ui/draft-notice";
 
-export const metadata: Metadata = { title: "Termini del servizio" };
+export const metadata: Metadata = { title: "Termini del servizio", description: "Termini del servizio di Cura Privata: che cosa offre, che cosa non è, prezzi, pagamenti, rimborsi e limiti delle spiegazioni informative." };
 
 export default function Page() {
   return (
