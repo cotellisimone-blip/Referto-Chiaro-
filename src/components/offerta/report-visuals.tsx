@@ -9,7 +9,7 @@ import { clsx } from "clsx";
 
 const VALUES = [
   { name: "Emoglobina", value: "13,9", unit: "g/dL", range: "12,0 – 16,0", pos: 52, note: "Dentro l'intervallo del laboratorio" },
-  { name: "Glicemia", value: "104", unit: "mg/dL", range: "70 – 99", pos: 86, out: true, note: "Sopra l'intervallo: chiedilo al medico" },
+  { name: "Glicemia", value: "104", unit: "mg/dL", range: "70 – 99", pos: 86, out: true, note: "Sopra l'intervallo del laboratorio" },
   { name: "TSH", value: "1,8", unit: "mUI/L", range: "0,4 – 4,0", pos: 44, note: "Dentro l'intervallo del laboratorio" },
 ] as const;
 

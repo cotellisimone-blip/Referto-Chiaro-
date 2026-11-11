@@ -80,31 +80,15 @@ test("fase 3: su telefono il passo attuale è scritto per intero e il facsimile 
   await expectNoHorizontalOverflow(page);
 });
 
-test("fase 3: «prima e dopo» su telefono è una scelta tra due fogli interi, da tastiera", async ({ page }) => {
+test("«prima e dopo» con il cursore, anche su telefono, da tastiera", async ({ page }) => {
   await page.goto("/referti");
-  const mobile = (page.viewportSize()?.width ?? 1440) < 640;
-  if (!mobile) {
-    await expect(page.getByRole("slider", { name: /Sposta per confrontare/ })).toBeVisible();
-    return;
-  }
-  await expect(page.getByRole("slider")).toHaveCount(0);
-  const prima = page.getByRole("radio", { name: /Prima/ });
-  const dopo = page.getByRole("radio", { name: /Dopo/ });
-  await expect(dopo).toBeChecked();
-  const sheet = page.locator("figure [aria-live]");
-  await expect(sheet.getByText("Spiegato da Cura Privata")).toBeVisible();
-  await dopo.focus();
-  await page.keyboard.press("ArrowLeft");
-  await expect(prima).toBeChecked();
-  await expect(sheet.getByText(/Laboratorio Analisi · referto/)).toBeVisible();
-  await expect(sheet.getByText("Spiegato da Cura Privata")).toHaveCount(0);
-  // Nessuna parola tagliata: ogni cella del referto sta dentro il foglio.
-  const clipped = await page.evaluate(() => {
-    const sheet = document.querySelector("figure .font-mono");
-    if (!sheet) return ["foglio assente"];
-    const box = sheet.getBoundingClientRect();
-    return [...sheet.querySelectorAll("span")].filter((el) => el.scrollWidth > el.clientWidth + 1 || el.getBoundingClientRect().right > box.right + 0.5).map((el) => el.textContent ?? "");
-  });
-  expect(clipped).toEqual([]);
+  const slider = page.getByRole("slider", { name: /Sposta per confrontare/ });
+  await expect(slider).toBeVisible();
+  await expect(page.getByRole("radio", { name: /Prima/ })).toHaveCount(0);
+  await slider.focus();
+  await page.keyboard.press("Home");
+  await expect(slider).toHaveValue("0");
+  await page.keyboard.press("End");
+  await expect(slider).toHaveValue("100");
   await expectNoHorizontalOverflow(page);
 });

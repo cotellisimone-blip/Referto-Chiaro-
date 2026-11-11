@@ -18,7 +18,7 @@ test("home: doppio ingresso, gratis e primo referto, senza rompere la V2", async
   const entries = page.getByRole("region", { name: "Da dove vuoi iniziare" });
   await expect(entries.getByRole("link", { name: /Parti dalla tua salute/ })).toHaveAttribute("href", "/punto-di-partenza");
   await expect(entries.getByRole("link", { name: /Rendilo chiaro/ })).toContainText("2,90");
-  await expect(page.getByRole("heading", { name: "Se una spiegazione non basta." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Parti gratis. Poi scegli tu fin dove arrivare." })).toBeVisible();
   await expect(page.locator("footer").getByRole("link", { name: "Punto di Partenza" })).toBeVisible();
   await noOverflow(page);
 });

@@ -35,7 +35,7 @@ export function DualEntry() {
                 </span>
                 <span className="min-w-0">
                   <span className="entry-title">Parti dalla tua salute.</span>
-                  <span className="mt-2 block text-lg leading-snug text-ink-soft">Crea gratuitamente il tuo Punto di Partenza e prepara una scheda semplice da discutere con il medico.</span>
+                  <span className="mt-2 block text-lg leading-snug text-ink-soft">Crea gratuitamente il tuo Punto di Partenza e prepara una scheda semplice per la prossima visita.</span>
                 </span>
               </span>
               <span className="entry-foot">

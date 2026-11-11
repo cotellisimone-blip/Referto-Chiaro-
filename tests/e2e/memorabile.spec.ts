@@ -113,19 +113,21 @@ test.describe("home «Evoluzione v2»", () => {
     await expect(page.locator("#referto")).toContainText("2,90 €");
     await expect(page.locator("#referto")).toContainText("poi 7,90 € per referto");
     await expect(page.locator("#referto").getByRole("link", { name: "Rendi chiaro il mio referto" })).toHaveAttribute("href", "/referti");
-    // I due livelli umani, distinti dal bisogno
-    await expect(page.getByRole("heading", { name: "Se una spiegazione non basta." })).toBeVisible();
-    await expect(page.locator("#servizi")).toContainText("non so quale specialista mi serve");
-    await expect(page.locator("#servizi")).toContainText("voglio un'altra valutazione");
-    await expect(page.locator("#servizi").getByRole("link", { name: "Chiedi un secondo parere" })).toHaveAttribute("href", "/servizi/secondo-parere");
+    // «Home più calma» (11/11/2026): il referto prima e dopo, con il cursore, anche su telefono
+    await expect(page.locator("#referto").getByRole("slider", { name: /Sposta per confrontare/ })).toBeVisible();
+    // Niente più blocco «Se una spiegazione non basta.»: i servizi con un medico si presentano una volta, nei livelli
+    await expect(page.getByRole("heading", { name: "Se una spiegazione non basta." })).toHaveCount(0);
+    await expect(page.locator(".levels").getByRole("link", { name: /Secondo parere|Approfondisci/ }).first()).toHaveAttribute("href", "/servizi/secondo-parere");
     // I tre livelli e la fiducia
     await expect(page.getByRole("heading", { name: "Parti gratis. Poi scegli tu fin dove arrivare." })).toBeVisible();
     for (const verb of ["Parti", "Capisci", "Orientati", "Approfondisci"]) await expect(page.locator(".levels")).toContainText(verb);
-    await expect(page.getByRole("heading", { name: /Rigoroso per il tuo medico/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Pochi fatti, detti chiari." })).toBeVisible();
     await expect(page.getByRole("link", { name: /Sei un medico/ })).toHaveAttribute("href", "/per-i-medici");
     await expect(page.getByRole("heading", { name: /Prima capisci da dove parti\./ })).toBeVisible();
     // Mai un medico che rivede «Capisci», mai conti alla rovescia
     const text = (await main.innerText()).toLowerCase();
+    // «Troppi chiedi a un dottore»: la parola «medic…» compare poche volte (prima erano 20 su desktop e 15 su telefono)
+    expect((text.match(/medic/g) ?? []).length, "menzioni di «medico»").toBeLessThanOrEqual(8);
     for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra"]) expect(text).not.toContain(bad);
     // Barra d'aiuto mobile: nascosta sulla hero (non compete con le due azioni), visibile scorrendo
     if (isMobile) {
@@ -162,9 +164,9 @@ test.describe("home «Evoluzione v2»", () => {
     // 4. Sono un medico: un clic
     await page.getByRole("link", { name: /Sei un medico/ }).click();
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Una piattaforma seria");
-    // 5. Prepararsi alla visita: un clic
+    // 5. Prepararsi alla visita: un clic, dal piè di pagina (la home più calma non ha più il suo blocco)
     await page.goto("/");
-    await page.getByRole("link", { name: "Prepara la mia lista" }).click();
+    await page.locator("footer").getByRole("link", { name: "Preparati alla visita" }).click();
     await expect(page).toHaveURL(/preparati-alla-visita/);
   });
 });

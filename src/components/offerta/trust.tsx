@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, Ban, Building2, Cpu, Eye, LockKeyhole, Stethoscope } from "lucide-react";
+import { ArrowRight, Ban, Building2, Cpu, Eye, LockKeyhole } from "lucide-react";
 import { readTitolare } from "@/domain/titolare";
 
 const POINTS = [
-  { icon: Eye, q: "Chi vede i documenti", a: "Tu. Un medico vede solo quelli che scegli di condividere." },
-  { icon: Stethoscope, q: "Quando interviene un medico", a: "Nel videoconsulto e nel secondo parere: abilitato e identificabile." },
+  { icon: Eye, q: "Chi vede i documenti", a: "Tu, e solo chi scegli tu." },
   { icon: Cpu, q: "Che cosa resta automatico", a: "La spiegazione del referto. Nessun medico la rivede, e i numeri restano quelli del documento." },
   { icon: LockKeyhole, q: "Dati e privacy", a: "Mai venduti né usati per la pubblicità. Nelle email, mai il contenuto del referto." },
   { icon: Ban, q: "Che cosa non facciamo", a: "Diagnosi automatiche, prescrizioni, urgenze." },
@@ -25,7 +24,7 @@ export function Trust() {
       <div className="lg:sticky lg:top-28 lg:self-start">
         <p className="eyebrow">Fiducia</p>
         <h2 id="fiducia-titolo" className="display-lg mt-4 text-ink">
-          Chiaro per te. Rigoroso per il tuo medico.
+          Pochi fatti, detti chiari.
         </h2>
         <div className="mt-8 flex flex-col items-start gap-3">
           <Link href="/sicurezza-e-privacy" className="btn btn-mint btn-lg">
