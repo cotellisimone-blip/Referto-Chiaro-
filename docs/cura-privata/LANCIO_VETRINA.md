@@ -6,7 +6,9 @@
 **Che cosa garantisce il codice** (test in `tests/unit/feature-flags.test.ts`, `payments.test.ts`, `seo.test.ts`):
 - il profilo forza la demo e spegne caricamenti, AI, pagamenti, servizi medici, registrazione e salvataggio del Punto di Partenza, anche se un interruttore fosse acceso per errore;
 - il checkout è sempre simulato, anche con una chiave Stripe configurata;
-- accanto all'azione principale di ogni servizio compare «Il servizio non è ancora aperto… Avvisami quando parte», che porta alla lista d'attesa;
+- **nessun account personale** (ciclo 2): la richiesta di accesso con un'email vera risponde «registrazione chiusa» e non salva né l'indirizzo né i consensi; si prova solo con l'account demo condiviso, che contiene già un referto inventato. Su `/accedi` il modulo email è sostituito dalla lista d'attesa;
+- l'azione principale di ogni servizio è «Avvisami quando parte» e porta alla lista d'attesa sulla pagina del servizio; accanto c'è la prova senza registrazione (referto di esempio per Capisci, account demo per gli altri due). Lo stesso vale per `/prezzi` e «Ti aiutiamo a scegliere»;
+- tutto questo è verificato da `npm run test:e2e:vetrina`, che compila il profilo vetrina in `.next-vetrina` e lo prova su desktop e telefono;
 - con `ENABLE_INDEXING=true` vanno negli indici solo le pagine pubbliche e le guide pratiche (oggi: Fascicolo Sanitario Elettronico); guide cliniche, glossario e Punto di Partenza restano `noindex` finché un medico non li ha revisionati;
 - il blocco «Chi c'è dietro», la riga nel fondo pagina, i contatti e i dati strutturati dell'organizzazione compaiono solo con nome e P.IVA veri (`PUBLIC_OWNER_*`).
 

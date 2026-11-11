@@ -63,6 +63,10 @@ export async function requestMagicLink(args: { email: string; consents: ConsentK
   const email = normalizeEmail(args.email);
   if (!email) return { ok: false, code: "invalid-email" };
   const flags = readFlags();
+  // Ciclo 2, fase 1: la vetrina è online prima della conformità. Nessuno crea o apre un account personale con la
+  // propria email (né con quella di un altro): si prova solo con l'account demo condiviso. Restano ammessi gli
+  // indirizzi di domini riservati ai test, che non appartengono a nessuno.
+  if (flags.vetrina && !TEST_EMAIL.test(email)) return { ok: false, code: "signup-closed" };
   const required = REQUIRED_CONSENTS;
   const token = newToken();
   const out = await withSystem(async (tx) => {

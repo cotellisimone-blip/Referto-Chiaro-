@@ -10,13 +10,19 @@ export const metadata: Metadata = { title: "Accedi", description: "Accedi all'ar
 /** I flag si leggono a ogni richiesta, mai al build: la pagina non deve «ricordare» l'ambiente di compilazione. */
 async function LoginAtRequest() {
   await connection();
-  return <LoginForm demoMode={readFlags().demoMode} />;
+  const flags = readFlags();
+  return <LoginForm demoMode={flags.demoMode} vetrina={flags.vetrina} />;
 }
 
 export default function AccediPage() {
   return (
     <>
-      <PageHeader compact eyebrow="Area personale" title="Il tuo archivio, visibile solo a te." lead="Nessuna password da ricordare: un link via email. Oppure entra con l'account demo e prova subito." />
+      <PageHeader compact eyebrow="Area personale" title="Il tuo archivio, visibile solo a te." lead={
+          readFlags().vetrina
+            ? "Oggi si prova con l'account demo: referti inventati, nessuna registrazione."
+            : "Nessuna password da ricordare: un link via email. Oppure entra con l'account demo e prova subito."
+        }
+      />
       <div className="container-rc py-10 sm:py-14">
         <Suspense fallback={<div className="h-64 animate-pulse rounded-2xl bg-mist" />}>
           <LoginAtRequest />

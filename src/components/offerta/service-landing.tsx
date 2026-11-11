@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ArrowRight, Check, CircleDashed, Clock3, Gift, UserRound, X } from "lucide-react";
 import { clsx } from "clsx";
-import { CORE_SERVICES, INFORMATIVE_NOTE, PRICE_NOTE, coreService, priceDisplay, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
+import { CORE_SERVICES, INFORMATIVE_NOTE, PRICE_NOTE, VETRINA_TRY, coreService, priceDisplay, publicPricesEnabled, serviceStart, type CoreServiceId } from "@/domain/offerta";
+import { WAITLIST_INTEREST } from "@/content/stato-progetto";
+import { WaitlistForm } from "@/components/site/waitlist-form";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS, VIDEOS } from "@/content/media";
 import { PriceTag } from "./price-tag";
 import { readFlags } from "@/lib/feature-flags";
@@ -72,6 +74,8 @@ export function ServiceLanding({
   const look = IDENTITY[id];
   const prices = publicPricesEnabled();
   const vetrina = readFlags().vetrina;
+  const start = serviceStart(id);
+  const interest = WAITLIST_INTEREST[id];
   const others = CORE_SERVICES.filter((x) => x.id !== id).sort((a, b) => a.level.n - b.level.n);
   const facts = [
     { icon: Clock3, label: "Tempi", text: s.timing },
@@ -94,24 +98,24 @@ export function ServiceLanding({
             <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:gap-10">
               {prices ? <PriceTag id={s.id} size="lg" /> : null}
               <div className="flex flex-col gap-3 sm:flex-row">
-                <Link href={s.startHref} data-track={look.track} className={clsx("btn btn-lg", look.strong ? "btn-mint" : "btn-primary")}>
-                  {look.cta} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                <Link href={start.href} data-track={look.track} className={clsx("btn btn-lg", look.strong ? "btn-mint" : "btn-primary")}>
+                  {vetrina ? start.label : look.cta} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                 </Link>
               </div>
             </div>
-            {secondaryCta ? (
+            {vetrina ? (
+              // Ciclo 2, fase 1. Profilo vetrina: il servizio non è aperto. L'azione principale porta alla lista d'attesa;
+              // accanto, la prova senza registrazione (esempio o account demo condiviso). Mai un modulo di registrazione.
+              <div className="mt-5 max-w-xl" data-testid="vetrina-avviso">
+                <p className="text-lg text-ink-soft">Il servizio non è ancora aperto. Lasciaci la tua email e ti avvisiamo quando parte; intanto puoi provarlo con dati inventati.</p>
+                <Link href={VETRINA_TRY[id].href} className="link mt-2 inline-flex min-h-11 items-center text-lg font-semibold">
+                  {VETRINA_TRY[id].label}
+                </Link>
+              </div>
+            ) : secondaryCta ? (
               <p className="mt-5">
                 <Link href={secondaryCta.href} className="link inline-flex min-h-11 items-center text-lg font-semibold">
                   {secondaryCta.label}
-                </Link>
-              </p>
-            ) : null}
-            {vetrina ? (
-              // Profilo vetrina: il servizio non è ancora aperto. Lo diciamo accanto all'azione, con la lista d'attesa.
-              <p className="mt-4 max-w-xl text-lg text-ink-soft" data-testid="vetrina-avviso">
-                Il servizio non è ancora aperto: puoi provarlo su un esempio inventato.{" "}
-                <Link href={`/stato-del-progetto#stato-${id}`} className="link font-semibold">
-                  Avvisami quando parte
                 </Link>
               </p>
             ) : null}
@@ -203,6 +207,21 @@ export function ServiceLanding({
           </div>
         </div>
       </section>
+
+      {vetrina && interest ? (
+        <section id="avvisami" aria-labelledby="avvisami-titolo" className="scroll-mt-24 border-b border-line bg-mist py-12 sm:py-16">
+          <div className="container-rc max-w-2xl">
+            <p className="eyebrow">Lista d&apos;attesa</p>
+            <h2 id="avvisami-titolo" className="display-lg mt-3 text-[2rem] sm:text-[2.5rem]">
+              Avvisami quando parte.
+            </h2>
+            <p className="mt-3 text-lg text-ink-soft">Solo la tua email, per un interesse non vincolante. Non scrivere informazioni sulla tua salute.</p>
+            <div className="mt-6">
+              <WaitlistForm interest={interest} />
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       {children}
 

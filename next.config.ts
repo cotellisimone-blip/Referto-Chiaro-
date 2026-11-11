@@ -35,6 +35,8 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // Ciclo 2: una seconda build (profilo vetrina) può vivere accanto a quella standard, per i test e2e della vetrina.
+  ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   cacheComponents: true,
   // Driver del database e PDF: restano moduli esterni, non vengono impacchettati nel bundle server.
   serverExternalPackages: ["@electric-sql/pglite", "pg", "pdf-lib", "@pdf-lib/fontkit", "unpdf"],

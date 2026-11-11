@@ -251,6 +251,29 @@ export function coreService(id: CoreServiceId): CoreService {
   return CORE_SERVICES.find((s) => s.id === id)!;
 }
 
+/** Profilo vetrina (SITE_PROFILE=vetrina), letto come in src/lib/feature-flags.ts. */
+export function isVetrina(env: Env = process.env): boolean {
+  return env.SITE_PROFILE?.trim().toLowerCase() === "vetrina";
+}
+
+/**
+ * Ciclo 2, fase 1: dove porta l'azione principale di un servizio. Nel profilo standard si entra nell'area personale;
+ * in vetrina i servizi non sono aperti, quindi l'azione porta alla lista d'attesa di quel servizio (sulla sua pagina),
+ * mai a una registrazione.
+ */
+export function serviceStart(id: CoreServiceId, env: Env = process.env): { href: string; label: string; waitlist: boolean } {
+  const s = coreService(id);
+  if (isVetrina(env)) return { href: `${s.href}#avvisami`, label: "Avvisami quando parte", waitlist: true };
+  return { href: s.startHref, label: s.startLabel, waitlist: false };
+}
+
+/** In vetrina, dove si prova il servizio senza registrarsi: l'esempio (Capisci) o l'account demo condiviso. */
+export const VETRINA_TRY: Record<CoreServiceId, { href: string; label: string }> = {
+  capisci: { href: "/referti/esempio", label: "Provalo su un referto di esempio" },
+  "parla-con-un-medico": { href: "/accedi?next=/area-personale/appuntamenti", label: "Provalo con l'account demo" },
+  "secondo-parere": { href: "/accedi?next=/area-personale/secondo-parere", label: "Provalo con l'account demo" },
+};
+
 /** Servizio pubblico a partire dal servizio interno di un ordine. */
 export function serviceForOrder(orderService: string): CoreService | null {
   return CORE_SERVICES.find((s) => s.orderService === orderService) ?? null;
@@ -306,8 +329,8 @@ export function pickerServices(env: Env = process.env) {
     id: s.id,
     name: s.name,
     href: s.href,
-    startHref: s.startHref,
-    startLabel: s.startLabel,
+    startHref: serviceStart(s.id, env).href,
+    startLabel: serviceStart(s.id, env).label,
     price: prices ? priceLabel(s.id, env) : null,
     need: s.need,
     level: s.level,

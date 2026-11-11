@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, Clock3, FileText, Stethoscope, UserRound, Video } from "lucide-react";
-import { CORE_SERVICES, PRICE_NOTE, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled, upgradeCostCents, upgradeEnabled } from "@/domain/offerta";
+import { CORE_SERVICES, PRICE_NOTE, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled, upgradeCostCents, upgradeEnabled, serviceStart } from "@/domain/offerta";
 import { PriceTag } from "@/components/offerta/price-tag";
 
 export const metadata: Metadata = {
@@ -67,8 +67,8 @@ export default function PrezziPage() {
                       ))}
                     </ul>
                     <div className="mt-auto flex flex-col gap-2 pt-8">
-                      <Link href={s.startHref} className="btn btn-primary">
-                        {s.startLabel} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                      <Link href={serviceStart(s.id).href} className="btn btn-primary">
+                        {serviceStart(s.id).label} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                       </Link>
                       <Link href={s.href} className="btn btn-ghost">
                         Dettagli del servizio

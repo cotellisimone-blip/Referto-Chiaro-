@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, FlaskConical, Loader2, MailCheck } from "lucide-react";
 import { api } from "./api";
+import { WaitlistForm } from "@/components/site/waitlist-form";
 
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; link?: string; delivery: "on-screen" | "email" | "unavailable" | "email-failed" } | { kind: "error"; message: string };
 
@@ -15,7 +16,7 @@ type ConsentKind = (typeof CONSENT_KINDS)[number];
  * Accesso con link sicuro. In demo non c'è un servizio email: il link viene mostrato qui,
  * e lo diciamo chiaramente. L'account demo permette di provare tutto senza registrarsi.
  */
-export function LoginForm({ demoMode }: { demoMode: boolean }) {
+export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; vetrina?: boolean }) {
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next")?.startsWith("/area-personale") ? params.get("next")! : "/area-personale";
@@ -60,7 +61,7 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
           <h2 id="demo-titolo" className="mt-2 font-serif text-2xl">
             Entra con l&apos;account demo
           </h2>
-          <p className="mt-3 text-muted">Un account condiviso, con referti inventati già caricati, per provare l&apos;area personale dall&apos;inizio alla fine.</p>
+          <p className="mt-3 text-muted">Un account condiviso, con un referto inventato già caricato, per provare l&apos;area personale dall&apos;inizio alla fine.</p>
           <button type="button" className="btn btn-primary mt-6 w-full" onClick={enterDemo} disabled={demoBusy}>
             {demoBusy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <FlaskConical aria-hidden className="h-4 w-4" />}
             Entra con l&apos;account demo
@@ -69,6 +70,19 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
         </section>
       ) : null}
 
+      {vetrina ? (
+        // Ciclo 2, fase 1: in vetrina nessun account personale. Al posto del modulo email, la lista d'attesa.
+        <section className="card p-6 sm:p-8" aria-labelledby="accesso-titolo" data-testid="vetrina-accesso">
+          <p className="eyebrow">Con la tua email</p>
+          <h2 id="accesso-titolo" className="mt-2 font-serif text-2xl">
+            Gli account personali non sono ancora aperti
+          </h2>
+          <p className="mt-3 text-muted">Oggi puoi provare tutto con l&apos;account demo. Se vuoi, lasciaci la tua email e ti avvisiamo quando il servizio parte.</p>
+          <div className="mt-6">
+            <WaitlistForm interest="completo" />
+          </div>
+        </section>
+      ) : (
       <section className="card p-6 sm:p-8" aria-labelledby="accesso-titolo">
         <p className="eyebrow">Con la tua email</p>
         <h2 id="accesso-titolo" className="mt-2 font-serif text-2xl">
@@ -165,6 +179,7 @@ export function LoginForm({ demoMode }: { demoMode: boolean }) {
           </form>
         )}
       </section>
+      )}
     </div>
   );
 }
