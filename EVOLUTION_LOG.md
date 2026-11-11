@@ -2,6 +2,24 @@
 
 Un ciclo = analisi, cinque fasi proposte, approvazione di Simone, esecuzione. Il più recente sta in cima. La storia precedente al ciclo 1 è in `docs/archivio/DECISION_LOG.md`.
 
+## Ciclo 2 · 11/11/2026
+
+**Base:** ramo `claude/project-thread-ut46xc` @ 059347a (fine ciclo 1, PR #3 ancora aperta). **Analisi:** `ANALISI_CICLO_2.md` nella cartella del progetto (`cura-privata/ciclo-2/`). **Approvazione:** Simone, 11/11 alle 21:07 UTC, tutte e cinque le fasi. **Ramo:** `claude/project-thread-oi7sjf`.
+
+| Fase | Cosa è cambiato | Commit |
+|---|---|---|
+| 1. Vetrina sicura | In vetrina la richiesta di accesso con un'email vera risponde «registrazione chiusa» e non salva indirizzo né consensi (prima `DEMO_MODE` lasciava registrare qualsiasi indirizzo, con consenso sanitario e link a schermo). `/accedi` in vetrina: solo account demo e lista d'attesa. Azione principale dei tre servizi, di `/prezzi` e di «Ti aiutiamo a scegliere» = «Avvisami quando parte» sulla pagina del servizio, con la prova senza registrazione accanto. L'account demo riceve un referto inventato se è vuoto. `npm run test:e2e:vetrina` (build in `.next-vetrina`) | 08857de |
+| 2. Misurare la vetrina | Sorgente della visita (utm_source o provenienza, 9 valori fissi) senza cookie né storage; eventi visita servizio, esempio completato, PDF di esempio, «Avvisami» per servizio; `funnel_source_daily` e `waitlist.source` (migrazione 8); sezione «Vetrina» in Admin → Panoramica (per settimana, per sorgente, per servizio) | 401abfe |
+| 3. Messaggio unico | Payoff «Capisci. Parla con un medico. Chiedi un secondo parere.» (titolo e fondo pagina, `PAYOFF` in `offerta.ts`); scheda «Il tuo report» sulla spalla, non più sul viso; titolo che va a capo tra 1024 e 1279 px; su telefono tolte le immagini doppie e il prezzo dal doppio ingresso; home su telefono da 9.272 a 7.994 px; niente «.it» senza dominio; Punto di Partenza «3 su 10» | 295346d |
+| 4. Tocchi da 44 px | L'indice A–Z e il filtro del glossario esistevano già (errore dell'analisi). Fatto: pulsanti della testata a 44 px (sotto i 390 px testo grande e tema vanno nel menu), link di percorso, termini, guide e fonti a 44 px, due righe di definizione per voce del glossario su telefono (31.944 → ~25.200 px) | 74da33f |
+| 5. Controlli automatici | `npm run typecheck` funziona da clone pulito (`next typegen`); workflow `.github/workflows/controlli.yml` su PR e su main | 55a35b2 |
+
+**Test (11/11, a fine ciclo):** lint senza errori, typecheck pulito, 200 test unitari, e2e desktop e telefono 229 passati e 51 saltati, e2e vetrina 17 passati e 1 saltato (l'unico salto: il controllo admin gira solo su desktop perché i codici 2FA sono monouso). Screenshot prima/dopo in `cura-privata/ciclo-2/screenshot-prima-dopo/`.
+
+**Decisioni prese approvando:** in vetrina nessun account personale (solo l'account demo condiviso); il payoff segue l'ordine dei servizi.
+
+**Rimandato o fuori dal codice:** quelli del ciclo 1 (titolare, P.IVA, dominio, informativa, medico revisore, chiave Anthropic). Doppio opt-in della lista d'attesa: serve un servizio email. Il workflow GitHub va verificato alla prima esecuzione sulla PR.
+
 ## Ciclo 1 · 11/11/2026
 
 **Analisi:** documento «Analisi e cinque fasi» (artifact del thread). **Approvazione:** Simone, 11/11 alle 18:59 UTC, tutte e cinque le fasi. **Ramo:** `claude/project-thread-ut46xc` (contiene anche la v2 e il Punto di Partenza V3, quindi sostituisce la PR #2).

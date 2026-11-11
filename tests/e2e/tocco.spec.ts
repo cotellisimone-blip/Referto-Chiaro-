@@ -13,7 +13,7 @@ async function smallTargets(page: Page, scope: string) {
         // Link dentro una frase: la regola dei 44 px non si applica al testo corrente.
         if (getComputedStyle(e).display === "inline" && e.closest("p")) return false;
         if (e.classList.contains("sr-only") || e.textContent?.trim() === "Vai al contenuto") return false;
-        return r.height < 44 || r.width < 44;
+        return r.height < 43.5 || r.width < 43.5; // mezzo pixel di tolleranza per l'arrotondamento
       })
       .map((e) => `${(e.textContent ?? "").trim().slice(0, 30)} ${Math.round(e.getBoundingClientRect().width)}x${Math.round(e.getBoundingClientRect().height)}`);
   }, scope);

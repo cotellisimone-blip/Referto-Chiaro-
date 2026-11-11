@@ -1,12 +1,22 @@
 # Roadmap di prodotto — Cura Privata
 
-*Aggiornata: 11/11/2026, ciclo 1.*
+*Aggiornata: 11/11/2026, ciclo 2.*
 
 ## Priorità strategiche
 1. **Andare online come vetrina** (profilo `vetrina`) per misurare la domanda reale: iscrizioni per servizio, click sui prezzi, uso di Punto di Partenza.
 2. **Un medico vero con nome**: è il primo fattore di fiducia e di conversione, e serve sia per la revisione dei contenuti sia per Parla con un medico.
 3. **Accendere Capisci con referti veri** solo dopo parere MDR, DPIA, contratti con i fornitori, valutazione AI dal vivo e antivirus.
 4. **Indicizzazione** delle guide dopo la revisione medica.
+
+## Come leggere la vetrina (ciclo 2, soglie da validare)
+Ipotesi di lavoro, non dati: da rivedere dopo le prime 4 settimane online. Si leggono nella sezione «Vetrina» di Admin.
+| Segnale | Soglia ipotetica | Decisione |
+|---|---|---|
+| Iscrizioni su visite (tre servizi) | ≥ 3% per 2 settimane con almeno 300 visite | La domanda c'è: priorità ai punti B di `PRODUCTION_GATES.md` per aprire Capisci |
+| Iscrizioni su visite | < 1% con almeno 500 visite | Rivedere messaggio, prezzo o canale prima di investire in conformità |
+| Iscrizioni «Parla con un medico» ≥ quelle di Capisci | 4 settimane | Anticipare il medico contrattualizzato rispetto all'AI |
+| Una sorgente porta più del 50% delle iscrizioni | 4 settimane | Concentrare lì il budget |
+Ogni link pubblicato deve avere `?utm_source=` (vedi `docs/cura-privata/LANCIO_VETRINA.md`).
 
 ## Dipendenze da validare (fuori dal codice, del titolare)
 | Cosa | Sblocca |
