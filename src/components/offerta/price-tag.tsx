@@ -9,10 +9,10 @@ export function PriceTag({ id, size = "md", className, align = "left" }: { id: C
   const p = priceDisplay(id);
   const amountSize = { sm: "text-[1.5rem]", md: "text-[2rem]", lg: "text-[2.75rem]" }[size];
   return (
-    <p className={clsx("price-tag", align === "right" && "text-right", className)} aria-label={p.label}>
-      {p.lead ? <span aria-hidden className="tone-text block text-[0.9375rem] font-bold uppercase tracking-[0.06em]">{p.lead}</span> : null}
-      <span aria-hidden className={clsx("stat-num block leading-none text-ink", amountSize)}>{p.amount}</span>
-      {p.note ? <span aria-hidden className="mt-1 block text-[0.9375rem] text-muted">{p.note}</span> : null}
+    <p className={clsx("price-tag", align === "right" && "text-right", className)}>
+      {p.lead ? <span className="tone-text block text-[0.9375rem] font-bold uppercase tracking-[0.06em]">{p.lead}</span> : null}
+      <span className={clsx("stat-num block leading-none text-ink", amountSize)}>{p.amount}</span>
+      {p.note ? <span className="mt-1 block text-[0.9375rem] text-muted">{p.note}</span> : null}
     </p>
   );
 }

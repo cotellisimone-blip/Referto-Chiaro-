@@ -54,8 +54,8 @@ test.describe("area personale", () => {
     await expect(page.getByRole("heading", { name: "Controlla prima i valori." })).toBeVisible({ timeout: 15_000 });
     await page.getByRole("button", { name: "Conferma tutti i valori leggibili" }).click();
     await page.getByRole("button", { name: /Salva e scegli il servizio/ }).click();
-    await expect(page.getByRole("heading", { name: "Scegli il servizio." })).toBeVisible();
-    await page.getByRole("button", { name: /Procedi al pagamento/ }).click();
+    await expect(page.getByRole("heading", { name: "Rendi chiaro il tuo referto." })).toBeVisible();
+    await page.getByRole("button", { name: /e ricevi il report/ }).click();
     await expect(page.getByText("Pagamento simulato — nessun addebito")).toBeVisible();
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
     await expect(page.getByText("Pagamento registrato")).toBeVisible();
@@ -70,6 +70,17 @@ test.describe("area personale", () => {
     // Ricaricando, si riparte dal report (stato nel database, non nel browser)
     await page.reload();
     await expect(page.getByRole("heading", { name: "Il tuo referto, in parole semplici." })).toBeVisible({ timeout: 15_000 });
+    // Report strutturato: valori a colpo d'occhio e, dove c'è una guida, i fattori generali.
+    await expect(page.getByTestId("valori-colpo-occhio")).toBeVisible();
+    await expect(page.getByText("Che cosa può influenzarlo, in generale").first()).toBeVisible();
+    // Continuità: dal report al medico senza ricaricare il documento.
+    const docUrl = page.url();
+    const docId = docUrl.split("/").pop()!;
+    await page.getByTestId("prossimo-passo").getByRole("link", { name: /Parla con un medico/ }).click();
+    await expect(page).toHaveURL(new RegExp(`/area-personale/appuntamenti\\?documento=${docId}`));
+    await expect(page.getByText("medico di medicina generale o internista").first()).toBeVisible();
+    await expect(page.getByLabel("Specialità")).toHaveCount(0);
+    await expect(page.getByRole("group", { name: "Documenti da far leggere al medico" }).getByRole("checkbox", { checked: true })).toHaveCount(1);
   });
 
   test("nessuno vede i documenti di un altro (API e pagine)", async ({ browser }) => {

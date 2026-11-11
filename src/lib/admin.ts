@@ -64,3 +64,31 @@ export function adminConfig() {
     database: process.env.DATABASE_URL ? "postgresql" : `pglite (${process.env.PGLITE_DATA_DIR ?? "memoria"})`,
   };
 }
+
+/** Funnel degli ultimi N giorni: contatori anonimi + passi calcolati dai dati esistenti. Account demo esclusi. */
+export async function adminFunnel(adminId: string, days = 30) {
+  return withSystem(async (tx) => {
+    await audit(tx, { userId: adminId, actor: "admin", action: "funnel-viewed" });
+    const one = async (sql: string) => Number((await tx.query(sql, [days])).rows[0]?.n ?? 0);
+    const since = "now() - make_interval(days => $1::int)";
+    const real = "u.deleted_at IS NULL AND NOT u.is_demo";
+    const pub = await tx.query<{ event: string; n: number }>("SELECT event, sum(count)::int AS n FROM funnel_daily WHERE day >= current_date - $1::int GROUP BY event", [days]);
+    const counters = Object.fromEntries(pub.rows.map((r) => [r.event, Number(r.n)]));
+    return {
+      days,
+      steps: {
+        "visita-home": counters["visita-home"] ?? 0,
+        "cta-capisci": counters["cta-capisci"] ?? 0,
+        "cta-medico": counters["cta-medico"] ?? 0,
+        "cta-parere": counters["cta-parere"] ?? 0,
+        uploads: await one(`SELECT count(*)::int AS n FROM documents d JOIN users u ON u.id = d.user_id WHERE ${real} AND d.created_at >= ${since}`),
+        checkoutCapisci: await one(`SELECT count(*)::int AS n FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'essenziale' AND o.created_at >= ${since}`),
+        paidCapisci: await one(`SELECT count(*)::int AS n FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'essenziale' AND o.status = 'paid' AND o.created_at >= ${since}`),
+        reportsReady: await one(`SELECT count(*)::int AS n FROM reports r JOIN users u ON u.id = r.user_id WHERE ${real} AND r.status = 'ready' AND r.created_at >= ${since}`),
+        reportToMedico: await one(`SELECT count(DISTINCT o.id)::int AS n FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'videoconsulto' AND o.status = 'paid' AND o.created_at >= ${since} AND EXISTS (SELECT 1 FROM reports r WHERE r.user_id = o.user_id AND r.status = 'ready' AND r.created_at < o.created_at)`),
+        reportToParere: await one(`SELECT count(DISTINCT o.id)::int AS n FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'secondo-parere' AND o.status = 'paid' AND o.created_at >= ${since} AND EXISTS (SELECT 1 FROM reports r WHERE r.user_id = o.user_id AND r.status = 'ready' AND r.created_at < o.created_at)`),
+        returning: await one(`SELECT count(*)::int AS n FROM (SELECT o.user_id FROM orders o JOIN users u ON u.id = o.user_id WHERE ${real} AND o.service = 'essenziale' AND o.status = 'paid' AND o.created_at >= ${since} GROUP BY o.user_id HAVING count(*) >= 2) x`),
+      } as Record<string, number>,
+    };
+  });
+}

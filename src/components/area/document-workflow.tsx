@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { clsx } from "clsx";
 import { ArrowLeft, ArrowRight, Download, FolderPlus, Loader2, RotateCcw, Trash2 } from "lucide-react";
 import type { ExtractedDocument } from "@/domain/extraction/schema";
 import type { Explanation } from "@/domain/reporting/explanation-schema";
+import type { ReportEnrichment } from "@/domain/reporting/enrich";
 import { Facsimile, revealFacsimileLine } from "@/components/report/facsimile";
 import { VerificationList, isReadableObs } from "@/components/report/verification-list";
 import { ExplanationView } from "@/components/report/explanation-view";
@@ -77,6 +77,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
   const router = useRouter();
   const [doc, setDoc] = useState<Doc | null>(null);
   const [reports, setReports] = useState<Rep[]>([]);
+  const [enrichment, setEnrichment] = useState<ReportEnrichment | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState<string[]>([]);
   const [highlight, setHighlight] = useState<number | null>(null);
@@ -90,9 +91,10 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
 
   const load = useCallback(async () => {
     try {
-      const r = await api<{ document: Doc; reports: Rep[] }>(`/api/v1/area/documents/${documentId}`);
+      const r = await api<{ document: Doc; reports: Rep[]; enrichment: ReportEnrichment | null }>(`/api/v1/area/documents/${documentId}`);
       setDoc(r.document);
       setReports(r.reports);
+      setEnrichment(r.enrichment ?? null);
       if (!seeded.current && r.document.verification) {
         seeded.current = true;
         setConfirmed(r.document.verification.confirmedObservationIds);
@@ -121,10 +123,11 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
   }, [load]);
 
   // Prezzo personale di «Capisci» (primo referto o standard), calcolato dal server.
+  const docStatus = doc?.status;
   useEffect(() => {
-    if (!doc || !["verified", "ready"].includes(doc.status) || quote) return;
+    if (!docStatus || !["verified", "ready"].includes(docStatus) || quote) return;
     api<Quote>("/api/v1/area/orders/preventivo").then(setQuote).catch(() => setQuote(null));
-  }, [doc?.status, quote]);
+  }, [docStatus, quote]);
 
   const reveal = (line: number) => revealFacsimileLine(setHighlight, line);
   const focusHeading = () => requestAnimationFrame(() => headingRef.current?.focus({ preventScroll: true }));
@@ -394,7 +397,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
             {doc.title} · Capisci il tuo referto · generato il {readyReport.generatedAt ? formatDate(readyReport.generatedAt) : ""}
           </p>
           <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start [&>*]:min-w-0">
-            <ExplanationView explanation={readyReport.explanation} onReveal={reveal} />
+            <ExplanationView explanation={readyReport.explanation} onReveal={reveal} enrichment={enrichment} />
             <aside className="space-y-5 lg:sticky lg:top-28" aria-label="Documento e download">
               <div className="card p-5 sm:p-6">
                 <h2 className="font-serif text-xl">Scarica il riepilogo</h2>

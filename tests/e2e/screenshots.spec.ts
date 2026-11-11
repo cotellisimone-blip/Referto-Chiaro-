@@ -100,10 +100,10 @@ test.describe("screenshots", () => {
     await page.screenshot({ path: `${dir}/area-4-valori.png`, fullPage: true });
     await page.getByRole("button", { name: "Conferma tutti i valori leggibili" }).click();
     await page.getByRole("button", { name: /Salva e scegli il servizio/ }).click();
-    await page.getByRole("heading", { name: "Scegli il servizio." }).waitFor();
+    await page.getByRole("heading", { name: "Rendi chiaro il tuo referto." }).waitFor();
     await settle(page);
     await page.screenshot({ path: `${dir}/area-5-servizio.png`, fullPage: true });
-    await page.getByRole("button", { name: /Procedi al pagamento/ }).click();
+    await page.getByRole("button", { name: /e ricevi il report/ }).click();
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
     await page.getByRole("link", { name: "Torna al referto" }).first().click();
     await page.getByRole("heading", { name: "Il tuo referto, in parole semplici." }).waitFor({ timeout: 20_000 });
@@ -141,7 +141,7 @@ test.describe("screenshots", () => {
     const ids = d.document.extracted.observations.filter((o: { valueRaw: string | null }) => o.valueRaw !== null).map((o: { id: string }) => o.id);
     await ctx.request.post(`/api/v1/area/documents/${id}/verification`, { data: { confirmedObservationIds: ids } });
     await page.goto(`/area-personale/documenti/${id}`);
-    await page.getByRole("heading", { name: "Scegli il servizio." }).waitFor({ timeout: 15_000 });
+    await page.getByRole("heading", { name: "Rendi chiaro il tuo referto." }).waitFor({ timeout: 15_000 });
     await settle(page);
     await page.screenshot({ path: `${dir}/fase3-1-servizio-pagamento.png`, fullPage: true });
     const ord = await (await ctx.request.post("/api/v1/area/orders", { data: { service: "essenziale", documentId: id } })).json();
