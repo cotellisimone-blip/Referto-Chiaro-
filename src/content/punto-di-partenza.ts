@@ -172,8 +172,8 @@ export const AREAS: Area[] = [
     whyItMatters: "I programmi di screening organizzati cambiano con l'età, il sesso e alcuni fattori personali. Spesso è la ASL a invitarti.",
     whatToDiscuss: "Quali programmi di screening sono previsti per te e se hai già aderito agli inviti ricevuti.",
     examples: ["Programmi di screening organizzati della tua Regione"],
-    sourceLabel: "Ministero della Salute — Screening oncologici",
-    sourceUrl: "https://www.salute.gov.it/new/it/tema/screening-oncologici/",
+    sourceLabel: "Osservatorio Nazionale Screening",
+    sourceUrl: "https://www.osservatorionazionalescreening.it/",
     ...DRAFT,
   },
 ];

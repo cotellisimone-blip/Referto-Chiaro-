@@ -68,3 +68,14 @@ Vedi `docs/AUDIT_ESTERNO.md`. Prima di qualsiasi dato reale:
 - [x] Lavori lunghi (lettura, AI) eseguiti dopo la risposta (`after`) e fuori dalle transazioni; cron protetto da `CRON_SECRET`
 - [ ] Repository su GitHub (account sospeso al 7/11/2026) → collegamento a Vercel
 - [ ] Account e chiavi: Neon, Vercel, Resend, Stripe (test), Anthropic; dominio puntato a Vercel
+
+## H. Punto di Partenza (pacchetto V3, 11/11/2026)
+
+Strumento gratuito, tutto nel browser: nessuna risposta salvata o inviata al server (solo contatori anonimi di passo), PDF generato sul dispositivo. Interruttore: `ENABLE_PUNTO_DI_PARTENZA="false"` lo spegne ovunque.
+
+- [x] Contenuti curati e versionati (`src/content/punto-di-partenza.ts`, versione `PDP_CONTENT_VERSION`), regole fisse, nessuna AI, nessun punteggio di salute, nessuna prescrizione; test di copy safety
+- [ ] Revisione dei contenuti da parte di un medico identificato: aggiornare `reviewStatus`, `reviewedAt`, `reviewedBy` per le 10 aree e il box «Non di routine»
+- [ ] Fonti puntuali verificate (gli URL attuali sono quelli del pacchetto e pagine istituzionali generali) e data dell'ultima revisione pubblicata
+- [ ] Responsabile editoriale dichiarato
+- [ ] Parere su destinazione d'uso / MDR (Regola 11) per questo strumento specifico
+- [ ] Prima di attivare `ENABLE_PUNTO_DI_PARTENZA_SAVE` (salvataggio nell'area personale, oggi non implementato e bloccato dal gate di conformità): consenso dedicato, DPIA aggiornata
