@@ -3,8 +3,47 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
-import { ArrowLeft, ArrowRight, Check, Download, FileText, Info, MessageCircleQuestion, Printer, Stethoscope } from "lucide-react";
-import { AREAS, CATEGORY_LABEL, COMPLETENESS_NOTE, CONTEXT_QUESTIONS, GOALS, HAVE, PDP_DISCLAIMER, type AreaCategory, type ContextAnswers } from "@/content/punto-di-partenza";
+import {
+  Apple,
+  ArrowLeft,
+  ArrowRight,
+  Bean,
+  CalendarCheck,
+  Check,
+  CircleCheck,
+  Download,
+  Droplet,
+  Droplets,
+  FileText,
+  Filter,
+  FolderSearch,
+  Gauge,
+  Gem,
+  HeartPulse,
+  Info,
+  Layers,
+  Leaf,
+  MessageCircleQuestion,
+  Printer,
+  ShieldCheck,
+  Stethoscope,
+  Target,
+  TestTube,
+  type LucideIcon,
+} from "lucide-react";
+import {
+  AREAS,
+  CATEGORY_LABEL,
+  COMPLETENESS_NOTE,
+  CONTEXT_QUESTIONS,
+  GOALS,
+  HAVE,
+  PDP_DISCLAIMER,
+  type AreaCategory,
+  type AreaId,
+  type ContextAnswers,
+  type GoalId,
+} from "@/content/punto-di-partenza";
 import { EMPTY_ANSWERS, buildMap, completeness, isDocumented, toggleHave, type PdpAnswers } from "@/domain/punto-di-partenza";
 import { track } from "@/components/site/track";
 
@@ -22,6 +61,51 @@ export interface PdpPrices {
 
 const STEPS = ["Obiettivo", "Cosa hai già", "Contesto", "Le 10 aree", "La tua scheda"] as const;
 
+/** Un'icona per area: solo un segno per riconoscerla, mai un indicatore. */
+const AREA_ICON: Record<AreaId, LucideIcon> = {
+  pressione: HeartPulse,
+  glicemia: Apple,
+  lipidi: Droplets,
+  ematologia: Droplet,
+  rene: Bean,
+  fegato: Filter,
+  ferro: Gem,
+  tiroide: Gauge,
+  urine: TestTube,
+  screening: ShieldCheck,
+};
+const GOAL_ICON: Record<GoalId, LucideIcon> = {
+  benessere: Leaf,
+  organizzare: CalendarCheck,
+  documentazione: FolderSearch,
+  medico: Stethoscope,
+};
+
+export function AreaIcon({ id, category, className }: { id: AreaId; category: AreaCategory; className?: string }) {
+  const Icon = AREA_ICON[id];
+  return (
+    <span aria-hidden className={clsx("pdp-ico", `pdp-cat-${category}`, className)}>
+      <Icon strokeWidth={1.8} />
+    </span>
+  );
+}
+
+/** Il foglio della scheda, disegnato in CSS (decorativo). */
+export function SheetArt({ className }: { className?: string }) {
+  return (
+    <span aria-hidden className={clsx("pdp-art", className)}>
+      <span className="pdp-art-sheet">
+        <i />
+        <i />
+        <i />
+      </span>
+      <span className="pdp-art-badge">
+        <Check strokeWidth={3} />
+      </span>
+    </span>
+  );
+}
+
 export function CategoryChip({ category, className }: { category: AreaCategory; className?: string }) {
   return <span className={clsx("pdp-chip", `pdp-chip-${category}`, className)}>{CATEGORY_LABEL[category]}</span>;
 }
@@ -32,6 +116,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
   const [started, setStarted] = useState(false);
   const [busy, setBusy] = useState(false);
   const headRef = useRef<HTMLHeadingElement>(null);
+  const topRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
   const map = useMemo(() => buildMap(a), [a]);
   const comp = completeness(a);
@@ -41,8 +126,12 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
       firstRender.current = false;
       return;
     }
-    headRef.current?.focus();
-    headRef.current?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    // Il fuoco va al titolo del passo, ma la pagina si ferma sull'avanzamento: così si vede sempre a che punto si è.
+    headRef.current?.focus({ preventScroll: true });
+    topRef.current?.scrollIntoView({
+      block: "start",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    });
   }, [step]);
 
   function update(next: Partial<PdpAnswers>) {
@@ -65,7 +154,10 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
     try {
       const { renderPdpPdf } = await import("@/domain/punto-di-partenza-pdf");
       const fonts = await Promise.all(["/fonts/pdf/manrope-400.ttf", "/fonts/pdf/manrope-700.ttf"].map((u) => fetch(u).then((r) => (r.ok ? r.arrayBuffer() : Promise.reject()))))
-        .then(([r, b]) => ({ regular: new Uint8Array(r), bold: new Uint8Array(b) }))
+        .then(([r, b]) => ({
+          regular: new Uint8Array(r),
+          bold: new Uint8Array(b),
+        }))
         .catch(() => null);
       const bytes = await renderPdpPdf(map, { fonts, notes: a.notes });
       const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/pdf" }));
@@ -86,12 +178,14 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
   }
 
   const hasResults = a.have.some((h) => h === "sangue" || h === "urine");
+  const documentedCount = map.documented.length;
+  const discussCount = map.toDiscussBase.length + map.toDiscussContextual.length;
   const capisciCta = prices.capisci ? `${prices.capisci.lead ? "Rendi chiaro il primo referto" : "Rendi chiaro il tuo referto"} — ${prices.capisci.amount}` : "Rendi chiaro il tuo referto";
 
   return (
     <div className="pdp-guide">
       {/* Avanzamento: lista ordinata vera, con il passo corrente annunciato */}
-      <div className="no-print">
+      <div ref={topRef} className="pdp-top no-print">
         <p className="sr-only" aria-live="polite">
           Passo {step} di {STEPS.length}: {STEPS[step - 1]}
         </p>
@@ -105,6 +199,9 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                   {state === "done" ? <Check className="h-4 w-4" /> : n}
                 </span>
                 <span className="pdp-step-label">
+                  <span aria-hidden className="pdp-step-count">
+                    Passo {n} di {STEPS.length} ·{" "}
+                  </span>
                   <span className="sr-only">{state === "done" ? "Completato: " : state === "todo" ? "Da fare: " : "In corso: "}</span>
                   {s}
                 </span>
@@ -114,7 +211,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
         </ol>
       </div>
 
-      <div className={clsx("mt-8 grid gap-8", step < 5 && "lg:grid-cols-[minmax(0,1fr)_20rem]")}>
+      <div className={clsx("mt-8 grid gap-8", step < 5 && "lg:grid-cols-[minmax(0,1fr)_21.5rem]")}>
         <div className="min-w-0">
           {step === 1 ? (
             <fieldset>
@@ -125,15 +222,21 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
               </legend>
               <p className="mt-2 text-lg text-muted">Una sola scelta: serve a dare un ordine alla scheda.</p>
               <div className="mt-5 grid gap-3">
-                {GOALS.map((g) => (
-                  <label key={g.id} className={clsx("pdp-option", a.goal === g.id && "is-on")}>
-                    <input type="radio" name="pdp-goal" checked={a.goal === g.id} onChange={() => update({ goal: g.id })} />
-                    <span>
-                      <span className="block text-lg font-bold text-ink">{g.label}</span>
-                      <span className="block text-[1.0625rem] text-muted">{g.hint}</span>
-                    </span>
-                  </label>
-                ))}
+                {GOALS.map((g) => {
+                  const Icon = GOAL_ICON[g.id];
+                  return (
+                    <label key={g.id} className={clsx("pdp-option pdp-option-goal", a.goal === g.id && "is-on")}>
+                      <span aria-hidden className="pdp-ico">
+                        <Icon strokeWidth={1.8} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-lg font-bold text-ink">{g.label}</span>
+                        <span className="block text-[1.0625rem] text-muted">{g.hint}</span>
+                      </span>
+                      <input type="radio" name="pdp-goal" checked={a.goal === g.id} onChange={() => update({ goal: g.id })} />
+                    </label>
+                  );
+                })}
               </div>
               <Nav next={() => go(2)} disabled={!a.goal} />
             </fieldset>
@@ -165,11 +268,11 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 Un po&apos; di contesto
               </h2>
               <p className="mt-2 text-lg text-muted">Cinque domande veloci. Puoi sempre scegliere di non rispondere.</p>
-              <div className="mt-6 space-y-7">
+              <div className="mt-6 grid gap-4">
                 {CONTEXT_QUESTIONS.map((q) => (
-                  <fieldset key={q.key}>
-                    <legend className="text-xl font-bold text-ink">{q.label}</legend>
-                    <div className="mt-3 flex flex-wrap gap-2.5">
+                  <fieldset key={q.key} className="pdp-ctx">
+                    <legend className="float-left w-full text-xl font-bold text-ink">{q.label}</legend>
+                    <div className="clear-both flex flex-wrap gap-2.5 pt-3">
                       {q.options.map((o) => (
                         <label key={o.v} className={clsx("pdp-pill", a.context[q.key] === o.v && "is-on")}>
                           <input type="radio" name={`pdp-${q.key}`} checked={a.context[q.key] === o.v} onChange={() => setCtx(q.key, o.v)} />
@@ -189,25 +292,26 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
               <h2 ref={headRef} tabIndex={-1} className="pdp-q">
                 Le 10 aree da conoscere
               </h2>
-              <p className="mt-2 max-w-2xl text-lg text-muted">
-                Per ogni area, segna se hai già informazioni recenti. L&apos;etichetta dice di che tipo di tema si tratta, non come stai.
-              </p>
+              <p className="mt-2 max-w-2xl text-lg text-muted">Per ogni area, segna se hai già informazioni recenti. L&apos;etichetta dice di che tipo di tema si tratta, non come stai.</p>
               <ul className="mt-6 grid gap-4 md:grid-cols-2">
                 {AREAS.map((ar) => {
                   const on = isDocumented(a, ar.id);
                   return (
                     <li key={ar.id} className={clsx("pdp-area", `pdp-area-${ar.category}`, on && "is-on")}>
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="text-xl font-bold leading-tight text-ink">
-                          <span className="pdp-area-n" aria-hidden>
-                            {String(ar.n).padStart(2, "0")}
-                          </span>
-                          {ar.title}
-                        </h3>
-                        <CategoryChip category={ar.category} />
+                      <div className="flex items-start gap-3.5">
+                        <AreaIcon id={ar.id} category={ar.category} />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <CategoryChip category={ar.category} />
+                            <span className="pdp-area-n" aria-hidden>
+                              {String(ar.n).padStart(2, "0")}
+                            </span>
+                          </div>
+                          <h3 className="mt-1.5 text-xl font-bold leading-tight text-ink">{ar.title}</h3>
+                        </div>
                       </div>
-                      <p className="mt-2 text-[1.0625rem] text-ink-soft">{ar.short}</p>
-                      <details className="pdp-details mt-3">
+                      <p className="mt-3 text-[1.0625rem] text-ink-soft">{ar.short}</p>
+                      <details className="pdp-details mt-2">
                         <summary>Perché conta e di che cosa parlare</summary>
                         <p className="mt-2">{ar.whyItMatters}</p>
                         <p className="mt-2">
@@ -226,10 +330,16 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                       <button
                         type="button"
                         aria-pressed={on}
-                        className={clsx("pdp-toggle mt-4", on && "is-on")}
-                        onClick={() => update({ areaOverrides: { ...a.areaOverrides, [ar.id]: !on } })}
+                        className={clsx("pdp-toggle", on && "is-on")}
+                        onClick={() =>
+                          update({
+                            areaOverrides: { ...a.areaOverrides, [ar.id]: !on },
+                          })
+                        }
                       >
-                        <span aria-hidden className="pdp-toggle-box">{on ? <Check className="h-4 w-4" /> : null}</span>
+                        <span aria-hidden className="pdp-toggle-box">
+                          {on ? <Check className="h-4 w-4" /> : null}
+                        </span>
                         Ho già informazioni recenti
                       </button>
                     </li>
@@ -242,27 +352,68 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
 
           {step === 5 ? (
             <div className="pdp-result">
-              <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                <div>
+              <div className="flex items-start gap-4 sm:gap-5">
+                <span className="hidden sm:block">
+                  <span aria-hidden className="pdp-ico pdp-ico-lg">
+                    <CircleCheck strokeWidth={1.8} />
+                  </span>
+                </span>
+                <div className="min-w-0">
                   <p className="eyebrow">Gratis · Punto di Partenza</p>
-                  <h2 ref={headRef} tabIndex={-1} className="display-lg mt-3 text-[2.25rem] outline-none sm:text-[3rem]">
+                  <h2 ref={headRef} tabIndex={-1} className="display-lg mt-3 text-[2.125rem] outline-none sm:text-[3rem]">
                     Il tuo Punto di Partenza è pronto.
                   </h2>
-                  {map.goalLabel ? <p className="mt-3 text-xl text-ink-soft">Obiettivo: {map.goalLabel}</p> : null}
+                  <p className="mt-3 max-w-2xl text-xl text-ink-soft">
+                    Ecco la mappa che hai costruito: che cosa hai già, di che cosa parlare con il medico e che cosa non serve chiedere in automatico.
+                  </p>
                 </div>
               </div>
 
-              <div className="mt-8 grid gap-5 lg:grid-cols-[18rem_repeat(3,minmax(0,1fr))]">
+              <div className="pdp-summary mt-8">
                 <Ring pct={map.completeness} />
-                <ResultCol title="Già documentato" tone="done" count={map.documented.length} empty="Nessuna area segnata: va benissimo, si parte da qui.">
+                <dl className="pdp-summary-facts">
+                  <div>
+                    <dt>Aree già documentate</dt>
+                    <dd>
+                      <span className="stat-num text-[1.75rem] text-ink">{documentedCount}</span> <span className="text-muted">su 10</span>
+                      <span aria-hidden className="pdp-pips">
+                        {AREAS.map((x, i) => (
+                          <i key={x.id} className={i < documentedCount ? "is-on" : undefined} />
+                        ))}
+                      </span>
+                    </dd>
+                  </div>
+                  {map.goalLabel ? (
+                    <div>
+                      <dt>Il tuo obiettivo</dt>
+                      <dd className="flex items-start gap-2 text-lg font-bold leading-snug text-ink">
+                        <Target aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-teal" /> {map.goalLabel}
+                      </dd>
+                    </div>
+                  ) : null}
+                </dl>
+              </div>
+
+              <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)_minmax(0,1fr)]">
+                <ResultCol
+                  title="Già documentato"
+                  desc="Aree su cui hai già informazioni recenti."
+                  tone="done"
+                  icon={CircleCheck}
+                  count={documentedCount}
+                  unit={["area", "aree"]}
+                  empty="Nessuna area segnata: va benissimo, si parte da qui."
+                >
                   {map.documented.map((x) => (
                     <li key={x.area.id}>{x.area.title}</li>
                   ))}
                 </ResultCol>
-                <ResultCol title="Da discutere con il medico" tone="discuss" count={map.toDiscussBase.length + map.toDiscussContextual.length}>
+                <ResultCol title="Da discutere con il medico" desc="Temi da portare alla prossima visita, in ordine." tone="discuss" icon={Stethoscope} count={discussCount} unit={["area", "aree"]}>
                   {map.toDiscussBase.map((x) => (
                     <li key={x.area.id}>
-                      {x.area.title} <CategoryChip category="base" className="ml-1" />
+                      <span className="pdp-col-row">
+                        {x.area.title} <CategoryChip category="base" />
+                      </span>
                       {x.notes.map((n) => (
                         <span key={n} className="mt-1 block text-[0.9375rem] font-normal text-muted">
                           {n}
@@ -272,12 +423,14 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                   ))}
                   {map.toDiscussContextual.map((x) => (
                     <li key={x.area.id}>
-                      {x.area.title} <CategoryChip category="contextual" className="ml-1" />
+                      <span className="pdp-col-row">
+                        {x.area.title} <CategoryChip category="contextual" />
+                      </span>
                       <span className="mt-1 block text-[0.9375rem] font-normal text-muted">Se pertinente nel tuo caso.</span>
                     </li>
                   ))}
                 </ResultCol>
-                <ResultCol title="Non di routine" tone="not" count={map.notRoutine.length}>
+                <ResultCol title="Non di routine" desc="Controlli che non vanno chiesti in automatico." tone="not" icon={Layers} count={map.notRoutine.length} unit={["tema", "temi"]}>
                   {map.notRoutine.map((x) => (
                     <li key={x.id}>
                       {x.title}
@@ -287,23 +440,30 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 </ResultCol>
               </div>
               {map.generalNotes.map((n) => (
-                <p key={n} className="mt-5 flex items-start gap-3 rounded-2xl border border-line bg-paper p-4 text-lg text-ink">
-                  <Info aria-hidden className="mt-1 h-5 w-5 shrink-0 text-teal" /> {n}
+                <p key={n} className="pdp-note mt-5 text-lg text-ink">
+                  <Info aria-hidden className="mt-1 h-5 w-5 shrink-0 text-teal" /> <span>{n}</span>
                 </p>
               ))}
 
-              <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-                <section aria-labelledby="pdp-scheda" className="pdp-panel">
-                  <h3 id="pdp-scheda" className="flex items-center gap-3 text-2xl font-bold text-ink">
-                    <FileText aria-hidden className="h-7 w-7 text-teal" /> La scheda da portare al medico
-                  </h3>
-                  <p className="mt-2 text-lg text-ink-soft">Obiettivo, informazioni che hai, aree da discutere e domande pronte, su un foglio A4.</p>
+              <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+                <section aria-labelledby="pdp-scheda" className="pdp-panel pdp-panel-scheda">
+                  <div className="flex items-start gap-5">
+                    <span className="no-print hidden shrink-0 sm:block">
+                      <SheetArt />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 id="pdp-scheda" className="flex items-center gap-3 text-2xl font-bold leading-tight text-ink">
+                        <FileText aria-hidden className="h-7 w-7 shrink-0 text-teal sm:hidden" /> La scheda da portare al medico
+                      </h3>
+                      <p className="mt-2 text-lg text-ink-soft">Obiettivo, informazioni che hai, aree da discutere e domande pronte, su un foglio A4.</p>
+                    </div>
+                  </div>
                   <label htmlFor="pdp-note" className="mt-5 block text-lg font-bold text-ink">
                     Note per te <span className="font-normal text-muted">(facoltative, restano su questo dispositivo)</span>
                   </label>
                   <textarea id="pdp-note" rows={3} maxLength={600} value={a.notes} onChange={(e) => setA((p) => ({ ...p, notes: e.target.value }))} className="pdp-notes mt-2" />
                   <div className="no-print mt-5 flex flex-col gap-3 sm:flex-row">
-                    <button type="button" className="btn btn-primary btn-lg" onClick={downloadPdf} disabled={busy} aria-busy={busy}>
+                    <button type="button" className="btn btn-primary btn-lg sm:flex-1" onClick={downloadPdf} disabled={busy} aria-busy={busy}>
                       <Download aria-hidden className="h-5 w-5" /> {busy ? "Preparo il PDF…" : "Scarica la scheda (PDF)"}
                     </button>
                     <button type="button" className="btn btn-secondary btn-lg" onClick={print}>
@@ -312,12 +472,13 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                   </div>
                 </section>
                 <section aria-labelledby="pdp-domande" className="pdp-panel">
-                  <h3 id="pdp-domande" className="flex items-center gap-3 text-2xl font-bold text-ink">
-                    <MessageCircleQuestion aria-hidden className="h-7 w-7 text-teal" /> Domande per il medico
+                  <h3 id="pdp-domande" className="flex items-center gap-3 text-2xl font-bold leading-tight text-ink">
+                    <MessageCircleQuestion aria-hidden className="h-7 w-7 shrink-0 text-teal" /> Domande per il medico
                   </h3>
-                  <ol className="mt-4 space-y-3">
+                  <p className="mt-2 text-lg text-ink-soft">Già scritte sulla scheda: puoi leggerle così come sono.</p>
+                  <ol className="pdp-questions mt-4">
                     {map.questions.map((q, i) => (
-                      <li key={q} className="flex gap-3 text-lg text-ink">
+                      <li key={q} className="flex gap-3 text-lg leading-snug text-ink">
                         <span aria-hidden className="pdp-qnum">
                           {i + 1}
                         </span>
@@ -329,7 +490,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
               </div>
 
               {/* Ponte verso Cura Privata: una CTA grande, una secondaria */}
-              <section aria-labelledby="pdp-ponte" className="no-print pdp-bridge mt-8">
+              <section aria-labelledby="pdp-ponte" className="no-print pdp-bridge mt-5">
                 <div className="min-w-0">
                   <h3 id="pdp-ponte" className="display-lg text-[2rem] sm:text-[2.5rem]">
                     {hasResults ? "Hai già i risultati?" : "Quando arriveranno i risultati"}
@@ -340,7 +501,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                       : "Salva questa scheda e torna con il referto: lo rendiamo chiaro e lo mettiamo accanto alla tua mappa."}
                   </p>
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    <Link href={capisciHref} data-track="pdp-to-referto" className="btn btn-primary btn-lg">
+                    <Link href={capisciHref} data-track="pdp-to-referto" className="btn btn-primary btn-lg pdp-cta">
                       {capisciCta} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                     </Link>
                     {!hasResults ? (
@@ -356,12 +517,15 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                   </p>
                   <p className="mt-2 text-[1.0625rem] text-ink-soft">Un videoconsulto con un medico di medicina generale o internista, con la tua scheda già letta.</p>
                   <Link href={medicoHref} data-track="pdp-to-medico" className="tone-text mt-4 inline-flex min-h-11 items-center gap-2 text-lg font-bold">
-                    Parla con un medico{prices.medico ? ` — ${prices.medico}` : ""} <ArrowRight aria-hidden className="h-5 w-5" />
+                    Parla con un medico
+                    {prices.medico ? ` — ${prices.medico}` : ""} <ArrowRight aria-hidden className="h-5 w-5" />
                   </Link>
                 </div>
               </section>
 
-              <p className="mt-8 max-w-3xl text-[1.0625rem] text-muted">{PDP_DISCLAIMER}</p>
+              <p className="pdp-note mt-5 text-[1.0625rem] text-ink-soft">
+                <Info aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-teal" /> <span>{PDP_DISCLAIMER}</span>
+              </p>
               <div className="no-print mt-6 flex flex-wrap gap-3">
                 <button type="button" className="btn btn-ghost" onClick={() => go(4)}>
                   <ArrowLeft aria-hidden className="h-5 w-5" /> Torna alle aree
@@ -386,14 +550,33 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
           <aside aria-label="La tua mappa in breve" className="no-print pdp-aside">
             <p className="text-xl font-bold text-ink">La tua mappa in breve</p>
             <Ring pct={comp.pct} compact />
-            <dl className="mt-4 space-y-3 text-[1.0625rem]">
-              <div className="flex justify-between gap-3">
-                <dt className="text-ink-soft">Aree già documentate</dt>
-                <dd className="font-bold text-ink">{AREAS.filter((x) => isDocumented(a, x.id)).length}/10</dd>
+            <dl className="pdp-aside-stats">
+              <div>
+                <dt>
+                  <span aria-hidden className="pdp-ico pdp-ico-sm">
+                    <Check strokeWidth={2.4} />
+                  </span>
+                  <span>Aree già documentate</span>
+                </dt>
+                <dd className="stat-num">{documentedCount}/10</dd>
               </div>
-              <div className="flex justify-between gap-3">
-                <dt className="text-ink-soft">Obiettivo</dt>
-                <dd className="text-right font-bold text-ink">{map.goalLabel ?? "—"}</dd>
+              <div>
+                <dt>
+                  <span aria-hidden className="pdp-ico pdp-ico-sm pdp-cat-contextual">
+                    <Stethoscope strokeWidth={2} />
+                  </span>
+                  <span>Da discutere con il medico</span>
+                </dt>
+                <dd className="stat-num">{discussCount}/10</dd>
+              </div>
+              <div>
+                <dt>
+                  <span aria-hidden className="pdp-ico pdp-ico-sm">
+                    <Target strokeWidth={2} />
+                  </span>
+                  <span>Obiettivo</span>
+                </dt>
+                <dd className="pdp-aside-goal">{map.goalLabel ?? "Da scegliere"}</dd>
               </div>
             </dl>
             <p className="mt-5 flex items-start gap-2 text-[0.9375rem] text-muted">
@@ -409,13 +592,13 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
 
 function Nav({ back, next, disabled, nextLabel = "Avanti" }: { back?: () => void; next: () => void; disabled?: boolean; nextLabel?: string }) {
   return (
-    <div className="pdp-nav no-print mt-8 flex flex-col-reverse gap-3 sm:flex-row">
+    <div className="pdp-nav no-print mt-8 flex gap-3">
       {back ? (
-        <button type="button" className="btn btn-ghost btn-lg" onClick={back}>
+        <button type="button" className="btn btn-secondary btn-lg pdp-nav-back" onClick={back}>
           <ArrowLeft aria-hidden className="h-5 w-5" /> Indietro
         </button>
       ) : null}
-      <button type="button" className="btn btn-primary btn-lg" onClick={next} disabled={disabled}>
+      <button type="button" className="btn btn-primary btn-lg pdp-nav-next" onClick={next} disabled={disabled}>
         {nextLabel} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
       </button>
     </div>
@@ -430,24 +613,54 @@ function Ring({ pct, compact }: { pct: number; compact?: boolean }) {
       <div className="relative shrink-0">
         <svg viewBox="0 0 120 120" className="pdp-ring-svg" aria-hidden>
           <circle cx="60" cy="60" r={r} className="pdp-ring-track" />
-          <circle cx="60" cy="60" r={r} className="pdp-ring-value" strokeDasharray={c} strokeDashoffset={c * (1 - pct / 100)} transform="rotate(-90 60 60)" />
+          {pct > 0 ? <circle cx="60" cy="60" r={r} className="pdp-ring-value" strokeDasharray={c} strokeDashoffset={c * (1 - pct / 100)} transform="rotate(-90 60 60)" /> : null}
         </svg>
-        <span className="pdp-ring-num stat-num">{pct}%</span>
+        <span aria-hidden className="pdp-ring-num stat-num">
+          {pct}%
+        </span>
       </div>
-      <div>
-        <p className="font-bold text-ink">Completezza delle informazioni: {pct}%</p>
-        <p className="mt-1 text-[0.9375rem] text-muted">{COMPLETENESS_NOTE}</p>
+      <div className="min-w-0">
+        <p className="pdp-ring-title">Completezza delle informazioni: {pct}%</p>
+        <p className="pdp-ring-note">{COMPLETENESS_NOTE}</p>
       </div>
     </div>
   );
 }
 
-function ResultCol({ title, tone, count, empty, children }: { title: string; tone: "done" | "discuss" | "not"; count: number; empty?: string; children: React.ReactNode }) {
+function ResultCol({
+  title,
+  desc,
+  tone,
+  icon: Icon,
+  count,
+  unit,
+  empty,
+  children,
+}: {
+  title: string;
+  desc: string;
+  tone: "done" | "discuss" | "not";
+  icon: LucideIcon;
+  count: number;
+  unit: [string, string];
+  empty?: string;
+  children: React.ReactNode;
+}) {
   return (
     <section aria-label={title} className={clsx("pdp-col", `pdp-col-${tone}`)}>
-      <h3 className="text-xl font-bold leading-tight text-ink">{title}</h3>
-      {count ? <ul className="pdp-col-list mt-3">{children}</ul> : <p className="mt-3 text-[1.0625rem] text-muted">{empty}</p>}
-      <p className="pdp-col-count mt-4">{count}</p>
+      <div className="flex items-start gap-3.5">
+        <span aria-hidden className="pdp-ico">
+          <Icon strokeWidth={1.8} />
+        </span>
+        <div className="min-w-0">
+          <h3 className="text-[1.375rem] font-extrabold leading-tight text-ink">{title}</h3>
+          <p className="mt-1 text-[1.0625rem] leading-snug text-ink-soft">{desc}</p>
+        </div>
+      </div>
+      {count ? <ul className="pdp-col-list mt-4">{children}</ul> : <p className="mt-4 text-[1.0625rem] text-muted">{empty}</p>}
+      <p className="pdp-col-count">
+        {count} {count === 1 ? unit[0] : unit[1]}
+      </p>
     </section>
   );
 }
