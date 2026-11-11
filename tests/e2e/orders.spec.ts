@@ -40,7 +40,8 @@ test.describe("ordini e pagamenti simulati", () => {
     await page.goto(o.checkoutUrl);
     await expect(page.getByRole("heading", { name: "Il tuo ordine." })).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText("Pagamento simulato — nessun addebito")).toBeVisible();
-    await expect(page.getByText(/49,00|49 €/)).toBeVisible();
+    // Nuovo cliente: primo referto in promozione.
+    await expect(page.getByText(/2,90/).first()).toBeVisible();
     await expect(page.getByText("In attesa di pagamento")).toBeVisible();
     const axe = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
     expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);

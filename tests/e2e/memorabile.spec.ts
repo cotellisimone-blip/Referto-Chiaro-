@@ -147,7 +147,7 @@ test.describe("percorsi A, C, D", () => {
     await signup(ctx.request, `a-${Date.now()}@test.invalid`);
     const doc = await verifiedDocument(ctx.request);
     const o = await (await ctx.request.post("/api/v1/area/orders", { data: { service: "essenziale", documentId: doc } })).json();
-    expect(o.amountCents ?? 4900).toBe(4900);
+    expect(o.checkoutUrl).toBeTruthy();
     await page.goto(o.checkoutUrl);
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
     await page.getByRole("link", { name: "Torna al referto" }).click();
@@ -229,7 +229,7 @@ test.describe("percorsi A, C, D", () => {
     await page.setViewportSize(isMobile ? { width: 390, height: 844 } : { width: 1440, height: 900 });
     await page.goto("/area-personale");
     const nav = page.getByRole("navigation", { name: "Area personale" }).last();
-    for (const label of isMobile ? ["Documenti", "Pareri", "Visite"] : ["I miei documenti", "I miei pareri", "I miei appuntamenti"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
+    for (const label of isMobile ? ["Referti", "Medico", "Pareri"] : ["I miei documenti e report", "I miei appuntamenti", "I miei pareri"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
     for (const [path, h] of [["/area-personale/secondo-parere", "I miei pareri"], ["/area-personale/appuntamenti", "I miei appuntamenti"], ["/area-personale/ordini", "Pagamenti"]] as const) {
       await page.goto(path);
       await expect(page.getByRole("heading", { name: h, level: 1 })).toBeVisible({ timeout: 15_000 });

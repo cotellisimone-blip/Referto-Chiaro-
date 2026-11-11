@@ -28,7 +28,7 @@ export default function Page() {
               </li>
             </ul>
             <h2>Che cosa non c&apos;è</h2>
-            <p>Nessun cookie di profilazione, di statistica o di terze parti. Nessun pixel pubblicitario. Per questo non compare un banner: non c&apos;è nulla da scegliere. Se in futuro verranno introdotti strumenti che richiedono il consenso, il sito chiederà una scelta reale prima di attivarli.</p>
+            <p>Nessun cookie di profilazione, di statistica o di terze parti. Nessun pixel pubblicitario. Contiamo soltanto, in forma anonima e aggregata per giorno, le visite alla home e i clic sui pulsanti dei servizi: non salviamo nulla sul tuo dispositivo né dati che ti identifichino. Per questo non compare un banner: non c&apos;è nulla da scegliere. Se in futuro verranno introdotti strumenti che richiedono il consenso, il sito chiederà una scelta reale prima di attivarli.</p>
           </Prose>
         </div>
       </div>

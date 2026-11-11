@@ -1,5 +1,7 @@
 "use client";
 
+import { FUNNEL_LABELS } from "@/domain/metrics/funnel";
+
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -82,7 +84,7 @@ function Table({ head, rows, label }: { head: string[]; rows: React.ReactNode[][
 const euro = (c: number) => (c / 100).toLocaleString("it-IT", { style: "currency", currency: "EUR" });
 
 export function AdminOverview() {
-  const { data, error } = useLoad<{ overview: Record<string, number> }>("/api/v1/admin/panoramica");
+  const { data, error } = useLoad<{ overview: Record<string, number>; funnel?: { days: number; steps: Record<string, number> } }>("/api/v1/admin/panoramica");
   const o = data?.overview;
   const items: [string, string][] = o
     ? [
@@ -108,6 +110,13 @@ export function AdminOverview() {
           </div>
         ))}
       </dl>
+      {data?.funnel ? (
+        <section aria-labelledby="funnel-titolo" className="mt-10">
+          <h2 id="funnel-titolo" className="font-serif text-2xl text-ink">Funnel, ultimi {data.funnel.days} giorni</h2>
+          <p className="mt-1 text-sm text-muted">Visite e clic sono contatori anonimi per giorno; gli altri passi vengono dai dati del sito. Account demo esclusi.</p>
+          <Table label="Funnel" head={["Passo", "Numero"]} rows={Object.entries(data.funnel.steps).map(([k, v]) => [FUNNEL_LABELS[k] ?? k, String(v)])} />
+        </section>
+      ) : null}
     </Frame>
   );
 }

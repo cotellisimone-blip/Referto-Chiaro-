@@ -1,3 +1,4 @@
+import { TrackClicks } from "@/components/site/track";
 import type { Metadata, Viewport } from "next";
 import { SITE_URL, indexingEnabled } from "@/lib/seo";
 import localFont from "next/font/local";
@@ -55,6 +56,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SiteFooter />
         <SiteSearch />
         <BackToTop />
+        <TrackClicks />
       </body>
     </html>
   );

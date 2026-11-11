@@ -393,3 +393,14 @@ CREATE TABLE IF NOT EXISTS promo_claims (
 );
 ALTER TABLE promo_claims ENABLE ROW LEVEL SECURITY;
 INSERT INTO schema_migrations(version) VALUES (6) ON CONFLICT DO NOTHING;
+
+-- Evoluzione v2: contatori aggregati del funnel pubblico (visita → CTA). Solo giorno, evento, conteggio:
+-- nessun utente, nessun cookie, nessun indirizzo IP. Solo sistema.
+CREATE TABLE IF NOT EXISTS funnel_daily (
+  day date NOT NULL,
+  event text NOT NULL,
+  count integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (day, event)
+);
+ALTER TABLE funnel_daily ENABLE ROW LEVEL SECURITY;
+INSERT INTO schema_migrations(version) VALUES (7) ON CONFLICT DO NOTHING;
