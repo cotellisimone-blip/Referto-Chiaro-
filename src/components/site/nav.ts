@@ -1,8 +1,8 @@
-/** Navigazione Cura Privata (pacchetto «Memorabile» 9/11/2026): i tre servizi per primi, poi prezzi e guide. */
+/** Navigazione Cura Privata: i tre servizi per primi, nell'ordine dei livelli e dei prezzi (ciclo 1), poi prezzi e guide. */
 export const MAIN_NAV = [
   { href: "/referti", label: "Capisci il referto", tone: "capisci" },
-  { href: "/servizi/secondo-parere", label: "Secondo parere", tone: "parere" },
   { href: "/servizi/parla-con-un-medico", label: "Parla con un medico", tone: "medico" },
+  { href: "/servizi/secondo-parere", label: "Secondo parere", tone: "parere" },
   { href: "/prezzi", label: "Prezzi", tone: null },
   { href: "/guide", label: "Guide", tone: null },
 ] as const;
@@ -11,8 +11,8 @@ export const MAIN_NAV = [
 export const FOOTER_NAV = {
   Servizi: [
     { href: "/referti", label: "Capisci il tuo referto" },
-    { href: "/servizi/secondo-parere", label: "Chiedi un secondo parere" },
     { href: "/servizi/parla-con-un-medico", label: "Parla con un medico" },
+    { href: "/servizi/secondo-parere", label: "Chiedi un secondo parere" },
     { href: "/prezzi", label: "Prezzi" },
     { href: "/inizia", label: "Ti aiutiamo a scegliere" },
   ],
