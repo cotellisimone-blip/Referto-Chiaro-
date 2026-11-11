@@ -12,7 +12,7 @@ import { MobileHelpBar } from "@/components/site/mobile-help-bar";
 import { TrackView } from "@/components/site/track";
 import { DualEntry } from "@/components/punto-di-partenza/dual-entry";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
-import { DESCRIPTOR, PRICE_NOTE, coreService, entryPriceLabel, publicPricesEnabled } from "@/domain/offerta";
+import { HERO_SUBTITLE, PRICE_NOTE, coreService, entryPriceLabel, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
 
 /*
  * Home di Cura Privata, «Evoluzione v2» (11/11/2026). Sette blocchi, chiari e forti alternati:
@@ -39,6 +39,7 @@ export default function Home() {
   const square = ILLUSTRATIVE_PHOTOS.heroSquare;
   const capisci = coreService("capisci");
   const pdp = puntoDiPartenzaEnabled();
+  const capisciPrice = priceDisplay("capisci");
   return (
     <>
       <TrackView event="visita-home" />
@@ -54,7 +55,7 @@ export default function Home() {
                 <span className="marker marker-animate">Parla con un medico.</span>
               </span>
             </h1>
-            <p className="mt-6 max-w-[30rem] text-xl text-ink-soft sm:text-[1.375rem] sm:leading-snug">{DESCRIPTOR}</p>
+            <p className="mt-6 max-w-[32rem] text-xl text-ink-soft sm:text-[1.375rem] sm:leading-snug">{HERO_SUBTITLE}</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link href={capisci.href} data-track="cta-capisci" className="btn btn-primary btn-lg">
                 Ho un referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
@@ -63,6 +64,22 @@ export default function Home() {
                 Scopri tutti i servizi
               </Link>
             </div>
+            {/* Ciclo 1: prezzo e ingresso gratuito già nella prima schermata, anche su telefono */}
+            {prices || pdp ? (
+              <p className="hero-facts mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-lg text-ink-soft">
+                {prices ? (
+                  <span>
+                    <strong className="text-ink">{capisciPrice.lead ? `${capisciPrice.lead} ${capisciPrice.amount}` : capisciPrice.amount}</strong>
+                    {capisciPrice.note ? `, ${capisciPrice.note}` : ""}
+                  </span>
+                ) : null}
+                {pdp ? (
+                  <Link href="/punto-di-partenza" data-track="cta-pdp" className="link inline-flex min-h-11 items-center font-semibold">
+                    Non hai ancora esami? Parti gratis
+                  </Link>
+                ) : null}
+              </p>
+            ) : null}
           </div>
         </div>
         {/* Una sola immagine: ritaglio 1:1 su telefono (sotto le azioni), fotografia larga che esce dal margine su desktop */}
@@ -84,7 +101,7 @@ export default function Home() {
       {pdp ? <DualEntry /> : null}
 
       {/* 2 · IL PRODOTTO D'INGRESSO */}
-      <section id="referto" aria-labelledby="referto-titolo" className={`scope-strong tone-capisci stage-petrol overflow-hidden ${pdp ? "py-12 sm:py-16" : "py-14 sm:py-24"}`}>
+      <section id="referto" aria-labelledby="referto-titolo" className={`scope-strong tone-capisci stage-petrol overflow-hidden ${pdp ? "py-12 sm:py-16" : "py-12 sm:py-[4.5rem]"}`}>
         <div className="container-rc">
           <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16">
             <div>
@@ -107,7 +124,7 @@ export default function Home() {
             </div>
             <Reveal>
               <ReportTransform />
-              <ol className="mt-9 grid gap-x-4 gap-y-3 sm:grid-cols-3">
+              <ol className="mt-9 hidden gap-x-4 gap-y-3 sm:grid sm:grid-cols-3">
                 {STEPS.map((t, i) => (
                   <li key={t} className="flex items-center gap-3 text-lg font-bold text-ink">
                     <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#7be0d2] text-base font-extrabold text-[#0c3340]">
@@ -134,13 +151,12 @@ export default function Home() {
       </section>
 
       {/* 3 · SE UNA SPIEGAZIONE NON BASTA */}
-      <section id="servizi" aria-labelledby="servizi-titolo" className="py-14 sm:py-24">
+      <section id="servizi" aria-labelledby="servizi-titolo" className="py-12 sm:py-[4.5rem]">
         <div className="container-rc">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <h2 id="servizi-titolo" className="display-lg max-w-2xl">
               Se una spiegazione non basta.
             </h2>
-            <p className="max-w-sm text-xl text-ink-soft lg:text-right">Due persone diverse, per due bisogni diversi.</p>
           </div>
           <div className="mt-10">
             <NextLevels />
@@ -157,14 +173,13 @@ export default function Home() {
       </section>
 
       {/* 4 · TRE LIVELLI */}
-      <section aria-labelledby="livelli-titolo" className="bg-mist py-14 sm:py-24">
+      <section aria-labelledby="livelli-titolo" className="bg-mist py-12 sm:py-[4.5rem]">
         <div className="container-rc">
           <div className="lg:flex lg:items-start lg:justify-between lg:gap-10">
             <h2 id="livelli-titolo" className="display-lg max-w-xl">
               {pdp ? "Parti gratis. Poi scegli tu fin dove arrivare." : "Tre livelli. Scegli tu fin dove arrivare."}
             </h2>
             <p className="mt-4 max-w-xs text-xl text-ink-soft lg:mt-2 lg:text-right">
-              Puoi iniziare dal livello che ti serve.{" "}
               <Link href="/inizia" className="link font-semibold">
                 Ti aiutiamo a scegliere
               </Link>
@@ -177,21 +192,21 @@ export default function Home() {
       </section>
 
       {/* 5 · FIDUCIA */}
-      <section aria-labelledby="fiducia-titolo" className="scope-strong bg-strong py-14 sm:py-24">
+      <section aria-labelledby="fiducia-titolo" className="scope-strong bg-strong py-12 sm:py-[4.5rem]">
         <div className="container-rc">
           <Trust />
         </div>
       </section>
 
       {/* 6 · LO STRUMENTO GRATUITO */}
-      <section aria-labelledby="preparati-titolo" className="bg-ivory py-14 sm:py-24">
+      <section aria-labelledby="preparati-titolo" className="bg-ivory py-12 sm:py-[4.5rem]">
         <div className="container-rc">
           <PrepBanner />
         </div>
       </section>
 
       {/* 7 · CHIUSURA */}
-      <section aria-labelledby="chiusura-titolo" className="scope-strong stage-teal py-14 sm:py-24">
+      <section aria-labelledby="chiusura-titolo" className="scope-strong stage-teal py-12 sm:py-[4.5rem]">
         <div className="container-rc grid grid-cols-[minmax(0,1fr)] items-end gap-10 lg:grid-cols-[1.3fr_0.7fr]">
           <div>
             {pdp ? (

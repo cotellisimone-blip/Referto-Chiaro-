@@ -1,9 +1,12 @@
 import { BadgeCheck, IdCard, ShieldCheck, UserRound } from "lucide-react";
 import { PUBLIC_PROFESSIONALS } from "@/domain/offerta";
 
+/** Federazione nazionale degli Ordini dei medici: chiunque può controllare l'iscrizione all'Albo. */
+const FNOMCEO_URL = "https://portale.fnomceo.it/";
+
 /**
  * «Chi si occupa del tuo caso». Mostra SOLO professionisti verificati (nome, specializzazione, iscrizione all'Albo,
- * foto con liberatoria). Finché l'elenco è vuoto dice la verità: quali dati vedrai e perché non ci sono ancora profili.
+ * mai fotografie). Finché l'elenco è vuoto dice la verità: quali dati vedrai e perché non ci sono ancora profili.
  * Niente nomi, numeri d'Albo, rating o badge di esempio.
  */
 export function Professionals() {
@@ -12,20 +15,19 @@ export function Professionals() {
       <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3" aria-label="Professionisti di Cura Privata">
         {PUBLIC_PROFESSIONALS.map((p) => (
           <li key={p.registration} className="card flex gap-5 p-6">
-            {p.photo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={p.photo.src} alt={p.photo.alt} width={96} height={96} loading="lazy" className="h-24 w-24 shrink-0 rounded-2xl object-cover object-top" />
-            ) : (
-              <span className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-mist">
-                <UserRound aria-hidden className="h-10 w-10 text-teal" />
-              </span>
-            )}
+            {/* Mai fotografie di medici (scelta del titolare): solo nome, specialità e iscrizione verificabile */}
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-mist">
+              <UserRound aria-hidden className="h-8 w-8 text-teal" />
+            </span>
             <div>
               <p className="text-xl font-bold text-ink">{p.fullName}</p>
               <p className="text-lg text-ink-soft">{p.specialty}</p>
               <p className="mt-2 flex items-center gap-1.5 text-[0.9375rem] text-muted">
                 <BadgeCheck aria-hidden className="h-4 w-4 text-teal" /> {p.registration}, verificata il {p.verifiedOn}
               </p>
+              <a href={FNOMCEO_URL} className="link mt-1 inline-flex min-h-11 items-center text-[0.9375rem] font-semibold" rel="noopener noreferrer" target="_blank">
+                Verificala anche tu sul portale FNOMCeO
+              </a>
             </div>
           </li>
         ))}
@@ -63,7 +65,7 @@ export function Professionals() {
           <span className="float-chip absolute -top-1 right-0 rounded-full bg-strong px-3.5 py-1.5 text-sm font-bold text-on-strong shadow-[var(--shadow-lift)]">Così sarà ogni profilo</span>
         </div>
         <p className="mt-8 text-xl text-ink-soft">
-          I profili dei medici compariranno qui <strong className="text-ink">solo dopo la verifica</strong>, con fotografia autorizzata. Non mostriamo profili di esempio, giudizi o numeri che non possiamo dimostrare.
+          I profili dei medici compariranno qui <strong className="text-ink">solo dopo la verifica</strong>: nome, specializzazione e iscrizione all&apos;Albo, che potrai controllare anche tu. Non mostriamo profili di esempio, giudizi o numeri che non possiamo dimostrare.
         </p>
       </div>
       <ul className="grid gap-4 sm:grid-cols-3">

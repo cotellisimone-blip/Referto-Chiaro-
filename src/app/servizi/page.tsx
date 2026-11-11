@@ -35,7 +35,7 @@ export default function ServiziPage() {
         <div className="container-rc pb-12 pt-12 sm:pt-16">
           <p className="eyebrow">I servizi di Cura Privata</p>
           <h1 id="servizi-titolo" className="display-xl mt-5 max-w-4xl">
-            Capisci. Chiedi un secondo parere. <span className="marker">Parla con un medico.</span>
+            Dal referto al medico, <span className="marker">un passo alla volta.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-xl text-ink-soft">Tre servizi in un unico spazio. Non sai quale ti serve? Rispondi a una domanda e te lo diciamo noi.</p>
           <Link href="/inizia" className="btn btn-secondary btn-lg mt-8">

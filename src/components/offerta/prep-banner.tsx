@@ -17,7 +17,7 @@ export function PrepBanner() {
         <div className="relative mx-auto max-w-[30rem] pb-10 pr-[18%] lg:mx-0">
           <span aria-hidden className="absolute -left-6 -top-6 h-40 w-40 rounded-full bg-[radial-gradient(closest-side,var(--color-marker),transparent)] opacity-60" />
           {SHOW_ILLUSTRATIVE_PHOTOS ? (
-            <figure className="relative aspect-[4/5] overflow-hidden rounded-[2.25rem] shadow-[var(--shadow-float)]">
+            <figure className="relative aspect-[4/3] overflow-hidden rounded-[2.25rem] shadow-[var(--shadow-float)] sm:aspect-[4/5] lg:aspect-square">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} loading="lazy" decoding="async" className="h-full w-full object-cover" />
               <figcaption className="caption-illus left-3 top-3">Immagine illustrativa</figcaption>

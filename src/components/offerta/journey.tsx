@@ -29,8 +29,8 @@ export function Journey({ withStart = false }: { withStart?: boolean }) {
               </span>
               {prices ? <span className="stat-num block text-right text-[1.75rem] text-ink">Gratis</span> : null}
             </span>
-            <span className="level-verb mt-5 block text-[1.75rem] font-extrabold uppercase leading-none tracking-[0.02em] text-ink">Parti</span>
-            <span className="mt-3 block text-xl leading-snug text-ink-soft">Una scheda per sapere di che cosa parlare con il medico.</span>
+            <span className="level-verb mt-3 block sm:mt-5 text-[1.75rem] font-extrabold uppercase leading-none tracking-[0.02em] text-ink">Parti</span>
+            <span className="mt-3 hidden text-xl leading-snug text-ink-soft sm:block">Una scheda per sapere di che cosa parlare con il medico.</span>
             <span className="tone-text mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-lg font-bold">
               Punto di Partenza <ArrowRight aria-hidden className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
             </span>
@@ -54,11 +54,11 @@ export function Journey({ withStart = false }: { withStart?: boolean }) {
                   </span>
                 ) : null}
               </span>
-              <span className="level-verb mt-5 block text-[1.75rem] font-extrabold uppercase leading-none tracking-[0.02em] text-ink">
+              <span className="level-verb mt-3 block sm:mt-5 text-[1.75rem] font-extrabold uppercase leading-none tracking-[0.02em] text-ink">
                 <span className="sr-only">Livello {s.level.n}: </span>
                 {s.level.verb}
               </span>
-              <span className="mt-3 block text-xl leading-snug text-ink-soft">{LINE[id]}</span>
+              <span className="mt-3 hidden text-xl leading-snug text-ink-soft sm:block">{LINE[id]}</span>
               <span className="tone-text mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-lg font-bold">
                 {s.name} <ArrowRight aria-hidden className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
               </span>

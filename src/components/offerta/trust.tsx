@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, Ban, Cpu, Eye, LockKeyhole, Stethoscope } from "lucide-react";
+import { ArrowRight, Ban, Building2, Cpu, Eye, LockKeyhole, Stethoscope } from "lucide-react";
+import { readTitolare } from "@/domain/titolare";
 
 const POINTS = [
   { icon: Eye, q: "Chi vede i documenti", a: "Tu. Un medico vede solo quelli che scegli di condividere." },
@@ -14,6 +15,11 @@ const POINTS = [
  * Un elenco editoriale (dl) su fondo forte, non una griglia di schede. Va dentro una sezione `.scope-strong`.
  */
 export function Trust() {
+  const t = readTitolare();
+  // «Chi c'è dietro» compare solo con i dati veri del titolare (nome + P.IVA): nessun segnaposto.
+  const points = t
+    ? [{ icon: Building2, q: "Chi c'è dietro", a: `${t.name}, P.IVA ${t.vat}${t.address ? `, ${t.address}` : ""}.` }, ...POINTS]
+    : POINTS;
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
       <div className="lg:sticky lg:top-28 lg:self-start">
@@ -31,7 +37,7 @@ export function Trust() {
         </div>
       </div>
       <dl className="trust-list">
-        {POINTS.map(({ icon: Icon, q, a }) => (
+        {points.map(({ icon: Icon, q, a }) => (
           <div key={q}>
             <dt className="flex items-center gap-3 text-xl font-bold text-ink">
               <Icon aria-hidden className="h-6 w-6 shrink-0 text-teal" strokeWidth={1.8} />

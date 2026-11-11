@@ -168,6 +168,12 @@ export const LEVELS = ["capisci", "parla-con-un-medico", "secondo-parere"] as co
 export const INFORMATIVE_NOTE = "Informativo: non sostituisce la valutazione del medico e non fornisce diagnosi o terapia.";
 export const DESCRIPTOR = "Referti, secondo parere e videoconsulti con medici abilitati e identificabili.";
 
+/**
+ * Sottotitolo della home (ciclo 1): dice in una riga che cosa ricevi e chi c'è se serve.
+ * «medici abilitati e identificabili» resta per scelta del titolare (11/11/2026).
+ */
+export const HERO_SUBTITLE = "Il tuo referto spiegato valore per valore, in parole semplici. Se serve, ne parli con medici abilitati e identificabili.";
+
 type Env = Record<string, string | undefined>;
 
 function envCents(env: Env, key: string, fallback: number): number {
@@ -280,7 +286,7 @@ export const PRICE_NOTE = "Prezzi di riferimento, IVA inclusa ove dovuta. Il pre
 
 /**
  * Professionisti mostrati sul sito pubblico. Si aggiungono SOLO dopo la verifica dell'iscrizione all'Albo
- * e con fotografia autorizzata per iscritto. Vuoto finché la rete di medici non è attiva: il sito lo dice.
+ * (mai fotografie di medici: scelta del titolare). Vuoto finché la rete di medici non è attiva: il sito lo dice.
  */
 export interface PublicProfessional {
   fullName: string;
@@ -288,7 +294,6 @@ export interface PublicProfessional {
   /** Riferimento d'iscrizione verificato (Ordine provinciale + numero). */
   registration: string;
   verifiedOn: string;
-  photo?: { src: string; alt: string; consentRef: string };
   bio?: string;
 }
 

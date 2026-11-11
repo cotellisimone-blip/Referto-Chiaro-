@@ -76,7 +76,7 @@ export function NextLevels() {
         </div>
         <div className="relative px-7 pb-7 sm:p-0">
           {SHOW_ILLUSTRATIVE_PHOTOS ? (
-            <figure className="relative aspect-[4/5] overflow-hidden rounded-[2rem] sm:absolute sm:inset-0 sm:aspect-auto sm:rounded-none sm:rounded-tl-[5rem]">
+            <figure className="relative hidden aspect-[4/3] overflow-hidden rounded-[2rem] sm:block sm:absolute sm:inset-0 sm:aspect-auto sm:rounded-none sm:rounded-tl-[5rem]">
               <picture className="contents">
                 <source media="(min-width: 640px)" srcSet={tall.src} width={tall.width} height={tall.height} />
                 <img src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} loading="lazy" decoding="async" className="h-full w-full object-cover object-top" />
@@ -84,7 +84,7 @@ export function NextLevels() {
               <figcaption className="caption-illus right-3 top-3">Immagine illustrativa</figcaption>
             </figure>
           ) : null}
-          <CallCard className="absolute bottom-11 left-11 right-11 sm:bottom-6 sm:left-[-2.5rem] sm:right-6" />
+          <CallCard className="relative sm:absolute sm:bottom-6 sm:left-[-2.5rem] sm:right-6" />
         </div>
       </article>
 
@@ -102,7 +102,6 @@ export function NextLevels() {
             Chiedi un secondo parere <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
         </div>
-        <OpinionSheet className="mt-10 rotate-[1.5deg]" />
       </article>
     </div>
   );

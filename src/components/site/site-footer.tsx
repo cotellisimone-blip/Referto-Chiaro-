@@ -2,16 +2,29 @@ import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 import { FOOTER_NAV, LEGAL_NAV } from "./nav";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
+import { readTitolare } from "@/domain/titolare";
+
+/** Titolare in una riga, solo se configurato (nome + P.IVA): mai un segnaposto. */
+function OwnerLine() {
+  const t = readTitolare();
+  if (!t) return null;
+  return (
+    <p className="mt-4 text-[1.0625rem] text-muted" data-testid="titolare-footer">
+      {t.name} · P.IVA {t.vat}
+      {t.address ? ` · ${t.address}` : ""}
+    </p>
+  );
+}
 
 export function SiteFooter() {
   const pdp = puntoDiPartenzaEnabled();
   return (
     <footer className="no-print mt-auto border-t border-line bg-paper">
-      <div className="container-rc grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.6fr_repeat(3,1fr)]">
-        <div className="max-w-sm">
+      <div className="container-rc grid grid-cols-2 gap-x-6 gap-y-10 py-12 sm:py-16 md:grid-cols-3 lg:grid-cols-[1.6fr_repeat(3,1fr)] lg:gap-12">
+        <div className="col-span-2 max-w-sm md:col-span-3 lg:col-span-1">
           <Logo withTld />
           <p className="mt-5 font-serif text-2xl leading-snug text-ink">Capisci. Chiedi un secondo parere. Parla con un medico.</p>
-          <p className="mt-4 text-[1.0625rem] text-muted">Versione dimostrativa: nessun pagamento e nessun medico sono reali finché non lo diciamo.</p>
+          <OwnerLine />
           <p className="mt-5 inline-flex items-center gap-3 rounded-xl border border-line bg-canvas px-4 py-3 text-[0.9375rem] text-ink">
             <span className="stat-num text-2xl text-danger">112</span>
             <span>In caso di emergenza non usare questo sito: chiama il 112.</span>
