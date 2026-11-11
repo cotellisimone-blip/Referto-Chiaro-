@@ -10,9 +10,10 @@ npm run dev                     # http://localhost:3000
 
 | Comando | A cosa serve |
 |---|---|
-| `npm run typecheck` · `npm run lint` | Controlli statici |
+| `npm run typecheck` · `npm run lint` | Controlli statici (`typecheck` genera prima i tipi delle rotte: funziona anche su un clone appena scaricato) |
 | `npm test` | Test unitari (Vitest) |
 | `npx playwright test --trace off` | Test end-to-end, accessibilità (axe), sicurezza, desktop e mobile |
+| `npm run test:e2e:vetrina` | Compila il profilo vetrina in `.next-vetrina` e lo prova (ciclo 2) |
 | `npm run screenshots` | Screenshot reali in `docs/screenshots/{desktop,mobile}` |
 | `npm run build` · `npm start` | Build e avvio di produzione |
 
@@ -23,3 +24,6 @@ npm run dev                     # http://localhost:3000
 Il percorso testato è Vercel + Neon (`docs/DEPLOY.md`). Il kit propone anche Cloudflare: **non verificato**. PGlite, pdf-lib e Node crypto non sono garantiti sul runtime Workers; servirebbe una prova reale prima di sceglierlo. Il codice è su GitHub (`cotellisimone-blip/referto-chiaro-`), ramo principale `main`.
 
 Rollback: ogni versione è un commit; i vecchi indirizzi di Referto Chiaro rimandano ai nuovi con redirect permanenti (`next.config.ts`), quindi tornare indietro è un `git revert` del rebrand.
+
+## Controlli automatici (ciclo 2)
+Ogni pull request e ogni push su `main` eseguono `.github/workflows/controlli.yml`: lint, tipi, test unitari, build, e2e desktop e telefono, e2e del profilo vetrina. Nessun segreto richiesto. Circa 8–10 minuti per esecuzione con i minuti gratuiti di GitHub Actions.
