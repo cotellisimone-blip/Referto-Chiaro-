@@ -121,12 +121,12 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
         </div>
 
         <div className="hdr-mobile items-center gap-1.5">
-          <SearchTrigger className="h-10 w-10" />
-          <TextSizeToggle className="hdr-wide-only inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-line bg-paper px-1.5 font-serif text-ink transition-colors hover:bg-mist" />
-          <ThemeToggle className="hdr-wide-only inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:bg-mist" />
+          <SearchTrigger className="h-11 w-11" />
+          <TextSizeToggle className="hdr-wide-only inline-flex h-11 min-w-11 items-center justify-center rounded-full border border-line bg-paper px-1.5 font-serif text-ink transition-colors hover:bg-mist" />
+          <ThemeToggle className="hdr-wide-only inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:bg-mist" />
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper text-ink"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-ink"
             aria-expanded={open}
             aria-controls="menu-mobile"
             onClick={() => setOpen((v) => !v)}

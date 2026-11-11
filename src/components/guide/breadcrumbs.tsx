@@ -15,7 +15,7 @@ export function Breadcrumbs({ items }: { items: { name: string; path: string }[]
                   {it.name}
                 </span>
               ) : (
-                <Link href={it.path} className="link">
+                <Link href={it.path} className="link inline-flex min-h-11 min-w-11 items-center">
                   {it.name}
                 </Link>
               )}

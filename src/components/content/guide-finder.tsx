@@ -66,7 +66,7 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
               className="min-w-0 flex-1 bg-transparent text-lg text-ink outline-none placeholder:text-muted"
             />
             {query ? (
-              <button type="button" onClick={() => setQuery("")} className="inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-mist">
+              <button type="button" onClick={() => setQuery("")} className="inline-flex h-11 w-11 items-center justify-center rounded-full hover:bg-mist">
                 <X aria-hidden className="h-4 w-4" />
                 <span className="sr-only">Cancella la ricerca</span>
               </button>
@@ -153,7 +153,7 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
               <ul className="columns-1 gap-8 px-5 pb-5 sm:columns-2 lg:columns-3">
                 {[...guides].sort((a, b) => a.examName.localeCompare(b.examName, "it")).map((g) => (
                   <li key={g.slug} className="break-inside-avoid">
-                    <Link href={`/guide/${g.slug}`} className="link inline-flex min-h-11 items-center text-[1.0625rem]">
+                    <Link href={`/guide/${g.slug}`} className="link inline-flex min-h-11 min-w-11 items-center text-[1.0625rem]">
                       {g.examName}
                     </Link>
                   </li>

@@ -148,7 +148,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                 <li key={q}>{q}</li>
               ))}
             </ol>
-            <Link href={`/strumenti/domande-per-il-medico?esami=${guide.slug}`} className="link no-print mt-4 inline-flex items-center gap-1 text-[1.0625rem] font-semibold">
+            <Link href={`/strumenti/domande-per-il-medico?esami=${guide.slug}`} className="link no-print mt-4 inline-flex min-h-11 items-center gap-1 text-[1.0625rem] font-semibold">
               Aggiungi altri esami e stampa la lista <ArrowRight aria-hidden className="h-4 w-4" />
             </Link>
           </section>
@@ -164,10 +164,10 @@ export function GuideArticle({ guide }: { guide: Guide }) {
           {guide.sources.length ? (
             <section aria-labelledby="fonti-titolo">
               <h2 id="fonti-titolo" className="text-lg font-semibold text-ink">Fonti consultate</h2>
-              <ul className="mt-2 space-y-1 text-sm text-muted">
+              <ul className="mt-2 text-sm text-muted">
                 {guide.sources.map((s) => (
                   <li key={s.url}>
-                    <a href={s.url} className="link" rel="noopener noreferrer">
+                    <a href={s.url} className="link inline-flex min-h-11 items-center" rel="noopener noreferrer">
                       {s.title}
                     </a>
                   </li>
@@ -191,10 +191,10 @@ export function GuideArticle({ guide }: { guide: Guide }) {
           {terms.length ? (
             <div className="card p-5">
               <p className="text-sm font-semibold text-ink">Termini del glossario</p>
-              <ul className="mt-2 space-y-1 text-[0.9375rem]">
+              <ul className="mt-2 text-[0.9375rem]">
                 {terms.map((t) => (
                   <li key={t.slug}>
-                    <Link href={`/glossario/${t.slug}`} className="link">
+                    <Link href={`/glossario/${t.slug}`} className="link inline-flex min-h-11 items-center">
                       {t.term}
                     </Link>
                   </li>
@@ -205,10 +205,10 @@ export function GuideArticle({ guide }: { guide: Guide }) {
           {related.length ? (
             <div className="card p-5">
               <p className="text-sm font-semibold text-ink">Guide collegate</p>
-              <ul className="mt-2 space-y-1 text-[0.9375rem]">
+              <ul className="mt-2 text-[0.9375rem]">
                 {related.map((r) => (
                   <li key={r.slug}>
-                    <Link href={`/guide/${r.slug}`} className="link">
+                    <Link href={`/guide/${r.slug}`} className="link inline-flex min-h-11 items-center">
                       {r.title}
                     </Link>
                   </li>

@@ -57,7 +57,7 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
             className="min-w-0 flex-1 bg-transparent text-lg text-ink outline-none placeholder:text-muted"
           />
           {query ? (
-            <button type="button" onClick={() => setQuery("")} className="inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-mist">
+            <button type="button" onClick={() => setQuery("")} className="inline-flex h-11 w-11 items-center justify-center rounded-full hover:bg-mist">
               <X aria-hidden className="h-4 w-4" />
               <span className="sr-only">Cancella la ricerca</span>
             </button>
@@ -120,12 +120,13 @@ function Row({ e }: { e: TermCard }) {
   return (
     <div className="grid gap-1 px-5 py-4 text-lg sm:grid-cols-[240px_1fr] sm:gap-6">
       <dt className="font-semibold text-ink">
-        <Link href={`/glossario/${e.slug}`} className="link">
+        <Link href={`/glossario/${e.slug}`} className="link inline-flex min-h-11 items-center">
           {e.term}
         </Link>
         {e.aliases.length ? <span className="block text-sm font-normal text-muted">{e.aliases.slice(0, 2).join(" · ")}</span> : null}
       </dt>
-      <dd className="text-[1.0625rem] text-ink-soft">{e.definition}</dd>
+      {/* Ciclo 2, fase 4: su telefono due righe per voce (la definizione intera è nella scheda del termine). */}
+      <dd className="line-clamp-2 text-[1.0625rem] text-ink-soft sm:line-clamp-none">{e.definition}</dd>
     </div>
   );
 }

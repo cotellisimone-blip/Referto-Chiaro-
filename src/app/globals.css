@@ -1225,7 +1225,8 @@ input[type="search"]::-webkit-search-decoration {
 .hdr-narrow-only {
   display: none;
 }
-@media (max-width: 374px) {
+/* Ciclo 2, fase 4: con i pulsanti da 44 px, sotto i 390 px testo grande e tema passano nel menu. */
+@media (max-width: 389px) {
   .hdr-wide-only {
     display: none !important;
   }
