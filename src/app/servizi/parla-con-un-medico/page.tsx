@@ -21,14 +21,14 @@ export default function ParlaConUnMedicoPage() {
       id="parla-con-un-medico"
       secondaryCta={{ href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita, gratis" }}
     >
-      <section aria-labelledby="differenza-titolo" className="stage-warm py-14 sm:py-24">
+      <section aria-labelledby="differenza-titolo" className="stage-warm py-10 sm:py-24">
         <div className="container-rc">
           <h2 id="differenza-titolo" className="display-lg max-w-3xl">
             Non una videochiamata qualsiasi.
           </h2>
-          <ul className="mt-10 grid gap-5 sm:grid-cols-2">
+          <ul className="mt-7 grid gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-5">
             {DIFFERENCE.map(({ icon: Icon, title, text }) => (
-              <li key={title} className="flex gap-5 rounded-[1.75rem] bg-paper/80 p-6 shadow-[var(--shadow-card)] sm:p-7">
+              <li key={title} className="flex gap-4 rounded-[1.75rem] bg-paper/80 p-5 shadow-[var(--shadow-card)] sm:p-7">
                 <span className="tone-icon h-14 w-14 shrink-0">
                   <Icon aria-hidden className="h-7 w-7" strokeWidth={1.7} />
                 </span>

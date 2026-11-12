@@ -21,15 +21,15 @@ export default function SecondoParerePage() {
       id="secondo-parere"
       secondaryCta={{ href: "/inizia", label: "Non sei sicuro? Ti aiutiamo" }}
     >
-      <section aria-labelledby="garanzie-titolo" className="scope-strong tone-parere stage-blue py-14 sm:py-24">
+      <section aria-labelledby="garanzie-titolo" className="scope-strong tone-parere stage-blue py-10 sm:py-24">
         <div className="container-rc">
           <p className="eyebrow !text-[var(--tone-accent)]">Chi risponde, e come</p>
           <h2 id="garanzie-titolo" className="display-lg mt-4">
             Trasparenza, prima di tutto.
           </h2>
-          <ul className="mt-10 grid gap-x-12 sm:grid-cols-2">
+          <ul className="mt-6 grid gap-x-12 sm:mt-10 sm:grid-cols-2">
             {TRANSPARENCY.map(({ icon: Icon, title, text }) => (
-              <li key={title} className="flex gap-5 border-t border-line py-7">
+              <li key={title} className="flex gap-4 border-t border-line py-5 sm:gap-5 sm:py-7">
                 <Icon aria-hidden className="mt-1 h-8 w-8 shrink-0 text-[var(--tone-accent)]" strokeWidth={1.6} />
                 <div>
                   <h3 className="text-[1.375rem] font-bold leading-snug text-ink">{title}</h3>

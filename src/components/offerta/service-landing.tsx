@@ -29,7 +29,8 @@ const IDENTITY: Record<CoreServiceId, { headline: string; cta: string; hero: str
 function HeroVisual({ id }: { id: CoreServiceId }) {
   if (id === "capisci") {
     return (
-      <div className="relative sm:pr-2">
+      // Ciclo 3, fase 3: su telefono la trasformazione si vede più sotto, nel «prima e dopo» con il cursore.
+      <div className="relative hidden sm:block sm:pr-2">
         <ReportTransform />
       </div>
     );
@@ -131,8 +132,8 @@ export function ServiceLanding({
 
       {/* IN BREVE: tempi, chi se ne occupa, che cosa ricevi */}
       <section aria-label="In breve" className="border-b border-line bg-paper">
-        <div className="container-rc py-8 sm:py-10">
-          <dl className="grid gap-6 md:grid-cols-3 md:gap-0 md:divide-x md:divide-line">
+        <div className="container-rc py-7 sm:py-10">
+          <dl className="grid gap-4 sm:gap-6 md:grid-cols-3 md:gap-0 md:divide-x md:divide-line">
             {facts.map(({ icon: Icon, label, text }) => (
               <div key={label} className="md:px-8 md:first:pl-0 md:last:pr-0">
                 <dt className="flex items-center gap-3 text-lg font-bold text-ink">
@@ -157,12 +158,12 @@ export function ServiceLanding({
       </section>
 
       {/* COME FUNZIONA: tre passi su una linea, non tre schede */}
-      <section aria-labelledby="passi-titolo" className="py-14 sm:py-20">
+      <section aria-labelledby="passi-titolo" className="py-10 sm:py-20">
         <div className="container-rc">
           <h2 id="passi-titolo" className="display-lg">
             Come funziona, in tre passi.
           </h2>
-          <ol className="relative mt-10 grid gap-8 md:grid-cols-3 md:gap-10">
+          <ol className="relative mt-7 grid gap-6 sm:mt-10 sm:gap-8 md:grid-cols-3 md:gap-10">
             <span aria-hidden className="absolute left-6 right-[16%] top-6 hidden h-0.5 bg-[linear-gradient(90deg,var(--tone-accent),transparent)] opacity-40 md:block" />
             {s.steps.map((st, i) => (
               <li key={st.title} className="relative flex gap-5 md:block">
@@ -170,7 +171,7 @@ export function ServiceLanding({
                   {i + 1}
                 </span>
                 <div>
-                  <h3 className="text-[1.5rem] font-bold leading-tight text-ink md:mt-6">
+                  <h3 className="text-[1.3125rem] font-bold leading-tight text-ink sm:text-[1.5rem] md:mt-6">
                     <span className="sr-only">Passo {i + 1}: </span>
                     {st.title}
                   </h3>
@@ -181,8 +182,8 @@ export function ServiceLanding({
           </ol>
 
           {/* CHE COSA INCLUDE (60) · QUANDO NON È LA STRADA GIUSTA (40) */}
-          <div className="mt-14 grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[1.35fr_0.85fr] lg:gap-6">
-            <div className="rounded-[2rem] border border-[color-mix(in_srgb,var(--tone-accent)_20%,transparent)] bg-[linear-gradient(160deg,var(--tone-bg),var(--color-paper)_80%)] p-7 sm:p-10">
+          <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-4 sm:mt-14 sm:gap-5 lg:grid-cols-[1.35fr_0.85fr] lg:gap-6">
+            <div className="rounded-[2rem] border border-[color-mix(in_srgb,var(--tone-accent)_20%,transparent)] bg-[linear-gradient(160deg,var(--tone-bg),var(--color-paper)_80%)] p-5 sm:p-10">
               <h2 id="include-titolo" className="text-[1.75rem] font-extrabold tracking-[-0.01em] text-ink">
                 Che cosa include
               </h2>
@@ -197,7 +198,7 @@ export function ServiceLanding({
                 ))}
               </ul>
             </div>
-            <div className="rounded-[2rem] border border-line bg-paper p-7 sm:p-10">
+            <div className="rounded-[2rem] border border-line bg-paper p-5 sm:p-10">
               <h2 className="text-[1.75rem] font-extrabold leading-tight tracking-[-0.01em] text-ink">Quando non è la strada giusta</h2>
               <ul className="mt-5 space-y-3.5 text-lg text-ink-soft">
                 {s.notFor.map((t) => (
@@ -239,12 +240,12 @@ export function ServiceLanding({
       ) : null}
 
       {/* GLI ALTRI DUE LIVELLI */}
-      <section aria-labelledby="altri-titolo" className="bg-paper py-14 sm:py-20">
+      <section aria-labelledby="altri-titolo" className="bg-paper py-10 sm:py-20">
         <div className="container-rc">
           <h2 id="altri-titolo" className="display-lg text-[2rem] sm:text-[2.5rem]">
             Gli altri livelli di Cura Privata
           </h2>
-          <ul className="mt-8 grid gap-5 md:grid-cols-2">
+          <ul className="mt-6 grid gap-4 sm:mt-8 sm:gap-5 md:grid-cols-2">
             {others.map((o) => (
               <li key={o.id} className={`tone-${o.tone}`}>
                 <Link href={o.href} className="level-step group">
@@ -260,7 +261,7 @@ export function ServiceLanding({
                     ) : null}
                   </span>
                   <span className="mt-3 block text-[1.625rem] font-bold leading-tight text-ink">{o.name}</span>
-                  <span className="mt-2 block text-lg text-ink-soft">{o.forWhom}</span>
+                  <span className="mt-2 hidden text-lg text-ink-soft sm:block">{o.forWhom}</span>
                   <span className="tone-text mt-auto inline-flex min-h-11 items-center gap-2 pt-4 text-lg font-bold">
                     Scopri <ArrowRight aria-hidden className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </span>

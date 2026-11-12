@@ -4,10 +4,10 @@ import { useId, useState } from "react";
 
 /** Righe del referto di esempio (sintetico, persona inesistente). Le spiegazioni descrivono, non valutano. */
 const ROWS = [
-  { name: "Emoglobina", value: "13,9", unit: "g/dL", range: "12,0 – 16,0", plain: "La proteina che porta l'ossigeno nel sangue. Il tuo valore è dentro l'intervallo stampato dal laboratorio." },
-  { name: "Glicemia", value: "104", unit: "mg/dL", range: "70 – 99", plain: "Lo zucchero nel sangue a digiuno. È sopra l'intervallo del laboratorio: è una domanda da portare al medico.", flag: true },
-  { name: "Colesterolo LDL", value: "128", unit: "mg/dL", range: "< 115", plain: "Il colesterolo che si deposita nelle arterie. Il laboratorio indica come riferimento un valore più basso.", flag: true },
-  { name: "TSH", value: "1,8", unit: "mUI/L", range: "0,4 – 4,0", plain: "L'ormone che regola la tiroide. Il tuo valore è dentro l'intervallo stampato." },
+  { name: "Glicemia", value: "92", unit: "mg/dL", range: "70 – 99", plain: "Lo zucchero nel sangue al momento del prelievo. Il tuo valore è dentro l'intervallo stampato dal laboratorio." },
+  { name: "Emoglobina glicata", value: "5,1", unit: "%", range: "4,0 – 5,6", plain: "La media dello zucchero nel sangue nelle settimane prima del prelievo. Dentro l'intervallo stampato." },
+  { name: "Colesterolo LDL", value: "134", unit: "mg/dL", range: "< 115", plain: "Il colesterolo che si deposita nelle arterie. Il laboratorio indica come riferimento un valore più basso: è una domanda da portare al medico.", flag: true },
+  { name: "Creatinina", value: "0,89", unit: "mg/dL", range: "0,70 – 1,20", plain: "Una sostanza prodotta dai muscoli ed eliminata dai reni. Il tuo valore è dentro l'intervallo stampato." },
 ];
 
 function After() {

@@ -7,11 +7,16 @@ import { clsx } from "clsx";
  * Sono illustrazioni: il testo che serve è sempre nella pagina accanto, quindi restano fuori dai lettori di schermo.
  */
 
+// Ciclo 3, fase 3: gli stessi valori del referto di esempio (src/fixtures/synthetic/referto-lab-001.json), così la
+// scheda in home, la pagina Capisci e l'esempio raccontano lo stesso referto.
 const VALUES = [
-  { name: "Emoglobina", value: "13,9", unit: "g/dL", range: "12,0 – 16,0", pos: 52, note: "Dentro l'intervallo del laboratorio" },
-  { name: "Glicemia", value: "104", unit: "mg/dL", range: "70 – 99", pos: 86, out: true, note: "Sopra l'intervallo del laboratorio" },
-  { name: "TSH", value: "1,8", unit: "mUI/L", range: "0,4 – 4,0", pos: 44, note: "Dentro l'intervallo del laboratorio" },
+  { name: "Glicemia", value: "92", unit: "mg/dL", range: "70 – 99", pos: 64, note: "Dentro l'intervallo del laboratorio" },
+  { name: "Colesterolo LDL", value: "134", unit: "mg/dL", range: "< 115", pos: 86, out: true, note: "Sopra l'intervallo del laboratorio" },
+  { name: "Creatinina", value: "0,89", unit: "mg/dL", range: "0,70 – 1,20", pos: 40, note: "Dentro l'intervallo del laboratorio" },
 ] as const;
+
+/** Sigla come la stampano molti laboratori, nel facsimile di partenza. */
+const SIGLA: Record<(typeof VALUES)[number]["name"], string> = { Glicemia: "GLU", "Colesterolo LDL": "LDL", Creatinina: "CREA" };
 
 function ValueRow({ v, compact = false }: { v: (typeof VALUES)[number]; compact?: boolean }) {
   return (
@@ -69,7 +74,7 @@ export function ReportTransform({ className }: { className?: string }) {
           </p>
           {VALUES.map((v) => (
             <p key={v.name} className="grid grid-cols-[1fr_0.7fr_1.2fr] gap-2 py-2">
-              <span className="uppercase">{v.name === "Emoglobina" ? "HGB" : v.name === "Glicemia" ? "GLU" : v.name}</span>
+              <span className="uppercase">{SIGLA[v.name]}</span>
               <span className="font-bold">
                 {v.value}
                 {"out" in v ? "*" : ""}
