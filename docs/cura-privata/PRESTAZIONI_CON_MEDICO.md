@@ -20,7 +20,7 @@ conferma e non cambia se poi cambia il listino.
 - **Prova a tre ruoli** (`/prova`, mai indicizzata): paziente, medico e amministrazione seguono la stessa richiesta.
   Stato nel browser (localStorage), resta al ricaricamento, «Ricomincia la prova» lo ripristina. Le pagine servizio
   portano qui.
-- **Regole** in `src/domain/prestazioni/engine.ts` (funzioni pure, 43 test in `tests/unit/prestazioni.test.ts`):
+- **Regole** in `src/domain/prestazioni/engine.ts` (funzioni pure, 29 test in `tests/unit/prestazioni.test.ts`):
   disponibilità condivise domicilio/video con 30 minuti di tragitto prima e dopo il domicilio; preavviso minimo
   (2 h domicilio, 1 h video) per mostrare «oggi»; conferma che riverifica servizio, medico, fascia e scadenza;
   doppia conferma idempotente; pagamento simulato fallito senza duplicati; integrazione documenti sulla stessa

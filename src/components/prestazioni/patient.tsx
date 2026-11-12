@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, CalendarCheck2, CheckCircle2, FileText, Home, MapPin, Video, WifiOff } from "lucide-react";
@@ -167,6 +167,18 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
   const [specialtyId, setSpecialtyId] = useState<string | null>(null);
   const [docs, setDocs] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // Al cambio di passo (o a un nuovo errore) riporta in vista l'inizio del passo: su telefono la pagina resterebbe
+  // scorsa in basso, con titolo e messaggio fuori schermo.
+  const topRef = useRef<HTMLParagraphElement>(null);
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    const el = topRef.current;
+    if (el && el.getBoundingClientRect().top < 96) el.scrollIntoView({ block: "start" });
+  }, [step, error]);
   if (!s) return <Loading />;
   const now = new Date();
   const info = PRESTAZIONI[kind];
@@ -243,7 +255,7 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
   return (
     <div className="space-y-6">
       {header}
-      <p className="text-[0.9375rem] font-semibold text-muted" aria-live="polite">
+      <p ref={topRef} className="scroll-mt-28 text-[0.9375rem] font-semibold text-muted" aria-live="polite">
         Passo {n} di {steps.length}
       </p>
       {error ? <ErrorBox>{error}</ErrorBox> : null}
@@ -266,7 +278,7 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
         >
           <h2 className="text-xl font-bold text-ink">Dove si svolge la visita?</h2>
           <p className="text-[1.0625rem] text-ink-soft">
-            Area pilota: <strong>{s.coverage.label}</strong>. In questa prova trovi già un indirizzo fittizio: puoi provare anche un CAP fuori zona, per esempio 20121.
+            Zona coperta: <strong>{s.coverage.label}</strong>. In questa prova trovi già un indirizzo fittizio: puoi provare anche un CAP fuori zona, per esempio 20121.
           </p>
           <div className="grid gap-4 sm:grid-cols-[2fr_1fr]">
             <label className="block text-[1.0625rem] font-semibold text-ink">
