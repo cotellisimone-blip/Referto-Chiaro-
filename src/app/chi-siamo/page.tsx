@@ -20,7 +20,7 @@ export default function Page() {
         </blockquote>
         <div className="mt-12">
           <Prose>
-            <p>Cura Privata è un progetto italiano in fase di sviluppo, nato come «Referto Chiaro». Oggi è una versione dimostrativa dei tre servizi: «Capisci il tuo referto», «Chiedi un secondo parere» e «Parla con un medico». Usa solo documenti inventati e un medico dimostrativo. È pensato prima di tutto per chi ha più di sessant&apos;anni e per chi aiuta un genitore: testo grande, poche parole, un passo per volta.</p>
+            <p>Cura Privata è un progetto italiano in fase di sviluppo, nato come «Referto Chiaro». Oggi è una versione dimostrativa dei suoi servizi: «Capisci il tuo referto» e, con un medico, la visita a domicilio, il videoconsulto e il secondo parere specialistico. Usa solo documenti inventati e un medico dimostrativo. È pensato prima di tutto per chi ha più di sessant&apos;anni e per chi aiuta un genitore: testo grande, poche parole, un passo per volta.</p>
             <h2>Che cosa crediamo</h2>
             <ul>
               <li>Capire un referto è un diritto, ma non sostituisce il medico.</li>

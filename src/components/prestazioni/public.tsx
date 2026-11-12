@@ -7,7 +7,7 @@ import { availability, checkCoverage, featuredKind, type PrestazioniState } from
 import { PRESTAZIONI, PRESTAZIONI_ORDER, type PrestazioneKind } from "@/domain/prestazioni/listino";
 import { usePrestazioni } from "./store";
 import { PrestazioneCard } from "./patient";
-import { Price, formatSlot, inputCls } from "./ui";
+import { Price, ZoneWaitlist, formatSlot, inputCls } from "./ui";
 
 /**
  * Parte pubblica delle prestazioni con un medico. Lo stato di apertura viene dalla prova (browser);
@@ -36,8 +36,34 @@ export function PrestazioniGrid({ only }: { only?: PrestazioneKind[] }) {
   // La data si legge solo nel browser (mai durante il prerender).
   const now = s ? new Date() : null;
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className={kinds.length === 2 ? "grid gap-4 md:grid-cols-2" : "grid gap-4 md:grid-cols-3"}>
       {kinds.map((k) => (s && now ? <PrestazioneCard key={k} s={s} kind={k} now={now} /> : <StaticCard key={k} kind={k} />))}
+    </div>
+  );
+}
+
+const ACTION_LABEL: Record<PrestazioneKind, string> = { domicilio: "Richiedi la visita", video: "Prenota il videoconsulto", parere: "Richiedi il secondo parere" };
+
+/**
+ * Disponibilità reale e richiesta diretta, dentro la scheda del servizio (pagina Servizi). Prima dell'idratazione
+ * mostra lo stato iniziale, così la scheda non salta. Sta sopra il collegamento che copre l'intera scheda.
+ */
+export function PrestazioneAction({ kind }: { kind: PrestazioneKind }) {
+  const s = usePrestazioni();
+  const now = s ? new Date() : null;
+  const info = PRESTAZIONI[kind];
+  const av = s && now ? availability(s, kind, now) : null;
+  const open = !av || av.state === "aperto";
+  return (
+    <div className="relative z-10 mt-auto pt-5" data-disponibilita={av?.state ?? "aperto"}>
+      <p className="flex flex-wrap items-center gap-2 text-[0.9375rem] text-ink-soft">
+        <span className={open ? "chip bg-marker-soft text-teal-deep" : "chip bg-cream text-warn"}>{open ? (av?.today ? "Disponibile oggi" : "Disponibile") : av!.state === "sospeso" ? "Sospesa" : av!.state === "esaurito" ? "Fasce esaurite" : "Non disponibile"}</span>
+        {av?.next && now ? <span>prima fascia {formatSlot(av.next, now)}</span> : null}
+      </p>
+      {!open ? <p className="mt-2 text-[0.9375rem] text-ink-soft">{av!.message}</p> : null}
+      <Link href={open ? info.startHref : av!.action.href} className={open ? "btn btn-primary mt-3 w-full" : "btn btn-secondary mt-3 w-full"}>
+        {open ? ACTION_LABEL[kind] : av!.action.label} <ArrowRight aria-hidden className="h-4 w-4" />
+      </Link>
     </div>
   );
 }
@@ -83,7 +109,7 @@ export function CoverageCheck() {
   const s = usePrestazioni();
   const [comune, setComune] = useState("Brescia");
   const [cap, setCap] = useState("");
-  const [res, setRes] = useState<null | { ok: boolean; text: string; href: string; cta: string }>(null);
+  const [res, setRes] = useState<null | { ok: boolean; text: string; href: string; cta: string; waitCap?: string }>(null);
   return (
     <form
       className="card space-y-4 p-5 sm:p-7"
@@ -99,6 +125,7 @@ export function CoverageCheck() {
             text: c.reason === "cap-non-valido" ? "Il CAP deve avere 5 cifre." : c.reason === "zona-sospesa" ? "La zona pilota è momentaneamente sospesa." : `Non ancora: per ora andiamo a domicilio solo a ${s.coverage.label}.`,
             href: video.state === "aperto" ? PRESTAZIONI.video.href : "/punto-di-partenza",
             cta: video.state === "aperto" ? "Intanto, un videoconsulto" : "Intanto, il Punto di Partenza gratuito",
+            waitCap: c.reason === "fuori-zona" && /^\d{5}$/.test(cap.trim()) ? cap.trim() : undefined,
           });
           return;
         }
@@ -120,7 +147,8 @@ export function CoverageCheck() {
         {res ? (
           <div className={res.ok ? "rounded-xl bg-marker-soft p-4" : "rounded-xl bg-cream p-4"}>
             <p className="flex items-start gap-2 text-[1.0625rem] text-ink">{res.ok ? <CheckCircle2 aria-hidden className="mt-1 h-5 w-5 shrink-0 text-teal" /> : null} {res.text}</p>
-            <Link href={res.href} className="btn btn-primary mt-3">{res.cta} <ArrowRight aria-hidden className="h-4 w-4" /></Link>
+            <Link href={res.href} className={res.waitCap ? "btn btn-secondary mt-3" : "btn btn-primary mt-3"}>{res.cta} <ArrowRight aria-hidden className="h-4 w-4" /></Link>
+            {res.waitCap ? <ZoneWaitlist cap={res.waitCap} /> : null}
           </div>
         ) : null}
       </div>

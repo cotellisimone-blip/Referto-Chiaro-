@@ -27,9 +27,12 @@ export const VETRINA_EVENTS = [
   "esempio-utile-si",
   "esempio-utile-no",
   "avvisami-da-prova",
+  // Ciclo 4: la visita a domicilio si misura come gli altri servizi.
+  "visita-domicilio",
+  "avvisami-domicilio",
 ] as const;
 
-export const PUBLIC_EVENTS = ["visita-home", "cta-capisci", "cta-medico", "cta-parere", ...PDP_EVENTS, ...VETRINA_EVENTS] as const;
+export const PUBLIC_EVENTS = ["visita-home", "cta-capisci", "cta-medico", "cta-parere", "cta-domicilio", ...PDP_EVENTS, ...VETRINA_EVENTS] as const;
 export type PublicEvent = (typeof PUBLIC_EVENTS)[number];
 
 export function isPublicEvent(x: unknown): x is PublicEvent {
@@ -115,6 +118,8 @@ export const FUNNEL_LABELS: Record<string, string> = {
   "avvisami-capisci": "Lista d'attesa «Capisci»",
   "avvisami-medico": "Lista d'attesa «Parla con un medico»",
   "avvisami-parere": "Lista d'attesa «Secondo parere»",
+  "visita-domicilio": "Visite a «Visita a domicilio»",
+  "avvisami-domicilio": "Lista d'attesa «Visita a domicilio»",
   uploads: "Referti caricati",
   checkoutCapisci: "Pagamenti «Capisci» avviati",
   paidCapisci: "Pagamenti «Capisci» completati",

@@ -8,6 +8,7 @@ import { STATUS_LABEL, isSameDay, type RequestStatus } from "@/domain/prestazion
 import { PRESTAZIONI, prestazionePrice, type PrestazioneKind } from "@/domain/prestazioni/listino";
 import { formatEuro } from "@/domain/offerta";
 import { resetDemo } from "./store";
+import { WaitlistForm } from "@/components/site/waitlist-form";
 
 const TONE: Record<RequestStatus, string> = {
   ricevuta: "bg-mist text-teal-deep",
@@ -166,6 +167,18 @@ export function ConfirmButton({ children, question, yes, onConfirm, className }:
         {yes}
       </button>
     </span>
+  );
+}
+
+/** Fuori zona: invece di un vicolo cieco, «Avvisami quando arrivate» con il CAP già scritto (ciclo 4). */
+export function ZoneWaitlist({ cap }: { cap: string }) {
+  return (
+    <div className="mt-4 border-t border-line pt-4" data-avvisami-zona={cap}>
+      <p className="text-lg font-bold text-ink">Avvisami quando arrivate al {cap}</p>
+      <div className="mt-2">
+        <WaitlistForm key={cap} interest="domicilio" defaultCap={cap} compact />
+      </div>
+    </div>
   );
 }
 

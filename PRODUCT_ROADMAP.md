@@ -1,6 +1,6 @@
 # Roadmap di prodotto — Cura Privata
 
-*Aggiornata: 12/11/2026, ciclo 3.*
+*Aggiornata: 12/11/2026, ciclo 4.*
 
 ## Priorità strategiche
 1. **Andare online come vetrina** (profilo `vetrina`) per misurare la domanda reale: iscrizioni per servizio, click sui prezzi, uso di Punto di Partenza.
@@ -18,6 +18,7 @@ Ipotesi di lavoro, non dati: da rivedere dopo le prime 4 settimane online. Si le
 | Una sorgente porta più del 50% delle iscrizioni | 4 settimane | Concentrare lì il budget |
 | Iscrizioni subito dopo una prova su esempi completati (ciclo 3) | < 10% con almeno 100 esempi completati | La prova non convince: rivedere la spiegazione dell'esempio prima del messaggio della home |
 | «Utile: non molto» più di un terzo delle risposte (ciclo 3) | almeno 50 risposte | Rivedere testi e ordine della spiegazione con il medico revisore |
+| Iscrizioni al domicilio per CAP (ciclo 4) | almeno 20 iscrizioni in 4 settimane, concentrate in pochi CAP | Cercare i primi medici in quelle zone; se i CAP sono fuori Brescia, rivedere l'area pilota |
 Ogni link pubblicato deve avere `?utm_source=` (vedi `docs/cura-privata/LANCIO_VETRINA.md`).
 
 ## Dipendenze da validare (fuori dal codice, del titolare)
@@ -52,4 +53,4 @@ Percentuali di precisione, chatbot libero, «monitoraggio 24/7», recensioni pri
 | Chiavi del limitatore di accesso con l'indirizzo IP in chiaro (`auth:<ip>` in `rate_limits`, cancellate dopo un giorno) | Prima dei referti veri: usare un'impronta come per i contatori (ciclo 3) |
 
 ## Funzionalità future (solo dopo i dati della vetrina)
-Salvataggio del Punto di Partenza nell'area personale (`ENABLE_PUNTO_DI_PARTENZA_SAVE`, già predisposto e bloccato); Archivio salute; Prevenzione.
+Richieste delle prestazioni con un medico salvate nell'account, con una sola implementazione al posto di due (proposta come fase 5 del ciclo 4, non approvata). Salvataggio del Punto di Partenza nell'area personale (`ENABLE_PUNTO_DI_PARTENZA_SAVE`, già predisposto e bloccato); Archivio salute; Prevenzione.

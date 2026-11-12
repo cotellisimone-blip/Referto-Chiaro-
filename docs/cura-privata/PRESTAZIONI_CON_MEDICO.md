@@ -28,13 +28,20 @@ conferma e non cambia se poi cambia il listino.
   quesito, documenti, sintesi, via, telefono; il medico vede solo le richieste assegnate, via e telefono dopo la conferma).
 - **Prove nel browser**: `tests/e2e/prestazioni.spec.ts` (8 casi × desktop e telefono) dai normali punti d'accesso.
 
+## Ciclo 4 (12/11/2026, sera)
+
+- Il paziente chiede la prestazione da `/richiedi/…` e la segue in `/richieste/…`, senza la barra dei ruoli; nella prova il medico risponde con un comando dichiarato come simulazione. La prova a tre ruoli resta in `/prova`.
+- Domicilio e video si chiudono con un riepilogo scritto e un prossimo passo; per il domicilio il medico può indicare di aver lasciato una prescrizione su ricetta bianca.
+- Annullamento (`CANCEL_FREE_MINUTES` in `engine.ts`): rimborso intero fino a 2 ore prima del domicilio e 1 ora prima del video; oltre, nessun rimborso; se annulla il medico, rimborso sempre. **Regola proposta: da confermare con un legale** insieme alla ricetta bianca (punto 6 qui sotto).
+- Lista d'attesa `domicilio` con CAP; in Admin → Vetrina le richieste per CAP.
+
 ## Differenze rispetto al servizio reale
 
 - Lo stato della prova vive nel browser: niente database, niente API, niente RLS per queste richieste. Il motore è
   già separato dall'interfaccia per andare dietro alle API con persistenza (tabelle per medici, fasce, richieste,
   con le stesse viste per ruolo come policy).
 - Il vecchio flusso server dei videoconsulti e dei pareri (`/area-personale/appuntamenti`, `/secondo-parere`, portale
-  `/medico` con 2FA) resta in funzione e testato, ma i pulsanti delle pagine servizio portano alla nuova prova.
+  `/medico` con 2FA) resta in funzione e testato, ma i pulsanti delle pagine servizio portano al nuovo percorso del paziente (`/richiedi/…`).
 - Accesso ai ruoli nella prova senza autenticazione; nel sito vero il portale medico e l'amministrazione restano
   dietro 2FA.
 - Video, pagamenti, calendari, notifiche e documenti sono simulati; nessun collegamento esterno è attivo.

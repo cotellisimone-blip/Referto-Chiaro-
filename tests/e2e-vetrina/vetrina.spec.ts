@@ -32,8 +32,8 @@ test("l'account demo ha davvero un referto inventato già caricato", async ({ pa
 
 for (const s of [
   { path: "/referti", interest: "Capisci", tryHref: "/referti/esempio" },
-  { path: "/servizi/parla-con-un-medico", interest: "Parla", tryHref: "/prova/paziente/videoconsulto" },
-  { path: "/servizi/secondo-parere", interest: "Secondo parere", tryHref: "/prova/paziente/secondo-parere" },
+  { path: "/servizi/parla-con-un-medico", interest: "Parla", tryHref: "/richiedi/videoconsulto" },
+  { path: "/servizi/secondo-parere", interest: "Secondo parere", tryHref: "/richiedi/secondo-parere" },
 ]) {
   test(`${s.path}: l'azione principale porta alla lista d'attesa, non a una registrazione`, async ({ page }) => {
     await page.goto(s.path);

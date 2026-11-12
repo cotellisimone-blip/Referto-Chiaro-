@@ -104,7 +104,7 @@ export const CORE_SERVICES: CoreService[] = [
     oneLiner: "Un medico di medicina generale legge prima i tuoi documenti e ti dedica un videoconsulto su appuntamento per chiarire i dubbi e capire il prossimo passo.",
     forWhom: "Hai dei dubbi e non sai quale specialista ti serve.",
     href: "/servizi/parla-con-un-medico",
-    startHref: "/prova/paziente/videoconsulto",
+    startHref: "/richiedi/videoconsulto",
     startLabel: "Prenota il videoconsulto",
     orderService: "videoconsulto",
     envPriceKey: "PRICE_VIDEOCONSULTO_CENTS",
@@ -138,7 +138,7 @@ export const CORE_SERVICES: CoreService[] = [
     oneLiner: "Uno specialista esamina la documentazione pertinente, ne parla con te in video e ti consegna una sintesi scritta su un quesito preciso.",
     forWhom: "Hai già una diagnosi, una proposta di cura o di intervento e vuoi un'altra valutazione.",
     href: "/servizi/secondo-parere",
-    startHref: "/prova/paziente/secondo-parere",
+    startHref: "/richiedi/secondo-parere",
     startLabel: "Richiedi il secondo parere",
     orderService: "secondo-parere",
     envPriceKey: "PRICE_SECONDO_PARERE_CENTS",
@@ -277,8 +277,8 @@ export function serviceStart(id: CoreServiceId, env: Env = process.env): { href:
 /** In vetrina, dove si prova il servizio senza registrarsi: l'esempio (Capisci) o l'account demo condiviso. */
 export const VETRINA_TRY: Record<CoreServiceId, { href: string; label: string }> = {
   capisci: { href: "/referti/esempio", label: "Provalo su un referto di esempio" },
-  "parla-con-un-medico": { href: "/prova/paziente/videoconsulto", label: "Provalo nella demo" },
-  "secondo-parere": { href: "/prova/paziente/secondo-parere", label: "Provalo nella demo" },
+  "parla-con-un-medico": { href: "/richiedi/videoconsulto", label: "Provalo nella demo" },
+  "secondo-parere": { href: "/richiedi/secondo-parere", label: "Provalo nella demo" },
 };
 
 /** Servizio pubblico a partire dal servizio interno di un ordine. */

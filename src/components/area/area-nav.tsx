@@ -10,7 +10,7 @@ import { api } from "./api";
 /** Gerarchia ridotta (pacchetto «Memorabile»): documenti, pareri, appuntamenti. Il resto è di supporto. */
 const ITEMS = [
   { href: "/area-personale", label: "I miei documenti e report", short: "Referti", icon: Files, exact: true },
-  { href: "/prova/paziente", label: "Visite e videoconsulti (prova)", short: "Medico", icon: Video, exact: false },
+  { href: "/richieste", label: "Visite e videoconsulti", short: "Medico", icon: Video, exact: false },
   { href: "/area-personale/secondo-parere", label: "I miei pareri", short: "Pareri", icon: Stethoscope, exact: false },
   { href: "/area-personale/dossier", label: "Dossier", short: "Dossier", icon: FolderOpen, exact: false },
   { href: "/area-personale/ordini", label: "Pagamenti", short: "Pagamenti", icon: Receipt, exact: false },

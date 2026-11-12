@@ -3,11 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, CalendarCheck2, CheckCircle2, FileText, Home, MapPin, Video, WifiOff } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarCheck2, CheckCircle2, FileText, FlaskConical, Home, MapPin, Printer, Video, WifiOff } from "lucide-react";
 import {
   DEMO_DOCUMENTS,
   DEMO_PATIENT,
   STATUS_LABEL,
+  NEXT_STEPS,
+  cancelTerms,
+  demoDoctorStep,
+  refundableNow,
   ACTIVE_STATUSES,
   addDocuments,
   availability,
@@ -32,7 +36,9 @@ import {
 } from "@/domain/prestazioni/engine";
 import { PRESTAZIONI, PRESTAZIONI_ORDER, type PrestazioneKind } from "@/domain/prestazioni/listino";
 import { act, usePrestazioni } from "./store";
-import { ConfirmButton, DemoNotice, EmergencyNumbers, ErrorBox, Loading, Price, SlotPicker, StatusBadge, areaCls, formatSlot, inputCls } from "./ui";
+import { usePatientPaths } from "./paths";
+import { formatEuro } from "@/domain/offerta";
+import { ConfirmButton, DemoNotice, EmergencyNumbers, ErrorBox, Loading, Price, SlotPicker, StatusBadge, ZoneWaitlist, areaCls, formatSlot, inputCls } from "./ui";
 
 const ICON: Record<PrestazioneKind, typeof Home> = { domicilio: Home, video: Video, parere: FileText };
 
@@ -73,6 +79,7 @@ export function PrestazioneCard({ s, kind, now, startHref }: { s: PrestazioniSta
 
 export function PatientHome() {
   const s = usePrestazioni();
+  const paths = usePatientPaths();
   if (!s) return <Loading />;
   const now = new Date();
   const mine = patientRequests(s, DEMO_PATIENT.id);
@@ -81,10 +88,10 @@ export function PatientHome() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="eyebrow">Area personale · {DEMO_PATIENT.name} (paziente di prova)</p>
-        <h1 className="display mt-3 text-[2rem] sm:text-[2.5rem]">Le tue prestazioni con un medico</h1>
+        <p className="eyebrow">{DEMO_PATIENT.name} · paziente di prova</p>
+        <h1 className="display mt-3 text-[2rem] sm:text-[2.5rem]">Le tue richieste</h1>
       </div>
-      <DemoNotice />
+      {paths.roles ? <DemoNotice /> : null}
       {active.length ? (
         <section aria-labelledby="attive-titolo">
           <h2 id="attive-titolo" className="text-2xl font-bold text-ink">In corso</h2>
@@ -95,7 +102,7 @@ export function PatientHome() {
         <h2 id="nuova-titolo" className="text-2xl font-bold text-ink">Nuova richiesta</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           {PRESTAZIONI_ORDER.map((k) => (
-            <PrestazioneCard key={k} s={s} kind={k} now={now} />
+            <PrestazioneCard key={k} s={s} kind={k} now={now} startHref={paths.start(k)} />
           ))}
         </div>
       </section>
@@ -110,13 +117,14 @@ export function PatientHome() {
 }
 
 function RequestList({ items, s, now }: { items: BookingRequest[]; s: PrestazioniState; now: Date }) {
+  const paths = usePatientPaths();
   return (
     <ul className="mt-4 grid gap-3 md:grid-cols-2">
       {items.map((r) => {
         const when = r.scheduledStart ?? r.proposal?.start ?? r.requestedStart;
         return (
           <li key={r.id}>
-            <Link href={`/prova/paziente/richieste/${r.id}`} className="card card-lift flex h-full flex-col gap-2 p-5">
+            <Link href={paths.request(r.id)} className="card card-lift flex h-full flex-col gap-2 p-5">
               <span className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-semibold text-ink">{PRESTAZIONI[r.kind].short}{r.kind === "parere" ? ` · ${specialtyName(s, r.specialtyId)}` : ""}</span>
                 <StatusBadge status={r.status} />
@@ -152,6 +160,7 @@ type Step = "zona" | "fascia" | "dati" | "riepilogo";
 export function PatientStart({ kind }: { kind: PrestazioneKind }) {
   const s = usePrestazioni();
   const router = useRouter();
+  const paths = usePatientPaths();
   const [step, setStep] = useState<Step>(kind === "domicilio" ? "zona" : kind === "video" ? "fascia" : "dati");
   const [comune, setComune] = useState(DEMO_PATIENT.address.comune);
   const [cap, setCap] = useState(DEMO_PATIENT.address.cap);
@@ -167,6 +176,7 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
   const [specialtyId, setSpecialtyId] = useState<string | null>(null);
   const [docs, setDocs] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [outCap, setOutCap] = useState<string | null>(null);
   // Al cambio di passo (o a un nuovo errore) riporta in vista l'inizio del passo: su telefono la pagina resterebbe
   // scorsa in basso, con titolo e messaggio fuori schermo.
   const topRef = useRef<HTMLParagraphElement>(null);
@@ -188,11 +198,11 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
 
   const header = (
     <div>
-      <Link href="/prova/paziente" className="link inline-flex min-h-11 items-center gap-1 font-semibold">
-        <ArrowLeft aria-hidden className="h-4 w-4" /> Le tue prestazioni
+      <Link href={paths.roles ? paths.home : info.href} className="link inline-flex min-h-11 items-center gap-1 font-semibold">
+        <ArrowLeft aria-hidden className="h-4 w-4" /> {paths.roles ? "Le tue richieste" : info.short}
       </Link>
-      <h1 className="display mt-2 text-[2rem] sm:text-[2.5rem]">{info.title}</h1>
-      <p className="mt-2 text-xl text-ink-soft">
+      <h1 className="display mt-1 text-[1.75rem] sm:text-[2.5rem]">{info.title}</h1>
+      <p className="mt-2 text-lg text-ink-soft sm:text-xl">
         <strong className="text-ink">
           <Price kind={kind} />
         </strong>{" "}
@@ -238,7 +248,7 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
       ),
     );
     if (r.ok) {
-      router.push(`/prova/paziente/richieste/${r.id}`);
+      router.push(paths.request(r.id));
       return;
     }
     setError(ERRORS[r.error] ?? "Non è stato possibile inviare la richiesta.");
@@ -269,18 +279,20 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
             if (c.ok) {
               setCoverage(c.cap);
               setError(null);
+              setOutCap(null);
               setStep("fascia");
             } else {
               setCoverage(null);
+              setOutCap(c.reason === "fuori-zona" && /^\d{5}$/.test(cap.trim()) ? cap.trim() : null);
               setError(c.reason === "cap-non-valido" ? "Il CAP deve avere 5 cifre." : c.reason === "zona-sospesa" ? "La zona pilota è momentaneamente sospesa." : `Per ora andiamo a domicilio solo a ${s.coverage.label}.`);
             }
           }}
         >
           <h2 className="text-xl font-bold text-ink">Dove si svolge la visita?</h2>
           <p className="text-[1.0625rem] text-ink-soft">
-            Zona coperta: <strong>{s.coverage.label}</strong>. In questa prova trovi già un indirizzo fittizio: puoi provare anche un CAP fuori zona, per esempio 20121.
+            Per ora arriviamo a <strong>{s.coverage.label}</strong>.
           </p>
-          <div className="grid gap-4 sm:grid-cols-[2fr_1fr]">
+          <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-3 sm:gap-4">
             <label className="block text-[1.0625rem] font-semibold text-ink">
               Comune
               <input value={comune} onChange={(e) => setComune(e.target.value)} required autoComplete="address-level2" className={inputCls} />
@@ -293,7 +305,7 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
           {error && !coverage ? (
             <p className="text-[1.0625rem] text-ink-soft">
               Intanto puoi parlare con un medico in video:{" "}
-              <Link href={PRESTAZIONI.video.startHref} className="link font-semibold">
+              <Link href={paths.start("video")} className="link font-semibold">
                 prenota un videoconsulto
               </Link>
               .
@@ -304,6 +316,11 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
           </button>
           <EmergencyNumbers compact />
         </form>
+      ) : null}
+      {step === "zona" && outCap ? (
+        <div className="card p-5 sm:p-7">
+          <ZoneWaitlist cap={outCap} />
+        </div>
       ) : null}
 
       {step === "fascia" ? (
@@ -489,6 +506,7 @@ export function PatientRequest({ id }: { id: string }) {
   const [moving, setMoving] = useState(false);
   const [extra, setExtra] = useState<string[]>([]);
   const [note, setNote] = useState("");
+  const paths = usePatientPaths();
   if (!s) return <Loading />;
   const now = new Date();
   const r = getRequest(s, id);
@@ -497,7 +515,7 @@ export function PatientRequest({ id }: { id: string }) {
       <div className="card p-6">
         <p className="text-xl font-bold text-ink">Richiesta non trovata</p>
         <p className="mt-2 text-ink-soft">Forse la prova è stata ripristinata. Le richieste restano solo in questo browser.</p>
-        <Link href="/prova/paziente" className="btn btn-primary mt-4">Le tue prestazioni</Link>
+        <Link href={paths.home} className="btn btn-primary mt-4">Le tue richieste</Link>
       </div>
     );
   }
@@ -517,8 +535,8 @@ export function PatientRequest({ id }: { id: string }) {
   return (
     <div className="space-y-6" data-richiesta={r.id} data-stato={r.status}>
       <div>
-        <Link href="/prova/paziente" className="link inline-flex min-h-11 items-center gap-1 font-semibold">
-          <ArrowLeft aria-hidden className="h-4 w-4" /> Le tue prestazioni
+        <Link href={paths.home} className="link inline-flex min-h-11 items-center gap-1 font-semibold">
+          <ArrowLeft aria-hidden className="h-4 w-4" /> Le tue richieste
         </Link>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <h1 className="display text-[1.75rem] sm:text-[2.25rem]">{info.title}</h1>
@@ -530,13 +548,15 @@ export function PatientRequest({ id }: { id: string }) {
         </p>
       </div>
 
+      <Progress r={r} />
+
       {message ? message.tone === "error" ? <ErrorBox>{message.text}</ErrorBox> : <p role="status" className="rounded-xl border border-teal/30 bg-marker-soft px-4 py-3 text-[1.0625rem] text-ink">{message.text}</p> : null}
 
       {r.status === "ricevuta" ? (
         <Panel title={r.kind === "parere" ? "Lo specialista sta valutando il tuo caso" : "In attesa della risposta del medico"}>
           <p>{r.kind === "parere" ? "Valuta se il quesito è adatto al percorso a distanza. Può accettarlo, chiederti altri documenti o indicarti un percorso in presenza." : `Hai chiesto ${formatSlot(r.requestedStart!, now)}. Il medico conferma la fascia o ne propone un'altra.`}</p>
           {r.notice ? <p className="mt-2 text-ink-soft">{r.notice}</p> : null}
-          <TryAs role="medico" id={r.id} text="Per andare avanti nella prova, rispondi come medico." />
+          <DemoDoctor id={r.id} label={r.kind === "parere" ? "Fai rispondere lo specialista" : "Fai rispondere il medico"} run={run} />
         </Panel>
       ) : null}
 
@@ -575,6 +595,7 @@ export function PatientRequest({ id }: { id: string }) {
             <Row label="Prezzo totale" value={<Price kind={r.kind} />} strong />
           </dl>
           <p className="mt-3 text-[0.9375rem] text-muted">Proposta valida fino a {formatSlot(r.proposal.expiresAt, now)}. Il pagamento è simulato: nessun addebito reale.</p>
+          <p className="mt-2 text-[0.9375rem] text-ink-soft" data-annullamento>{cancelTerms(r.kind)}</p>
           {r.payment.status === "fallito" ? <p className="mt-2 text-[0.9375rem] text-warn">Tentativo precedente non riuscito. Puoi riprovare: non si crea un secondo appuntamento.</p> : null}
           <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row">
             <button type="button" className="btn btn-ghost" onClick={() => run((st, n) => rejectProposal(st, r.id, n))}>
@@ -619,8 +640,8 @@ export function PatientRequest({ id }: { id: string }) {
             r.video.state === "attesa" ? (
               <div className="mt-5 rounded-2xl bg-strong p-5 text-on-strong" role="status">
                 <p className="text-lg font-semibold">Sala d&apos;attesa (simulata)</p>
-                <p className="mt-1 opacity-90">Il medico ti fa entrare all&apos;orario dell&apos;appuntamento. Nella prova, avvia il video dal ruolo Medico.</p>
-                <TryAs role="medico" id={r.id} text="" dark />
+                <p className="mt-1 opacity-90">Il medico ti fa entrare all&apos;orario dell&apos;appuntamento.</p>
+                <DemoDoctor id={r.id} label="Fai entrare il medico" run={run} dark />
               </div>
             ) : (
               <button type="button" className="btn btn-primary mt-5" onClick={() => run((st, n) => enterWaitingRoom(st, r.id, n))}>
@@ -628,15 +649,19 @@ export function PatientRequest({ id }: { id: string }) {
               </button>
             )
           ) : (
-            <p className="mt-4 text-ink-soft">Il medico ti chiama al numero indicato se serve. Puoi annullare fino all&apos;arrivo: rimborso simulato dell&apos;importo.</p>
+            <>
+              <p className="mt-4 text-ink-soft">Il medico ti chiama al numero indicato se serve.</p>
+              <DemoDoctor id={r.id} label="Fai arrivare il medico" run={run} />
+            </>
           )}
+          <p className="mt-4 text-[0.9375rem] text-ink-soft" data-annullamento>{cancelTerms(r.kind)}</p>
           <div className="mt-5 flex flex-wrap gap-3 border-t border-line pt-4">
             {r.kind !== "domicilio" ? (
               <button type="button" className="btn btn-secondary" onClick={() => setMoving(!moving)} aria-expanded={moving}>
                 Riprogramma
               </button>
             ) : null}
-            <ConfirmButton className="btn btn-ghost" question="La fascia torna libera e l'importo viene rimborsato (simulazione)." yes="Sì, annulla" onConfirm={() => run((st, n) => cancelRequest(st, r.id, n), "Annullata. Rimborso simulato registrato.")}>
+            <ConfirmButton className="btn btn-ghost" question={refundableNow(r, now) ? "La fascia torna libera e l'importo viene rimborsato per intero (simulazione)." : "Sei oltre il termine: la fascia torna libera ma l'importo non viene rimborsato."} yes="Sì, annulla" onConfirm={() => { const refund = refundableNow(r, now); run((st, n) => cancelRequest(st, r.id, n), refund ? "Annullata. Rimborso simulato registrato." : "Annullata oltre il termine: importo non rimborsato."); }}>
               Annulla
             </ConfirmButton>
           </div>
@@ -647,7 +672,8 @@ export function PatientRequest({ id }: { id: string }) {
       {r.status === "in_corso" ? (
         r.kind === "domicilio" ? (
           <Panel title="Il medico è da te" tone="ok">
-            <p>La visita è in corso. Al termine il medico la segna come conclusa.</p>
+            <p>La visita è in corso. Al termine il medico ti lascia qui un riepilogo scritto.</p>
+            <DemoDoctor id={r.id} label="Concludi la visita" run={run} />
           </Panel>
         ) : r.video.state === "problema" ? (
           <Panel title="Connessione interrotta" tone="warn">
@@ -662,10 +688,11 @@ export function PatientRequest({ id }: { id: string }) {
           <div className="rounded-[1.75rem] bg-strong p-6 text-on-strong" role="region" aria-label="Videoconsulto simulato">
             <p className="text-sm uppercase tracking-wide opacity-80">Video simulato · nessuna chiamata reale</p>
             <p className="mt-2 text-2xl font-bold">In collegamento con {doctor?.name}</p>
-            <p className="mt-2 opacity-90">Il medico conclude il colloquio dal suo portale.</p>
+            <p className="mt-2 opacity-90">Al termine il medico ti lascia qui {r.kind === "parere" ? "la sintesi scritta, nei tempi concordati" : "un riepilogo scritto"}.</p>
             <button type="button" className="btn btn-on-strong mt-5" onClick={() => run((st, n) => connectionProblem(st, r.id, n))}>
               <WifiOff aria-hidden className="h-4 w-4" /> Simula un problema di connessione
             </button>
+            <DemoDoctor id={r.id} label="Concludi il videoconsulto" run={run} dark />
           </div>
         )
       ) : null}
@@ -673,25 +700,11 @@ export function PatientRequest({ id }: { id: string }) {
       {r.status === "sintesi" ? (
         <Panel title="Videoconsulto concluso">
           <p>La sintesi scritta arriva qui {r.deliveryDays ? `entro ${r.deliveryDays} giorni lavorativi` : "nei tempi concordati"}.</p>
-          <TryAs role="medico" id={r.id} text="Nella prova, consegna la sintesi dal ruolo Medico." />
+          <DemoDoctor id={r.id} label="Fai consegnare la sintesi" run={run} />
         </Panel>
       ) : null}
 
-      {r.status === "conclusa" ? (
-        <Panel title="Prestazione conclusa" tone="ok">
-          {r.summary ? (
-            <article className="rounded-2xl border border-line bg-paper p-5" aria-label={r.kind === "parere" ? "Sintesi scritta dello specialista" : "Riepilogo del medico"}>
-              <p className="chip bg-cream text-warn">Documento dimostrativo · non ha valore clinico</p>
-              <h2 className="mt-3 text-xl font-bold text-ink">{r.kind === "parere" ? "Sintesi scritta dello specialista" : "Riepilogo del medico"}</h2>
-              <p className="mt-1 text-[0.9375rem] text-muted">{doctorLabel} · {formatSlot(r.summary.at, now)}</p>
-              <p className="mt-3 whitespace-pre-line text-[1.0625rem] text-ink">{r.summary.text}</p>
-            </article>
-          ) : (
-            <p>Il medico ha segnato la prestazione come conclusa.</p>
-          )}
-          <p className="mt-3 text-[0.9375rem] text-muted">Pagato (simulazione): <Price kind={r.kind} cents={r.priceCents} />.</p>
-        </Panel>
-      ) : null}
+      {r.status === "conclusa" ? <Outcome r={r} doctorLabel={doctorLabel} now={now} /> : null}
 
       {r.status === "non_accettata" ? (
         <Panel title="Lo specialista non ha accettato il caso">
@@ -702,7 +715,8 @@ export function PatientRequest({ id }: { id: string }) {
 
       {r.status === "annullata" ? (
         <Panel title="Richiesta annullata">
-          <p>{r.payment.status === "rimborsato" ? "L'importo pagato è stato rimborsato (simulazione)." : "Nessun addebito."}</p>
+          <p>{r.payment.status === "rimborsato" ? "L'importo pagato è stato rimborsato per intero (simulazione)." : r.payment.status === "pagato" ? "Annullata oltre il termine: l'importo non è stato rimborsato (simulazione)." : "Nessun addebito."}</p>
+          <Link href={paths.start(r.kind)} className="btn btn-secondary mt-4">Fai una nuova richiesta <ArrowRight aria-hidden className="h-4 w-4" /></Link>
         </Panel>
       ) : null}
 
@@ -753,7 +767,7 @@ function Panel({ title, tone, children }: { title: string; tone?: "ok" | "warn";
   );
 }
 
-/** Scorciatoia della prova verso l'altro ruolo, per seguire la stessa richiesta. */
+/** Scorciatoia della prova a tre ruoli verso l'altro ruolo, per seguire la stessa richiesta. */
 export function TryAs({ role, id, text, dark = false }: { role: "medico" | "paziente"; id: string; text: string; dark?: boolean }) {
   return (
     <p className={dark ? "mt-3" : "mt-4 border-t border-dashed border-line pt-3 text-[0.9375rem] text-muted"}>
@@ -762,6 +776,106 @@ export function TryAs({ role, id, text, dark = false }: { role: "medico" | "pazi
         Apri come {role}
       </Link>
     </p>
+  );
+}
+
+type Run = (fn: (st: PrestazioniState, n: Date) => { ok: boolean; error?: string; state: PrestazioniState }, ok?: string) => boolean;
+
+/**
+ * Nella prova non c'è un medico vero. Nel percorso del paziente un solo comando, dichiarato come simulazione,
+ * fa compiere al medico il passo successivo; nella prova a tre ruoli resta la scorciatoia verso il ruolo Medico.
+ */
+function DemoDoctor({ id, label, run, dark = false }: { id: string; label: string; run: Run; dark?: boolean }) {
+  const paths = usePatientPaths();
+  if (paths.roles) return <TryAs role="medico" id={id} text={dark ? "" : "Per andare avanti nella prova, agisci come medico."} dark={dark} />;
+  return (
+    <div className={dark ? "mt-4 rounded-xl border border-dashed border-white/40 p-3" : "mt-4 rounded-xl border border-dashed border-warn/60 bg-cream p-3"} data-simulazione>
+      <p className={dark ? "flex items-start gap-2 text-[0.9375rem] opacity-90" : "flex items-start gap-2 text-[0.9375rem] text-ink-soft"}>
+        <FlaskConical aria-hidden className="mt-0.5 h-4 w-4 shrink-0" /> Prova dimostrativa: qui non c&apos;è un medico vero.
+      </p>
+      <button type="button" className={dark ? "btn btn-on-strong btn-sm mt-2 min-h-11" : "btn btn-secondary btn-sm mt-2 min-h-11"} onClick={() => run((st, n) => demoDoctorStep(st, id, n))}>
+        {label} (simulazione)
+      </button>
+    </div>
+  );
+}
+
+const PROGRESS: Record<"visita" | "parere", string[]> = {
+  visita: ["Richiesta inviata", "Il medico risponde", "Confermi e paghi", "Visita", "Riepilogo scritto"],
+  parere: ["Richiesta inviata", "Lo specialista valuta", "Confermi e paghi", "Videoconsulto", "Sintesi scritta"],
+};
+
+/** «Che cosa succede ora»: dove sei nel percorso e che cosa viene dopo, in una riga leggibile da telefono. */
+function Progress({ r }: { r: BookingRequest }) {
+  const steps = PROGRESS[r.kind === "parere" ? "parere" : "visita"].map((x, i) => (i === 3 && r.kind === "video" ? "Videoconsulto" : x));
+  const at: Partial<Record<BookingRequest["status"], number>> = { ricevuta: 1, documenti_richiesti: 1, proposta: 2, indisponibile: 2, confermata: 3, in_corso: 3, sintesi: 4, conclusa: 5 };
+  const i = at[r.status];
+  if (i === undefined) return null;
+  const done = i >= steps.length;
+  return (
+    <div className="rounded-2xl border border-line bg-paper p-4" data-percorso={i}>
+      <p className="text-[0.9375rem] font-semibold text-muted">Che cosa succede ora</p>
+      <p className="mt-1 text-lg font-bold text-ink">
+        {done ? "Percorso concluso" : steps[i]}
+        {!done && i + 1 < steps.length ? <span className="font-normal text-ink-soft"> · poi: {steps[i + 1].toLowerCase()}</span> : null}
+      </p>
+      <ol className="mt-3 flex gap-1.5" aria-label={`Passo ${Math.min(i + 1, steps.length)} di ${steps.length}`}>
+        {steps.map((x, k) => (
+          <li key={x} className={k < i ? "h-1.5 flex-1 rounded-full bg-teal" : k === i ? "h-1.5 flex-1 rounded-full bg-marker" : "h-1.5 flex-1 rounded-full bg-line"}>
+            <span className="sr-only">{x}{k < i ? " (fatto)" : k === i ? " (ora)" : ""}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+/** Che cosa resta al paziente: riepilogo o sintesi, prossimo passo con un'azione concreta, ricevuta dimostrativa. */
+function Outcome({ r, doctorLabel, now }: { r: BookingRequest; doctorLabel: string | null; now: Date }) {
+  const paths = usePatientPaths();
+  const title = r.kind === "parere" ? "Sintesi scritta dello specialista" : "Riepilogo del medico";
+  const step = r.summary?.nextStep ?? null;
+  const action: { href: string; label: string } | null =
+    step === "esami" ? { href: "/referti", label: "Quando hai il referto, rendilo chiaro" } : step === "controllo" ? { href: paths.start(r.kind === "parere" ? "video" : r.kind), label: r.kind === "domicilio" ? "Richiedi un'altra visita" : "Prenota un videoconsulto di controllo" } : step === "specialista" || step === "medico-di-famiglia" ? { href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita in 2 minuti" } : null;
+  return (
+    <>
+      <section className="card border-teal/40 p-5 sm:p-7" aria-label="Prestazione conclusa">
+        <h2 className="text-xl font-bold text-ink sm:text-2xl">Prestazione conclusa</h2>
+        {r.summary ? (
+          <article className="mt-4 rounded-2xl border border-line bg-paper p-5" aria-label={title}>
+            <p className="chip bg-cream text-warn">Documento dimostrativo · non ha valore clinico</p>
+            <h3 className="mt-3 text-xl font-bold text-ink">{title}</h3>
+            <p className="mt-1 text-[0.9375rem] text-muted">{doctorLabel} · {formatSlot(r.summary.at, now)}</p>
+            <p className="mt-3 whitespace-pre-line text-[1.0625rem] text-ink">{r.summary.text}</p>
+            {r.summary.prescription ? <p className="mt-3 rounded-xl bg-mist px-4 py-3 text-[1.0625rem] text-ink">Il medico ti ha lasciato una prescrizione su ricetta bianca (in questa prova non esiste un documento reale).</p> : null}
+          </article>
+        ) : null}
+        {step ? (
+          <div className="mt-4 rounded-2xl bg-marker-soft p-5" data-prossimo-passo={step}>
+            <p className="text-[0.9375rem] font-semibold uppercase tracking-wide text-teal-deep">Prossimo passo</p>
+            <p className="mt-1 text-xl font-bold text-ink">{NEXT_STEPS[step]}</p>
+            {action ? (
+              <Link href={action.href} className="btn btn-primary mt-4 h-auto w-full whitespace-normal py-3 sm:w-auto">
+                {action.label} <ArrowRight aria-hidden className="h-4 w-4" />
+              </Link>
+            ) : null}
+          </div>
+        ) : null}
+        <button type="button" className="btn btn-ghost mt-4 print:hidden" onClick={() => window.print()}>
+          <Printer aria-hidden className="h-4 w-4" /> Stampa o salva in PDF
+        </button>
+      </section>
+      <section className="card p-5 sm:p-7" aria-label="Ricevuta dimostrativa">
+        <h2 className="text-lg font-bold text-ink">Ricevuta dimostrativa</h2>
+        <dl className="mt-3 grid gap-2 text-[1.0625rem]">
+          <Row label="Prestazione" value={PRESTAZIONI[r.kind].title} />
+          <Row label="Data" value={r.scheduledStart ? formatSlot(r.scheduledStart, now) : "—"} />
+          <Row label="Importo" value={r.priceCents != null ? formatEuro(r.priceCents) : "—"} strong />
+          <Row label="Pagamento" value={`simulato${r.payment.ref ? ` · rif. ${r.payment.ref}` : ""}`} />
+        </dl>
+        <p className="mt-3 text-[0.9375rem] text-muted">Non è una fattura: nel servizio reale la emette chi eroga la prestazione.</p>
+      </section>
+    </>
   );
 }
 

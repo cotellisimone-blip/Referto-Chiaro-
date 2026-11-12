@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, CalendarClock, CheckCircle2, ClipboardCheck, Home, X } from "lucide-react";
+import { ArrowRight, CalendarClock, CheckCircle2, ClipboardCheck, FileText, Home, Pill, Signpost, X } from "lucide-react";
+import { TrackView } from "@/components/site/track";
+import { WaitlistForm } from "@/components/site/waitlist-form";
+import { cancelTerms } from "@/domain/prestazioni/engine";
 import { FaqList } from "@/components/ui/faq-list";
 import { CoverageCheck, PrestazioniGrid } from "@/components/prestazioni/public";
 import { EmergencyNumbers } from "@/components/prestazioni/ui";
@@ -22,22 +25,33 @@ const STEPS = [
 const NOT_FOR = [
   "Emergenze: chiama il 112",
   "Continuità assistenziale pubblica (ex guardia medica): chiama il 116117 negli orari previsti",
-  "Certificati, prescrizioni o visite specialistiche",
+  "Certificati di malattia, ricette del Servizio sanitario o visite specialistiche",
+];
+
+/** Ciclo 4: che cosa resta in mano dopo la visita. La prescrizione è una decisione del medico, mai una promessa. */
+const AFTER = [
+  { icon: FileText, title: "Un riepilogo scritto", text: "Che cosa ha controllato il medico e che cosa ti ha indicato. Lo ritrovi nella tua richiesta e lo puoi stampare." },
+  { icon: Signpost, title: "Il prossimo passo", text: "Una riga chiara: nessun altro passo, il tuo medico di famiglia, esami, uno specialista o un controllo." },
+  { icon: Pill, title: "Se serve, una prescrizione", text: "Dopo averti visitato il medico può lasciarti una prescrizione su ricetta bianca, se la ritiene necessaria. I farmaci su ricetta bianca sono a tuo carico." },
 ];
 
 const FAQ_DOMICILIO = [
   { q: "Per chi è la visita a domicilio?", a: "Per chi ha un'esigenza non urgente e preferisce, o ha bisogno, di essere visitato a casa: per sé o per un familiare. La valutazione clinica è sempre del medico, che decide se serve altro." },
   { q: "Dove arrivate?", a: "Partiamo da Brescia città come area pilota. Inserisci comune e CAP: se non siamo ancora nella tua zona te lo diciamo subito e ti proponiamo un videoconsulto." },
   { q: "Quanto costa e quando pago?", a: "Il prezzo è fisso e comprende lo spostamento nell'area coperta. Non paghi nulla quando invii la richiesta: paghi solo dopo che il medico ha confermato l'orario e hai visto nome, orario, indirizzo e importo." },
-  { q: "Posso annullare?", a: "Sì. Prima della conferma non c'è alcun addebito; dopo la conferma l'annullamento libera la fascia e l'importo viene rimborsato secondo le condizioni che vedrai prima di pagare." },
+  { q: "Posso annullare?", a: `Sì. Prima della conferma non c'è alcun addebito. Dopo la conferma: ${cancelTerms("domicilio").charAt(0).toLowerCase()}${cancelTerms("domicilio").slice(1)}` },
+  { q: "Il medico può prescrivere farmaci?", a: "Decide il medico dopo averti visitato: se lo ritiene necessario può lasciarti una prescrizione su ricetta bianca, con i farmaci a tuo carico. Non rilascia certificati di malattia né ricette del Servizio sanitario: per quelli resta il tuo medico di famiglia." },
+  { q: "Che cosa mi resta dopo la visita?", a: "Un riepilogo scritto nella tua richiesta, con il prossimo passo indicato dal medico. Lo puoi stampare o mostrare al tuo medico di famiglia." },
   { q: "E se ho bisogno subito?", a: "Questo non è un servizio di urgenza. Per le emergenze sanitarie chiama il 112. Per la continuità assistenziale pubblica chiama il 116117 negli orari previsti." },
 ];
 
 export default function VisitaADomicilioPage() {
   const info = PRESTAZIONI.domicilio;
   const prices = publicPricesEnabled();
+  const vetrina = isVetrina();
   return (
     <>
+      <TrackView event="visita-domicilio" />
       <section aria-labelledby="dom-titolo" className="tone-medico stage-warm">
         <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-8 pb-12 pt-10 sm:pt-16 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div>
@@ -46,7 +60,7 @@ export default function VisitaADomicilioPage() {
             <p className="mt-5 max-w-2xl text-xl text-ink-soft">{info.title}: per esigenze non urgenti, per te o per un familiare. Vedi solo le fasce davvero disponibili.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link href={info.startHref} data-track="cta-domicilio" className="btn btn-primary btn-lg">
-                {isVetrina() ? "Provala nella demo" : "Richiedi la visita"} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                {vetrina ? "Provala nella demo" : "Richiedi la visita"} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
               <a href="#copertura" className="btn btn-secondary btn-lg">Arrivate da me?</a>
             </div>
@@ -91,7 +105,34 @@ export default function VisitaADomicilioPage() {
         </div>
       </section>
 
-      <section aria-labelledby="nonper-titolo" className="py-10 sm:py-16">
+      <section aria-labelledby="dopo-titolo" className="py-10 sm:py-16">
+        <div className="container-rc">
+          <h2 id="dopo-titolo" className="display-lg">Che cosa ti resta dopo la visita</h2>
+          <ul className="mt-7 grid gap-4 md:grid-cols-3">
+            {AFTER.map(({ icon: Icon, title, text }) => (
+              <li key={title} className="card p-6">
+                <Icon aria-hidden className="h-8 w-8 text-teal" />
+                <p className="mt-3 text-xl font-bold text-ink">{title}</p>
+                <p className="mt-1 text-[1.0625rem] text-ink-soft">{text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {vetrina ? (
+        <section id="avvisami" aria-labelledby="avvisami-titolo" className="scroll-mt-28 bg-mist py-10 sm:py-16">
+          <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2 lg:items-start">
+            <div>
+              <h2 id="avvisami-titolo" className="display-lg">Avvisami quando parte nella mia zona</h2>
+              <p className="mt-4 text-xl text-ink-soft">Il servizio non è ancora attivo. Lascia email e CAP: partiamo dalle zone in cui c&apos;è più richiesta.</p>
+            </div>
+            <WaitlistForm interest="domicilio" />
+          </div>
+        </section>
+      ) : null}
+
+      <section aria-labelledby="nonper-titolo" className="bg-paper py-10 sm:py-16">
         <div className="container-rc">
           <h2 id="nonper-titolo" className="display-lg">Quando non è il servizio giusto</h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -104,9 +145,9 @@ export default function VisitaADomicilioPage() {
 
       <section aria-labelledby="altre-titolo" className="bg-ivory-wash py-10 sm:py-16">
         <div className="container-rc">
-          <h2 id="altre-titolo" className="display-lg">Le prestazioni con un medico</h2>
-          <p className="mt-3 max-w-2xl text-xl text-ink-soft">Due servizi allo stesso prezzo, molto diversi: la visita a casa con un medico generalista, oppure il secondo parere di uno specialista su un quesito preciso.</p>
-          <div className="mt-7"><PrestazioniGrid /></div>
+          <h2 id="altre-titolo" className="display-lg">Se ti serve altro</h2>
+          <p className="mt-3 max-w-2xl text-xl text-ink-soft">Per un dubbio che si chiarisce a distanza basta un videoconsulto. Per un&apos;altra valutazione su una diagnosi o una proposta di cura c&apos;è il secondo parere di uno specialista.</p>
+          <div className="mt-7"><PrestazioniGrid only={["video", "parere"]} /></div>
         </div>
       </section>
 

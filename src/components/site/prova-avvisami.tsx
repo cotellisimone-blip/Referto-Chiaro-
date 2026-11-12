@@ -5,17 +5,20 @@ import { usePathname } from "next/navigation";
 import { BellRing } from "lucide-react";
 import { WaitlistForm } from "@/components/site/waitlist-form";
 
-type Servizio = "capisci" | "parla-con-un-medico" | "secondo-parere";
+type Servizio = "capisci" | "domicilio" | "parla-con-un-medico" | "secondo-parere";
 
-const SERVIZI: { id: Servizio; label: string; interest: "completo" | "visite" | "secondo-parere" }[] = [
+const SERVIZI: { id: Servizio; label: string; interest: "completo" | "visite" | "secondo-parere" | "domicilio" }[] = [
   { id: "capisci", label: "Capisci il referto", interest: "completo" },
-  { id: "parla-con-un-medico", label: "Parla con un medico", interest: "visite" },
+  { id: "domicilio", label: "Visita a domicilio", interest: "domicilio" },
+  { id: "parla-con-un-medico", label: "Videoconsulto", interest: "visite" },
   { id: "secondo-parere", label: "Secondo parere", interest: "secondo-parere" },
 ];
 
 /** Il servizio provato si ricava dalla pagina: appuntamenti → medico, pareri → secondo parere, il resto → Capisci. */
 export function servizioDaPercorso(path: string): Servizio {
-  if (path.startsWith("/area-personale/appuntamenti")) return "parla-con-un-medico";
+  if (path.startsWith("/area-personale/appuntamenti") || path.startsWith("/richiedi/videoconsulto")) return "parla-con-un-medico";
+  if (path.startsWith("/richiedi/secondo-parere")) return "secondo-parere";
+  if (path.startsWith("/richiedi/domicilio") || path.startsWith("/richieste")) return "domicilio";
   if (path.startsWith("/area-personale/secondo-parere")) return "secondo-parere";
   return "capisci";
 }

@@ -2,11 +2,11 @@
 
 import { useId, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ClipboardList, FileText, Stethoscope, Video } from "lucide-react";
+import { ArrowRight, ClipboardList, FileText, Home, Stethoscope, Video } from "lucide-react";
 import { clsx } from "clsx";
 
 export interface PickerService {
-  id: "capisci" | "secondo-parere" | "parla-con-un-medico";
+  id: "capisci" | "domicilio" | "secondo-parere" | "parla-con-un-medico";
   name: string;
   href: string;
   startHref: string;
@@ -14,24 +14,26 @@ export interface PickerService {
   price: string | null;
   timing: string;
   need: string;
-  level: { n: number; verb: string };
+  /** Assente per la visita a domicilio, che non è un livello del percorso Capisci → Orientati → Approfondisci. */
+  level?: { n: number; verb: string };
 }
 
 /** Ordine delle risposte: i tre livelli, poi lo strumento gratuito. La frase del bisogno arriva da src/domain/offerta.ts. */
-const ORDER = ["capisci", "parla-con-un-medico", "secondo-parere"] as const;
+const ORDER = ["capisci", "domicilio", "parla-con-un-medico", "secondo-parere"] as const;
 const WHY = {
   capisci: "Il tuo referto diventa un report chiaro, con i valori controllati da te e le domande da fare al medico. È automatico: nessun medico lo rivede.",
+  domicilio: "Un medico di medicina generale viene a casa, per esigenze non urgenti, e lascia un riepilogo scritto con il prossimo passo. Per ora a Brescia città.",
   "parla-con-un-medico": "Un medico di medicina generale o internista legge prima i tuoi documenti e, in video, ti aiuta a capire il prossimo passo. Non devi scegliere tu la specialità.",
   "secondo-parere": "Uno specialista della disciplina appropriata valuta i tuoi documenti e risponde per iscritto alla tua domanda.",
 } as const;
-const TONE = { capisci: "capisci", "parla-con-un-medico": "medico", "secondo-parere": "parere", tool: "capisci" } as const;
-const ICON = { capisci: FileText, "parla-con-un-medico": Video, "secondo-parere": Stethoscope, tool: ClipboardList } as const;
+const TONE = { capisci: "capisci", domicilio: "medico", "parla-con-un-medico": "medico", "secondo-parere": "parere", tool: "capisci" } as const;
+const ICON = { capisci: FileText, domicilio: Home, "parla-con-un-medico": Video, "secondo-parere": Stethoscope, tool: ClipboardList } as const;
 const TOOL = { label: "Ho una visita e voglio arrivare preparato", why: "Uno strumento gratuito: in 2 minuti hai la lista di cosa portare e cosa chiedere." };
 
 type Choice = (typeof ORDER)[number] | "tool";
 
 /**
- * «Ti aiutiamo a scegliere»: una domanda sola, quattro risposte fisse, sul BISOGNO e mai sui sintomi.
+ * «Ti aiutiamo a scegliere»: una domanda sola, cinque risposte fisse, sul BISOGNO e mai sui sintomi.
  * Non fa domande cliniche, non valuta urgenze, non è un chatbot: porta al servizio adatto, con prezzo e tempi.
  */
 export function NeedPicker({ services, headingId }: { services: PickerService[]; headingId?: string }) {
@@ -69,7 +71,7 @@ export function NeedPicker({ services, headingId }: { services: PickerService[];
       <div aria-live="polite" className="min-h-[1px] lg:pt-12">
         {need && Icon ? (
           <div key={need} className={clsx("scene-pop overflow-hidden rounded-[2rem] border border-[color-mix(in_srgb,var(--tone-accent)_25%,transparent)] bg-[linear-gradient(165deg,var(--tone-bg),var(--color-paper)_75%)] p-7 shadow-[var(--shadow-float)] sm:p-9", `tone-${TONE[need]}`)}>
-            <p className="eyebrow !text-[var(--tone-accent)]">{service ? `Ti consigliamo · livello ${service.level.n}` : "Ti consigliamo"}</p>
+            <p className="eyebrow !text-[var(--tone-accent)]">{service?.level ? `Ti consigliamo · livello ${service.level.n}` : "Ti consigliamo"}</p>
             <div className="mt-5 flex items-center gap-4">
               <span className="tone-icon h-14 w-14 shrink-0">
                 <Icon aria-hidden className="h-7 w-7" />

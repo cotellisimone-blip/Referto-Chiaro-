@@ -2,6 +2,31 @@
 
 Un ciclo = analisi, cinque fasi proposte, approvazione di Simone, esecuzione. Il più recente sta in cima. La storia precedente al ciclo 1 è in `docs/archivio/DECISION_LOG.md`.
 
+## Ciclo 4 · 12/11/2026 (sera)
+
+**Base:** ramo `claude/project-thread-t5hahw` @ a9306b8 (PR #6 sopra la PR #5, entrambe aperte). **Metodo:** master prompt «Evoluzione produttiva» v3. **Analisi:** `ANALISI_CICLO_4.md` nella cartella del progetto (`cura-privata/ciclo-4/`). **Approvazione:** Simone, 12/11 alle 20:30 UTC, fasi 1–4 («Tutte tranne la 5»).
+
+**Ostacolo:** il sito vendeva quattro servizi ma ne raccontava tre (videoconsulto e secondo parere comparivano due volte in Servizi e Prezzi) e «Richiedi la visita» apriva la prova a tre ruoli.
+
+| Fase | Cosa è cambiato | Stato |
+|---|---|---|
+| 1. Un'offerta sola | Un solo elenco (`src/domain/prestazioni/offerta-completa.ts`): Capisci, a domicilio, videoconsulto, secondo parere. Servizi: quattro schede illustrate (nuova scena del domicilio) con disponibilità e richiesta diretta. Prezzi: quattro schede con «Che cosa include» richiudibile; su telefono da 9,2 a 6,6 schermate. «Ti aiutiamo a scegliere», ricerca, Chi siamo e Stato del progetto conoscono il domicilio. Il payoff resta | completata e verificata |
+| 2. Chiedere la visita da telefono, da paziente | Nuovo percorso `/richiedi/…` e `/richieste/…` senza barra dei ruoli (stessi componenti della prova, `src/components/prestazioni/paths.tsx`); comune e CAP sulla stessa riga, comando del primo passo nella prima schermata; «Che cosa succede ora» in cima alla richiesta; il medico dimostrativo risponde con un comando dichiarato come simulazione (`demoDoctorStep`). La prova a tre ruoli resta in `/prova` | completata e verificata |
+| 3. «Avvisami nella mia zona» | Lista d'attesa `domicilio` con CAP (5 cifre, mai un indirizzo; facoltativo per il video): fuori zona, sulla pagina del servizio in vetrina, a fine prova e in Stato del progetto. Admin → Vetrina: riga del domicilio e tabella «richieste per CAP». Eventi `visita-domicilio`, `cta-domicilio`, `avvisami-domicilio` | completata e verificata (la tabella per CAP in Admin è verificata dai test unitari della lista, non nel browser) |
+| 4. Che cosa ti resta dopo la visita | Domicilio e video si chiudono solo con un riepilogo scritto; il medico indica il prossimo passo (5 voci fisse) e, per il domicilio, se ha lasciato una prescrizione su ricetta bianca. Il paziente vede riepilogo, prossimo passo con un'azione, ricevuta dimostrativa, stampa. Annullamento scritto prima di pagare | completata e verificata |
+
+**Decisioni prese approvando:** la pagina del domicilio dice che il medico, se lo ritiene dopo la visita, può lasciare una prescrizione su ricetta bianca (restano esclusi certificati di malattia e ricette del Servizio sanitario). Regola di annullamento proposta, modificabile in un punto (`CANCEL_FREE_MINUTES`): rimborso intero fino a 2 ore prima del domicilio e 1 ora prima del video; oltre, nessun rimborso; se annulla il medico, rimborso sempre.
+
+**Test (12/11, a fine ciclo):** vedi la PR #6.
+
+**Non approvata:** fase 5, richieste salvate nell'account (oggi restano nel browser; videoconsulto e secondo parere hanno ancora due implementazioni).
+
+**Dipendenze future (una volta sola):** regola di annullamento e ricetta bianca da confermare con legale e medici prima dell'apertura (`docs/cura-privata/PRESTAZIONI_CON_MEDICO.md`). Confronto prezzi con le alternative non aggiornato in questo ciclo.
+
+## Intervento «Medico a domicilio» · 12/11/2026
+
+Fuori ciclo, da un prompt diretto del titolare: visita a domicilio 149 €, videoconsulto 69 €, secondo parere 149 € fisso, prova a tre ruoli in `/prova`. Dettagli in `docs/cura-privata/PRESTAZIONI_CON_MEDICO.md`. Commit d796626, a9306b8.
+
 ## Ciclo 3 · 12/11/2026
 
 **Base:** ramo `claude/project-thread-oi7sjf` @ 17e0daa (fine ciclo 2, PR #4 impilata sulla PR #3, entrambe aperte). **Analisi:** `ANALISI_CICLO_3.md` nella cartella del progetto (`cura-privata/ciclo-3/`). **Approvazione:** Simone, 12/11 alle 08:29 UTC, tutte e cinque le fasi. **Ramo:** `claude/project-thread-2y3p3f`, una sola PR verso `main` che contiene anche i cicli 1 e 2 (sostituisce le PR #1–#4).

@@ -416,5 +416,10 @@ CREATE TABLE IF NOT EXISTS funnel_source_daily (
 );
 ALTER TABLE funnel_source_daily ENABLE ROW LEVEL SECURITY;
 -- Sorgente dell'iscrizione alla lista d'attesa (stesso elenco chiuso; vuota per le iscrizioni precedenti).
+-- Ciclo 4 (12/11/2026): «Avvisami nella mia zona». Interesse per la visita a domicilio e CAP facoltativo
+-- (solo 5 cifre: è una zona, non un indirizzo), per capire dove c'è domanda.
+ALTER TABLE waitlist DROP CONSTRAINT IF EXISTS waitlist_interest_check;
+ALTER TABLE waitlist ADD CONSTRAINT waitlist_interest_check CHECK (interest IN ('completo', 'secondo-parere', 'strutture', 'archivio', 'visite', 'prevenzione', 'domicilio'));
+ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS cap text CHECK (cap IS NULL OR cap ~ '^[0-9]{5}$');
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS source text CHECK (source IS NULL OR source IN ('diretto', 'google', 'facebook', 'instagram', 'tiktok', 'whatsapp', 'email', 'medico', 'altro'));
 INSERT INTO schema_migrations(version) VALUES (8) ON CONFLICT DO NOTHING;

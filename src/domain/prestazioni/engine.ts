@@ -126,8 +126,40 @@ export interface BookingRequest {
   /** Messaggio del medico (documenti richiesti, esito, motivo di indisponibilità). */
   notice: string | null;
   video: { state: "chiusa" | "attesa" | "in_corso" | "problema" | "conclusa" } ;
-  summary: { text: string; at: string } | null;
+  /** Che cosa resta al paziente a fine prestazione: riepilogo scritto, prossimo passo, eventuale prescrizione lasciata. */
+  summary: { text: string; at: string; nextStep?: NextStepId | null; prescription?: boolean } | null;
   history: HistoryEntry[];
+}
+
+/** Prossimo passo indicato dal medico a fine prestazione: poche voci fisse, leggibili dal paziente. */
+export const NEXT_STEPS = {
+  nessuno: "Nessun altro passo per ora",
+  "medico-di-famiglia": "Parlane con il tuo medico di famiglia",
+  esami: "Fai gli esami indicati nel riepilogo",
+  specialista: "Prenota una visita specialistica in presenza",
+  controllo: "Fissa un controllo tra qualche settimana",
+} as const;
+export type NextStepId = keyof typeof NEXT_STEPS;
+
+/**
+ * Annullamento dopo la conferma (ciclo 4, regola proposta e modificabile solo qui): rimborso intero fino a
+ * 2 ore prima della visita a domicilio e fino a 1 ora prima di un videoconsulto; oltre, l'importo non viene
+ * rimborsato, perché il medico ha già riservato la fascia. Se annulla il medico o l'amministrazione, rimborso sempre.
+ */
+export const CANCEL_FREE_MINUTES: Record<PrestazioneKind, number> = { domicilio: 120, video: 60, parere: 60 };
+
+export function cancelTerms(kind: PrestazioneKind): string {
+  const h = CANCEL_FREE_MINUTES[kind] / 60;
+  const prima = h === 1 ? "1 ora prima" : `${h} ore prima`;
+  return kind === "domicilio"
+    ? `Puoi annullare senza costi fino a ${prima} della visita: l'importo torna per intero. Dopo, non viene rimborsato. Se annulla il medico, il rimborso è sempre intero.`
+    : `Puoi annullare o spostare senza costi fino a ${prima} del videoconsulto: l'importo torna per intero. Dopo, non viene rimborsato. Se annulla il medico, il rimborso è sempre intero.`;
+}
+
+/** Vero se, annullando adesso, il paziente riceve il rimborso intero. */
+export function refundableNow(r: BookingRequest, now: Date): boolean {
+  if (r.payment.status !== "pagato" || !r.scheduledStart) return true;
+  return now.getTime() <= new Date(r.scheduledStart).getTime() - CANCEL_FREE_MINUTES[r.kind] * 60_000;
 }
 
 export interface Specialty {
@@ -500,8 +532,10 @@ export function cancelRequest(s: PrestazioniState, id: string, now: Date, actor:
   const r = getRequest(s, id);
   if (!r || !["ricevuta", "documenti_richiesti", "proposta", "confermata", "indisponibile"].includes(r.status)) return { ok: false, error: "stato-non-valido", state: s };
   const paid = r.payment.status === "pagato";
-  let x: BookingRequest = { ...r, status: "annullata", proposal: null, payment: paid ? { ...r.payment, status: "rimborsato" } : r.payment };
-  x = log(x, now, actor, paid ? "Annullata. Rimborso simulato dell'importo pagato; la fascia torna libera." : "Annullata. Nessun addebito; la fascia torna libera.");
+  // Oltre il termine il paziente non viene rimborsato; medico e amministrazione rimborsano sempre.
+  const refund = paid && (actor !== "paziente" || refundableNow(r, now));
+  let x: BookingRequest = { ...r, status: "annullata", proposal: null, payment: refund ? { ...r.payment, status: "rimborsato" } : r.payment };
+  x = log(x, now, actor, !paid ? "Annullata. Nessun addebito; la fascia torna libera." : refund ? "Annullata. Rimborso simulato dell'importo pagato; la fascia torna libera." : "Annullata oltre il termine: importo non rimborsato; la fascia torna libera.");
   return { ok: true, id, state: replaceRequest(s, x) };
 }
 
@@ -559,8 +593,8 @@ export type DoctorAction =
   | { type: "rifiuta"; reason: string; inPerson?: string }
   | { type: "chiedi-documenti"; message: string }
   | { type: "avvia" }
-  | { type: "concludi"; note: string }
-  | { type: "consegna-sintesi"; text: string };
+  | { type: "concludi"; note: string; nextStep?: NextStepId; prescription?: boolean }
+  | { type: "consegna-sintesi"; text: string; nextStep?: NextStepId };
 
 export type DoctorError = "non-assegnata" | "stato-non-valido" | "fascia-occupata" | "medico-non-abilitato" | "dati-mancanti";
 
@@ -618,7 +652,14 @@ export function doctorAct(s: PrestazioniState, doctorId: string, id: string, act
         x = { ...r, status: "sintesi", video: { state: "conclusa" } };
         x = log(x, now, "medico", "Videoconsulto concluso. Sintesi in preparazione.");
       } else {
-        x = { ...r, status: "conclusa", video: { state: r.kind === "video" ? "conclusa" : "chiusa" }, summary: action.note.trim() ? { text: action.note.trim(), at: now.toISOString() } : null };
+        // Domicilio e video si chiudono sempre con un riepilogo scritto: è ciò che resta al paziente.
+        if (!action.note.trim()) return fail("dati-mancanti");
+        x = {
+          ...r,
+          status: "conclusa",
+          video: { state: r.kind === "video" ? "conclusa" : "chiusa" },
+          summary: { text: action.note.trim(), at: now.toISOString(), nextStep: action.nextStep ?? null, prescription: r.kind === "domicilio" ? !!action.prescription : false },
+        };
         x = log(x, now, "medico", "Prestazione conclusa.");
       }
       break;
@@ -626,12 +667,40 @@ export function doctorAct(s: PrestazioniState, doctorId: string, id: string, act
     case "consegna-sintesi": {
       if (r.kind !== "parere" || r.status !== "sintesi") return fail("stato-non-valido");
       if (!action.text.trim()) return fail("dati-mancanti");
-      x = { ...r, status: "conclusa", summary: { text: action.text.trim(), at: now.toISOString() } };
+      x = { ...r, status: "conclusa", summary: { text: action.text.trim(), at: now.toISOString(), nextStep: action.nextStep ?? null } };
       x = log(x, now, "medico", "Sintesi scritta consegnata.");
       break;
     }
   }
   return { ok: true, id, state: replaceRequest(s, x) };
+}
+
+/** Testi dimostrativi, sempre dichiarati come tali: servono alla prova e alla risposta simulata del medico. */
+export const SAMPLE_RIEPILOGO: Record<"domicilio" | "video", string> = {
+  domicilio:
+    "RIEPILOGO DIMOSTRATIVO. Testo di prova, senza valore clinico.\n\nMotivo della visita: quello indicato nella richiesta.\nChe cosa ho controllato: parametri di base e colloquio.\nIndicazioni: quelle spiegate a voce durante la visita.\nQuando richiamare un medico: se compaiono sintomi nuovi o un peggioramento. Per le emergenze, 112.",
+  video:
+    "RIEPILOGO DIMOSTRATIVO. Testo di prova, senza valore clinico.\n\nDi che cosa abbiamo parlato: i dubbi indicati nella richiesta e i documenti condivisi.\nChe cosa ti ho consigliato: il passo successivo indicato qui sotto.\nSe qualcosa cambia: contatta il tuo medico di famiglia. Per le emergenze, 112.",
+};
+export const SAMPLE_SINTESI =
+  "DOCUMENTO DIMOSTRATIVO — testo fittizio, senza valore clinico.\n\nQuesito: quello indicato nella richiesta.\nDocumenti esaminati: quelli condivisi dal paziente.\nValutazione: in un caso reale qui lo specialista risponde al quesito, indica i limiti della valutazione a distanza e che cosa discutere con il medico curante.";
+
+/**
+ * Nel percorso del paziente la prova non ha un medico vero: questa funzione fa compiere al medico assegnato
+ * il passo successivo (accetta, avvia, conclude, consegna la sintesi), con le stesse regole di doctorAct.
+ */
+export function demoDoctorStep(s: PrestazioniState, id: string, now: Date): Done | Fail<DoctorError> {
+  const r = getRequest(s, id);
+  if (!r || !r.doctorId) return { ok: false, error: "non-assegnata", state: s };
+  const act = (a: DoctorAction) => doctorAct(s, r.doctorId!, id, a, now);
+  if (r.status === "ricevuta") {
+    const start = r.requestedStart ?? doctorFreeSlots(s, r.doctorId, r.kind, now, r.id)[0];
+    return act({ type: "accetta", start, deliveryDays: r.kind === "parere" ? 5 : undefined });
+  }
+  if (r.status === "confermata") return act({ type: "avvia" });
+  if (r.status === "in_corso") return act({ type: "concludi", note: r.kind === "parere" ? "" : SAMPLE_RIEPILOGO[r.kind], nextStep: "medico-di-famiglia" });
+  if (r.status === "sintesi") return act({ type: "consegna-sintesi", text: SAMPLE_SINTESI, nextStep: "medico-di-famiglia" });
+  return { ok: false, error: "stato-non-valido", state: s };
 }
 
 export function setAcceptsNewOpinions(s: PrestazioniState, doctorId: string, on: boolean): PrestazioniState {

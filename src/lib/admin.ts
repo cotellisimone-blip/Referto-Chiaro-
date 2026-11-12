@@ -1,4 +1,5 @@
 import "server-only";
+import { BRESCIA_CAPS } from "@/domain/prestazioni/engine";
 import { audit, withSystem } from "@/db/client";
 import { publicConfig, readFlags } from "@/lib/feature-flags";
 import { PDP_EVENTS, VETRINA_EVENTS } from "@/domain/metrics/funnel";
@@ -105,8 +106,8 @@ export async function adminVetrina(adminId: string, days = 30) {
   return withSystem(async (tx) => {
     await audit(tx, { userId: adminId, actor: "admin", action: "vetrina-viewed" });
     const VISITS = "event LIKE 'visita-%'";
-    const CTAS = "event IN ('cta-capisci', 'cta-medico', 'cta-parere')";
-    const SERVICE_INTERESTS = "('completo', 'visite', 'secondo-parere')";
+    const CTAS = "event IN ('cta-capisci', 'cta-medico', 'cta-parere', 'cta-domicilio')";
+    const SERVICE_INTERESTS = "('completo', 'visite', 'secondo-parere', 'domicilio')";
     const weeks = await tx.query<{ week: string; visits: number; ctas: number; examples: number; signups: number }>(
       `WITH w AS (SELECT generate_series(date_trunc('week', current_date) - interval '7 weeks', date_trunc('week', current_date), interval '1 week')::date AS week)
        SELECT to_char(w.week, 'YYYY-MM-DD') AS week,
@@ -137,6 +138,7 @@ export async function adminVetrina(adminId: string, days = 30) {
     );
     const byService = [
       { service: "capisci", visits: counters["visita-capisci"] ?? 0, ctas: counters["cta-capisci"] ?? 0, signups: signups["completo"] ?? 0 },
+      { service: "domicilio", visits: counters["visita-domicilio"] ?? 0, ctas: counters["cta-domicilio"] ?? 0, signups: signups["domicilio"] ?? 0 },
       { service: "parla-con-un-medico", visits: counters["visita-medico"] ?? 0, ctas: counters["cta-medico"] ?? 0, signups: signups["visite"] ?? 0 },
       { service: "secondo-parere", visits: counters["visita-parere"] ?? 0, ctas: counters["cta-parere"] ?? 0, signups: signups["secondo-parere"] ?? 0 },
     ];
@@ -147,8 +149,16 @@ export async function adminVetrina(adminId: string, days = 30) {
       usefulNo: counters["esempio-utile-no"] ?? 0,
       signupsAfterTrial: counters["avvisami-da-prova"] ?? 0,
     };
+    // Ciclo 4: dove chiedono la visita a domicilio (solo il CAP, mai un indirizzo), con la zona già coperta in evidenza.
+    const byCap = (
+      await tx.query<{ cap: string; n: number }>(
+        "SELECT cap, count(*)::int AS n FROM waitlist WHERE interest = 'domicilio' AND cap IS NOT NULL AND created_at >= now() - make_interval(days => $1::int) GROUP BY cap ORDER BY n DESC, cap LIMIT 40",
+        [days],
+      )
+    ).rows.map((r) => ({ cap: r.cap, signups: Number(r.n), covered: BRESCIA_CAPS.includes(r.cap) }));
     return {
       days,
+      byCap,
       afterTrial,
       weeks: weeks.rows.map((r) => ({ ...r, visits: Number(r.visits), ctas: Number(r.ctas), examples: Number(r.examples), signups: Number(r.signups) })),
       bySource: bySource.rows.map((r) => ({ ...r, visits: Number(r.visits), ctas: Number(r.ctas), examples: Number(r.examples), signups: Number(r.signups) })),

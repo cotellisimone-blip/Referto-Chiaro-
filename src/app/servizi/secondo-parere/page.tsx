@@ -3,7 +3,7 @@ import { Clock3, FileSearch, ShieldCheck, UserRoundCheck } from "lucide-react";
 import { ServiceLanding } from "@/components/offerta/service-landing";
 
 export const metadata: Metadata = {
-  title: "Chiedi un secondo parere",
+  title: "Secondo parere specialistico",
   description: "Un medico della specialità giusta valuta i tuoi documenti e risponde per iscritto a una domanda precisa. Parere firmato, mai scritto da un'intelligenza artificiale.",
   alternates: { canonical: "/servizi/secondo-parere" },
 };

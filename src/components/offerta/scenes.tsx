@@ -175,4 +175,65 @@ export function MedicoScene({ className, uid = "" }: SceneProps) {
   );
 }
 
+/** Visita a domicilio (ciclo 4): una casa, la borsa del medico che arriva, il segnaposto della zona. Nessun volto. */
+export function DomicilioScene({ className, uid = "" }: SceneProps) {
+  const u = uid;
+  return (
+    <svg aria-hidden viewBox="0 0 400 240" className={clsx(frame, className)}>
+      <defs>
+        <linearGradient id={`ds-bg${u}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="var(--color-tint-medico)" />
+          <stop offset="1" stopColor="var(--color-paper)" />
+        </linearGradient>
+        <filter id={`ds-sh${u}`} x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="10" stdDeviation="12" floodColor="#0C3340" floodOpacity="0.16" />
+        </filter>
+      </defs>
+      <rect width="400" height="240" fill={`url(#ds-bg${u})`} />
+      <circle cx="56" cy="50" r="64" fill="var(--color-accent-medico)" opacity="0.1" className="sc-float-slow" />
+      <circle cx="364" cy="206" r="56" fill="var(--color-marker)" opacity="0.2" />
+      {/* strada */}
+      <path d="M0 204 h400" stroke="#C9D6DA" strokeWidth="3" strokeLinecap="round" strokeDasharray="2 12" />
+      {/* casa */}
+      <g filter={`url(#ds-sh${u})`}>
+        <path d="M104 112 L190 46 L276 112 Z" fill="var(--color-strong)" />
+        <rect x="236" y="58" width="18" height="34" rx="3" fill="var(--color-strong)" />
+        <rect x="120" y="108" width="140" height="94" rx="6" fill="var(--color-paper)" />
+        {/* finestra accesa */}
+        <rect x="136" y="126" width="42" height="36" rx="6" fill="var(--color-marker)" opacity="0.75" className="sc-marker" />
+        <path d="M157 126 v36 M136 144 h42" stroke="var(--color-paper)" strokeWidth="3" />
+        {/* porta */}
+        <rect x="202" y="134" width="40" height="68" rx="6" fill="var(--color-accent-medico)" />
+        <circle cx="233" cy="170" r="3.5" fill="var(--color-paper)" />
+      </g>
+      {/* segnaposto della zona coperta */}
+      <g transform="translate(190 22)">
+        <g className="sc-pop">
+          <path d="M0 30 C -16 12, -14 -8, 0 -8 C 14 -8, 16 12, 0 30 Z" fill="var(--color-teal)" />
+          <circle cy="4" r="5" fill="var(--color-paper)" />
+        </g>
+      </g>
+      {/* borsa del medico in arrivo */}
+      <g className="sc-slide-in" filter={`url(#ds-sh${u})`}>
+        <g transform="translate(288 138)">
+          <path d="M22 0 h28 a8 8 0 0 1 8 8 v6 h-10 v-4 h-24 v4 h-10 v-6 a8 8 0 0 1 8 -8 z" fill="var(--color-strong)" />
+          <rect x="0" y="12" width="72" height="50" rx="12" fill="var(--color-teal)" />
+          <path d="M36 24 v26 M23 37 h26" stroke="var(--color-paper)" strokeWidth="7" strokeLinecap="round" />
+        </g>
+      </g>
+      {/* fascia confermata */}
+      <g className="sc-slide-in sc-delay" filter={`url(#ds-sh${u})`}>
+        <rect x="24" y="150" width="84" height="40" rx="12" fill="var(--color-paper)" />
+        <circle cx="46" cy="170" r="10" fill="none" stroke="var(--color-accent-medico)" strokeWidth="3" />
+        <path d="M46 164 v6 l5 3" stroke="var(--color-accent-medico)" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="64" y="162" width="32" height="6" rx="3" fill="#B8C7CC" />
+        <rect x="64" y="174" width="22" height="6" rx="3" fill="#C5D3D6" />
+      </g>
+    </svg>
+  );
+}
+
 export const SCENE = { capisci: CapisciScene, "secondo-parere": ParereScene, "parla-con-un-medico": MedicoScene } as const;
+
+/** Le stesse scene, per chiave dell'offerta completa (Capisci, a domicilio, videoconsulto, secondo parere). */
+export const OFFER_SCENE = { capisci: CapisciScene, domicilio: DomicilioScene, video: MedicoScene, parere: ParereScene } as const;

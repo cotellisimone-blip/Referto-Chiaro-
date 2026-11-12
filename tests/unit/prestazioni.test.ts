@@ -8,6 +8,9 @@ import {
   assignRequest,
   availability,
   cancelRequest,
+  cancelTerms,
+  demoDoctorStep,
+  refundableNow,
   checkCoverage,
   chooseAlternative,
   confirmRequest,
@@ -162,7 +165,7 @@ describe("avvio con un solo servizio", () => {
     const s = setServiceOpen(b.state, "domicilio", false);
     expect(getRequest(s, b.id)!.status).toBe("confermata");
     expect(ok(cancelRequest(s, b.id, NOW)).state.requests.find((r) => r.id === b.id)!.status).toBe("annullata");
-    expect(ok(doctorAct(s, b.doctorId, b.id, { type: "concludi", note: "" }, NOW)).state.requests.find((r) => r.id === b.id)!.status).toBe("conclusa");
+    expect(ok(doctorAct(s, b.doctorId, b.id, { type: "concludi", note: "Riepilogo di prova." }, NOW)).state.requests.find((r) => r.id === b.id)!.status).toBe("conclusa");
   });
 });
 
@@ -410,5 +413,52 @@ describe("conflitti, pagamento e accessi", () => {
     const a = adminView(getRequest(s, c.id)!) as unknown as Record<string, unknown>;
     for (const k of ["reason", "documents", "summary", "contact", "address", "notice", "history"]) expect(a).not.toHaveProperty(k);
     expect(JSON.stringify(a)).not.toContain("procedura");
+  });
+});
+
+describe("ciclo 4: che cosa resta dopo la visita e annullamento", () => {
+  it("domicilio e video si chiudono solo con un riepilogo scritto, che porta prossimo passo ed eventuale prescrizione", () => {
+    const b = book(seedState(NOW), domicilio(at(1, 15)));
+    expect(doctorAct(b.state, b.doctorId, b.id, { type: "concludi", note: "  " }, NOW)).toMatchObject({ ok: false, error: "dati-mancanti" });
+    const done = ok(doctorAct(b.state, b.doctorId, b.id, { type: "concludi", note: "Riepilogo di prova.", nextStep: "esami", prescription: true }, NOW));
+    const r = getRequest(done.state, b.id)!;
+    expect(r.status).toBe("conclusa");
+    expect(r.summary).toMatchObject({ text: "Riepilogo di prova.", nextStep: "esami", prescription: true });
+    // L'amministrazione continua a non vedere il riepilogo.
+    expect(JSON.stringify(adminView(r))).not.toContain("Riepilogo di prova.");
+  });
+
+  it("annullare entro il termine rimborsa per intero; oltre il termine no; il medico rimborsa sempre", () => {
+    const b = book(seedState(NOW), domicilio(at(1, 15)));
+    const start = new Date(getRequest(b.state, b.id)!.scheduledStart!);
+    const early = new Date(start.getTime() - 3 * 60 * 60_000);
+    const late = new Date(start.getTime() - 30 * 60_000);
+    expect(refundableNow(getRequest(b.state, b.id)!, early)).toBe(true);
+    expect(refundableNow(getRequest(b.state, b.id)!, late)).toBe(false);
+    expect(getRequest(ok(cancelRequest(b.state, b.id, early)).state, b.id)!.payment.status).toBe("rimborsato");
+    const kept = getRequest(ok(cancelRequest(b.state, b.id, late)).state, b.id)!;
+    expect(kept.status).toBe("annullata");
+    expect(kept.payment.status).toBe("pagato");
+    expect(getRequest(ok(cancelRequest(b.state, b.id, late, "medico")).state, b.id)!.payment.status).toBe("rimborsato");
+    // In ogni caso la fascia torna libera.
+    expect(freeSlots(ok(cancelRequest(b.state, b.id, late)).state, "domicilio", NOW, { cap: "25122" }).some((x) => x.start === start.toISOString())).toBe(true);
+    expect(cancelTerms("domicilio")).toContain("2 ore prima");
+    expect(cancelTerms("video")).toContain("1 ora prima");
+  });
+
+  it("la risposta simulata del medico porta la richiesta fino al riepilogo con le stesse regole", () => {
+    let s = seedState(NOW);
+    const c = ok(createRequest(s, domicilio(at(1, 15)), NOW));
+    s = ok(demoDoctorStep(c.state, c.id, NOW)).state;
+    expect(getRequest(s, c.id)!.status).toBe("proposta");
+    expect(demoDoctorStep(s, c.id, NOW).ok).toBe(false); // tocca al paziente confermare
+    s = ok(confirmRequest(s, c.id, NOW)).state;
+    s = ok(demoDoctorStep(s, c.id, NOW)).state;
+    expect(getRequest(s, c.id)!.status).toBe("in_corso");
+    s = ok(demoDoctorStep(s, c.id, NOW)).state;
+    const r = getRequest(s, c.id)!;
+    expect(r.status).toBe("conclusa");
+    expect(r.summary?.text).toContain("RIEPILOGO DIMOSTRATIVO");
+    expect(r.summary?.nextStep).toBe("medico-di-famiglia");
   });
 });

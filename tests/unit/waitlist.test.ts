@@ -31,6 +31,16 @@ describe("lista d'attesa", () => {
     await expect(addToWaitlist({ email: "b@esempio.test", interest: "completo", extra: 1 } as never)).rejects.toThrow();
   });
 
+  it("ciclo 4: il domicilio registra il CAP della zona, solo a 5 cifre e solo dove serve", async () => {
+    expect(await addToWaitlist({ email: "zona@esempio.test", interest: "domicilio", cap: "20121" })).toEqual({ ok: true });
+    expect((await listWaitlist()).find((r) => r.email === "zona@esempio.test")).toMatchObject({ interest: "domicilio", cap: "20121" });
+    await expect(addToWaitlist({ email: "zona2@esempio.test", interest: "domicilio", cap: "2012" })).rejects.toThrow();
+    await expect(addToWaitlist({ email: "zona2@esempio.test", interest: "domicilio", cap: "via Roma 1" })).rejects.toThrow();
+    // Per gli altri servizi il CAP non viene conservato.
+    await addToWaitlist({ email: "zona3@esempio.test", interest: "completo", cap: "20121" });
+    expect((await listWaitlist()).find((r) => r.email === "zona3@esempio.test")?.cap).toBeNull();
+  });
+
   it("l'elenco parte dal più recente", async () => {
     await addToWaitlist({ email: "ultimo@esempio.test", interest: "secondo-parere" });
     const rows = await listWaitlist();

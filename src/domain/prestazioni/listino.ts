@@ -40,11 +40,11 @@ export const PRESTAZIONI: Record<PrestazioneKind, PrestazioneInfo> = {
     short: "Visita a domicilio",
     mode: "In presenza, a casa",
     href: "/servizi/visita-a-domicilio",
-    startHref: "/prova/paziente/domicilio",
+    startHref: "/richiedi/domicilio",
     includes: [
       "Un medico di medicina generale viene a casa tua o del tuo familiare",
       "Visita per esigenze non urgenti, di circa 45 minuti",
-      "La valutazione clinica è del medico, che decide se serve altro",
+      "Un riepilogo scritto con il prossimo passo; se il medico lo ritiene, una prescrizione su ricetta bianca",
       "Prezzo fisso, comprensivo dello spostamento nell'area coperta",
     ],
     durationLabel: "circa 45 minuti a casa",
@@ -55,7 +55,7 @@ export const PRESTAZIONI: Record<PrestazioneKind, PrestazioneInfo> = {
     short: "Videoconsulto",
     mode: "In video, su appuntamento",
     href: "/servizi/parla-con-un-medico",
-    startHref: "/prova/paziente/videoconsulto",
+    startHref: "/richiedi/videoconsulto",
     includes: [
       "Circa 20–25 minuti in video con un medico di medicina generale",
       "Il medico legge prima i documenti che scegli tu",
@@ -70,7 +70,7 @@ export const PRESTAZIONI: Record<PrestazioneKind, PrestazioneInfo> = {
     short: "Secondo parere",
     mode: "Documenti, video e sintesi",
     href: "/servizi/secondo-parere",
-    startHref: "/prova/paziente/secondo-parere",
+    startHref: "/richiedi/secondo-parere",
     includes: [
       "Per un quesito clinico circoscritto, accettato dallo specialista",
       "Esame della documentazione pertinente",

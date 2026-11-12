@@ -5,17 +5,16 @@ import { Section } from "@/components/ui/section";
 import { ServiceTriad } from "@/components/offerta/service-triad";
 import { FaqList } from "@/components/ui/faq-list";
 import { FAQ } from "@/content/faq";
-import { PrestazioniGrid } from "@/components/prestazioni/public";
 
 export const metadata: Metadata = {
   title: "I servizi",
-  description: "Capisci il tuo referto, chiedi un secondo parere, parla con un medico: i servizi di Cura Privata, e gli strumenti gratuiti.",
+  description: "Capisci il tuo referto, visita a domicilio, videoconsulto con un medico, secondo parere specialistico: i servizi di Cura Privata e gli strumenti gratuiti.",
   alternates: { canonical: "/servizi" },
 };
 
 const NOT_DONE = [
   "Diagnosi automatiche",
-  "Prescrizioni o consigli terapeutici",
+  "Prescrizioni o terapie senza una visita del medico",
   "Triage d'urgenza",
   "Lettura diagnostica di immagini TAC, RM o ecografie",
   "Pareri medici senza un professionista realmente coinvolto",
@@ -44,9 +43,10 @@ export default function ServiziPage() {
           </Link>
         </div>
       </section>
-      <div className="container-rc py-12 sm:py-16">
+      <div id="con-un-medico" className="container-rc scroll-mt-28 py-12 sm:py-16">
         <ServiceTriad headingLevel={2} />
-        <p className="mt-6 text-[1.0625rem] text-muted">
+        <p className="mt-6 max-w-3xl text-lg text-ink-soft">Con un medico il prezzo è fisso e paghi solo dopo che il medico ha confermato: vedi nome, orario e importo prima.</p>
+        <p className="mt-4 text-[1.0625rem] text-muted">
           <Link href="/prezzi" className="link font-semibold">
             Confronta prezzi e tempi
           </Link>
@@ -56,10 +56,6 @@ export default function ServiziPage() {
           </Link>
         </p>
       </div>
-      <Section id="con-un-medico" eyebrow="Con un medico" title="Visita a domicilio, videoconsulto, secondo parere.">
-        <p className="-mt-2 mb-6 max-w-2xl text-xl text-ink-soft">Prezzo fisso, disponibilità reale, e paghi solo quando il medico ha confermato. Ognuna si prenota direttamente.</p>
-        <PrestazioniGrid />
-      </Section>
       <Section id="gratis" tone="paper" eyebrow="Gratis, per tutti" title="Strumenti e guide, senza registrarti.">
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {FREE.map(({ icon: Icon, title, href, text }) => (

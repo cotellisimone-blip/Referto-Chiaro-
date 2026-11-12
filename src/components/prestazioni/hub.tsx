@@ -3,16 +3,45 @@
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Stethoscope, UserRound } from "lucide-react";
 import { prestazionePrice } from "@/domain/prestazioni/listino";
-import { DemoNotice, RoleBar } from "./ui";
+import { ConfirmButton, DemoNotice, RoleBar } from "./ui";
+import { PatientPathsProvider } from "./paths";
+import { resetDemo } from "./store";
+import { ProvaAvvisami } from "@/components/site/prova-avvisami";
 
 export function ProvaShell({ role, children }: { role: "paziente" | "medico" | "amministrazione" | null; children: React.ReactNode }) {
   return (
-    <>
+    <PatientPathsProvider mode="prova">
       <RoleBar active={role} />
       <div className="container-rc py-8 pb-28 sm:py-12" data-prova={role ?? "hub"}>
         {children}
       </div>
-    </>
+    </PatientPathsProvider>
+  );
+}
+
+/**
+ * Cornice del percorso del paziente a cui portano home e pagine servizio (ciclo 4): niente barra dei ruoli,
+ * il modulo parte subito. In fondo, una sola riga dice che è una prova e porta alla prova a tre ruoli.
+ */
+export function PatientShell({ children, vetrina = false }: { children: React.ReactNode; vetrina?: boolean }) {
+  return (
+    <PatientPathsProvider mode="public">
+      <div className="container-rc max-w-3xl py-6 pb-28 sm:py-10" data-percorso-paziente>
+        {children}
+        {vetrina ? <ProvaAvvisami titolo="Ti interessa davvero? Avvisami quando parte." /> : null}
+        <div role="note" className="mt-10 rounded-2xl border border-dashed border-warn/60 bg-cream p-4 text-[0.9375rem] text-ink-soft print:hidden">
+          <p>
+            <strong className="text-ink">Prova dimostrativa.</strong> Medici, fasce, pagamenti e documenti sono simulati e restano in questo browser.
+          </p>
+          <p className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1">
+            <Link href="/prova" className="link inline-flex min-h-11 items-center font-semibold">Guarda anche il lato del medico e dell&apos;amministrazione</Link>
+            <ConfirmButton className="link inline-flex min-h-11 items-center font-semibold" question="Le richieste tornano allo stato iniziale." yes="Sì, ricomincia" onConfirm={resetDemo}>
+              Ricomincia la prova
+            </ConfirmButton>
+          </p>
+        </div>
+      </div>
+    </PatientPathsProvider>
   );
 }
 

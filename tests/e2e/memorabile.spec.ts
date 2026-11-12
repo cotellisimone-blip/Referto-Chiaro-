@@ -201,7 +201,7 @@ test.describe("percorsi A, C, D", () => {
     // 12/11/2026: il pulsante della pagina porta alla prova a fasce (tests/e2e/prestazioni.spec.ts); qui resta provato
     // il percorso server dell'area personale, che si apre direttamente.
     await page.goto("/servizi/parla-con-un-medico");
-    await expect(page.getByRole("link", { name: "Prenota il videoconsulto" }).first()).toHaveAttribute("href", "/prova/paziente/videoconsulto");
+    await expect(page.getByRole("link", { name: "Prenota il videoconsulto" }).first()).toHaveAttribute("href", "/richiedi/videoconsulto");
     await page.goto("/area-personale/appuntamenti");
     await expect(page.getByRole("heading", { name: "I miei appuntamenti" })).toBeVisible({ timeout: 15_000 });
     await expectAccessible(page);
@@ -267,7 +267,7 @@ test.describe("percorsi A, C, D", () => {
     await page.setViewportSize(isMobile ? { width: 390, height: 844 } : { width: 1440, height: 900 });
     await page.goto("/area-personale");
     const nav = page.getByRole("navigation", { name: "Area personale" }).last();
-    for (const label of isMobile ? ["Referti", "Medico", "Pareri"] : ["I miei documenti e report", "Visite e videoconsulti (prova)", "I miei pareri"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
+    for (const label of isMobile ? ["Referti", "Medico", "Pareri"] : ["I miei documenti e report", "Visite e videoconsulti", "I miei pareri"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
     for (const [path, h] of [["/area-personale/secondo-parere", "I miei pareri"], ["/area-personale/appuntamenti", "I miei appuntamenti"], ["/area-personale/ordini", "Pagamenti"]] as const) {
       await page.goto(path);
       await expect(page.getByRole("heading", { name: h, level: 1 })).toBeVisible({ timeout: 15_000 });

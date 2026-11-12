@@ -54,8 +54,8 @@ test("listino e accessi dalla home: domicilio in evidenza, prezzi coerenti su sc
   await expect(cards.nth(2)).toContainText("Secondo parere specialistico");
   await expect(cards.nth(2)).toContainText(eur(149));
   // Ognuna raggiungibile direttamente dalla pagina servizi.
-  await cards.nth(2).getByRole("link").click();
-  await expect(page).toHaveURL(/\/prova\/paziente\/secondo-parere$/);
+  await cards.nth(2).getByRole("link", { name: /Richiedi il secondo parere/ }).click();
+  await expect(page).toHaveURL(/\/richiedi\/secondo-parere$/);
   for (const path of ["/servizi/parla-con-un-medico", "/prezzi"]) {
     await gotoReady(page, path);
     const txt = (await page.locator("main").innerText()).replace(/\s/g, " ");
@@ -101,12 +101,12 @@ test("candidatura: il medico è assegnabile solo dopo verifica e abilitazione", 
 
 test("domicilio: fuori zona, richiesta, accettazione del medico, conferma a 149 €, annullamento che libera la fascia", async ({ page }) => {
   await fresh(page, "/prova/paziente/domicilio");
-  await page.getByLabel("CAP").fill("20121");
+  await page.getByLabel("CAP", { exact: true }).fill("20121");
   await page.getByLabel("Comune").fill("Milano");
   await page.getByRole("button", { name: "Verifica la copertura" }).click();
   await expect(page.locator("main").getByRole("alert")).toContainText("Brescia città");
   await page.getByLabel("Comune").fill("Brescia");
-  await page.getByLabel("CAP").fill("25122");
+  await page.getByLabel("CAP", { exact: true }).fill("25122");
   await page.getByRole("button", { name: "Verifica la copertura" }).click();
   await pickFirstSlot(page);
   await page.getByRole("button", { name: "Continua" }).click();

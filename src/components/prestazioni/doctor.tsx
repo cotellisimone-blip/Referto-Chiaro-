@@ -12,6 +12,9 @@ import {
   getDoctor,
   getRequest,
   setAcceptsNewOpinions,
+  NEXT_STEPS,
+  SAMPLE_RIEPILOGO,
+  type NextStepId,
   specialtyName,
   BRESCIA_CAPS,
   type DoctorAction,
@@ -137,6 +140,8 @@ export function DoctorRequestPage({ id }: { id: string }) {
   const [slot, setSlot] = useState<string | null>(null);
   const [days, setDays] = useState(5);
   const [text, setText] = useState("");
+  const [nextStep, setNextStep] = useState<NextStepId>("medico-di-famiglia");
+  const [prescription, setPrescription] = useState(false);
   const [inPerson, setInPerson] = useState("");
   if (!s) return <Loading />;
   const now = new Date();
@@ -282,12 +287,21 @@ export function DoctorRequestPage({ id }: { id: string }) {
         <Actions>
           {r.video.state === "problema" ? <p className="mb-3 text-warn">Il paziente ha perso la connessione (simulazione): può ricollegarsi o riprogrammare.</p> : null}
           {r.kind !== "parere" ? (
-            <label className="block text-[1.0625rem] font-semibold text-ink">
-              {r.kind === "video" ? "Breve riepilogo per il paziente" : "Esito della visita, per il paziente (facoltativo)"}
-              <textarea value={text} onChange={(e) => setText(e.target.value)} rows={4} className={areaCls} placeholder="RIEPILOGO DIMOSTRATIVO. Testo di prova, senza valore clinico." />
-            </label>
+            <>
+              <label className="block text-[1.0625rem] font-semibold text-ink">
+                Riepilogo per il paziente
+                <textarea value={text || SAMPLE_RIEPILOGO[r.kind]} onChange={(e) => setText(e.target.value)} rows={7} className={areaCls} />
+              </label>
+              <NextStepSelect value={nextStep} onChange={setNextStep} />
+              {r.kind === "domicilio" ? (
+                <label className="check-row mt-4 flex min-h-12 items-center gap-3 rounded-xl border border-line bg-paper px-4 text-[1.0625rem] text-ink">
+                  <input type="checkbox" checked={prescription} onChange={(e) => setPrescription(e.target.checked)} className="h-5 w-5" />
+                  Ho lasciato una prescrizione su ricetta bianca
+                </label>
+              ) : null}
+            </>
           ) : null}
-          <button type="button" className="btn btn-primary mt-4" onClick={() => run({ type: "concludi", note: text || (r.kind === "video" ? "RIEPILOGO DIMOSTRATIVO. Testo di prova, senza valore clinico." : "") }, r.kind === "parere" ? "Videoconsulto concluso. Ora consegna la sintesi." : "Prestazione conclusa.")}>
+          <button type="button" className="btn btn-primary mt-4" onClick={() => run({ type: "concludi", note: r.kind === "parere" ? "" : text || SAMPLE_RIEPILOGO[r.kind], nextStep, prescription }, r.kind === "parere" ? "Videoconsulto concluso. Ora consegna la sintesi." : "Prestazione conclusa: il paziente trova il riepilogo nella sua richiesta.")}>
             {r.kind === "parere" ? "Concludi il videoconsulto" : "Concludi la prestazione"}
           </button>
         </Actions>
@@ -304,7 +318,8 @@ export function DoctorRequestPage({ id }: { id: string }) {
               className={areaCls}
             />
           </label>
-          <button type="button" className="btn btn-primary mt-4" onClick={() => run({ type: "consegna-sintesi", text: text || SAMPLE_SINTESI }, "Sintesi consegnata: il paziente la trova nella sua area.")}>
+          <NextStepSelect value={nextStep} onChange={setNextStep} />
+          <button type="button" className="btn btn-primary mt-4" onClick={() => run({ type: "consegna-sintesi", text: text || SAMPLE_SINTESI, nextStep }, "Sintesi consegnata: il paziente la trova nella sua area.")}>
             Consegna la sintesi
           </button>
         </Actions>
@@ -315,6 +330,19 @@ export function DoctorRequestPage({ id }: { id: string }) {
 
 const SAMPLE_SINTESI =
   "DOCUMENTO DIMOSTRATIVO — testo fittizio, senza valore clinico.\n\nQuesito: valutazione di una proposta terapeutica.\nDocumentazione esaminata: referti di esempio condivisi dal paziente.\nSintesi: in questa prova lo specialista riassume ciò che è emerso dal colloquio e dai documenti, e indica eventuali approfondimenti da discutere con il medico curante.";
+
+function NextStepSelect({ value, onChange }: { value: NextStepId; onChange: (v: NextStepId) => void }) {
+  return (
+    <label className="mt-4 block text-[1.0625rem] font-semibold text-ink">
+      Prossimo passo per il paziente
+      <select value={value} onChange={(e) => onChange(e.target.value as NextStepId)} className={inputCls}>
+        {(Object.keys(NEXT_STEPS) as NextStepId[]).map((k) => (
+          <option key={k} value={k}>{NEXT_STEPS[k]}</option>
+        ))}
+      </select>
+    </label>
+  );
+}
 
 function Actions({ children }: { children: React.ReactNode }) {
   return (
