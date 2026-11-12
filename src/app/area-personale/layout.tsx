@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { safeAreaNext } from "@/lib/auth/next-path";
 import { getCurrentUser } from "@/lib/auth/session";
 import { AreaNav } from "@/components/area/area-nav";
 import { AreaProvaAvvisami, VetrinaProvider } from "@/components/site/prova-avvisami";
@@ -19,7 +21,10 @@ export default function AreaLayout({ children }: LayoutProps<"/area-personale">)
 
 async function Gate({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
-  if (!user) redirect("/accedi?next=/area-personale");
+  if (!user) {
+    const next = safeAreaNext((await headers()).get("x-cp-path"));
+    redirect(next === "/area-personale" ? "/accedi?next=/area-personale" : `/accedi?next=${encodeURIComponent(next)}`);
+  }
   return (
     <div data-bottom-nav className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 pb-28 pt-6 sm:pt-10 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10 lg:pb-16">
       <AreaNav email={user.email} displayName={user.displayName} isDemo={user.isDemo} />

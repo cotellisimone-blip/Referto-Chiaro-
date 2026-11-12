@@ -119,11 +119,12 @@ export function DocumentsDashboard() {
     );
   }
 
+  const n = (v: number, one: string, many: string) => (v === 1 ? one : many);
   const tiles = [
-    { label: "Referti", value: data.documents.length, icon: FileText, href: "#referti" },
-    { label: "Report pronti", value: summary.readyCount, icon: Sparkles, href: "#referti" },
-    { label: "Da controllare", value: summary.toCheck, icon: ListChecks, href: "#referti", warn: summary.toCheck > 0 },
-    { label: "Dossier", value: dossiers.length, icon: FolderOpen, href: "/area-personale/dossier" },
+    { label: n(data.documents.length, "referto", "referti"), value: data.documents.length, icon: FileText, href: "#referti" },
+    { label: n(summary.readyCount, "report pronto", "report pronti"), value: summary.readyCount, icon: Sparkles, href: "#referti" },
+    { label: "da controllare", value: summary.toCheck, icon: ListChecks, href: "#referti", warn: summary.toCheck > 0 },
+    { label: "dossier", value: dossiers.length, icon: FolderOpen, href: "/area-personale/dossier" },
   ];
 
   return (
@@ -139,23 +140,9 @@ export function DocumentsDashboard() {
         </Link>
       </div>
 
-      {/* Tessere di riepilogo */}
-      <ul className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Riepilogo">
-        {tiles.map(({ label, value, icon: Icon, href, warn }) => (
-          <li key={label}>
-            <Link href={href} className="stat-tile card-glow block transition-shadow hover:shadow-[var(--shadow-lift)]">
-              <span className="flex items-center justify-between text-sm font-semibold text-muted">
-                {label}
-                <Icon aria-hidden className={clsx("h-4.5 w-4.5", warn ? "text-warn" : "text-teal")} />
-              </span>
-              <span className={clsx("stat-num", warn ? "text-warn" : "text-ink")}>{value}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-
-      {/* Prossimo passo */}
-      <section aria-labelledby="prossimo-titolo" className="card mt-6 grid gap-5 overflow-hidden border-teal/30 bg-[linear-gradient(135deg,var(--color-marker-soft),var(--color-paper)_60%)] p-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:p-7">
+      {/* Ciclo 3, fase 2: prima il prossimo passo, poi un riepilogo in una riga (al posto di quattro tessere che
+          su telefono occupavano uno schermo intero). */}
+      <section aria-labelledby="prossimo-titolo" className="card mt-6 grid gap-5 overflow-hidden border-teal/30 bg-[linear-gradient(135deg,var(--color-marker-soft),var(--color-paper)_60%)] p-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:p-7" data-testid="prossimo-passo">
         <div className="min-w-0">
           <p className="eyebrow">Prossimo passo</p>
           <h2 id="prossimo-titolo" className="mt-2 text-[1.5rem] font-bold leading-tight text-ink">{summary.next.title}</h2>
@@ -165,6 +152,17 @@ export function DocumentsDashboard() {
           {summary.next.cta} <ArrowRight aria-hidden className="btn-arrow h-4 w-4" />
         </Link>
       </section>
+
+      <ul className="mt-5 flex flex-wrap gap-2" aria-label="Riepilogo" data-testid="riepilogo">
+        {tiles.map(({ label, value, icon: Icon, href, warn }) => (
+          <li key={label}>
+            <Link href={href} className={clsx("inline-flex min-h-11 items-center gap-2 rounded-full border bg-paper px-4 text-[0.9375rem] font-semibold transition-colors hover:border-teal", warn ? "border-warn/40 text-warn" : "border-line text-ink")}>
+              <Icon aria-hidden className={clsx("h-4 w-4", warn ? "text-warn" : "text-teal")} />
+              <span className="tabular">{value}</span> {label}
+            </Link>
+          </li>
+        ))}
+      </ul>
 
       {/* Elenco referti */}
       <h2 id="referti" className="mt-12 scroll-mt-28 text-[1.375rem] font-bold text-ink">Tutti i referti</h2>
@@ -200,7 +198,7 @@ export function DocumentsDashboard() {
               </div>
               {d.errorMessage ? <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{d.errorMessage}</p> : null}
               <div className="mt-auto pt-5">
-                <Link href={`/area-personale/documenti/${d.id}`} className={clsx("btn w-full sm:w-auto", d.status === "needs-verification" ? "btn-primary" : "btn-secondary")}>
+                <Link href={`/area-personale/documenti/${d.id}`} className={clsx("btn w-full sm:w-auto", d.status === "needs-verification" && summary.next.href !== `/area-personale/documenti/${d.id}` ? "btn-primary" : "btn-secondary")}>
                   {d.status === "needs-verification" ? "Controlla i valori" : d.status === "verified" && !active && !ready ? "Scegli il servizio" : ready ? "Apri il report" : "Apri"}
                   <ArrowRight aria-hidden className="h-4 w-4" />
                 </Link>

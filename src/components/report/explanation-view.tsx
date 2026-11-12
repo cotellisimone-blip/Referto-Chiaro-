@@ -28,9 +28,9 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
             <thead className="border-y border-line bg-canvas text-sm text-muted">
               <tr>
                 <th scope="col" className="px-4 py-2 font-semibold sm:px-6">Esame</th>
-                <th scope="col" className="px-3 py-2 font-semibold">Valore</th>
+                <th scope="col" className="px-2 py-2 font-semibold sm:px-3">Valore</th>
                 <th scope="col" className="hidden px-3 py-2 font-semibold sm:table-cell">Intervallo stampato</th>
-                <th scope="col" className="px-4 py-2 font-semibold sm:px-6">Dove</th>
+                <th scope="col" className="px-3 py-2 font-semibold sm:px-6">Dove</th>
               </tr>
             </thead>
             <tbody>
@@ -39,13 +39,14 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
                   <th scope="row" className="break-words px-4 py-3 font-semibold text-ink sm:px-6">
                     <a href={`#voce-${it.sourceObservationId}`} className="hover:underline">{it.nameExact}</a>
                   </th>
-                  <td className="tabular px-3 py-3 font-mono text-ink">
-                    {it.originalValueExact} <span className="text-muted">{it.originalUnitExact}</span>
+                  {/* Ciclo 3, fase 2: valore e unità sulla stessa riga anche su telefono, nel carattere del sito. */}
+                  <td className="tabular whitespace-nowrap px-2 py-3 font-semibold text-ink sm:px-3">
+                    {it.originalValueExact} <span className="font-normal text-muted">{it.originalUnitExact}</span>
                   </td>
                   <td className="tabular hidden px-3 py-3 font-mono text-ink-soft sm:table-cell">{it.originalReferenceExact ?? "—"}</td>
-                  <td className="px-4 py-3 sm:px-6">
-                    <button type="button" className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-teal-deep hover:underline" onClick={() => onReveal(it.sourceCitation.line)}>
-                      <ScanEye aria-hidden className="h-4 w-4" /> p. {it.sourceCitation.page}, r. {it.sourceCitation.line}
+                  <td className="px-3 py-3 sm:px-6">
+                    <button type="button" className="inline-flex min-h-11 items-center gap-1 whitespace-nowrap text-sm font-semibold text-teal-deep hover:underline" onClick={() => onReveal(it.sourceCitation.line)}>
+                      <ScanEye aria-hidden className="h-4 w-4 shrink-0" /> p.&nbsp;{it.sourceCitation.page}, r.&nbsp;{it.sourceCitation.line}
                       <span className="sr-only">: mostra {it.nameExact} nel documento</span>
                     </button>
                   </td>
@@ -68,7 +69,7 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
                 </span>
                 {it.nameExact}
               </h3>
-              <p className="tabular rounded-full bg-canvas px-3.5 py-1.5 font-mono text-[1.0625rem]">
+              <p className="tabular whitespace-nowrap rounded-full bg-canvas px-3.5 py-1.5 text-[1.0625rem]">
                 <strong className="text-ink">{it.originalValueExact}</strong> <span className="text-muted">{it.originalUnitExact}</span>
               </p>
             </div>

@@ -1,4 +1,5 @@
 import "server-only";
+import { safeAreaNext } from "@/lib/auth/next-path";
 import { randomUUID } from "node:crypto";
 import { audit, withSystem, withUser } from "@/db/client";
 import { readFlags } from "@/lib/feature-flags";
@@ -57,7 +58,13 @@ function rowToUser(r: Record<string, unknown>): User {
  */
 export type MagicLinkDelivery = "on-screen" | "email" | "unavailable" | "email-failed";
 
-export async function requestMagicLink(args: { email: string; consents: ConsentKind[] }): Promise<
+/** Link di verifica; con `next` (solo pagine dell'area personale) si torna lì dopo l'accesso. Ciclo 3, fase 2. */
+function verifyPath(token: string, next?: string): string {
+  const safe = safeAreaNext(next);
+  return `/api/v1/auth/verifica?token=${token}${safe !== "/area-personale" ? `&next=${encodeURIComponent(safe)}` : ""}`;
+}
+
+export async function requestMagicLink(args: { email: string; consents: ConsentKind[]; next?: string }): Promise<
   { ok: true; delivery: MagicLinkDelivery; link?: string } | { ok: false; code: "invalid-email" | "signup-closed" | "consent-required" }
 > {
   const email = normalizeEmail(args.email);
@@ -104,12 +111,12 @@ export async function requestMagicLink(args: { email: string; consents: ConsentK
     // account appena creato, oppure indirizzo di un dominio riservato ai test. Altrimenti niente link.
     const onScreen = isNew || TEST_EMAIL.test(email) || email === DEMO_ACCOUNT_EMAIL;
     if (!onScreen) return { ok: true as const, delivery: "unavailable" as const };
-    return { ok: true as const, delivery: "on-screen" as const, link: `/api/v1/auth/verifica?token=${token}` };
+    return { ok: true as const, delivery: "on-screen" as const, link: verifyPath(token, args.next) };
   });
   // Fuori dalla demo il link parte per email, dopo il commit (mai dentro la transazione).
   if (out.ok && out.delivery === "email") {
     try {
-      await getEmailProvider().send(magicLinkEmail(email, publicUrl(`/api/v1/auth/verifica?token=${token}`)), emailFrom());
+      await getEmailProvider().send(magicLinkEmail(email, publicUrl(verifyPath(token, args.next))), emailFrom());
     } catch (e) {
       console.error(`[auth] invio link a ${maskEmail(email)} non riuscito: ${e instanceof Error ? e.message : "errore"}`);
       return { ok: true, delivery: "email-failed" };

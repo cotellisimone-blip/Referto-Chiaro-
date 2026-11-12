@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { safeAreaNext } from "@/lib/auth/next-path";
 import { ArrowRight, FlaskConical, Loader2, MailCheck } from "lucide-react";
 import { api } from "./api";
 import { WaitlistForm } from "@/components/site/waitlist-form";
@@ -17,9 +18,8 @@ type ConsentKind = (typeof CONSENT_KINDS)[number];
  * e lo diciamo chiaramente. L'account demo permette di provare tutto senza registrarsi.
  */
 export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; vetrina?: boolean }) {
-  const router = useRouter();
   const params = useSearchParams();
-  const next = params.get("next")?.startsWith("/area-personale") ? params.get("next")! : "/area-personale";
+  const next = safeAreaNext(params.get("next"));
   const linkError = params.get("errore") === "link";
   const [email, setEmail] = useState("");
   const [consents, setConsents] = useState<Record<ConsentKind, boolean>>({ terms: false, privacy: false, "health-data": false, "subject-declaration": false });
@@ -33,7 +33,7 @@ export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; ve
     try {
       const r = await api<{ ok: true; delivery: "on-screen" | "email" | "unavailable" | "email-failed"; link?: string }>("/api/v1/auth/magic-link", {
         method: "POST",
-        body: { email, consents: CONSENT_KINDS.filter((k) => consents[k]) },
+        body: { email, consents: CONSENT_KINDS.filter((k) => consents[k]), ...(next !== "/area-personale" ? { next } : {}) },
       });
       setState({ kind: "sent", link: r.link, delivery: r.delivery });
     } catch (err) {
@@ -45,8 +45,9 @@ export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; ve
     setDemoBusy(true);
     try {
       await api("/api/v1/auth/demo", { method: "POST", body: {} });
-      router.push(next);
-      router.refresh();
+      // Navigazione completa: la cache del router potrebbe ricordare il rinvio all'accesso di prima del login
+      // e riportare qui invece che alla pagina richiesta (ciclo 3, fase 2).
+      window.location.assign(next);
     } catch (err) {
       setState({ kind: "error", message: err instanceof Error ? err.message : "Errore imprevisto." });
       setDemoBusy(false);

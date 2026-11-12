@@ -5,7 +5,7 @@ import { rateLimitShared } from "@/lib/rate-limit-shared";
 import { json } from "@/lib/api";
 import { readJson } from "@/lib/auth/guard";
 
-const Body = z.object({ email: z.string().max(254), consents: z.array(z.enum(["terms", "privacy", "health-data", "subject-declaration"])).default([]) }).strict();
+const Body = z.object({ email: z.string().max(254), consents: z.array(z.enum(["terms", "privacy", "health-data", "subject-declaration"])).default([]), next: z.string().max(200).optional() }).strict();
 
 /**
  * Richiesta del link di accesso. In demo non esiste un servizio email: il link viene restituito
