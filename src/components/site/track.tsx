@@ -34,6 +34,11 @@ export function track(event: string) {
 export function TrackClicks() {
   // La sorgente si fissa al primo caricamento, prima di qualsiasi navigazione interna.
   useEffect(() => void currentSource(), []);
+  // Segnale che la pagina è interattiva (React ha collegato i comandi). Lo usano i test prima di toccare la testata:
+  // su una macchina lenta un tocco prima di questo momento andrebbe perso.
+  useEffect(() => {
+    document.documentElement.dataset.ready = "1";
+  }, []);
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       const el = (e.target as Element | null)?.closest?.("[data-track]");

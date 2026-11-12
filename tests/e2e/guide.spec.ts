@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { gotoReady } from "./_lib/ready";
 import { expectAccessible } from "./_lib/a11y";
 
 test.describe("guide e glossario", () => {
@@ -86,7 +87,7 @@ test.describe("guide e glossario", () => {
     test.skip(isMobile, "solo desktop");
     for (const width of [1024, 1280, 1440]) {
       await page.setViewportSize({ width, height: 800 });
-      await page.goto("/");
+      await gotoReady(page, "/");
       await expect(page.getByRole("navigation", { name: /principale/i }).getByRole("link", { name: "Capisci il referto" })).toBeVisible();
       for (const large of [false, true]) {
         if (large) await page.getByRole("button", { name: "Testo più grande" }).click();

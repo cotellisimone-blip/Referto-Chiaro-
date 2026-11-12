@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { gotoReady } from "./_lib/ready";
 import AxeBuilder from "@axe-core/playwright";
 import { expectAccessible } from "./_lib/a11y";
 
@@ -69,7 +70,7 @@ test.describe("tema scuro", () => {
 });
 
 test("il selettore del tema forza il tema scuro e lo ricorda", async ({ page }) => {
-  await page.goto("/");
+  await gotoReady(page, "/");
   const toggle = page.getByRole("button", { name: /cambia tema/ }).first();
   await toggle.click(); // auto -> chiaro
   await toggle.click(); // chiaro -> scuro
@@ -80,7 +81,7 @@ test("il selettore del tema forza il tema scuro e lo ricorda", async ({ page }) 
 
 test("menu mobile: si apre, intrappola il fuoco e si chiude con Esc", async ({ page, isMobile }) => {
   test.skip(!isMobile, "solo mobile");
-  await page.goto("/");
+  await gotoReady(page, "/");
   await page.getByRole("button", { name: "Apri il menu" }).click();
   const menu = page.locator("#menu-mobile");
   await expect(menu).toBeVisible();

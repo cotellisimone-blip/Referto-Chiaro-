@@ -1,9 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { gotoReady } from "./_lib/ready";
 import { expectAccessible } from "./_lib/a11y";
 
 test.describe("ricerca del sito", () => {
   test("si apre dalla testata, trova una sigla e porta alla guida", async ({ page, isMobile }) => {
-    await page.goto("/");
+    await gotoReady(page, "/");
     await page.getByRole("button", { name: isMobile ? "Cerca nel sito" : "Apri la ricerca" }).first().click();
     const input = page.getByRole("searchbox", { name: /cerca una sigla/i });
     await expect(input).toBeFocused();
@@ -19,7 +20,7 @@ test.describe("ricerca del sito", () => {
 
   test("Esc chiude; nessun risultato mostra un suggerimento", async ({ page, isMobile }) => {
     test.skip(isMobile, "scorciatoia da tastiera: solo desktop");
-    await page.goto("/guide");
+    await gotoReady(page, "/guide");
     await page.keyboard.press("Control+k");
     const input = page.getByRole("searchbox", { name: /cerca una sigla/i });
     await expect(input).toBeVisible();
