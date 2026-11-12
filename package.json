@@ -16,7 +16,8 @@
     "keys": "node scripts/genera-chiavi.mjs",
     "vercel-build": "node scripts/db-migrate.mjs && next build",
     "eval:ai": "EVAL_WRITE_REPORT=1 vitest run tests/ai-eval",
-    "test:e2e:vetrina": "playwright test -c playwright.vetrina.config.ts --trace off"
+    "test:e2e:vetrina": "playwright test -c playwright.vetrina.config.ts --trace off",
+    "controlli": "node scripts/controlli.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.6.0",

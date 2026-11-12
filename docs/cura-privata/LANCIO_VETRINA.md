@@ -8,6 +8,8 @@
 - il checkout è sempre simulato, anche con una chiave Stripe configurata;
 - **nessun account personale** (ciclo 2): la richiesta di accesso con un'email vera risponde «registrazione chiusa» e non salva né l'indirizzo né i consensi; si prova solo con l'account demo condiviso, che contiene già un referto inventato. Su `/accedi` il modulo email è sostituito dalla lista d'attesa;
 - l'azione principale di ogni servizio è «Avvisami quando parte» e porta alla lista d'attesa sulla pagina del servizio; accanto c'è la prova senza registrazione (referto di esempio per Capisci, account demo per gli altri due). Lo stesso vale per `/prezzi` e «Ti aiutiamo a scegliere»;
+- **ogni prova finisce con «Avvisami»** (ciclo 3): alla fine del referto di esempio, in fondo all'area demo e dopo il pagamento simulato c'è il modulo della lista d'attesa con il servizio provato già scelto; «Ti è stato utile?» ha due risposte contate in forma anonima; dopo l'iscrizione si propone un passo gratuito;
+- **i numeri sono puliti** (ciclo 3): una visita conta una volta per scheda (non contano ricariche e ritorni), robot, anteprime dei link di WhatsApp e Facebook e browser automatici sono esclusi;
 - tutto questo è verificato da `npm run test:e2e:vetrina`, che compila il profilo vetrina in `.next-vetrina` e lo prova su desktop e telefono;
 - con `ENABLE_INDEXING=true` vanno negli indici solo le pagine pubbliche e le guide pratiche (oggi: Fascicolo Sanitario Elettronico); guide cliniche, glossario e Punto di Partenza restano `noindex` finché un medico non li ha revisionati;
 - il blocco «Chi c'è dietro», la riga nel fondo pagina, i contatti e i dati strutturati dell'organizzazione compaiono solo con nome e P.IVA veri (`PUBLIC_OWNER_*`).
@@ -37,7 +39,8 @@ Il resto segue `docs/DEPLOY.md` (passi 1–6). Nessuna chiave Stripe, Anthropic 
 - [ ] Aprire home, `/prezzi`, `/referti`, `/punto-di-partenza`, `/stato-del-progetto` da telefono e computer
 - [ ] Iscriversi a una lista d'attesa e verificarla nel pannello admin (`/admin/lista-attesa`)
 - [ ] Controllare `/robots.txt` e `/sitemap.xml`
-- [ ] Ogni settimana: tabella «Vetrina» in `/admin` (per settimana, per sorgente, per servizio) e funnel anonimo
+- [ ] Ogni settimana: tabella «Vetrina» in `/admin` (per settimana, per sorgente, per servizio, dopo la prova) e funnel anonimo
+- [ ] Condividere un link su WhatsApp a se stessi e controllare l'anteprima (immagine e titolo propri per Capisci, esempio, Parla con un medico, Secondo parere e Punto di Partenza)
 - [ ] In ogni post, annuncio o messaggio usare un link con la sorgente: `?utm_source=facebook`, `instagram`, `tiktok`, `whatsapp`, `email`, `google`, `medico` (per i link dati ai medici). Valori diversi finiscono in «Altro»; senza parametro vale il sito di provenienza. Nessun cookie: la sorgente resta in memoria finché la scheda è aperta
 
 ## Quando passare oltre

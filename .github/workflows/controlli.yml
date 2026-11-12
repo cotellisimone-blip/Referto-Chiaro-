@@ -27,20 +27,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Lint
-        run: npm run lint
-      - name: Tipi
-        run: npm run typecheck
-      - name: Test unitari
-        run: npm test
-      - name: Build
-        run: npm run build
       - name: Browser per i test
         run: npx playwright install --with-deps chromium
-      - name: e2e desktop e telefono
-        run: npx playwright test --trace off
-      - name: e2e profilo vetrina
-        run: npm run test:e2e:vetrina
+      # Ciclo 3, fase 5: gli stessi passi di `npm run controlli` in locale (lint, tipi, unit, build, e2e, e2e vetrina).
+      - name: Controlli
+        run: npm run controlli
       - name: Report in caso di errore
         if: failure()
         uses: actions/upload-artifact@v4

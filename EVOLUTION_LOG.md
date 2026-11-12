@@ -2,6 +2,24 @@
 
 Un ciclo = analisi, cinque fasi proposte, approvazione di Simone, esecuzione. Il più recente sta in cima. La storia precedente al ciclo 1 è in `docs/archivio/DECISION_LOG.md`.
 
+## Ciclo 3 · 12/11/2026
+
+**Base:** ramo `claude/project-thread-oi7sjf` @ 17e0daa (fine ciclo 2, PR #4 impilata sulla PR #3, entrambe aperte). **Analisi:** `ANALISI_CICLO_3.md` nella cartella del progetto (`cura-privata/ciclo-3/`). **Approvazione:** Simone, 12/11 alle 08:29 UTC, tutte e cinque le fasi. **Ramo:** `claude/project-thread-2y3p3f`, una sola PR verso `main` che contiene anche i cicli 1 e 2 (sostituisce le PR #1–#4).
+
+| Fase | Cosa è cambiato | Commit |
+|---|---|---|
+| 1. Dalla prova all'iscrizione | In vetrina, alla fine del referto di esempio, in fondo all'area demo e dopo il pagamento simulato compare «Avvisami quando parte» con il servizio provato già scelto (prima la prova finiva senza un modo per iscriversi). «Ti è stato utile?» ha due risposte, contate in forma anonima. Dopo l'iscrizione: Punto di Partenza e Preparati alla visita. Admin: tabella «Dopo la prova». Fuori dalla vetrina l'esempio finisce con «Rendi chiaro il mio referto» | e6824f5 |
+| 2. Entrare e ritrovarsi da telefono | L'accesso riporta alla pagina richiesta (prima «Prenota il videoconsulto» portava a «I tuoi referti»), anche dal link via email; solo percorsi interni dell'area. Area personale: prima il prossimo passo, poi il riepilogo in una riga al posto di quattro tessere. Report: valore e unità sulla stessa riga su telefono | 4dc6d4c |
+| 3. Pagine dei servizi più corte e coerenti | Su telefono: Capisci da 8.342 a 5.936 px, Parla con un medico da 6.420 a 5.929, Secondo parere da 6.086 a 5.567. Tolto il blocco «Un foglio chiaro» che ripeteva il «prima e dopo». La scheda della home e il «prima e dopo» usano il referto di esempio (glicemia 92, LDL 134; prima la home diceva glicemia 104). Immagine di condivisione propria per 5 pagine | 0011d98 |
+| 4. Numeri della vetrina affidabili | Una visita per scheda (non contano ricariche, ritorni, stessa pagina rivista); robot, anteprime dei link e browser automatici esclusi; limite di frequenza condiviso tra istanze con l'impronta dell'indirizzo | ea1e634 |
+| 5. Una sola strada verso il lancio | `npm run controlli` (stessi passi di GitHub, con riepilogo); il workflow GitHub usa lo stesso comando. PR unica del ciclo 3 verso `main`; PR #1–#4 chiuse perché contenute | questo commit |
+
+**Test (12/11, `npm run controlli`):** lint e tipi puliti, 205 test unitari, e2e desktop e telefono 253 passati e 61 saltati, e2e vetrina 25 passati e 1 saltato, 0 falliti. Nuovi test: `tests/e2e-vetrina/prova-avvisami.spec.ts`, `tests/e2e/ritorno.spec.ts`, `tests/e2e/pagine-servizio.spec.ts`, `tests/e2e/contatori.spec.ts`, `tests/unit/next-path.test.ts`, `tests/unit/bots.test.ts`.
+
+**Decisioni prese approvando:** una sola PR verso `main` con tutto il lavoro; PR #1–#4 chiuse (si possono riaprire). Su telefono la pagina Capisci mostra la trasformazione del referto solo nel cursore «prima e dopo».
+
+**Rimandato o fuori dal codice:** i controlli GitHub non partono (nessun runner sulla PR #4): verificare GitHub Actions sull'account. Chiavi del limitatore di accesso con IP in chiaro (`auth:<ip>`, cancellate dopo un giorno): da passare a un'impronta prima dei referti veri. Restano quelli dei cicli 1 e 2 (titolare, P.IVA, dominio, informativa, medico revisore, chiave Anthropic, doppio opt-in).
+
 ## Ciclo 2 · 11/11/2026
 
 **Base:** ramo `claude/project-thread-ut46xc` @ 059347a (fine ciclo 1, PR #3 ancora aperta). **Analisi:** `ANALISI_CICLO_2.md` nella cartella del progetto (`cura-privata/ciclo-2/`). **Approvazione:** Simone, 11/11 alle 21:07 UTC, tutte e cinque le fasi. **Ramo:** `claude/project-thread-oi7sjf`.

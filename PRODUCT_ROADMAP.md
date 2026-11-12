@@ -1,6 +1,6 @@
 # Roadmap di prodotto — Cura Privata
 
-*Aggiornata: 11/11/2026, ciclo 2.*
+*Aggiornata: 12/11/2026, ciclo 3.*
 
 ## Priorità strategiche
 1. **Andare online come vetrina** (profilo `vetrina`) per misurare la domanda reale: iscrizioni per servizio, click sui prezzi, uso di Punto di Partenza.
@@ -16,6 +16,8 @@ Ipotesi di lavoro, non dati: da rivedere dopo le prime 4 settimane online. Si le
 | Iscrizioni su visite | < 1% con almeno 500 visite | Rivedere messaggio, prezzo o canale prima di investire in conformità |
 | Iscrizioni «Parla con un medico» ≥ quelle di Capisci | 4 settimane | Anticipare il medico contrattualizzato rispetto all'AI |
 | Una sorgente porta più del 50% delle iscrizioni | 4 settimane | Concentrare lì il budget |
+| Iscrizioni subito dopo una prova su esempi completati (ciclo 3) | < 10% con almeno 100 esempi completati | La prova non convince: rivedere la spiegazione dell'esempio prima del messaggio della home |
+| «Utile: non molto» più di un terzo delle risposte (ciclo 3) | almeno 50 risposte | Rivedere testi e ordine della spiegazione con il medico revisore |
 Ogni link pubblicato deve avere `?utm_source=` (vedi `docs/cura-privata/LANCIO_VETRINA.md`).
 
 ## Dipendenze da validare (fuori dal codice, del titolare)
@@ -47,6 +49,8 @@ Percentuali di precisione, chatbot libero, «monitoraggio 24/7», recensioni pri
 | Penetration test esterno | Prima dei referti veri |
 | Peso JavaScript (circa 700 KB non compressi per pagina) | Quando ci saranno dati reali di velocità |
 | Firma qualificata dei pareri e verifica Albo automatica | Prima del Secondo parere reale |
+| Controlli GitHub mai partiti (nessun runner sulla PR #4) | Subito: verificare GitHub Actions sull'account; intanto `npm run controlli` in locale |
+| Chiavi del limitatore di accesso con l'indirizzo IP in chiaro (`auth:<ip>` in `rate_limits`, cancellate dopo un giorno) | Prima dei referti veri: usare un'impronta come per i contatori (ciclo 3) |
 
 ## Funzionalità future (solo dopo i dati della vetrina)
 Salvataggio del Punto di Partenza nell'area personale (`ENABLE_PUNTO_DI_PARTENZA_SAVE`, già predisposto e bloccato); Archivio salute; Prevenzione.

@@ -14,6 +14,7 @@ npm run dev                     # http://localhost:3000
 | `npm test` | Test unitari (Vitest) |
 | `npx playwright test --trace off` | Test end-to-end, accessibilità (axe), sicurezza, desktop e mobile |
 | `npm run test:e2e:vetrina` | Compila il profilo vetrina in `.next-vetrina` e lo prova (ciclo 2) |
+| `npm run controlli` | Tutti i controlli di GitHub in locale, con un riepilogo (ciclo 3). `-- --rapido` salta i test nel browser, `-- --esito file.md` scrive il riepilogo |
 | `npm run screenshots` | Screenshot reali in `docs/screenshots/{desktop,mobile}` |
 | `npm run build` · `npm start` | Build e avvio di produzione |
 
@@ -27,3 +28,5 @@ Rollback: ogni versione è un commit; i vecchi indirizzi di Referto Chiaro riman
 
 ## Controlli automatici (ciclo 2)
 Ogni pull request e ogni push su `main` eseguono `.github/workflows/controlli.yml`: lint, tipi, test unitari, build, e2e desktop e telefono, e2e del profilo vetrina. Nessun segreto richiesto. Circa 8–10 minuti per esecuzione con i minuti gratuiti di GitHub Actions.
+Dal ciclo 3 il workflow esegue `npm run controlli`, lo stesso comando che si usa in locale.
+**Stato al 12/11/2026:** sulla PR #4 il controllo non è mai partito (nessun runner assegnato, annullato dopo 15 minuti). Probabile causa: GitHub Actions non disponibile sull'account. Da verificare in GitHub → Settings → Actions del repository e del profilo. Finché non parte, ogni ciclo esegue `npm run controlli` in locale e ne riporta l'esito nel registro.

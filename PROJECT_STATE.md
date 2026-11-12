@@ -1,6 +1,6 @@
 # Stato del progetto — Cura Privata
 
-*Aggiornato: 11/11/2026, ciclo 2. Fonte di verità è il codice: se questo file e il codice non coincidono, vince il codice e questo file va corretto.*
+*Aggiornato: 12/11/2026, ciclo 3. Fonte di verità è il codice: se questo file e il codice non coincidono, vince il codice e questo file va corretto.*
 
 ## Obiettivo e pubblico
 Servizio digitale italiano che rende comprensibili i referti e, se serve, porta a un medico vero.
@@ -24,6 +24,7 @@ Next.js 16 (App Router, pagine statiche dove possibile) · React 19 · Tailwind 
 - File cifrati AES-256-GCM, audit append-only, 2FA per medici e admin, funnel anonimo per giorno senza cookie (`funnel_daily`).
 - Profilo vetrina (ciclo 1): `SITE_PROFILE=vetrina` forza spenti caricamenti, AI, pagamenti veri e servizi medici, e lascia aperte solo le pagine informative e le liste d'attesa. Dal ciclo 2 chiude anche gli account personali (solo account demo condiviso) e porta le azioni dei servizi alla lista d'attesa; ha i suoi e2e (`npm run test:e2e:vetrina`).
 - Misura (ciclo 2): contatori anonimi per giorno e per sorgente (`funnel_daily`, `funnel_source_daily`), sezione «Vetrina» in Admin. Nessun cookie.
+- Ciclo 3: una visita per scheda (ricariche e ritorni esclusi), robot e anteprime dei link esclusi (`src/domain/metrics/bots.ts`); in vetrina ogni prova finisce con «Avvisami» (`src/components/site/prova-avvisami.tsx`) e Admin mostra «Dopo la prova»; dopo l'accesso si torna alla pagina richiesta (`src/lib/auth/next-path.ts`); un'immagine di condivisione per pagina principale (`src/lib/og.tsx`).
 
 ## Identità grafica approvata
 Palette petrolio `#0C3340`, turchese testo `#00756F`, menta `#7BE0D2` solo come segno, canvas `#F5FAF8`; Manrope ovunque; logo «C» aperta con punto di menta; colori per servizio (menta Capisci, caldo Parla, blu Secondo parere). Dettagli: `docs/cura-privata/DESIGN_SYSTEM.md`.
@@ -37,8 +38,11 @@ Foto: solo pazienti, sempre con «Immagine illustrativa»; **mai foto di medici*
 - Ordine dei servizi ovunque: Capisci → Parla con un medico → Secondo parere (prezzi crescenti), anche nel payoff «Capisci. Parla con un medico. Chiedi un secondo parere.» (Simone, ciclo 2).
 - In vetrina nessuno crea un account personale: si prova solo con l'account demo condiviso (Simone, ciclo 2).
 - Comandi toccabili di almeno 44 px su telefono (verificato da `tests/e2e/tocco.spec.ts`).
+- Pagine dei tre servizi sotto le 7,3 schermate su telefono; la scheda della home e il «prima e dopo» usano i valori del referto di esempio (ciclo 3, `tests/e2e/pagine-servizio.spec.ts`).
+- Prima di ogni PR: `npm run controlli` (stessi passi del workflow GitHub).
 
 ## Problemi noti
+- I controlli su GitHub non sono mai partiti (PR #4: nessun runner, annullato dopo 15 minuti): verificare GitHub Actions sull'account. Intanto si usa `npm run controlli` in locale.
 - Nulla è online: mancano titolare, P.IVA, dominio, informativa rivista, account (Neon, Vercel, Resend, Stripe, Anthropic). Vedi `docs/PRODUCTION_GATES.md`.
 - Guide, glossario e Punto di Partenza non hanno revisione medica.
 - Nessun medico contrattualizzato.
