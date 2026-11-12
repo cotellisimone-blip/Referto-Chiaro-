@@ -49,7 +49,6 @@ Percentuali di precisione, chatbot libero, «monitoraggio 24/7», recensioni pri
 | Penetration test esterno | Prima dei referti veri |
 | Peso JavaScript (circa 700 KB non compressi per pagina) | Quando ci saranno dati reali di velocità |
 | Firma qualificata dei pareri e verifica Albo automatica | Prima del Secondo parere reale |
-| Controlli GitHub mai partiti (nessun runner sulla PR #4) | Subito: verificare GitHub Actions sull'account; intanto `npm run controlli` in locale |
 | Chiavi del limitatore di accesso con l'indirizzo IP in chiaro (`auth:<ip>` in `rate_limits`, cancellate dopo un giorno) | Prima dei referti veri: usare un'impronta come per i contatori (ciclo 3) |
 
 ## Funzionalità future (solo dopo i dati della vetrina)

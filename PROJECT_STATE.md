@@ -42,7 +42,6 @@ Foto: solo pazienti, sempre con «Immagine illustrativa»; **mai foto di medici*
 - Prima di ogni PR: `npm run controlli` (stessi passi del workflow GitHub).
 
 ## Problemi noti
-- I controlli su GitHub non sono mai partiti (PR #4: nessun runner, annullato dopo 15 minuti): verificare GitHub Actions sull'account. Intanto si usa `npm run controlli` in locale.
 - Nulla è online: mancano titolare, P.IVA, dominio, informativa rivista, account (Neon, Vercel, Resend, Stripe, Anthropic). Vedi `docs/PRODUCTION_GATES.md`.
 - Guide, glossario e Punto di Partenza non hanno revisione medica.
 - Nessun medico contrattualizzato.

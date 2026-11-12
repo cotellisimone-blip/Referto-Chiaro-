@@ -18,7 +18,9 @@ Un ciclo = analisi, cinque fasi proposte, approvazione di Simone, esecuzione. Il
 
 **Decisioni prese approvando:** una sola PR verso `main` con tutto il lavoro; PR #1–#4 chiuse (si possono riaprire). Su telefono la pagina Capisci mostra la trasformazione del referto solo nel cursore «prima e dopo».
 
-**Rimandato o fuori dal codice:** i controlli GitHub non partono (nessun runner sulla PR #4): verificare GitHub Actions sull'account. Chiavi del limitatore di accesso con IP in chiaro (`auth:<ip>`, cancellate dopo un giorno): da passare a un'impronta prima dei referti veri. Restano quelli dei cicli 1 e 2 (titolare, P.IVA, dominio, informativa, medico revisore, chiave Anthropic, doppio opt-in).
+**Controlli GitHub:** sulla PR #4 non erano partiti; sulla PR #5 partono. Le prime due esecuzioni sono fallite su test della testata su telefono (clic prima che la pagina fosse interattiva): corretto con `html[data-ready]` e `tests/e2e/_lib/ready.ts` (4858a4c), poi verde.
+
+**Rimandato o fuori dal codice:** chiavi del limitatore di accesso con IP in chiaro (`auth:<ip>`, cancellate dopo un giorno): da passare a un'impronta prima dei referti veri. Restano quelli dei cicli 1 e 2 (titolare, P.IVA, dominio, informativa, medico revisore, chiave Anthropic, doppio opt-in).
 
 ## Ciclo 2 · 11/11/2026
 

@@ -29,4 +29,4 @@ Rollback: ogni versione è un commit; i vecchi indirizzi di Referto Chiaro riman
 ## Controlli automatici (ciclo 2)
 Ogni pull request e ogni push su `main` eseguono `.github/workflows/controlli.yml`: lint, tipi, test unitari, build, e2e desktop e telefono, e2e del profilo vetrina. Nessun segreto richiesto. Circa 8–10 minuti per esecuzione con i minuti gratuiti di GitHub Actions.
 Dal ciclo 3 il workflow esegue `npm run controlli`, lo stesso comando che si usa in locale.
-**Stato al 12/11/2026:** sulla PR #4 il controllo non è mai partito (nessun runner assegnato, annullato dopo 15 minuti). Probabile causa: GitHub Actions non disponibile sull'account. Da verificare in GitHub → Settings → Actions del repository e del profilo. Finché non parte, ogni ciclo esegue `npm run controlli` in locale e ne riporta l'esito nel registro.
+**Stato al 12/11/2026:** sulla PR #4 il controllo non era partito (nessun runner assegnato). Sulla PR #5 parte regolarmente ed è verde (circa 6–7 minuti). I test che toccano la testata aspettano `html[data-ready]` (`tests/e2e/_lib/ready.ts`): su GitHub, più lento, un clic prima dell'idratazione andava perso.
