@@ -58,7 +58,7 @@ test.describe("secondo parere e portali riservati", () => {
     await page.getByRole("button", { name: /Continua al pagamento/ }).click();
     // Percorso B: documentazione → pagamento (simulato) → solo dopo arriva al medico
     await expect(page.getByRole("heading", { name: "Il tuo ordine." })).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByRole("main").getByText("Secondo parere", { exact: true }).first()).toBeVisible();
+    await expect(page.getByRole("main").getByText("Secondo parere specialistico", { exact: true }).first()).toBeVisible();
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
     await page.getByRole("link", { name: "Vai alla richiesta" }).click();
     await expect(page.getByRole("heading", { name: "Richiesta di secondo parere" })).toBeVisible({ timeout: 15_000 });

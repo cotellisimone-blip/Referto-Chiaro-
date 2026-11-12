@@ -3,15 +3,15 @@ import { CalendarClock, FileText, MonitorSmartphone, NotebookPen } from "lucide-
 import { ServiceLanding } from "@/components/offerta/service-landing";
 
 export const metadata: Metadata = {
-  title: "Parla con un medico",
-  description: "Un videoconsulto con un medico che ha già letto i documenti che hai scelto di condividere. Prezzo e tempi chiari, riepilogo scritto nella tua area personale.",
+  title: "Videoconsulto con medico generalista",
+  description: "Parla con un medico di medicina generale in video, su appuntamento, dopo che ha letto i documenti che scegli. Prezzo fisso, fasce davvero libere, riepilogo scritto nella tua area personale.",
   alternates: { canonical: "/servizi/parla-con-un-medico" },
 };
 
 const DIFFERENCE = [
   { icon: FileText, title: "Il medico arriva preparato", text: "Legge prima i documenti che scegli: il tempo del colloquio è tutto per le tue domande." },
-  { icon: CalendarClock, title: "Scegli tu quando", text: "Indichi due o tre momenti comodi; il medico conferma quello disponibile." },
-  { icon: MonitorSmartphone, title: "Da computer o telefono", text: "Ricevi il collegamento nella tua area personale, non in una email." },
+  { icon: CalendarClock, title: "Scegli tu quando", text: "Vedi solo le fasce libere; il medico conferma la tua o ne propone un'altra." },
+  { icon: MonitorSmartphone, title: "Da computer o telefono", text: "Entri nella sala d'attesa dalla tua area personale; se la connessione cade, ti ricolleghi o sposti l'appuntamento." },
   { icon: NotebookPen, title: "Un riepilogo scritto", text: "Dopo il colloquio il medico lascia un breve riepilogo, che resta tuo." },
 ];
 

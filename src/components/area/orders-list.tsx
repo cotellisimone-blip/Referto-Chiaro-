@@ -14,7 +14,7 @@ interface Order {
   createdAt: string;
 }
 
-export const SERVICE_NAME: Record<Order["service"], string> = { essenziale: "Capisci il tuo referto", completo: "Capisci più referti", "secondo-parere": "Secondo parere", videoconsulto: "Parla con un medico" };
+export const SERVICE_NAME: Record<Order["service"], string> = { essenziale: "Capisci il tuo referto", completo: "Capisci più referti", "secondo-parere": "Secondo parere specialistico", videoconsulto: "Videoconsulto con medico generalista" };
 
 export function OrdersList() {
   const [orders, setOrders] = useState<Order[] | null>(null);

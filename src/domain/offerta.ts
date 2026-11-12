@@ -9,13 +9,17 @@
  * - Parla con un medico: 79 €, medico di medicina generale/internista di orientamento.
  * - Chiedi un secondo parere: da 149 €, specialista della disciplina appropriata.
  * Livelli del percorso: CAPISCI → ORIENTATI → APPROFONDISCI (si può entrare da qualunque livello).
+ *
+ * Listino «Medico a domicilio» (12/11/2026, sostituisce 79 € e «da 149 €»): videoconsulto con medico generalista 69 €,
+ * secondo parere specialistico 149 € fisso (documenti + videoconsulto + sintesi scritta), visita a domicilio 149 €
+ * (src/domain/prestazioni/listino.ts). Gli importi già confermati restano quelli registrati nella richiesta.
  */
 
 /** Prezzi in centesimi: l'unico punto in cui sono scritti. Ognuno è sovrascrivibile da variabile d'ambiente. */
 export const PRICES = {
   CAPISCI_STANDARD: 790,
   CAPISCI_FIRST: 290,
-  MEDICO_GENERALISTA: 7900,
+  MEDICO_GENERALISTA: 6900,
   SECONDO_PARERE_BASE: 14900,
 } as const;
 
@@ -96,11 +100,11 @@ export const CORE_SERVICES: CoreService[] = [
   {
     id: "parla-con-un-medico",
     verb: "Parla con un medico.",
-    name: "Parla con un medico",
-    oneLiner: "Un medico di medicina generale o internista legge prima i tuoi documenti e ti dedica un videoconsulto per chiarire i dubbi e capire il prossimo passo.",
+    name: "Videoconsulto con medico generalista",
+    oneLiner: "Un medico di medicina generale legge prima i tuoi documenti e ti dedica un videoconsulto su appuntamento per chiarire i dubbi e capire il prossimo passo.",
     forWhom: "Hai dei dubbi e non sai quale specialista ti serve.",
     href: "/servizi/parla-con-un-medico",
-    startHref: "/area-personale/appuntamenti",
+    startHref: "/prova/paziente/videoconsulto",
     startLabel: "Prenota il videoconsulto",
     orderService: "videoconsulto",
     envPriceKey: "PRICE_VIDEOCONSULTO_CENTS",
@@ -117,9 +121,9 @@ export const CORE_SERVICES: CoreService[] = [
     receives: "Un appuntamento confermato, il collegamento video e poi il riepilogo scritto.",
     notFor: ["Urgenze: in quel caso chiama il 112", "Situazioni che richiedono di essere visitati di persona", "Certificati e prescrizioni"],
     steps: [
-      { title: "Scegli quando", text: "Indichi il motivo e due o tre momenti comodi. Nessuna specialità da scegliere." },
-      { title: "Condividi i documenti", text: "Solo quelli che vuoi: il medico li legge prima." },
-      { title: "Parli con il medico", text: "In video, poi ricevi un riepilogo scritto." },
+      { title: "Scegli una fascia", text: "Vedi solo gli orari davvero liberi. Nessuna specialità da scegliere." },
+      { title: "Confermi quando il medico risponde", text: "Vedi nome del medico, orario e prezzo prima di confermare." },
+      { title: "Parli con il medico", text: "Entri nella sala d'attesa dall'area personale, poi ricevi un riepilogo scritto." },
     ],
     icon: "video",
     tone: "medico",
@@ -130,34 +134,35 @@ export const CORE_SERVICES: CoreService[] = [
   {
     id: "secondo-parere",
     verb: "Chiedi un secondo parere.",
-    name: "Chiedi un secondo parere",
-    oneLiner: "Uno specialista della disciplina appropriata valuta i tuoi documenti e risponde per iscritto a una domanda precisa.",
+    name: "Secondo parere specialistico",
+    oneLiner: "Uno specialista esamina la documentazione pertinente, ne parla con te in video e ti consegna una sintesi scritta su un quesito preciso.",
     forWhom: "Hai già una diagnosi, una proposta di cura o di intervento e vuoi un'altra valutazione.",
     href: "/servizi/secondo-parere",
-    startHref: "/area-personale/secondo-parere",
+    startHref: "/prova/paziente/secondo-parere",
     startLabel: "Richiedi il secondo parere",
     orderService: "secondo-parere",
     envPriceKey: "PRICE_SECONDO_PARERE_CENTS",
     defaultPriceCents: PRICES.SECONDO_PARERE_BASE,
-    timing: "Di norma entro 5 giorni lavorativi dalla presa in carico",
+    timing: "Sintesi nei tempi concordati con lo specialista, indicati prima di confermare",
     who: "Un medico specialista abilitato e identificabile. Mai un'intelligenza artificiale.",
     includes: [
-      "Un quesito specifico, scritto da te",
-      "Valutazione dei documenti che scegli di condividere",
-      "Parere scritto e firmato dal medico, con data e impronta verificabile",
-      "Lo specialista può chiederti altri documenti o dirti che il caso richiede una visita in presenza",
+      "Per un quesito clinico circoscritto, accettato dallo specialista",
+      "Esame della documentazione pertinente che scegli di condividere",
+      "Un videoconsulto con lo specialista",
+      "Una sintesi scritta a cura dello specialista, nella tua area personale",
+      "Lo specialista può chiederti altri documenti o dirti che il caso richiede una visita in presenza: in quel caso non paghi",
     ],
-    receives: "Un parere scritto nella tua area personale, firmato dal medico.",
+    receives: "Un videoconsulto e una sintesi scritta nella tua area personale, a cura dello specialista.",
     notFor: ["Urgenze: in quel caso chiama il 112", "Casi che richiedono una visita in presenza", "Prescrizioni di farmaci"],
     steps: [
-      { title: "Scrivi la tua domanda", text: "Indichi la specialità e i documenti da condividere: quelli già caricati non li ricarichi." },
-      { title: "Paghi solo se il quadro è chiaro", text: "Prezzo e tempi li vedi prima di confermare." },
-      { title: "Ricevi il parere", text: "Scritto e firmato da un medico identificabile." },
+      { title: "Scrivi la tua domanda", text: "Scegli la specialità, scrivi il quesito e indichi i documenti da condividere." },
+      { title: "Paghi solo se lo specialista accetta", text: "Vedi medico, orario, prezzo e tempi della sintesi prima di confermare." },
+      { title: "Video e sintesi scritta", text: "Ne parlate in video, poi la sintesi arriva nella tua area personale." },
     ],
     icon: "stethoscope",
     tone: "parere",
     level: { n: 3, verb: "Approfondisci" },
-    priceKind: "from",
+    priceKind: "fixed",
     need: "Ho già una diagnosi o una proposta e voglio un'altra valutazione",
   },
 ];
@@ -238,7 +243,7 @@ export function priceDisplay(id: CoreServiceId, env: Env = process.env): PriceDi
   }
   if (id === "capisci") return { lead: null, amount: std, note: "per referto", label: `${std} per referto` };
   const amount = s.priceKind === "from" ? `da ${std}` : std;
-  return { lead: null, amount, note: id === "parla-con-un-medico" ? "videoconsulto di circa 20–25 minuti" : "in base alla specialità e al caso", label: amount };
+  return { lead: null, amount, note: id === "parla-con-un-medico" ? "videoconsulto di circa 20–25 minuti" : id === "secondo-parere" ? "documenti, videoconsulto e sintesi scritta" : null, label: amount };
 }
 
 /** Etichetta in una riga (compatibilità): «Primo referto 2,90 €, poi 7,90 € per referto», «79 €», «da 149 €». */
@@ -272,8 +277,8 @@ export function serviceStart(id: CoreServiceId, env: Env = process.env): { href:
 /** In vetrina, dove si prova il servizio senza registrarsi: l'esempio (Capisci) o l'account demo condiviso. */
 export const VETRINA_TRY: Record<CoreServiceId, { href: string; label: string }> = {
   capisci: { href: "/referti/esempio", label: "Provalo su un referto di esempio" },
-  "parla-con-un-medico": { href: "/accedi?next=/area-personale/appuntamenti", label: "Provalo con l'account demo" },
-  "secondo-parere": { href: "/accedi?next=/area-personale/secondo-parere", label: "Provalo con l'account demo" },
+  "parla-con-un-medico": { href: "/prova/paziente/videoconsulto", label: "Provalo nella demo" },
+  "secondo-parere": { href: "/prova/paziente/secondo-parere", label: "Provalo nella demo" },
 };
 
 /** Servizio pubblico a partire dal servizio interno di un ordine. */

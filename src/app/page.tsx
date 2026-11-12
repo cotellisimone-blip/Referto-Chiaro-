@@ -10,8 +10,9 @@ import { PriceTag } from "@/components/offerta/price-tag";
 import { MobileHelpBar } from "@/components/site/mobile-help-bar";
 import { TrackView } from "@/components/site/track";
 import { DualEntry } from "@/components/punto-di-partenza/dual-entry";
+import { FeaturedPrestazione } from "@/components/prestazioni/public";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
-import { HERO_SUBTITLE, PAYOFF_LINES, PRICE_NOTE, coreService, entryPriceLabel, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
+import { HERO_SUBTITLE, PAYOFF_LINES, PRICE_NOTE, coreService, entryPriceLabel, isVetrina, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
 
 /*
  * Home di Cura Privata. 11/11/2026, «home più calma» su richiesta del titolare: troppe volte «medico», troppe
@@ -42,7 +43,9 @@ export default function Home() {
       {/* 1 · HERO */}
       <section aria-labelledby="hero-titolo" className="hero2">
         <div className="container-rc relative">
-          <div className="pt-10 lg:max-w-[52%] lg:py-20">
+          <div className="pt-6 lg:max-w-[52%] lg:py-16">
+            {/* 12/11/2026: in evidenza la prestazione con un medico davvero disponibile (il domicilio quando ha copertura). */}
+            <FeaturedPrestazione vetrina={isVetrina()} />
             <h1 id="hero-titolo" className="display-xl hero-payoff text-ink">
               <span className="block">{PAYOFF_LINES[0]}</span>
               <span className="block">

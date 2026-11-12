@@ -53,7 +53,10 @@ export default function Page() {
             <Link href="/contatti" className="btn btn-primary btn-lg">
               Scrivici <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
             </Link>
-            <Link href="/medico" className="btn btn-secondary btn-lg">
+            <Link href="/prova/medico/candidatura" className="btn btn-secondary btn-lg">
+              Candidati come medico (prova)
+            </Link>
+            <Link href="/prova/medico" className="btn btn-ghost btn-lg">
               Prova il portale demo
             </Link>
           </div>

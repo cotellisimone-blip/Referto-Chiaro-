@@ -17,21 +17,21 @@ function walk(dir: string, out: string[] = []): string[] {
 
 describe("offerta: tre servizi, prezzi da un'unica fonte", () => {
   it("i tre servizi protagonisti, nell'ordine dei livelli e dei prezzi (ciclo 1)", () => {
-    expect(CORE_SERVICES.map((s) => s.name)).toEqual(["Capisci il tuo referto", "Parla con un medico", "Chiedi un secondo parere"]);
+    expect(CORE_SERVICES.map((s) => s.name)).toEqual(["Capisci il tuo referto", "Videoconsulto con medico generalista", "Secondo parere specialistico"]);
     expect(CORE_SERVICES.map((s) => s.level.n)).toEqual([1, 2, 3]);
   });
 
-  it("listino Evoluzione v2: primo referto 2,90 €, poi 7,90 € · medico 79 € · secondo parere da 149 €", () => {
-    expect(PRICES).toEqual({ CAPISCI_STANDARD: 790, CAPISCI_FIRST: 290, MEDICO_GENERALISTA: 7900, SECONDO_PARERE_BASE: 14900 });
+  it("listino 12/11: primo referto 2,90 €, poi 7,90 € · videoconsulto 69 € · secondo parere 149 € fisso", () => {
+    expect(PRICES).toEqual({ CAPISCI_STANDARD: 790, CAPISCI_FIRST: 290, MEDICO_GENERALISTA: 6900, SECONDO_PARERE_BASE: 14900 });
     expect(priceCents("capisci", {})).toBe(790);
     expect(priceCents("secondo-parere", {})).toBe(14900);
-    expect(priceCents("parla-con-un-medico", {})).toBe(7900);
+    expect(priceCents("parla-con-un-medico", {})).toBe(6900);
     expect(capisciPriceCents(true, {})).toBe(290);
     expect(capisciPriceCents(false, {})).toBe(790);
     const sp = (x: string) => x.replace(/\s/g, " ");
     expect(sp(priceLabel("capisci", {}))).toBe("Primo referto 2,90 €, poi 7,90 € per referto");
-    expect(sp(priceLabel("parla-con-un-medico", {}))).toBe("79 €");
-    expect(sp(priceLabel("secondo-parere", {}))).toBe("da 149 €");
+    expect(sp(priceLabel("parla-con-un-medico", {}))).toBe("69 €");
+    expect(sp(priceLabel("secondo-parere", {}))).toBe("149 €");
     expect(sp(entryPriceLabel({}))).toBe("2,90 €");
     expect(sp(formatEuro(990))).toBe("9,90 €");
   });
@@ -66,14 +66,14 @@ describe("offerta: tre servizi, prezzi da un'unica fonte", () => {
   });
 
   it("upgrade Capisci → medico: si paga la differenza, ed è spento salvo UPGRADE_CREDIT=true", () => {
-    expect(upgradeCostCents("capisci", "parla-con-un-medico", {})).toBe(7110);
+    expect(upgradeCostCents("capisci", "parla-con-un-medico", {})).toBe(6110);
     expect(upgradeEnabled({})).toBe(false);
     expect(upgradeEnabled({ UPGRADE_CREDIT: "true" })).toBe(true);
   });
 
   it("nessun prezzo scritto a mano nei componenti: passano tutti da offerta.ts", () => {
     const files = walk("src/components").concat(walk("src/app")).filter((f) => !f.includes(`${path.sep}api${path.sep}`));
-    const hits = files.filter((f) => /(?:da |€ ?)(?:2,90|7,90|49|79|89|149)\b|\b(?:2,90|7,90|49|79|89|149) ?€/.test(readFileSync(f, "utf8")));
+    const hits = files.filter((f) => /(?:da |€ ?)(?:2,90|7,90|49|69|79|89|149)\b|\b(?:2,90|7,90|49|69|79|89|149) ?€/.test(readFileSync(f, "utf8")));
     expect(hits).toEqual([]);
   });
 

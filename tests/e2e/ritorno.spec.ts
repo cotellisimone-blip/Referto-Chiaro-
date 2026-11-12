@@ -2,13 +2,14 @@ import { test, expect } from "@playwright/test";
 
 /** Ciclo 3, fase 2: dopo l'accesso si arriva dove si voleva andare, non alla pagina iniziale dell'area. */
 
+// 12/11/2026: i pulsanti delle pagine servizio portano alla prova a fasce (senza accesso); il ritorno dopo l'accesso
+// resta per chi apre una pagina dell'area personale senza sessione.
 for (const s of [
-  { from: "/servizi/parla-con-un-medico", cta: "Prenota il videoconsulto", to: "/area-personale/appuntamenti", h1: "I miei appuntamenti" },
-  { from: "/servizi/secondo-parere", cta: "Richiedi un secondo parere", to: "/area-personale/secondo-parere", h1: "I miei pareri" },
+  { cta: "Videoconsulti", to: "/area-personale/appuntamenti", h1: "I miei appuntamenti" },
+  { cta: "Pareri", to: "/area-personale/secondo-parere", h1: "I miei pareri" },
 ]) {
   test(`${s.cta}: login con l'account demo e ritorno a ${s.to}`, async ({ page }) => {
-    await page.goto(s.from);
-    await page.getByRole("link", { name: s.cta }).first().click();
+    await page.goto(s.to);
     await expect(page).toHaveURL(new RegExp(`/accedi\\?next=${encodeURIComponent(s.to).replace(/%/g, "%")}`));
     await page.getByRole("button", { name: "Entra con l'account demo" }).click();
     await expect(page).toHaveURL(new RegExp(`${s.to}$`), { timeout: 15_000 });

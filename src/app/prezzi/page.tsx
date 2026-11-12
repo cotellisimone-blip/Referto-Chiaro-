@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PrestazioniGrid } from "@/components/prestazioni/public";
 import { ArrowRight, Check, Clock3, FileText, Stethoscope, UserRound, Video } from "lucide-react";
 import { CORE_SERVICES, PRICE_NOTE, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled, upgradeCostCents, upgradeEnabled, serviceStart } from "@/domain/offerta";
 import { PriceTag } from "@/components/offerta/price-tag";
@@ -79,6 +80,11 @@ export default function PrezziPage() {
               );
             })}
           </ul>
+          <h2 className="mt-12 text-[1.75rem] font-bold leading-tight text-ink">Con un medico, a prezzo fisso</h2>
+          <p className="mt-2 max-w-2xl text-lg text-ink-soft">Visita a domicilio, videoconsulto e secondo parere: paghi solo dopo che il medico ha confermato.</p>
+          <div className="mt-6">
+            <PrestazioniGrid />
+          </div>
           <p className="mt-6 text-[1.0625rem] text-muted">{PRICE_NOTE}</p>
           {upgrade && prices ? (
             <p className="mt-4 rounded-2xl bg-mist px-5 py-4 text-lg text-ink">

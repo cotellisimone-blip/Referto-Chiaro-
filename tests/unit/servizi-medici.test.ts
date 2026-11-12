@@ -48,7 +48,7 @@ describe("secondo parere e videoconsulto: pagamento prima del medico", () => {
     expect(await getPhysicianAppointment(doctorUser, physician, a.id)).toBeNull();
 
     const o = await createServiceOrder(alice, { service: "videoconsulto", refId: a.id, documentIds: [doc], provider: "simulated" });
-    expect(o.amountCents).toBe(7900);
+    expect(o.amountCents).toBe(6900);
     await markOrderPaid(o.id);
     const seen = await getPhysicianAppointment(doctorUser, physician, a.id);
     expect(seen?.documents.map((d) => d.id)).toEqual([doc]);
@@ -83,7 +83,7 @@ describe("secondo parere e videoconsulto: pagamento prima del medico", () => {
       const a = await createAppointment(alice, { reason: "Continuare con un medico.", slots: [{ day: tomorrow, window: "pomeriggio" }], documentIds: [doc], isSimulated: true });
       if ("error" in a) throw new Error(a.error);
       const o = await createServiceOrder(alice, { service: "videoconsulto", refId: a.id, documentIds: [doc], provider: "simulated" });
-      expect(o.amountCents).toBe(7110);
+      expect(o.amountCents).toBe(6110);
     } finally {
       if (prev === undefined) delete process.env.UPGRADE_CREDIT;
       else process.env.UPGRADE_CREDIT = prev;

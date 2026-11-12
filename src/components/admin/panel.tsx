@@ -166,6 +166,10 @@ export function AdminOverview() {
     : [];
   return (
     <Frame title="Panoramica" lead="Numeri dell'istanza. In demo sono dati inventati e account dimostrativi." error={error}>
+      <p className="mb-6 rounded-xl bg-mist px-4 py-3 text-ink">
+        Apertura dei servizi, candidature dei medici, fasce e assegnazioni di domicilio, videoconsulto e secondo parere:{" "}
+        <Link href="/prova/amministrazione" className="link font-semibold">prestazioni con un medico (prova)</Link>.
+      </p>
       <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {items.map(([k, v]) => (
           <div key={k} className="card p-5">

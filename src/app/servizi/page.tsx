@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { ServiceTriad } from "@/components/offerta/service-triad";
 import { FaqList } from "@/components/ui/faq-list";
 import { FAQ } from "@/content/faq";
+import { PrestazioniGrid } from "@/components/prestazioni/public";
 
 export const metadata: Metadata = {
   title: "I servizi",
@@ -37,7 +38,7 @@ export default function ServiziPage() {
           <h1 id="servizi-titolo" className="display-xl mt-5 max-w-4xl">
             Dal referto al medico, <span className="marker">un passo alla volta.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-xl text-ink-soft">Tre servizi in un unico spazio. Non sai quale ti serve? Rispondi a una domanda e te lo diciamo noi.</p>
+          <p className="mt-6 max-w-2xl text-xl text-ink-soft">Il referto spiegato, il medico a casa o in video, il secondo parere. Non sai quale ti serve? Rispondi a una domanda e te lo diciamo noi.</p>
           <Link href="/inizia" className="btn btn-secondary btn-lg mt-8">
             Ti aiutiamo a scegliere <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
@@ -55,6 +56,10 @@ export default function ServiziPage() {
           </Link>
         </p>
       </div>
+      <Section id="con-un-medico" eyebrow="Con un medico" title="Visita a domicilio, videoconsulto, secondo parere.">
+        <p className="-mt-2 mb-6 max-w-2xl text-xl text-ink-soft">Prezzo fisso, disponibilità reale, e paghi solo quando il medico ha confermato. Ognuna si prenota direttamente.</p>
+        <PrestazioniGrid />
+      </Section>
       <Section id="gratis" tone="paper" eyebrow="Gratis, per tutti" title="Strumenti e guide, senza registrarti.">
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {FREE.map(({ icon: Icon, title, href, text }) => (
