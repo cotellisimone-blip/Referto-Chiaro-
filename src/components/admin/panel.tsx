@@ -89,10 +89,11 @@ type VetrinaData = {
   weeks: (VetrinaRow & { week: string })[];
   bySource: (VetrinaRow & { source: string })[];
   byService: { service: string; visits: number; ctas: number; signups: number }[];
+  byCap?: { cap: string; signups: number; covered: boolean }[];
   afterTrial?: { examples: number; usefulYes: number; usefulNo: number; signupsAfterTrial: number };
 };
 
-const SERVICE_NAMES: Record<string, string> = { capisci: "Capisci il tuo referto", "parla-con-un-medico": "Parla con un medico", "secondo-parere": "Secondo parere" };
+const SERVICE_NAMES: Record<string, string> = { capisci: "Capisci il tuo referto", domicilio: "Visita a domicilio", "parla-con-un-medico": "Videoconsulto", "secondo-parere": "Secondo parere" };
 
 /** Percentuale leggibile: «—» quando il denominatore è zero, mai una divisione per zero. */
 function pct(n: number, d: number): string {
@@ -111,7 +112,7 @@ function VetrinaSection({ v }: { v: VetrinaData }) {
     <section aria-labelledby="vetrina-titolo" className="mt-10" data-testid="admin-vetrina">
       <h2 id="vetrina-titolo" className="font-serif text-2xl text-ink">Vetrina: chi arriva e chi chiede di essere avvisato</h2>
       <p className="mt-1 text-sm text-muted">
-        Contatori anonimi (nessun cookie, nessun IP) e iscrizioni alla lista d&apos;attesa dei tre servizi. «Iscrizioni su visite» è il numero da guardare ogni settimana; le soglie
+        Contatori anonimi (nessun cookie, nessun IP) e iscrizioni alla lista d&apos;attesa dei servizi. «Iscrizioni su visite» è il numero da guardare ogni settimana; le soglie
         per decidere sono in PRODUCT_ROADMAP.md. Dal 12/11/2026 una visita conta una volta per scheda: ricariche, robot, anteprime dei link e browser
         automatici sono esclusi.
       </p>
@@ -133,6 +134,16 @@ function VetrinaSection({ v }: { v: VetrinaData }) {
         head={["Servizio", "Visite alla pagina", "Clic sull'azione", "Iscrizioni", "Iscrizioni su visite"]}
         rows={v.byService.map((r) => [SERVICE_NAMES[r.service] ?? r.service, String(r.visits), String(r.ctas), String(r.signups), pct(r.signups, r.visits)])}
       />
+      {v.byCap ? (
+        <>
+          <h3 className="mt-6 text-lg font-semibold text-ink">Visita a domicilio: richieste per CAP, ultimi {v.days} giorni</h3>
+          {v.byCap.length ? (
+            <Table label="Visita a domicilio per CAP" head={["CAP", "Iscrizioni", "Zona"]} rows={v.byCap.map((r) => [r.cap, String(r.signups), r.covered ? "già coperta (area pilota)" : "non coperta"])} />
+          ) : (
+            <p className="mt-2 text-sm text-muted" data-testid="admin-cap-vuoto">Nessuna iscrizione con CAP per ora. Compaiono qui quando qualcuno chiede di essere avvisato per la sua zona.</p>
+          )}
+        </>
+      ) : null}
       {v.afterTrial ? (
         <>
           <h3 className="mt-6 text-lg font-semibold text-ink">Dopo la prova, ultimi {v.days} giorni</h3>
@@ -166,6 +177,10 @@ export function AdminOverview() {
     : [];
   return (
     <Frame title="Panoramica" lead="Numeri dell'istanza. In demo sono dati inventati e account dimostrativi." error={error}>
+      <p className="mb-6 rounded-xl bg-mist px-4 py-3 text-ink">
+        Apertura dei servizi, candidature dei medici, fasce e assegnazioni di domicilio, videoconsulto e secondo parere:{" "}
+        <Link href="/prova/amministrazione" className="link font-semibold">prestazioni con un medico (prova)</Link>.
+      </p>
       <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {items.map(([k, v]) => (
           <div key={k} className="card p-5">

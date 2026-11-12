@@ -1,18 +1,24 @@
-/** Navigazione Cura Privata: i tre servizi per primi, nell'ordine dei livelli e dei prezzi (ciclo 1), poi prezzi e guide. */
-export const MAIN_NAV = [
+/**
+ * Navigazione Cura Privata: i servizi per primi (ciclo 1), poi prezzi e guide. 12/11/2026: entra la visita a domicilio;
+ * «Parla con un medico» diventa «Videoconsulto». «Guide» si vede dai 1280 px in su (sotto resta nel menu, nel fondo
+ * pagina e nella ricerca), così la testata non va a capo a 1024 px.
+ */
+export const MAIN_NAV: readonly { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; wideOnly?: boolean }[] = [
   { href: "/referti", label: "Capisci il referto", tone: "capisci" },
-  { href: "/servizi/parla-con-un-medico", label: "Parla con un medico", tone: "medico" },
+  { href: "/servizi/visita-a-domicilio", label: "A domicilio", tone: "medico" },
+  { href: "/servizi/parla-con-un-medico", label: "Videoconsulto", tone: "medico" },
   { href: "/servizi/secondo-parere", label: "Secondo parere", tone: "parere" },
   { href: "/prezzi", label: "Prezzi", tone: null },
-  { href: "/guide", label: "Guide", tone: null },
-] as const;
+  { href: "/guide", label: "Guide", tone: null, wideOnly: true },
+];
 
 /** Fondo pagina snello: tre colonne, una dozzina di voci. Le note legali stanno nella riga in basso. */
 export const FOOTER_NAV = {
   Servizi: [
     { href: "/referti", label: "Capisci il tuo referto" },
-    { href: "/servizi/parla-con-un-medico", label: "Parla con un medico" },
-    { href: "/servizi/secondo-parere", label: "Chiedi un secondo parere" },
+    { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio" },
+    { href: "/servizi/parla-con-un-medico", label: "Videoconsulto con un medico" },
+    { href: "/servizi/secondo-parere", label: "Secondo parere specialistico" },
     { href: "/prezzi", label: "Prezzi" },
     { href: "/inizia", label: "Ti aiutiamo a scegliere" },
   ],
@@ -46,4 +52,5 @@ export const EXTRA_PAGES = [
   { href: "/servizi", label: "Tutti i servizi" },
   { href: "/per-le-strutture", label: "Per le strutture" },
   { href: "/accedi", label: "Area personale" },
+  { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio con medico generalista" },
 ] as const;

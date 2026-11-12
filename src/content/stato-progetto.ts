@@ -25,6 +25,14 @@ export const PREREQUISITES: Record<CoreServiceId, string[]> = {
   ],
 };
 
+/** Ciclo 4: la visita a domicilio ha i suoi prerequisiti, oltre a quelli comuni alle prestazioni con un medico. */
+export const PREREQUISITES_DOMICILIO = [
+  "Medici con contratto, iscrizione all'Albo verificata e copertura assicurativa per le visite a casa",
+  "Fasce davvero coperte nell'area pilota di Brescia città prima di mostrare «oggi»",
+  "Chi eroga la prestazione e chi fattura, verificato da un consulente",
+  "Regole su annullamenti e rimborsi approvate da un legale",
+];
+
 export const WAITLIST_INTEREST: Partial<Record<CoreServiceId, "completo" | "secondo-parere" | "visite">> = {
   // «completo» è il nome storico dell'interesse per il servizio sui referti: oggi è «Capisci il tuo referto».
   capisci: "completo",

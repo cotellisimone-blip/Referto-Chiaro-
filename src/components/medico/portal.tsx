@@ -31,6 +31,10 @@ export function PhysicianDashboard() {
         <p className="mt-2 text-muted">{data.physician.specialty} · iscrizione: {data.physician.registrationRef ?? "da verificare"}</p>
       </div>
       <SimulationNotice />
+      <p className="rounded-xl bg-mist px-4 py-3 text-ink">
+        Visite a domicilio, videoconsulti a fasce e secondi pareri con video e sintesi si provano nel nuovo{" "}
+        <Link href="/prova/medico" className="link font-semibold">portale delle prestazioni (prova)</Link>.
+      </p>
       <CaseList title="Da gestire" cases={open} empty="Nessun caso in attesa." />
       <AppointmentList appointments={appointments} />
       <CaseList title="Conclusi" cases={done} empty="Nessun caso concluso." />

@@ -50,7 +50,7 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
     await page.goto("/inizia");
     await expect(page.getByText("Non ti chiediamo sintomi né dati sanitari", { exact: false })).toBeVisible();
     await page.getByLabel("Ho già una diagnosi o una proposta e voglio un'altra valutazione").check();
-    await expect(page.getByText("Chiedi un secondo parere", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText("Secondo parere specialistico", { exact: true }).first()).toBeVisible();
     await page.getByLabel("Ho dei dubbi e non so quale specialista mi serve").check();
     await expect(page.getByRole("link", { name: "Scopri il servizio" })).toHaveAttribute("href", "/servizi/parla-con-un-medico");
     await page.getByLabel("Ho una visita e voglio arrivare preparato").check();
@@ -127,7 +127,8 @@ test.describe("home «Evoluzione v2»", () => {
     // Mai un medico che rivede «Capisci», mai conti alla rovescia
     const text = (await main.innerText()).toLowerCase();
     // «Troppi chiedi a un dottore»: la parola «medic…» compare poche volte (prima erano 20 su desktop e 15 su telefono)
-    expect((text.match(/medic/g) ?? []).length, "menzioni di «medico»").toBeLessThanOrEqual(8);
+    // 12/11/2026: +2 per la visita a domicilio in evidenza («Il medico a casa tua», «medico generalista»).
+    expect((text.match(/medic/g) ?? []).length, "menzioni di «medico»").toBeLessThanOrEqual(10);
     for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra"]) expect(text).not.toContain(bad);
     // Barra d'aiuto mobile: nascosta sulla hero (non compete con le due azioni), visibile scorrendo
     if (isMobile) {
@@ -154,7 +155,7 @@ test.describe("home «Evoluzione v2»", () => {
   test("cinque compiti dalla home, in pochi clic", async ({ page }) => {
     await page.goto("/");
     // 1. Quanto costa il videoconsulto? Visibile in home.
-    await expect(page.locator("main")).toContainText("79 €");
+    await expect(page.locator("main")).toContainText("69 €");
     // 2. Capire un referto: un clic porta al servizio
     await page.locator("main").getByRole("link", { name: "Ho un referto" }).click();
     await expect(page).toHaveURL(/\/referti$/);
@@ -197,8 +198,11 @@ test.describe("percorsi A, C, D", () => {
     await loginPhysician(doctor);
 
     const page = await patient.newPage();
+    // 12/11/2026: il pulsante della pagina porta alla prova a fasce (tests/e2e/prestazioni.spec.ts); qui resta provato
+    // il percorso server dell'area personale, che si apre direttamente.
     await page.goto("/servizi/parla-con-un-medico");
-    await page.getByRole("link", { name: "Prenota il videoconsulto" }).click();
+    await expect(page.getByRole("link", { name: "Prenota il videoconsulto" }).first()).toHaveAttribute("href", "/richiedi/videoconsulto");
+    await page.goto("/area-personale/appuntamenti");
     await expect(page.getByRole("heading", { name: "I miei appuntamenti" })).toBeVisible({ timeout: 15_000 });
     await expectAccessible(page);
     await page.getByLabel(/Di che cosa vuoi parlare/).fill("Vorrei capire con un medico i valori del referto di esempio.");
@@ -206,7 +210,7 @@ test.describe("percorsi A, C, D", () => {
     await page.getByLabel(/Acconsento a condividere/).check();
     await page.getByRole("button", { name: /Continua al pagamento/ }).click();
     await expect(page.getByRole("heading", { name: "Il tuo ordine." })).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByRole("main").getByText("Parla con un medico", { exact: true }).first()).toBeVisible();
+    await expect(page.getByRole("main").getByText("Videoconsulto con medico generalista", { exact: true }).first()).toBeVisible();
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
     await page.getByRole("link", { name: "Vai all'appuntamento" }).click();
     await expect(page.getByRole("heading", { name: "Videoconsulto" })).toBeVisible({ timeout: 15_000 });
@@ -263,7 +267,7 @@ test.describe("percorsi A, C, D", () => {
     await page.setViewportSize(isMobile ? { width: 390, height: 844 } : { width: 1440, height: 900 });
     await page.goto("/area-personale");
     const nav = page.getByRole("navigation", { name: "Area personale" }).last();
-    for (const label of isMobile ? ["Referti", "Medico", "Pareri"] : ["I miei documenti e report", "I miei appuntamenti", "I miei pareri"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
+    for (const label of isMobile ? ["Referti", "Medico", "Pareri"] : ["I miei documenti e report", "Visite e videoconsulti", "I miei pareri"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
     for (const [path, h] of [["/area-personale/secondo-parere", "I miei pareri"], ["/area-personale/appuntamenti", "I miei appuntamenti"], ["/area-personale/ordini", "Pagamenti"]] as const) {
       await page.goto(path);
       await expect(page.getByRole("heading", { name: h, level: 1 })).toBeVisible({ timeout: 15_000 });

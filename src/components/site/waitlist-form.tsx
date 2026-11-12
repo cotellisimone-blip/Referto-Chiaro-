@@ -6,10 +6,10 @@ import { CircleCheck, Loader2 } from "lucide-react";
 import { api } from "@/components/area/api";
 import { currentSource, track } from "@/components/site/track";
 
-type Interest = "completo" | "secondo-parere" | "strutture" | "archivio" | "visite" | "prevenzione";
+type Interest = "completo" | "secondo-parere" | "strutture" | "archivio" | "visite" | "prevenzione" | "domicilio";
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "done"; already: boolean } | { kind: "error"; message: string };
 
-const AVVISAMI_EVENT: Partial<Record<Interest, string>> = { completo: "avvisami-capisci", visite: "avvisami-medico", "secondo-parere": "avvisami-parere" };
+const AVVISAMI_EVENT: Partial<Record<Interest, string>> = { completo: "avvisami-capisci", visite: "avvisami-medico", "secondo-parere": "avvisami-parere", domicilio: "avvisami-domicilio" };
 
 const INPUT = "mt-1.5 block min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-ink placeholder:text-muted/70 focus:border-teal";
 
@@ -17,7 +17,12 @@ const INPUT = "mt-1.5 block min-h-12 w-full rounded-xl border border-line bg-pap
  * Lista d'attesa. In questa versione dimostrativa non viene inviata alcuna email:
  * lo diciamo prima e dopo l'invio. L'iscrizione è un interesse non vincolante.
  */
-export function WaitlistForm({ interest, afterTrial = false, compact = false }: { interest: Interest; afterTrial?: boolean; compact?: boolean }) {
+/** Ciclo 4: il CAP si chiede solo dove serve a capire la zona. Obbligatorio per il domicilio, facoltativo per il video. */
+const CAP_MODE: Partial<Record<Interest, "required" | "optional">> = { domicilio: "required", visite: "optional" };
+
+export function WaitlistForm({ interest, afterTrial = false, compact = false, defaultCap = "" }: { interest: Interest; afterTrial?: boolean; compact?: boolean; defaultCap?: string }) {
+  const capMode = CAP_MODE[interest];
+  const [cap, setCap] = useState(defaultCap);
   const uid = useId();
   const [email, setEmail] = useState("");
   const [organization, setOrganization] = useState("");
@@ -31,6 +36,11 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false }: 
       setState({ kind: "error", message: "Per iscriverti devi accettare l'informativa privacy (bozza)." });
       return;
     }
+    const zona = cap.trim();
+    if (capMode && (zona ? !/^\d{5}$/.test(zona) : capMode === "required")) {
+      setState({ kind: "error", message: "Scrivi il CAP con 5 cifre: ci serve solo per sapere in quale zona avvisarti." });
+      return;
+    }
     setState({ kind: "sending" });
     try {
       const r = await api<{ ok: true; already?: boolean }>("/api/v1/waitlist", {
@@ -40,6 +50,7 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false }: 
           interest,
           ...(interest === "strutture" && organization.trim() ? { organization: organization.trim() } : {}),
           ...(note.trim() ? { note: note.trim() } : {}),
+          ...(capMode && zona ? { cap: zona } : {}),
           consent: true,
           source: currentSource(),
         },
@@ -98,6 +109,15 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false }: 
         </label>
         <input id={`${uid}-email`} type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={INPUT} placeholder="nome@esempio.it" maxLength={254} />
       </div>
+      {capMode ? (
+        <div>
+          <label htmlFor={`${uid}-cap`} className="block text-sm font-semibold text-ink">
+            {capMode === "required" ? "CAP dove vorresti la visita" : "Il tuo CAP (facoltativo)"}
+          </label>
+          <input id={`${uid}-cap`} type="text" inputMode="numeric" autoComplete="postal-code" required={capMode === "required"} value={cap} onChange={(e) => setCap(e.target.value)} className={`${INPUT} max-w-40`} placeholder="25122" maxLength={5} />
+          <p className="mt-1 text-sm text-muted">Solo il CAP, non l&apos;indirizzo: ci dice in quali zone c&apos;è richiesta.</p>
+        </div>
+      ) : null}
       {interest === "strutture" ? (
         <div>
           <label htmlFor={`${uid}-org`} className="block text-sm font-semibold text-ink">
@@ -132,7 +152,7 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false }: 
       ) : null}
       <button type="submit" className="btn btn-primary min-h-11" disabled={state.kind === "sending"}>
         {state.kind === "sending" ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null}
-        Iscrivimi alla lista d&apos;attesa
+        {interest === "domicilio" ? "Avvisami per la mia zona" : "Iscrivimi alla lista d'attesa"}
       </button>
     </form>
   );

@@ -8,13 +8,13 @@ import { FAQ } from "@/content/faq";
 
 export const metadata: Metadata = {
   title: "I servizi",
-  description: "Capisci il tuo referto, chiedi un secondo parere, parla con un medico: i servizi di Cura Privata, e gli strumenti gratuiti.",
+  description: "Capisci il tuo referto, visita a domicilio, videoconsulto con un medico, secondo parere specialistico: i servizi di Cura Privata e gli strumenti gratuiti.",
   alternates: { canonical: "/servizi" },
 };
 
 const NOT_DONE = [
   "Diagnosi automatiche",
-  "Prescrizioni o consigli terapeutici",
+  "Prescrizioni o terapie senza una visita del medico",
   "Triage d'urgenza",
   "Lettura diagnostica di immagini TAC, RM o ecografie",
   "Pareri medici senza un professionista realmente coinvolto",
@@ -37,15 +37,16 @@ export default function ServiziPage() {
           <h1 id="servizi-titolo" className="display-xl mt-5 max-w-4xl">
             Dal referto al medico, <span className="marker">un passo alla volta.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-xl text-ink-soft">Tre servizi in un unico spazio. Non sai quale ti serve? Rispondi a una domanda e te lo diciamo noi.</p>
+          <p className="mt-6 max-w-2xl text-xl text-ink-soft">Il referto spiegato, il medico a casa o in video, il secondo parere. Non sai quale ti serve? Rispondi a una domanda e te lo diciamo noi.</p>
           <Link href="/inizia" className="btn btn-secondary btn-lg mt-8">
             Ti aiutiamo a scegliere <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
         </div>
       </section>
-      <div className="container-rc py-12 sm:py-16">
+      <div id="con-un-medico" className="container-rc scroll-mt-28 py-12 sm:py-16">
         <ServiceTriad headingLevel={2} />
-        <p className="mt-6 text-[1.0625rem] text-muted">
+        <p className="mt-6 max-w-3xl text-lg text-ink-soft">Con un medico il prezzo è fisso e paghi solo dopo che il medico ha confermato: vedi nome, orario e importo prima.</p>
+        <p className="mt-4 text-[1.0625rem] text-muted">
           <Link href="/prezzi" className="link font-semibold">
             Confronta prezzi e tempi
           </Link>

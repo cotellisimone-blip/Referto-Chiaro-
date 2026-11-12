@@ -15,6 +15,8 @@ const Body = z
     consent: z.literal(true),
     // Ciclo 2: sorgente della visita, dallo stesso elenco chiuso del funnel (facoltativa).
     source: z.enum(SOURCES).optional(),
+    // Ciclo 4: CAP della zona, facoltativo (obbligatorio nel modulo del domicilio).
+    cap: z.string().regex(/^\d{5}$/).optional(),
   })
   .strict();
 

@@ -72,7 +72,7 @@ test("percorso completo: 5 passi, indietro senza perdere le risposte, scheda PDF
   await expect(page.getByText("Misura quanto è completa la mappa che hai costruito, non il tuo stato di salute.").first()).toBeVisible();
   await expect(page.getByText(/punteggio di salute|età biologica|sei a rischio|devi fare/i)).toHaveCount(0);
   await expect(page.getByRole("link", { name: /Rendi chiaro il primo referto — 2,90/ })).toBeVisible();
-  await expect(page.getByRole("link", { name: /Parla con un medico — 79/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Parla con un medico — 69/ })).toBeVisible();
   await noOverflow(page);
   await axe(page);
 

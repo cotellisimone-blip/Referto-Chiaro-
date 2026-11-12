@@ -38,12 +38,12 @@ export const FAQ: FaqItem[] = [
   {
     topic: "medico",
     q: "Come funzionerà il secondo parere?",
-    a: "Sarà una prestazione di un medico abilitato, non una risposta automatica. Il medico vedrà i documenti originali, potrà chiedere integrazioni o non accettare il caso. Oggi il servizio è in preparazione e non accettiamo richieste.",
+    a: "È una prestazione di uno specialista abilitato, non una risposta automatica, per un quesito circoscritto. Lo specialista esamina i documenti, può chiedere integrazioni o non accettare il caso (senza addebito); se lo accetta, ne parlate in video e ricevi una sintesi scritta nei tempi concordati. Oggi è provabile solo nella demo, con dati fittizi.",
   },
   {
     topic: "pagamenti",
     q: "Quanto costa?",
-    a: "Il listino non è ancora definito: lo pubblicheremo quando i servizi saranno attivi, sempre prima di qualsiasi richiesta. Oggi non è possibile acquistare nulla e nessun pagamento viene richiesto.",
+    a: "I prezzi sono fissi e li trovi nella pagina Prezzi e su ogni scheda; il totale lo vedi sempre prima di confermare. Per le prestazioni con un medico paghi solo dopo che il medico ha confermato. Oggi i pagamenti sono solo simulati: non è possibile acquistare nulla.",
   },
   {
     topic: "servizio",
