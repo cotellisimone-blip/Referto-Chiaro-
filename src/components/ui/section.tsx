@@ -1,0 +1,39 @@
+import { clsx } from "clsx";
+
+export function Section({
+  id,
+  eyebrow,
+  title,
+  lead,
+  children,
+  className,
+  tone = "canvas",
+}: {
+  id?: string;
+  eyebrow?: string;
+  title: string;
+  lead?: React.ReactNode;
+  children?: React.ReactNode;
+  className?: string;
+  tone?: "canvas" | "paper" | "mist";
+}) {
+  const headingId = id ? `${id}-titolo` : undefined;
+  return (
+    <section
+      id={id}
+      aria-labelledby={headingId}
+      className={clsx("py-16 sm:py-24", tone === "paper" && "border-y border-line/70 bg-paper", tone === "mist" && "grain bg-mist", className)}
+    >
+      <div className="container-rc">
+        <div className="max-w-2xl">
+          {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
+          <h2 id={headingId} className="display-lg mt-4">
+            {title}
+          </h2>
+          {lead ? <div className="mt-5 text-xl text-ink-soft">{lead}</div> : null}
+        </div>
+        {children ? <div className="mt-10 sm:mt-14">{children}</div> : null}
+      </div>
+    </section>
+  );
+}

@@ -1,0 +1,58 @@
+{
+  "name": "cura-privata",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "screenshots": "SCREENSHOTS=1 playwright test screenshots --trace off",
+    "setup": "bash scripts/setup.sh",
+    "db:migrate": "node scripts/db-migrate.mjs",
+    "keys": "node scripts/genera-chiavi.mjs",
+    "vercel-build": "node scripts/db-migrate.mjs && next build",
+    "eval:ai": "EVAL_WRITE_REPORT=1 vitest run tests/ai-eval",
+    "test:e2e:vetrina": "playwright test -c playwright.vetrina.config.ts --trace off",
+    "controlli": "node scripts/controlli.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.6.0",
+    "@electric-sql/pglite": "^0.5.15",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.70.0",
+    "next": "16.4.5",
+    "pdf-lib": "^1.17.1",
+    "pg": "^8.23.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "stripe": "^23.1.0",
+    "unpdf": "^1.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "1.63.0",
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^22.20.5",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "server-only": "^0.0.1",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^5.1.0"
+  },
+  "overrides": {
+    "playwright-core": "1.63.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

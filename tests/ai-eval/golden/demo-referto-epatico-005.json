@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "1.0",
+  "sourceDocumentId": "demo-referto-epatico-005",
+  "sourceVerified": true,
+  "summary": "Questo documento riporta 6 valori di laboratorio che hai confermato. Qui trovi i numeri esattamente come sono stampati e una spiegazione generale dei termini. Il riepilogo non valuta la tua situazione clinica.",
+  "items": [
+    {
+      "sourceObservationId": "obs-01",
+      "nameExact": "AST (GOT)",
+      "originalValueExact": "24",
+      "originalUnitExact": "U/L",
+      "originalReferenceExact": "< 40",
+      "plainLanguageDefinition": "L'AST (o GOT) è un enzima presente in diversi organi, tra cui il fegato. Il referto ne riporta l'attività nel sangue.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 4,
+        "excerpt": "AST (GOT)                     24          U/L      < 40"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-02",
+      "nameExact": "ALT (GPT)",
+      "originalValueExact": "31",
+      "originalUnitExact": "U/L",
+      "originalReferenceExact": "< 41",
+      "plainLanguageDefinition": "L'ALT (o GPT) è un enzima presente soprattutto nel fegato. Il referto ne riporta l'attività nel sangue.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 5,
+        "excerpt": "ALT (GPT)                     31          U/L      < 41"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-03",
+      "nameExact": "Gamma GT",
+      "originalValueExact": "28",
+      "originalUnitExact": "U/L",
+      "originalReferenceExact": "< 60",
+      "plainLanguageDefinition": "La gamma GT è un enzima presente nel fegato e nelle vie biliari. Il referto ne riporta l'attività nel sangue.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 6,
+        "excerpt": "Gamma GT                      28          U/L      < 60"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-04",
+      "nameExact": "Bilirubina totale",
+      "originalValueExact": "0,7",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "0,2 - 1,2",
+      "plainLanguageDefinition": "La bilirubina è una sostanza che deriva dalla normale degradazione dei globuli rossi ed è elaborata dal fegato. Il referto ne riporta la concentrazione.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 7,
+        "excerpt": "Bilirubina totale             0,7         mg/dL    0,2 - 1,2"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-05",
+      "nameExact": "Fosfatasi alcalina",
+      "originalValueExact": "71",
+      "originalUnitExact": "U/L",
+      "originalReferenceExact": "40 - 130",
+      "plainLanguageDefinition": "La fosfatasi alcalina è un enzima presente in vari tessuti, in particolare fegato e ossa. Il referto ne riporta l'attività nel sangue.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 8,
+        "excerpt": "Fosfatasi alcalina            71          U/L      40 - 130"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-06",
+      "nameExact": "Albumina",
+      "originalValueExact": "4,4",
+      "originalUnitExact": "g/dL",
+      "originalReferenceExact": "3,5 - 5,2",
+      "plainLanguageDefinition": "L'albumina è la proteina più abbondante nel sangue, prodotta dal fegato. Il referto ne riporta la concentrazione.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 9,
+        "excerpt": "Albumina                      4,4         g/dL     3,5 - 5,2"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    }
+  ],
+  "excludedObservations": [],
+  "questionsForDoctor": [
+    "Quali informazioni sulla mia storia e sul mio stato di salute servono per leggere correttamente questi risultati?",
+    "Ci sono valori che secondo lei è utile approfondire o confrontare con esami precedenti?",
+    "C'è qualcosa che dovrei chiarire o portare alla prossima visita?"
+  ],
+  "limitations": [
+    "Spiegazione informativa e non clinica: non sostituisce la diagnosi o le indicazioni del medico.",
+    "Gli intervalli sono quelli stampati dal laboratorio sul documento e non sono valori universali.",
+    "In caso di urgenza non usare questo servizio: in Italia chiama il 112."
+  ],
+  "modelAndPromptVersion": "deterministic-demo-v1+policy-informativa-v1"
+}

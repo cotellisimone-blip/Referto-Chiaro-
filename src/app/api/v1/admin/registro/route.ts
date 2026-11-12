@@ -1,0 +1,9 @@
+import { requireRole } from "@/lib/auth/guard";
+import { adminAuditTail } from "@/lib/admin";
+import { json } from "@/lib/api";
+
+export async function GET() {
+  const g = await requireRole(["admin"]);
+  if ("response" in g) return g.response;
+  return json({ entries: await adminAuditTail(g.user.id) });
+}

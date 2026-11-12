@@ -1,0 +1,41 @@
+# Ciclo 2, fase 5: controlli automatici su ogni pull request e su main.
+# Nessun segreto: tutto gira in modalità dimostrativa con PGlite e pagamenti simulati.
+name: Controlli
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: controlli-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  controlli:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Browser per i test
+        run: npx playwright install --with-deps chromium
+      # Ciclo 3, fase 5: gli stessi passi di `npm run controlli` in locale (lint, tipi, unit, build, e2e, e2e vetrina).
+      - name: Controlli
+        run: npm run controlli
+      - name: Report in caso di errore
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 7

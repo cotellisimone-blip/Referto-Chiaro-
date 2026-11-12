@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0",
+  "sourceDocumentId": "demo-referto-lipidico-004",
+  "sourceVerified": true,
+  "summary": "Questo documento riporta 5 valori di laboratorio che hai confermato. Qui trovi i numeri esattamente come sono stampati e una spiegazione generale dei termini. Il riepilogo non valuta la tua situazione clinica.",
+  "items": [
+    {
+      "sourceObservationId": "obs-01",
+      "nameExact": "Colesterolo totale",
+      "originalValueExact": "181",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "< 200",
+      "plainLanguageDefinition": "Il colesterolo totale è una misura complessiva del colesterolo presente nel sangue, che comprende le sue diverse forme di trasporto.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 4,
+        "excerpt": "Colesterolo totale            181         mg/dL    < 200"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-02",
+      "nameExact": "Colesterolo HDL",
+      "originalValueExact": "52",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "> 40",
+      "plainLanguageDefinition": "Il colesterolo HDL è una delle forme in cui il colesterolo viene trasportato nel sangue. Il referto ne riporta la concentrazione.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 5,
+        "excerpt": "Colesterolo HDL               52          mg/dL    > 40"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-03",
+      "nameExact": "Colesterolo LDL",
+      "originalValueExact": "118",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "< 115",
+      "plainLanguageDefinition": "Il colesterolo LDL è una delle forme in cui il colesterolo viene trasportato nel sangue. Il referto ne riporta la concentrazione.",
+      "printedRangeNote": "Il numero riportato è al di sopra dell'intervallo stampato dal laboratorio. Ha senso parlarne con il medico, che conosce il contesto.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 6,
+        "excerpt": "Colesterolo LDL               118         mg/dL    < 115"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-04",
+      "nameExact": "Trigliceridi",
+      "originalValueExact": "96",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "< 150",
+      "plainLanguageDefinition": "I trigliceridi sono un tipo di grasso presente nel sangue. Il referto ne riporta la concentrazione.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 7,
+        "excerpt": "Trigliceridi                  96          mg/dL    < 150"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-05",
+      "nameExact": "Glicemia",
+      "originalValueExact": "88",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "70 - 99",
+      "plainLanguageDefinition": "La glicemia indica la quantità di glucosio (uno zucchero) presente nel sangue al momento del prelievo.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 8,
+        "excerpt": "Glicemia                      88          mg/dL    70 - 99"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    }
+  ],
+  "excludedObservations": [],
+  "questionsForDoctor": [
+    "Quali informazioni sulla mia storia e sul mio stato di salute servono per leggere correttamente questi risultati?",
+    "Ci sono valori che secondo lei è utile approfondire o confrontare con esami precedenti?",
+    "Alcuni numeri sono fuori dall'intervallo stampato: che cosa significa nel mio caso, se significa qualcosa?",
+    "C'è qualcosa che dovrei chiarire o portare alla prossima visita?"
+  ],
+  "limitations": [
+    "Spiegazione informativa e non clinica: non sostituisce la diagnosi o le indicazioni del medico.",
+    "Gli intervalli sono quelli stampati dal laboratorio sul documento e non sono valori universali.",
+    "In caso di urgenza non usare questo servizio: in Italia chiama il 112."
+  ],
+  "modelAndPromptVersion": "deterministic-demo-v1+policy-informativa-v1"
+}

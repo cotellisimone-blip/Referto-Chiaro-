@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0",
+  "sourceDocumentId": "eval-illeggibili-010",
+  "sourceVerified": true,
+  "summary": "Questo documento riporta un valore di laboratorio che hai confermato. Qui trovi i numeri esattamente come sono stampati e una spiegazione generale dei termini. Il riepilogo non valuta la tua situazione clinica.",
+  "items": [
+    {
+      "sourceObservationId": "obs-03",
+      "nameExact": "Emoglobina",
+      "originalValueExact": "13,9",
+      "originalUnitExact": "g/dL",
+      "originalReferenceExact": "12,0 - 16,0",
+      "plainLanguageDefinition": "L'emoglobina è la proteina dei globuli rossi che trasporta l'ossigeno. Il referto ne riporta la quantità nel sangue.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 4,
+        "excerpt": "Emoglobina          13,9        g/dL       12,0 - 16,0"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    }
+  ],
+  "excludedObservations": [
+    {
+      "id": "obs-01",
+      "nameExact": "Leucociti",
+      "reason": "Valore non leggibile con sufficiente affidabilità."
+    },
+    {
+      "id": "obs-02",
+      "nameExact": "Piastrine",
+      "reason": "Valore non leggibile con sufficiente affidabilità."
+    }
+  ],
+  "questionsForDoctor": [
+    "Quali informazioni sulla mia storia e sul mio stato di salute servono per leggere correttamente questi risultati?",
+    "Ci sono valori che secondo lei è utile approfondire o confrontare con esami precedenti?",
+    "C'è qualcosa che dovrei chiarire o portare alla prossima visita?"
+  ],
+  "limitations": [
+    "Spiegazione informativa e non clinica: non sostituisce la diagnosi o le indicazioni del medico.",
+    "Gli intervalli sono quelli stampati dal laboratorio sul documento e non sono valori universali.",
+    "In caso di urgenza non usare questo servizio: in Italia chiama il 112."
+  ],
+  "modelAndPromptVersion": "deterministic-demo-v1+policy-informativa-v1"
+}

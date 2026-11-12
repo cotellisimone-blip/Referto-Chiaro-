@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0",
+  "sourceDocumentId": "demo-referto-lab-001",
+  "sourceVerified": true,
+  "summary": "Questo documento riporta 5 valori di laboratorio che hai confermato. Qui trovi i numeri esattamente come sono stampati e una spiegazione generale dei termini. Il riepilogo non valuta la tua situazione clinica.",
+  "items": [
+    {
+      "sourceObservationId": "obs-01",
+      "nameExact": "Glicemia",
+      "originalValueExact": "92",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "70 - 99",
+      "plainLanguageDefinition": "La glicemia indica la quantità di glucosio (uno zucchero) presente nel sangue al momento del prelievo.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 4,
+        "excerpt": "Glicemia                      92          mg/dL    70 - 99"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-02",
+      "nameExact": "Emoglobina glicata (HbA1c)",
+      "originalValueExact": "5,1",
+      "originalUnitExact": "%",
+      "originalReferenceExact": "4,0 - 5,6",
+      "plainLanguageDefinition": "L'emoglobina glicata è un esame che riflette l'andamento medio del glucosio nel sangue nelle settimane precedenti al prelievo, non solo nel giorno dell'esame.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 5,
+        "excerpt": "Emoglobina glicata (HbA1c)    5,1         %        4,0 - 5,6"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-03",
+      "nameExact": "Colesterolo totale",
+      "originalValueExact": "173",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "< 200",
+      "plainLanguageDefinition": "Il colesterolo totale è una misura complessiva del colesterolo presente nel sangue, che comprende le sue diverse forme di trasporto.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 6,
+        "excerpt": "Colesterolo totale            173         mg/dL    < 200"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-04",
+      "nameExact": "Colesterolo LDL",
+      "originalValueExact": "134",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "< 115",
+      "plainLanguageDefinition": "Il colesterolo LDL è una delle forme in cui il colesterolo viene trasportato nel sangue. Il referto ne riporta la concentrazione.",
+      "printedRangeNote": "Il numero riportato è al di sopra dell'intervallo stampato dal laboratorio. Ha senso parlarne con il medico, che conosce il contesto.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 7,
+        "excerpt": "Colesterolo LDL               134         mg/dL    < 115"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-06",
+      "nameExact": "Creatinina",
+      "originalValueExact": "0,89",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "0,70 - 1,20",
+      "plainLanguageDefinition": "La creatinina è una sostanza prodotta normalmente dai muscoli ed eliminata attraverso i reni. Il medico la considera, insieme ad altri elementi, quando valuta il funzionamento dei reni.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 9,
+        "excerpt": "Creatinina                    0,89        mg/dL    0,70 - 1,20"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    }
+  ],
+  "excludedObservations": [
+    {
+      "id": "obs-05",
+      "nameExact": "Trigliceridi",
+      "reason": "Valore non leggibile con sufficiente affidabilità."
+    }
+  ],
+  "questionsForDoctor": [
+    "Quali informazioni sulla mia storia e sul mio stato di salute servono per leggere correttamente questi risultati?",
+    "Ci sono valori che secondo lei è utile approfondire o confrontare con esami precedenti?",
+    "Alcuni numeri sono fuori dall'intervallo stampato: che cosa significa nel mio caso, se significa qualcosa?",
+    "C'è qualcosa che dovrei chiarire o portare alla prossima visita?"
+  ],
+  "limitations": [
+    "Spiegazione informativa e non clinica: non sostituisce la diagnosi o le indicazioni del medico.",
+    "Gli intervalli sono quelli stampati dal laboratorio sul documento e non sono valori universali.",
+    "In caso di urgenza non usare questo servizio: in Italia chiama il 112."
+  ],
+  "modelAndPromptVersion": "deterministic-demo-v1+policy-informativa-v1"
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0",
+  "sourceDocumentId": "eval-dati-personali-008",
+  "sourceVerified": true,
+  "summary": "Questo documento riporta un valore di laboratorio che hai confermato. Qui trovi i numeri esattamente come sono stampati e una spiegazione generale dei termini. Il riepilogo non valuta la tua situazione clinica.",
+  "items": [
+    {
+      "sourceObservationId": "obs-01",
+      "nameExact": "Glicemia",
+      "originalValueExact": "97",
+      "originalUnitExact": "mg/dL",
+      "originalReferenceExact": "70 - 99",
+      "plainLanguageDefinition": "La glicemia indica la quantità di glucosio (uno zucchero) presente nel sangue al momento del prelievo.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 4,
+        "excerpt": "Glicemia            97          mg/dL      70 - 99"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    }
+  ],
+  "excludedObservations": [
+    {
+      "id": "obs-02",
+      "nameExact": "Urea",
+      "reason": "Termine non presente nel glossario revisionabile."
+    },
+    {
+      "id": "obs-03",
+      "nameExact": "Acido urico",
+      "reason": "Termine non presente nel glossario revisionabile."
+    }
+  ],
+  "questionsForDoctor": [
+    "Quali informazioni sulla mia storia e sul mio stato di salute servono per leggere correttamente questi risultati?",
+    "Ci sono valori che secondo lei è utile approfondire o confrontare con esami precedenti?",
+    "C'è qualcosa che dovrei chiarire o portare alla prossima visita?"
+  ],
+  "limitations": [
+    "Spiegazione informativa e non clinica: non sostituisce la diagnosi o le indicazioni del medico.",
+    "Gli intervalli sono quelli stampati dal laboratorio sul documento e non sono valori universali.",
+    "In caso di urgenza non usare questo servizio: in Italia chiama il 112."
+  ],
+  "modelAndPromptVersion": "deterministic-demo-v1+policy-informativa-v1"
+}

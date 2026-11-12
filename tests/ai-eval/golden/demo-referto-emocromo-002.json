@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "1.0",
+  "sourceDocumentId": "demo-referto-emocromo-002",
+  "sourceVerified": true,
+  "summary": "Questo documento riporta 7 valori di laboratorio che hai confermato. Qui trovi i numeri esattamente come sono stampati e una spiegazione generale dei termini. Il riepilogo non valuta la tua situazione clinica.",
+  "items": [
+    {
+      "sourceObservationId": "obs-01",
+      "nameExact": "Emoglobina",
+      "originalValueExact": "13,8",
+      "originalUnitExact": "g/dL",
+      "originalReferenceExact": "12,0 - 16,0",
+      "plainLanguageDefinition": "L'emoglobina è la proteina dei globuli rossi che trasporta l'ossigeno. Il referto ne riporta la quantità nel sangue.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 4,
+        "excerpt": "Emoglobina                    13,8        g/dL     12,0 - 16,0"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-02",
+      "nameExact": "Ematocrito",
+      "originalValueExact": "41,2",
+      "originalUnitExact": "%",
+      "originalReferenceExact": "36,0 - 46,0",
+      "plainLanguageDefinition": "L'ematocrito indica quale parte del volume del sangue è occupata dai globuli rossi, espressa in percentuale.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 5,
+        "excerpt": "Ematocrito                    41,2        %        36,0 - 46,0"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-03",
+      "nameExact": "Globuli rossi (RBC)",
+      "originalValueExact": "4,62",
+      "originalUnitExact": "x10^6/µL",
+      "originalReferenceExact": "3,80 - 5,20",
+      "plainLanguageDefinition": "I globuli rossi sono le cellule del sangue che trasportano l'ossigeno. Il referto ne riporta il numero per unità di volume.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 6,
+        "excerpt": "Globuli rossi (RBC)           4,62        x10^6/µL 3,80 - 5,20"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-04",
+      "nameExact": "Globuli bianchi (WBC)",
+      "originalValueExact": "6,1",
+      "originalUnitExact": "x10^3/µL",
+      "originalReferenceExact": "4,0 - 10,0",
+      "plainLanguageDefinition": "I globuli bianchi sono le cellule del sangue coinvolte nelle difese dell'organismo. Il referto ne riporta il numero per unità di volume.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 7,
+        "excerpt": "Globuli bianchi (WBC)         6,1         x10^3/µL 4,0 - 10,0"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-05",
+      "nameExact": "Piastrine (PLT)",
+      "originalValueExact": "238",
+      "originalUnitExact": "x10^3/µL",
+      "originalReferenceExact": "150 - 400",
+      "plainLanguageDefinition": "Le piastrine sono frammenti cellulari che partecipano alla coagulazione del sangue. Il referto ne riporta il numero per unità di volume.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 8,
+        "excerpt": "Piastrine (PLT)               238         x10^3/µL 150 - 400"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-06",
+      "nameExact": "MCV",
+      "originalValueExact": "89",
+      "originalUnitExact": "fL",
+      "originalReferenceExact": "80 - 99",
+      "plainLanguageDefinition": "L'MCV (volume corpuscolare medio) descrive la dimensione media dei globuli rossi.",
+      "printedRangeNote": "Il numero riportato rientra nell'intervallo stampato dal laboratorio.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 9,
+        "excerpt": "MCV                           89          fL       80 - 99"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    },
+    {
+      "sourceObservationId": "obs-07",
+      "nameExact": "Ferritina",
+      "originalValueExact": "18",
+      "originalUnitExact": "ng/mL",
+      "originalReferenceExact": "20 - 200",
+      "plainLanguageDefinition": "La ferritina è una proteina che immagazzina il ferro. Il suo valore nel sangue viene considerato dal medico quando valuta le riserve di ferro.",
+      "printedRangeNote": "Il numero riportato è al di sotto dell'intervallo stampato dal laboratorio. Ha senso parlarne con il medico, che conosce il contesto.",
+      "sourceCitation": {
+        "page": 1,
+        "line": 10,
+        "excerpt": "Ferritina                     18          ng/mL    20 - 200"
+      },
+      "interpretationType": "general-term-definition",
+      "limits": "Il significato per la singola persona va discusso con il medico."
+    }
+  ],
+  "excludedObservations": [],
+  "questionsForDoctor": [
+    "Quali informazioni sulla mia storia e sul mio stato di salute servono per leggere correttamente questi risultati?",
+    "Ci sono valori che secondo lei è utile approfondire o confrontare con esami precedenti?",
+    "Alcuni numeri sono fuori dall'intervallo stampato: che cosa significa nel mio caso, se significa qualcosa?",
+    "C'è qualcosa che dovrei chiarire o portare alla prossima visita?"
+  ],
+  "limitations": [
+    "Spiegazione informativa e non clinica: non sostituisce la diagnosi o le indicazioni del medico.",
+    "Gli intervalli sono quelli stampati dal laboratorio sul documento e non sono valori universali.",
+    "In caso di urgenza non usare questo servizio: in Italia chiama il 112."
+  ],
+  "modelAndPromptVersion": "deterministic-demo-v1+policy-informativa-v1"
+}
