@@ -89,6 +89,7 @@ type VetrinaData = {
   weeks: (VetrinaRow & { week: string })[];
   bySource: (VetrinaRow & { source: string })[];
   byService: { service: string; visits: number; ctas: number; signups: number }[];
+  afterTrial?: { examples: number; usefulYes: number; usefulNo: number; signupsAfterTrial: number };
 };
 
 const SERVICE_NAMES: Record<string, string> = { capisci: "Capisci il tuo referto", "parla-con-un-medico": "Parla con un medico", "secondo-parere": "Secondo parere" };
@@ -131,6 +132,16 @@ function VetrinaSection({ v }: { v: VetrinaData }) {
         head={["Servizio", "Visite alla pagina", "Clic sull'azione", "Iscrizioni", "Iscrizioni su visite"]}
         rows={v.byService.map((r) => [SERVICE_NAMES[r.service] ?? r.service, String(r.visits), String(r.ctas), String(r.signups), pct(r.signups, r.visits)])}
       />
+      {v.afterTrial ? (
+        <>
+          <h3 className="mt-6 text-lg font-semibold text-ink">Dopo la prova, ultimi {v.days} giorni</h3>
+          <Table
+            label="Vetrina dopo la prova"
+            head={["Esempio completato", "«Utile»: sì", "«Utile»: non molto", "Iscrizioni subito dopo una prova", "Iscrizioni su esempi completati"]}
+            rows={[[String(v.afterTrial.examples), String(v.afterTrial.usefulYes), String(v.afterTrial.usefulNo), String(v.afterTrial.signupsAfterTrial), pct(v.afterTrial.signupsAfterTrial, v.afterTrial.examples)]]}
+          />
+        </>
+      ) : null}
     </section>
   );
 }

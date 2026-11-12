@@ -17,7 +17,7 @@ const INPUT = "mt-1.5 block min-h-12 w-full rounded-xl border border-line bg-pap
  * Lista d'attesa. In questa versione dimostrativa non viene inviata alcuna email:
  * lo diciamo prima e dopo l'invio. L'iscrizione è un interesse non vincolante.
  */
-export function WaitlistForm({ interest }: { interest: Interest }) {
+export function WaitlistForm({ interest, afterTrial = false, compact = false }: { interest: Interest; afterTrial?: boolean; compact?: boolean }) {
   const uid = useId();
   const [email, setEmail] = useState("");
   const [organization, setOrganization] = useState("");
@@ -47,6 +47,8 @@ export function WaitlistForm({ interest }: { interest: Interest }) {
       // Ciclo 2: conteggio anonimo dell'iscrizione per servizio (solo il nome dell'evento e la sorgente).
       const ev = AVVISAMI_EVENT[interest];
       if (ev && !r.already) track(ev);
+      // Ciclo 3, fase 1: iscrizione arrivata subito dopo una prova (esempio o account demo).
+      if (afterTrial && !r.already) track("avvisami-da-prova");
       setState({ kind: "done", already: Boolean(r.already) });
     } catch (err) {
       setState({ kind: "error", message: err instanceof Error ? err.message : "Errore imprevisto." });
@@ -55,21 +57,40 @@ export function WaitlistForm({ interest }: { interest: Interest }) {
 
   if (state.kind === "done") {
     return (
-      <div role="status" className="card p-6 sm:p-8">
+      <div role="status" className={compact ? "" : "card p-6 sm:p-8"}>
         <p className="flex items-center gap-2 font-semibold text-ink">
           <CircleCheck aria-hidden className="h-5 w-5 text-sage-deep" /> {state.already ? "Eri già in lista." : "Interesse registrato."}
         </p>
         <p className="mt-3 text-muted">
           In questa versione dimostrativa non inviamo alcuna email: la tua iscrizione è solo un&apos;espressione di interesse non vincolante. Non ti scriveremo finché il servizio non sarà attivo e non ci sarà alcun obbligo per te.
         </p>
+        {AVVISAMI_EVENT[interest] ? (
+          <div className="mt-5 border-t border-line pt-5" data-testid="waitlist-next">
+            <p className="text-sm font-semibold text-ink">Intanto, gratis e senza registrarti:</p>
+            <ul className="mt-2 space-y-1">
+              <li>
+                <Link href="/punto-di-partenza" className="link inline-flex min-h-11 items-center">
+                  Crea il tuo Punto di Partenza
+                </Link>
+              </li>
+              <li>
+                <Link href="/strumenti/preparati-alla-visita" className="link inline-flex min-h-11 items-center">
+                  Preparati alla prossima visita
+                </Link>
+              </li>
+            </ul>
+          </div>
+        ) : null}
       </div>
     );
   }
 
   return (
-    <form onSubmit={submit} noValidate className="card space-y-4 p-6 sm:p-8" aria-label="Lista d'attesa">
+    <form onSubmit={submit} noValidate className={compact ? "space-y-4" : "card space-y-4 p-6 sm:p-8"} aria-label="Lista d'attesa">
       <p className="text-muted">
-        Lascia la tua email per manifestare interesse. In questa versione dimostrativa non inviamo email e l&apos;iscrizione non è vincolante. Non inserire dati sanitari.
+        {compact
+          ? "Solo la tua email: nessuna email in questa versione dimostrativa, nessun impegno. Non inserire dati sanitari."
+          : "Lascia la tua email per manifestare interesse. In questa versione dimostrativa non inviamo email e l'iscrizione non è vincolante. Non inserire dati sanitari."}
       </p>
       <div>
         <label htmlFor={`${uid}-email`} className="block text-sm font-semibold text-ink">

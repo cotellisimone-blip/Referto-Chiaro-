@@ -140,8 +140,16 @@ export async function adminVetrina(adminId: string, days = 30) {
       { service: "parla-con-un-medico", visits: counters["visita-medico"] ?? 0, ctas: counters["cta-medico"] ?? 0, signups: signups["visite"] ?? 0 },
       { service: "secondo-parere", visits: counters["visita-parere"] ?? 0, ctas: counters["cta-parere"] ?? 0, signups: signups["secondo-parere"] ?? 0 },
     ];
+    // Ciclo 3, fase 1: com'è andata la prova e quante iscrizioni arrivano subito dopo.
+    const afterTrial = {
+      examples: counters["esempio-completato"] ?? 0,
+      usefulYes: counters["esempio-utile-si"] ?? 0,
+      usefulNo: counters["esempio-utile-no"] ?? 0,
+      signupsAfterTrial: counters["avvisami-da-prova"] ?? 0,
+    };
     return {
       days,
+      afterTrial,
       weeks: weeks.rows.map((r) => ({ ...r, visits: Number(r.visits), ctas: Number(r.ctas), examples: Number(r.examples), signups: Number(r.signups) })),
       bySource: bySource.rows.map((r) => ({ ...r, visits: Number(r.visits), ctas: Number(r.ctas), examples: Number(r.examples), signups: Number(r.signups) })),
       byService,

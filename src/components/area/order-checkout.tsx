@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowLeft, CheckCircle2, Loader2, RotateCcw } from "lucide-react";
+import { OrdineProvaAvvisami } from "@/components/site/prova-avvisami";
 import { api, ApiError, formatDateTime, formatEuro } from "./api";
 import { StatusChip } from "./status-chip";
 import { SERVICE_NAME } from "./orders-list";
@@ -212,6 +213,7 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
           </Link>
         </section>
       ) : null}
+      {order.status === "paid" ? <OrdineProvaAvvisami orderService={order.service} /> : null}
 
       {order.status === "failed" ? (
         <section className="mt-6 rounded-2xl border border-danger/30 bg-paper p-5 sm:p-6" role="alert">

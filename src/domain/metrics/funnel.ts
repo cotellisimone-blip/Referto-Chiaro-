@@ -23,6 +23,10 @@ export const VETRINA_EVENTS = [
   "avvisami-capisci",
   "avvisami-medico",
   "avvisami-parere",
+  // Ciclo 3, fase 1: com'è andata la prova e quante iscrizioni arrivano subito dopo una prova.
+  "esempio-utile-si",
+  "esempio-utile-no",
+  "avvisami-da-prova",
 ] as const;
 
 export const PUBLIC_EVENTS = ["visita-home", "cta-capisci", "cta-medico", "cta-parere", ...PDP_EVENTS, ...VETRINA_EVENTS] as const;

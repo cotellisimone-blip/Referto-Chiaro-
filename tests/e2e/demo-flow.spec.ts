@@ -92,3 +92,17 @@ test("«prima e dopo» con il cursore, anche su telefono, da tastiera", async ({
   await expect(slider).toHaveValue("100");
   await expectNoHorizontalOverflow(page);
 });
+
+test("ciclo 3: alla fine dell'esempio si risponde a «Ti è stato utile?» e si passa al servizio vero", async ({ page }) => {
+  await page.goto("/referti/esempio");
+  await page.getByRole("button", { name: /Controlla i valori/ }).click();
+  await page.getByRole("button", { name: /Conferma tutti/ }).click();
+  await page.getByRole("button", { name: /Genera la spiegazione/ }).click();
+  const fine = page.getByTestId("esempio-fine");
+  await expect(fine).toBeVisible({ timeout: 15_000 });
+  await fine.getByRole("button", { name: "Non molto" }).click();
+  await expect(fine.getByRole("status").filter({ hasText: /Grazie/ })).toBeVisible();
+  await expect(fine.getByRole("link", { name: /Rendi chiaro il mio referto/ })).toHaveAttribute("href", "/area-personale/nuovo");
+  // Fuori dalla vetrina niente lista d'attesa: il servizio si prova davvero.
+  await expect(page.getByTestId("prova-avvisami")).toHaveCount(0);
+});

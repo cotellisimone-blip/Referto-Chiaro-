@@ -10,6 +10,7 @@ import { VerificationList, isReadableObs, type VerifiableObservation } from "@/c
 import { ExplanationView } from "@/components/report/explanation-view";
 import { Stepper as StepperBase } from "@/components/report/stepper";
 import { track } from "@/components/site/track";
+import { ProvaAvvisami } from "@/components/site/prova-avvisami";
 
 const DOC = lab001 as Omit<typeof lab001, "observations"> & { observations: VerifiableObservation[] };
 const readable = isReadableObs;
@@ -40,7 +41,12 @@ type ReportState =
   | { status: "ready"; explanation: Explanation; generatedAt: string }
   | { status: "error"; message: string };
 
-export function DemoFlow() {
+/**
+ * `vetrina`: nel profilo vetrina la prova finisce con «Avvisami quando parte» (ciclo 3, fase 1);
+ * `startHref`: nel profilo standard, dove inizia il servizio vero.
+ */
+export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" }: { vetrina?: boolean; startHref?: string } = {}) {
+  const [utile, setUtile] = useState<"si" | "no" | null>(null);
   const [step, setStep] = useState<Step>(0);
   const [confirmed, setConfirmed] = useState<string[]>([]);
   const [highlight, setHighlight] = useState<number | null>(null);
@@ -283,19 +289,54 @@ export function DemoFlow() {
           ) : null}
 
           {report.status === "ready" ? (
-            <div className="mt-12 rounded-[var(--radius-lg)] border border-line bg-paper p-6 sm:p-8">
-              <p className="font-serif text-2xl">Ti è stato utile?</p>
-              <p className="mt-2 max-w-2xl text-muted">
-                Il servizio per i referti reali non è ancora attivo: stiamo completando le verifiche cliniche, legali e di sicurezza.
-              </p>
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                <Link href="/servizi" className="btn btn-secondary">
-                  Vedi servizi e prezzi
-                </Link>
-                <Link href="/come-funziona" className="btn btn-ghost">
-                  Come funziona nel dettaglio
-                </Link>
+            <div className="mt-12" data-testid="esempio-fine">
+              <div className="rounded-[var(--radius-lg)] border border-line bg-paper p-6 sm:p-8">
+                <p className="font-serif text-2xl" id="esempio-utile">
+                  Ti è stato utile?
+                </p>
+                {utile === null ? (
+                  <div className="mt-4 flex flex-wrap gap-3" role="group" aria-labelledby="esempio-utile">
+                    <button
+                      type="button"
+                      className="btn btn-secondary min-h-11"
+                      onClick={() => {
+                        setUtile("si");
+                        track("esempio-utile-si");
+                      }}
+                    >
+                      Sì, è chiaro
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-ghost min-h-11"
+                      onClick={() => {
+                        setUtile("no");
+                        track("esempio-utile-no");
+                      }}
+                    >
+                      Non molto
+                    </button>
+                  </div>
+                ) : (
+                  <p role="status" className="mt-3 text-muted">
+                    {utile === "si" ? "Grazie. Lo contiamo, senza sapere chi sei." : "Grazie: ce lo segniamo, senza sapere chi sei, per migliorare le spiegazioni."}
+                  </p>
+                )}
+                <p className="mt-4 max-w-2xl text-muted">
+                  Il servizio per i referti reali non è ancora attivo: stiamo completando le verifiche cliniche, legali e di sicurezza.
+                </p>
+                {vetrina ? null : (
+                  <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                    <Link href={startHref} className="btn btn-primary">
+                      Rendi chiaro il mio referto <ArrowRight aria-hidden className="h-4 w-4" />
+                    </Link>
+                    <Link href="/servizi" className="btn btn-ghost">
+                      Vedi servizi e prezzi
+                    </Link>
+                  </div>
+                )}
               </div>
+              {vetrina ? <ProvaAvvisami servizio="capisci" titolo="Vuoi la stessa spiegazione per il tuo referto?" /> : null}
             </div>
           ) : null}
         </section>

@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { AreaNav } from "@/components/area/area-nav";
+import { AreaProvaAvvisami, VetrinaProvider } from "@/components/site/prova-avvisami";
+import { isVetrina } from "@/domain/offerta";
 
 /**
  * Tutte le pagine dell'area personale richiedono una sessione. La lettura del cookie avviene
@@ -21,7 +23,13 @@ async function Gate({ children }: { children: React.ReactNode }) {
   return (
     <div data-bottom-nav className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 pb-28 pt-6 sm:pt-10 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10 lg:pb-16">
       <AreaNav email={user.email} displayName={user.displayName} isDemo={user.isDemo} />
-      <div className="min-w-0">{children}</div>
+      <VetrinaProvider vetrina={isVetrina()}>
+        <div className="min-w-0">
+          {children}
+          {/* Ciclo 3, fase 1: in vetrina la prova con l'account demo finisce con «Avvisami quando parte». */}
+          <AreaProvaAvvisami />
+        </div>
+      </VetrinaProvider>
     </div>
   );
 }
