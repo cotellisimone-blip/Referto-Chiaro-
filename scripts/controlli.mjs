@@ -33,7 +33,8 @@ for (const p of PASSI) {
   const t0 = Date.now();
   const r = spawnSync(p.cmd, { shell: true, encoding: "utf8", env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" }, maxBuffer: 64 * 1024 * 1024 });
   const out = `${r.stdout ?? ""}${r.stderr ?? ""}`;
-  process.stdout.write(out.split("\n").slice(-15).join("\n") + "\n");
+  // Se il passo fallisce mostriamo molto di più: su GitHub è l'unico posto dove leggere l'errore.
+  process.stdout.write(out.split("\n").slice(r.status === 0 ? -15 : -400).join("\n") + "\n");
   // Riga utile del risultato: conteggi di vitest o playwright, se ci sono.
   const riassunto =
     out.match(/Tests\s+[^\n]*/)?.[0]?.trim() ??
