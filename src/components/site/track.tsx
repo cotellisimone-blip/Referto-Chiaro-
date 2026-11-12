@@ -46,8 +46,30 @@ export function TrackClicks() {
   return null;
 }
 
+/**
+ * Ciclo 3, fase 4: una visita conta una volta per scheda. Non si contano le ricariche né il ritorno con «indietro»
+ * che ricarica la pagina, né la stessa pagina rivista navigando nel sito. Tutto in memoria: niente cookie né storage.
+ */
+const viewed = new Set<string>();
+// Il tipo di caricamento vale per il documento: conta solo per la prima pagina vista, non per la navigazione interna dopo.
+let firstView = true;
+export function isRepeatLoad(): boolean {
+  try {
+    const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+    return nav?.type === "reload" || nav?.type === "back_forward";
+  } catch {
+    return false;
+  }
+}
+
 export function TrackView({ event }: { event: string }) {
-  // Nessun dato salvato sul dispositivo (niente cookie né storage): si conta una visita per caricamento.
-  useEffect(() => track(event), [event]);
+  useEffect(() => {
+    if (viewed.has(event)) return;
+    viewed.add(event);
+    const repeat = firstView && isRepeatLoad();
+    firstView = false;
+    if (repeat) return;
+    track(event);
+  }, [event]);
   return null;
 }

@@ -16,7 +16,7 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${PORT}`, trace: "off" },
   webServer: {
     command: `rm -rf .data/e2e-vetrina && npx next build && npx next start -p ${PORT}`,
-    env: { ...ENV, PGLITE_DATA_DIR: ".data/e2e-vetrina", COOKIE_INSECURE: "true", AUTH_RATE_LIMIT_PER_10MIN: "1000", WAITLIST_RATE_LIMIT_PER_10MIN: "1000" },
+    env: { ...ENV, PGLITE_DATA_DIR: ".data/e2e-vetrina", COOKIE_INSECURE: "true", AUTH_RATE_LIMIT_PER_10MIN: "1000", WAITLIST_RATE_LIMIT_PER_10MIN: "1000", FUNNEL_COUNT_HEADLESS: "true" },
     url: `http://localhost:${PORT}`,
     reuseExistingServer: false,
     timeout: 400_000,

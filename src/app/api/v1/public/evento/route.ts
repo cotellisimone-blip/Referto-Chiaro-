@@ -1,5 +1,8 @@
 import { withSystem } from "@/db/client";
-import { clientKey, rateLimit } from "@/lib/rate-limit";
+import { createHash } from "node:crypto";
+import { clientKey } from "@/lib/rate-limit";
+import { rateLimitShared } from "@/lib/rate-limit-shared";
+import { isAutomatedAgent } from "@/domain/metrics/bots";
 import { isPublicEvent, toSource } from "@/domain/metrics/funnel";
 
 /**
@@ -7,7 +10,11 @@ import { isPublicEvent, toSource } from "@/domain/metrics/funnel";
  * Nessun cookie, nessun identificativo, nessun IP salvato (l'IP serve solo al limite di frequenza in memoria).
  */
 export async function POST(req: Request) {
-  const rl = rateLimit(`evento:${clientKey(req)}`, 60, 10 * 60_000);
+  // Ciclo 3, fase 4: robot e browser automatici non contano (rispondiamo 204 come sempre, senza dire perché).
+  if (isAutomatedAgent(req.headers.get("user-agent"), process.env)) return new Response(null, { status: 204 });
+  // Limite condiviso tra le istanze (su Vercel la memoria non lo è). La chiave è un'impronta dell'indirizzo, non l'indirizzo.
+  const key = createHash("sha256").update(`evento:${clientKey(req)}`).digest("base64url").slice(0, 22);
+  const rl = await rateLimitShared(`evento:${key}`, 60, 10 * 60_000);
   if (!rl.ok) return new Response(null, { status: 204 });
   let event: unknown = null;
   let rawSource: unknown = undefined;

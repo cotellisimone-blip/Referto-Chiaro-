@@ -3,7 +3,7 @@ import { resetDatabaseForTests, withSystem } from "@/db/client";
 import { POST } from "@/app/api/v1/public/evento/route";
 import { isPublicEvent } from "@/domain/metrics/funnel";
 
-const req = (body: string) => new Request("http://localhost/api/v1/public/evento", { method: "POST", body, headers: { "content-type": "application/json" } });
+const req = (body: string) => new Request("http://localhost/api/v1/public/evento", { method: "POST", body, headers: { "content-type": "application/json", "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 Mobile Safari/604.1" } });
 
 describe("funnel anonimo", () => {
   beforeAll(async () => {

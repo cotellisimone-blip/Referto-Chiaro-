@@ -112,7 +112,8 @@ function VetrinaSection({ v }: { v: VetrinaData }) {
       <h2 id="vetrina-titolo" className="font-serif text-2xl text-ink">Vetrina: chi arriva e chi chiede di essere avvisato</h2>
       <p className="mt-1 text-sm text-muted">
         Contatori anonimi (nessun cookie, nessun IP) e iscrizioni alla lista d&apos;attesa dei tre servizi. «Iscrizioni su visite» è il numero da guardare ogni settimana; le soglie
-        per decidere sono in PRODUCT_ROADMAP.md.
+        per decidere sono in PRODUCT_ROADMAP.md. Dal 12/11/2026 una visita conta una volta per scheda: ricariche, robot, anteprime dei link e browser
+        automatici sono esclusi.
       </p>
       <h3 className="mt-6 text-lg font-semibold text-ink">Per settimana</h3>
       <Table
