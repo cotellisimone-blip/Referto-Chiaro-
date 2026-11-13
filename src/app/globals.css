@@ -222,6 +222,10 @@
     -webkit-text-size-adjust: 100%;
     scroll-padding-top: 96px;
   }
+  /* Un gruppo di campi non può allargare la pagina: di suo un fieldset non si restringe sotto la parola più lunga. */
+  fieldset {
+    min-width: 0;
+  }
   body {
     background: var(--color-canvas);
     color: var(--color-ink);
@@ -444,6 +448,22 @@
     padding-block: 0.625rem;
     text-align: center;
     white-space: normal;
+  }
+  /* Schermi molto stretti, o stretti con il testo grande: un'etichetta lunga va a capo dentro il pulsante,
+     invece di allargare la pagina oltre lo schermo. */
+  @media (max-width: 379.98px) {
+    .btn:not(.btn-lg, .btn-wrap) {
+      padding-block: 0.5rem;
+      text-align: center;
+      white-space: normal;
+    }
+  }
+  @media (max-width: 479.98px) {
+    :root[data-size="large"] .btn:not(.btn-lg, .btn-wrap) {
+      padding-block: 0.5rem;
+      text-align: center;
+      white-space: normal;
+    }
   }
   .btn .btn-arrow {
     transition: transform 220ms var(--ease-out-soft);
@@ -1156,6 +1176,35 @@
   .hdr-narrow-only {
     display: flex;
   }
+}
+/* Con il testo grande logo e tre pulsanti non stanno in riga fino a 396 px (i telefoni più diffusi):
+   anche lì «aA» passa nel menu, con la sua etichetta. */
+@media (max-width: 395.98px) {
+  :root[data-size="large"] .hdr-wide-only {
+    display: none !important;
+  }
+  :root[data-size="large"] .hdr-narrow-only {
+    display: flex;
+  }
+}
+/* Testo grande su schermi da 320 px: il logo si stringe quanto basta a lasciare il margine a destra. */
+@media (max-width: 339.98px) {
+  :root[data-size="large"] .site-header-row .brand-logo {
+    gap: 0.5rem;
+  }
+  :root[data-size="large"] .site-header-row .brand-logo-mark {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  :root[data-size="large"] .site-header-row .brand-logo-word {
+    font-size: 1.125rem;
+  }
+}
+/* «aA» acceso si vede: pieno, turchese (tinta fissa, leggibile anche nel tema scuro). */
+.icon-btn[aria-pressed="true"] {
+  background: linear-gradient(180deg, #00827b, #006c66);
+  color: #fff;
+  box-shadow: none;
 }
 
 /* ───────── Upgrade grafica e funzionalità (8/11/2026): ricerca, strumenti, cruscotto, lettura ───────── */
@@ -2026,14 +2075,25 @@ input[type="search"]::-webkit-search-decoration {
     .payoff {
       font-size: 1.875rem;
     }
+    /* Senza icona resta una colonna sola: occhiello e titolo uno sotto l'altro. */
     .announce {
-      padding-left: 0.875rem;
+      grid-template-columns: minmax(0, 1fr);
+      padding: 0.75rem 0.875rem 0;
     }
     .announce > .tile-ico {
       display: none;
     }
+    .announce-kicker {
+      margin-bottom: 0.25rem;
+    }
     .announce-actions {
-      padding-left: 0;
+      padding-inline: 0;
+    }
+  }
+  /* Testo grande sui telefoni da 360–390 px: «secondo parere.» resta su una riga. */
+  @media (min-width: 360px) and (max-width: 389.98px) {
+    :root[data-size="large"] .payoff {
+      font-size: 2rem;
     }
   }
   @media (min-width: 640px) {
@@ -3372,6 +3432,7 @@ input[type="search"]::-webkit-search-decoration {
     line-height: 1.15;
     letter-spacing: -0.02em;
     color: var(--color-ink);
+    overflow-wrap: anywhere;
   }
   .form-card-text {
     margin-top: 0.625rem;
@@ -3403,6 +3464,7 @@ input[type="search"]::-webkit-search-decoration {
     letter-spacing: -0.032em;
     line-height: 1.06;
     color: var(--color-ink);
+    overflow-wrap: anywhere;
   }
   .area-lead {
     margin-top: 0.75rem;
@@ -3542,6 +3604,11 @@ input[type="search"]::-webkit-search-decoration {
     line-height: 1.35;
     color: var(--color-ink);
     cursor: pointer;
+    /* Parole lunghe («Elettrocardiogramma») su schermi stretti: vanno a capo dentro la riga, non fuori. */
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    /* Il trattino solo nelle parole davvero lunghe: «esempio» resta intero. */
+    hyphenate-limit-chars: 12 4 4;
     transition:
       border-color 0.15s,
       background-color 0.15s;
@@ -3577,8 +3644,15 @@ input[type="search"]::-webkit-search-decoration {
   }
   .form-card-head {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.875rem;
+  }
+  /* Accanto all'icona il titolo ha sempre lo spazio di una parola lunga («Videoconsulto»):
+     se lo schermo è troppo stretto passa sotto l'icona, invece di spezzare la parola. */
+  .form-card-head > .form-card-title {
+    flex: 1 1 12.5rem;
+    min-width: 0;
   }
   .form-card-body {
     margin-top: 1.125rem;
@@ -3593,6 +3667,16 @@ input[type="search"]::-webkit-search-decoration {
     border-radius: 1.125rem;
     padding: 0.875rem 1rem;
     box-shadow: none;
+  }
+  @media (max-width: 379.98px) {
+    .callout-compact .callout-ico {
+      display: none;
+    }
+  }
+  @media (max-width: 479.98px) {
+    :root[data-size="large"] .callout-compact .callout-ico {
+      display: none;
+    }
   }
   .callout-compact .callout-text {
     margin-top: 0;
@@ -3795,6 +3879,14 @@ input[type="search"]::-webkit-search-decoration {
     letter-spacing: -0.02em;
     line-height: 1.15;
     color: var(--color-ink);
+  }
+  .stat-sub {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--color-ink-soft);
   }
 
   /* Tabelle di servizio: testo leggibile, righe ariose; su telefono scorrono dentro il loro riquadro. */
@@ -5039,6 +5131,7 @@ input[type="search"]::-webkit-search-decoration {
   /* ───────── Come funziona: una scheda per servizio, «Tu» e «Ricevi» affiancati ───────── */
   .how-grid {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.875rem;
   }
   .how-grid > li {
@@ -5580,9 +5673,10 @@ input[type="search"]::-webkit-search-decoration {
 .pdp-art-badge { position: absolute; right: -0.25rem; bottom: 0; display: flex; height: 2.15rem; width: 2.15rem; align-items: center; justify-content: center; border-radius: 999px; background: var(--color-teal); color: var(--color-paper); box-shadow: 0 0 0 3px var(--color-paper), var(--shadow-card); }
 .pdp-art-badge svg { height: 1.05rem; width: 1.05rem; }
 
-/* Avanzamento: pallini uniti da una linea; su telefono resta solo l'etichetta del passo corrente. */
+/* Avanzamento: pallini uniti da una linea; su telefono, sotto i pallini, una riga con il nome intero del passo attuale. */
 .pdp-top { scroll-margin-top: 6.25rem; }
-.pdp-stepper { position: relative; display: flex; align-items: center; border-radius: var(--radius-lg); border: 1px solid var(--color-line); background: var(--color-paper); padding: 0.9rem 1rem 2.85rem; box-shadow: var(--shadow-card); }
+.pdp-stepper { position: relative; border-radius: var(--radius-lg); border: 1px solid var(--color-line); background: var(--color-paper); padding: 0.9rem 1rem; box-shadow: var(--shadow-card); }
+.pdp-steps { display: flex; align-items: center; }
 .pdp-step { display: flex; align-items: center; font-size: 1rem; font-weight: 600; color: var(--color-muted); }
 .pdp-step:not(:first-child) { flex: 1; }
 .pdp-step:not(:first-child)::before { content: ""; flex: 1; height: 3px; margin: 0 0.4rem; border-radius: 999px; background: var(--color-line); }
@@ -5591,26 +5685,29 @@ input[type="search"]::-webkit-search-decoration {
 .pdp-step-done .pdp-step-dot { border-color: var(--color-teal); background: var(--color-teal); color: var(--color-paper); }
 .pdp-step-current { color: var(--color-ink); font-weight: 800; }
 .pdp-step-current .pdp-step-dot { border-color: var(--color-teal); background: var(--color-teal); color: var(--color-paper); box-shadow: 0 0 0 5px var(--color-marker-soft); }
-/* I nomi degli altri passi non si vedono su telefono, ma restano nella lista per i lettori di schermo. */
+/* Su telefono i nomi dei passi non si vedono accanto ai pallini, ma restano nella lista per i lettori di schermo. */
 .pdp-step-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.pdp-step-current .pdp-step-label { left: 1rem; right: 1rem; bottom: 0.75rem; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; text-align: center; line-height: 1.3; }
-.pdp-step-count { font-weight: 600; color: var(--color-muted); }
-/* Percorso concluso: nessun passo «attuale», quindi niente spazio riservato al suo nome. */
-@media (max-width: 767.98px) {
-  .pdp-stepper:not(:has(.pdp-step-current)) { padding-bottom: 0.9rem; }
-}
+/* Il passo attuale, scritto per intero sotto i pallini: sta nel flusso, quindi può andare a capo senza coprire nulla. */
+.pdp-step-now { margin-top: 0.7rem; text-align: center; font-size: 1rem; font-weight: 800; line-height: 1.3; color: var(--color-ink); text-wrap: balance; }
+/* «Passo 2 di 5 ·» e il nome del passo sono due blocchi: a capo si va solo tra l'uno e l'altro,
+   mai con «· Il» in fondo alla riga o con il punto da solo in testa. */
+.pdp-step-count { font-weight: 600; color: var(--color-muted); white-space: nowrap; }
+.pdp-step-name { display: inline-block; }
 @media (min-width: 768px) {
-  .pdp-stepper { display: grid; grid-template-columns: repeat(var(--steps, 5), minmax(0, 1fr)); align-items: start; padding: 1.25rem 1rem 1.1rem; }
+  .pdp-stepper { padding: 1.25rem 1rem 1.1rem; }
+  .pdp-steps { display: grid; grid-template-columns: repeat(var(--steps, 5), minmax(0, 1fr)); align-items: start; }
   .pdp-step, .pdp-step:not(:first-child) { position: relative; flex-direction: column; gap: 0.55rem; text-align: center; }
   .pdp-step:not(:first-child)::before { position: absolute; top: calc(1.125rem - 1.5px); left: calc(-50% + 1.75rem); right: calc(50% + 1.75rem); margin: 0; }
-  .pdp-step-label, .pdp-step-current .pdp-step-label { position: static; display: block; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; }
-  .pdp-step-count { display: none; }
+  .pdp-step-label { position: static; display: block; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; }
+  .pdp-step-now { display: none; }
 }
 
 .pdp-q { font-size: 1.875rem; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; color: var(--color-ink); outline: none; }
 @media (min-width: 640px) { .pdp-q { font-size: 2.25rem; } }
 .pdp-option, .pdp-pill { display: flex; cursor: pointer; align-items: center; gap: 0.9rem; border-radius: var(--radius-md); border: 2px solid var(--color-line); background: var(--color-paper); min-height: 3.5rem; padding: 0.75rem 1.1rem; transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s; }
 .pdp-option-goal { border-radius: 18px; padding: 0.9rem 1.1rem; }
+/* Parole lunghe su schermi stretti: a capo dentro la scelta, mai fuori dallo schermo. */
+.pdp-option { min-width: 0; overflow-wrap: anywhere; }
 .pdp-pill { display: inline-flex; min-height: 3rem; border-radius: 999px; padding: 0.5rem 1.1rem; font-size: 1.0625rem; font-weight: 700; color: var(--color-ink); background: var(--color-canvas); }
 .pdp-option input, .pdp-pill input { height: 1.35rem; width: 1.35rem; flex-shrink: 0; accent-color: var(--color-teal); }
 .pdp-option:hover, .pdp-pill:hover { border-color: color-mix(in srgb, var(--color-teal) 50%, transparent); }
@@ -5736,9 +5833,14 @@ input[type="search"]::-webkit-search-decoration {
 .pdp-areas-wrap { position: relative; padding-bottom: 1rem; }
 @media (min-width: 1024px) { .pdp-areas-wrap { margin-top: -1.75rem; } }
 .pdp-areas-panel { border-radius: var(--radius-xl); border: 1px solid var(--color-line); background: var(--color-paper); padding: 1.35rem; box-shadow: var(--shadow-lift); }
-.pdp-tiles { display: grid; gap: 0.65rem; }
-.pdp-tile { display: flex; align-items: center; gap: 0.85rem; border-radius: 18px; border: 1px solid var(--color-line); background: var(--color-canvas); padding: 0.7rem 0.85rem; }
-.pdp-tile-title { min-width: 0; flex: 1; font-size: 1.0625rem; font-weight: 800; line-height: 1.2; color: var(--color-ink); }
+/* Una colonna vera (non «auto»): la riga più lunga non allarga più l'elenco oltre lo schermo.
+   Su telefono e tablet ogni area è icona a sinistra, titolo ed etichetta uno sotto l'altro a destra:
+   la stessa forma per tutte, con qualsiasi grandezza del testo. */
+.pdp-tiles { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.65rem; }
+.pdp-tile { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 0.3rem 0.85rem; border-radius: 18px; border: 1px solid var(--color-line); background: var(--color-canvas); padding: 0.7rem 0.85rem; }
+.pdp-tile > :first-child { grid-row: 1 / span 2; }
+.pdp-tile > .pdp-chip { grid-column: 2; justify-self: start; }
+.pdp-tile-title { min-width: 0; font-size: 1.0625rem; font-weight: 800; line-height: 1.2; color: var(--color-ink); }
 @media (min-width: 640px) {
   .pdp-areas-panel { padding: 2rem; }
   .pdp-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem; }
@@ -5746,8 +5848,8 @@ input[type="search"]::-webkit-search-decoration {
 @media (min-width: 1024px) {
   .pdp-areas-panel { padding: 2.5rem; }
   .pdp-tiles { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .pdp-tile { flex-direction: column; align-items: flex-start; gap: 0.8rem; padding: 1.1rem; }
-  .pdp-tile-title { font-size: 1.125rem; }
+  .pdp-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; padding: 1.1rem; }
+  .pdp-tile-title { flex: 1; font-size: 1.125rem; }
 }
 .pdp-passi { display: grid; gap: 1rem; }
 .pdp-passo { position: relative; border-radius: var(--radius-lg); border: 1px solid var(--color-line); background: var(--color-paper); padding: 1.5rem; box-shadow: var(--shadow-card); }

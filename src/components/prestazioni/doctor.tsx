@@ -88,7 +88,9 @@ export function DoctorPortal() {
         <h1 className="area-title mt-3">{d ? d.name.replace(/ \(.*\)$/, "") : "Portale medico"}</h1>
         {d ? (
           <p className="area-lead">
-            {d.ordine} · {d.role === "specialista" ? specialtyName(s, d.specialtyId) : "Medicina generale"} · profilo dimostrativo
+            {d.ordine}
+            {"\u00a0"}· {d.role === "specialista" ? specialtyName(s, d.specialtyId) : "Medicina generale"}
+            {"\u00a0"}· profilo dimostrativo
           </p>
         ) : (
           <p className="area-lead">Scegli qui sotto un profilo di prova per vedere le richieste come le vede un medico.</p>
@@ -374,9 +376,10 @@ export function DoctorRequestPage({ id }: { id: string }) {
         {back}
         <h1 className="area-title mt-1">{PRESTAZIONI[r.kind].title}</h1>
         <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[1.0625rem] text-ink-soft">
-          <StatusBadge status={r.status} /> <span>{r.code}</span>{" "}
+          <StatusBadge status={r.status} />
           <span>
-            · <Price kind={r.kind} cents={r.priceCents} />
+            {r.code}
+            {"\u00a0"}· <Price kind={r.kind} cents={r.priceCents} />
           </span>
         </p>
         <p className="meta mt-2">Assegnata a te: {getDoctor(s, doctorId)?.name}</p>

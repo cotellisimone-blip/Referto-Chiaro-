@@ -69,7 +69,8 @@ export function FeaturedPrestazione({ vetrina = false }: { vetrina?: boolean }) 
         {s ? copy.eyebrow(s) : "Novità · Brescia città"}
       </p>
       <p className="announce-title">
-        {copy.title} · <Price kind={kind} />
+        {copy.title}
+        {"\u00a0"}· <Price kind={kind} />
       </p>
       <p className="announce-actions">
         <Link href={info.startHref} data-track={`cta-${kind}`} className="announce-cta">

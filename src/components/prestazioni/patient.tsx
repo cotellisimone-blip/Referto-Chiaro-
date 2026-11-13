@@ -613,9 +613,13 @@ export function PatientRequest({ id }: { id: string }) {
         </Link>
         <h1 className="area-title mt-1">{info.title}</h1>
         <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[1.0625rem] text-ink-soft">
-          <StatusBadge status={r.status} /> <span>Richiesta {r.code}</span>
-          {r.kind === "parere" ? <span>· {specialtyName(s, r.specialtyId)}</span> : null}
-          {!r.forWhom.self ? <span>· per {r.forWhom.name}{r.forWhom.relation ? ` (${r.forWhom.relation})` : ""}</span> : null}
+          <StatusBadge status={r.status} />
+          {/* Un solo blocco di testo: quando va a capo il punto resta in coda alla riga, mai da solo in testa. */}
+          <span>
+            Richiesta {r.code}
+            {r.kind === "parere" ? `\u00a0· ${specialtyName(s, r.specialtyId)}` : ""}
+            {!r.forWhom.self ? `\u00a0· per ${r.forWhom.name}${r.forWhom.relation ? ` (${r.forWhom.relation})` : ""}` : ""}
+          </span>
         </p>
       </header>
 
@@ -784,7 +788,7 @@ export function PatientRequest({ id }: { id: string }) {
             ) : (
               <div className="video-room" role="region" aria-label="Videoconsulto simulato">
                 <p className="video-room-kicker">
-                  <span aria-hidden className="live-dot" /> Video simulato · nessuna chiamata reale
+                  <span aria-hidden className="live-dot" /> Video simulato{"\u00a0"}· nessuna chiamata reale
                 </p>
                 <p className="video-room-title">In collegamento con {doctor?.name}</p>
                 <p className="video-room-text">Al termine il medico ti lascia qui {r.kind === "parere" ? "la sintesi scritta, nei tempi concordati" : "un riepilogo scritto"}.</p>

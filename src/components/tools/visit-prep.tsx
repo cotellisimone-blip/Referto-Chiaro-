@@ -4,7 +4,8 @@ import { useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { clsx } from "clsx";
-import { ArrowLeft, ArrowRight, Briefcase, Check, Copy, Info, ListChecks, MessageCircleQuestionMark, PencilLine, Printer, RotateCcw, type LucideIcon } from "lucide-react";
+import { Stepper } from "@/components/report/stepper";
+import { ArrowLeft, ArrowRight, Briefcase, Copy, Info, ListChecks, MessageCircleQuestionMark, PencilLine, Printer, RotateCcw, type LucideIcon } from "lucide-react";
 import { HAVE, TOPICS, VISIT_TYPES, buildVisitPlan, parseVisitParams, type HaveId, type TopicId, type VisitType } from "@/content/preparati-visita";
 
 const STEPS = ["Che visita è", "Che cosa hai", "Di che cosa parlare"];
@@ -68,25 +69,7 @@ export function VisitPrep() {
             <p className="sr-only" aria-live="polite">
               Passo {step} di {STEPS.length}: {STEPS[step - 1]}
             </p>
-            <ol className="pdp-stepper no-print mb-8" style={{ "--steps": STEPS.length } as React.CSSProperties} aria-label="Avanzamento">
-              {STEPS.map((s, i) => {
-                const n = i + 1;
-                const state = n < step ? "done" : n === step ? "current" : "todo";
-                return (
-                  <li key={s} className={clsx("pdp-step", `pdp-step-${state}`)} aria-current={state === "current" ? "step" : undefined}>
-                    <span aria-hidden className="pdp-step-dot">
-                      {state === "done" ? <Check className="h-4 w-4" /> : n}
-                    </span>
-                    <span className="pdp-step-label">
-                      <span aria-hidden className="pdp-step-count">
-                        Passo {n} di {STEPS.length} ·{" "}
-                      </span>
-                      {s}
-                    </span>
-                  </li>
-                );
-              })}
-            </ol>
+            <Stepper steps={STEPS} step={step - 1} label="Avanzamento" className="mb-8" />
             {step === 1 ? (
               <fieldset>
                 <legend className="pdp-q">Che visita hai in programma?</legend>

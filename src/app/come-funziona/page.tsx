@@ -53,11 +53,12 @@ export default function ComeFunzionaPage() {
               return (
                 <li key={s.key} className={`tone-${s.tone}`}>
                   <article className="how-card">
-                    <div className="flex items-center gap-4">
+                    {/* Il titolo tiene accanto all'icona lo spazio di una parola lunga; se non c'è, passa sotto. */}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
                       <span aria-hidden className="tile-ico tile-ico-tone">
                         <Icon />
                       </span>
-                      <h3 className="svc-card-title">
+                      <h3 className="svc-card-title min-w-0 flex-[1_1_12.5rem]">
                         <Link href={s.href} className="after:absolute after:inset-0 focus-visible:outline-none">
                           {s.name}
                         </Link>

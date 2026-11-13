@@ -169,10 +169,16 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                   {signedIn ? "Vai all'area personale" : "Accedi all'area personale"}
                 </Link>
               </div>
-              <div className="mt-5 flex items-center gap-2 text-[1rem] text-muted">
-                <TextSizeToggle className="hdr-narrow-only icon-btn icon-btn-solid px-2 font-serif" />
-                <ThemeToggle className="icon-btn icon-btn-solid" />
-                <span className="ml-1">Tema chiaro o scuro</span>
+              {/* Su schermi stretti (o con il testo grande) il pulsante «aA» non sta nella testata: qui ha la sua etichetta. */}
+              <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-[1rem] text-ink-soft">
+                <span className="hdr-narrow-only items-center gap-2.5">
+                  <TextSizeToggle className="icon-btn icon-btn-solid px-2 font-serif" />
+                  <span aria-hidden>Testo più grande</span>
+                </span>
+                <span className="flex items-center gap-2.5">
+                  <ThemeToggle className="icon-btn icon-btn-solid" />
+                  <span>Tema chiaro o scuro</span>
+                </span>
               </div>
             </nav>
           </div>

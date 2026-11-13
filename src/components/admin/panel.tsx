@@ -182,13 +182,14 @@ function VetrinaSection({ v }: { v: VetrinaData }) {
 export function AdminOverview() {
   const { data, error } = useLoad<{ overview: Record<string, number>; funnel?: { days: number; steps: Record<string, number> }; vetrina?: VetrinaData; aiCosts?: { days: number; runs: number; documents: number; inputTokens: number; outputTokens: number; usd: number; usdPerDocument: number } }>("/api/v1/admin/panoramica");
   const o = data?.overview;
-  const items: [string, string][] = o
+  // Voce, numero e, quando serve, una riga di dettaglio sotto: il numero resta intero anche su telefono.
+  const items: [string, string, string?][] = o
     ? [
-        ["Utenti", `${o.users} (${o.demoUsers} demo)`],
+        ["Utenti", String(o.users), `di cui ${o.demoUsers} demo`],
         ["Documenti", String(o.documents)],
         ["Report pronti", String(o.reportsReady)],
         ["Dossier", String(o.dossiers)],
-        ["Ordini pagati", `${o.ordersPaid} · ${euro(o.revenueCents)}`],
+        ["Ordini pagati", String(o.ordersPaid), euro(o.revenueCents)],
         ["Ordini in attesa", String(o.ordersPending)],
         ["Lista d'attesa", String(o.waitlist)],
         ["Casi aperti", String(o.casesOpen)],
@@ -199,10 +200,13 @@ export function AdminOverview() {
   return (
     <Frame title="Panoramica" lead="Numeri dell'istanza. In demo sono dati inventati e account dimostrativi." error={error}>
       <dl className="stat-grid">
-        {items.map(([k, v]) => (
+        {items.map(([k, v, sub]) => (
           <div key={k} className="stat-card">
             <dt>{k}</dt>
-            <dd className="tabular">{v}</dd>
+            <dd className="tabular">
+              {v}
+              {sub ? <span className="stat-sub">{sub}</span> : null}
+            </dd>
           </div>
         ))}
       </dl>

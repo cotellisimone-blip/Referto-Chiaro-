@@ -1,6 +1,8 @@
 # Design system — Cura Privata
 *8 novembre 2026 · token in `src/app/globals.css`*
 
+> **Aggiornamento del 13 novembre 2026.** Grafica, misure e componenti sono stati rifatti con il sistema «Luce»: la descrizione valida è in [`GRAFICA_LUCE.md`](GRAFICA_LUCE.md). Di questa pagina restano attuali il simbolo, i nomi dei colori e la distinzione tra demo e produzione; valori dei colori, raggi, carattere dei titoli e componenti sono quelli del documento nuovo.
+
 ## Idea
 «Calma editoriale + affidabilità da banca digitale + chiarezza da portale sanitario» (kit, `02_DESIGN_SYSTEM`). Superfici carta e bianche, petrolio per le aree forti, turchese per le azioni, menta come segno di marca.
 
