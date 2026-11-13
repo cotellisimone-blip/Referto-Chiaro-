@@ -3,7 +3,7 @@ import { gotoReady } from "./_lib/ready";
 import AxeBuilder from "@axe-core/playwright";
 import { expectAccessible } from "./_lib/a11y";
 
-const PAGES = ["/", "/referti", "/servizi/archivio", "/servizi/parla-con-un-medico", "/servizi/prevenzione", "/referti/esempio", "/prezzi", "/strumenti/preparati-alla-visita", "/come-funziona", "/servizi", "/domande-frequenti", "/servizi/secondo-parere", "/per-le-strutture", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/inizia", "/chi-siamo", "/per-i-medici", "/stato-del-progetto", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"];
+const PAGES = ["/", "/referti", "/famiglia", "/servizi/parla-con-un-medico", "/servizi/prevenzione", "/referti/esempio", "/prezzi", "/strumenti/preparati-alla-visita", "/come-funziona", "/servizi", "/domande-frequenti", "/servizi/secondo-parere", "/per-le-strutture", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/inizia", "/chi-siamo", "/per-i-medici", "/stato-del-progetto", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"];
 
 for (const path of PAGES) {
   test(`pagina ${path}: nessun errore, nessun overflow, accessibilità`, async ({ page }) => {
@@ -94,7 +94,7 @@ test("menu mobile: si apre, intrappola il fuoco e si chiude con Esc", async ({ p
 
 test.describe("Cura Privata: mappa, stati e prezzi", () => {
   test("i vecchi indirizzi rimandano in modo permanente alla nuova mappa", async ({ request }) => {
-    for (const [from, to] of [["/esempio", "/referti/esempio"], ["/secondo-parere", "/servizi/secondo-parere"], ["/servizi-prezzi", "/servizi"], ["/faq", "/domande-frequenti"], ["/sicurezza", "/sicurezza-e-privacy"], ["/privacy", "/privacy-policy"], ["/cookie", "/cookie-policy"], ["/area", "/area-personale"], ["/area/dossier", "/area-personale/dossier"], ["/servizi/visite-e-consulti", "/servizi/parla-con-un-medico"]]) {
+    for (const [from, to] of [["/esempio", "/referti/esempio"], ["/secondo-parere", "/servizi/secondo-parere"], ["/servizi-prezzi", "/servizi"], ["/faq", "/domande-frequenti"], ["/sicurezza", "/sicurezza-e-privacy"], ["/privacy", "/privacy-policy"], ["/cookie", "/cookie-policy"], ["/area", "/area-personale"], ["/area/dossier", "/area-personale/dossier"], ["/servizi/visite-e-consulti", "/servizi/parla-con-un-medico"], ["/servizi/archivio", "/famiglia"]]) {
       const res = await request.get(from, { maxRedirects: 0 });
       expect(res.status(), from).toBe(308);
       expect(res.headers()["location"], from).toBe(to);
@@ -114,7 +114,7 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
   });
 
   test("i servizi in preparazione lo dicono e non offrono caricamenti, prenotazioni o pagamenti", async ({ page }) => {
-    for (const path of ["/servizi/archivio", "/servizi/prevenzione"]) {
+    for (const path of ["/servizi/prevenzione"]) {
       await page.goto(path);
       await expect(page.getByText("Servizio in preparazione", { exact: false }).first()).toBeVisible();
       await expect(page.locator("main input[type=file]")).toHaveCount(0);
@@ -124,10 +124,11 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     }
   });
 
-  test("la home dice in 5 secondi che cosa offre: il payoff è il titolo, i tre servizi subito sotto", async ({ page, isMobile }) => {
+  test("la home dice in 5 secondi che cosa offre: la promessa è il titolo, i tre servizi subito sotto", async ({ page, isMobile }) => {
     await page.goto("/");
-    // Ciclo 2, fase 3: il payoff segue l'ordine dei servizi, come menu e fondo pagina.
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci\.\s*Parla con un medico\.\s*Chiedi un secondo parere\./);
+    // 13/11/2026: la promessa «famiglia e nel tempo» è il titolo; il payoff dei tre servizi resta subito sotto, nello stesso ordine.
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Tutta la salute della tua famiglia,\s*finalmente chiara\./);
+    await expect(page.locator("main .payoff").first()).toHaveText(/Capisci\.\s*Parla con un medico\.\s*Chiedi un secondo parere\./);
     await expect(page.locator("footer").getByText("Capisci. Parla con un medico. Chiedi un secondo parere.")).toBeVisible();
     // Nessun «.it» accanto al logo finché il sito non gira su un dominio vero (PUBLIC_BASE_URL).
     await expect(page.locator("footer").getByText(".it", { exact: true })).toHaveCount(0);

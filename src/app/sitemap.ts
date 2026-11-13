@@ -7,7 +7,7 @@ import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 
 const pdpReviewed = () => AREAS.every((a) => a.reviewStatus === "revisionato");
 
-const PUBLIC = ["/", "/referti", "/come-funziona", "/servizi", "/servizi/archivio", "/servizi/parla-con-un-medico", "/servizi/visita-a-domicilio", "/prezzi", "/strumenti/preparati-alla-visita", "/servizi/prevenzione", "/servizi/secondo-parere", "/domande-frequenti", "/inizia", "/chi-siamo", "/per-i-medici", "/stato-del-progetto", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/per-le-strutture", "/referti/esempio", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/punto-di-partenza"];
+const PUBLIC = ["/", "/referti", "/come-funziona", "/servizi", "/famiglia", "/servizi/parla-con-un-medico", "/servizi/visita-a-domicilio", "/prezzi", "/strumenti/preparati-alla-visita", "/servizi/prevenzione", "/servizi/secondo-parere", "/domande-frequenti", "/inizia", "/chi-siamo", "/per-i-medici", "/stato-del-progetto", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/per-le-strutture", "/referti/esempio", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/punto-di-partenza"];
 
 /**
  * Sitemap vuota finché l'indicizzazione è spenta: nessun URL viene proposto ai motori.

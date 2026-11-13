@@ -30,6 +30,10 @@ export const VETRINA_EVENTS = [
   // Ciclo 4: la visita a domicilio si misura come gli altri servizi.
   "visita-domicilio",
   "avvisami-domicilio",
+  // 13/11/2026: salute nel tempo e famiglia.
+  "visita-famiglia",
+  "cta-famiglia",
+  "avvisami-famiglia",
 ] as const;
 
 export const PUBLIC_EVENTS = ["visita-home", "cta-capisci", "cta-medico", "cta-parere", "cta-domicilio", ...PDP_EVENTS, ...VETRINA_EVENTS] as const;
@@ -123,6 +127,9 @@ export const FUNNEL_LABELS: Record<string, string> = {
   "avvisami-parere": "Lista d'attesa «Secondo parere»",
   "visita-domicilio": "Visite a «Visita a domicilio»",
   "avvisami-domicilio": "Lista d'attesa «Visita a domicilio»",
+  "visita-famiglia": "Visite a «Famiglia»",
+  "cta-famiglia": "Clic su «Prova Famiglia»",
+  "avvisami-famiglia": "Lista d'attesa «Famiglia»",
   uploads: "Referti caricati",
   checkoutCapisci: "Pagamenti «Capisci» avviati",
   paidCapisci: "Pagamenti «Capisci» completati",

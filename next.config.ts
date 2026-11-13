@@ -56,6 +56,8 @@ const nextConfig: NextConfig = {
       ["/privacy", "/privacy-policy"],
       ["/cookie", "/cookie-policy"],
       ["/referti/come-funziona", "/come-funziona"],
+      // 13/11/2026: l'archivio «in preparazione» è diventato Famiglia e salute nel tempo.
+      ["/servizi/archivio", "/famiglia"],
     ];
     return [
       ...moved.map(([source, destination]) => ({ source, destination, permanent: true })),

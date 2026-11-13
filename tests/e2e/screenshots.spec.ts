@@ -6,7 +6,7 @@ const SHOTS = [
   ["cp-02-referti", "/referti"],
   ["cp-03-servizi", "/servizi"],
   ["cp-04-secondo-parere", "/servizi/secondo-parere"],
-  ["cp-05-archivio", "/servizi/archivio"],
+  ["cp-05-famiglia", "/famiglia"],
   ["cp-06-parla-con-un-medico", "/servizi/parla-con-un-medico"],
   ["cp-18-prezzi", "/prezzi"],
   ["cp-19-preparati-alla-visita", "/strumenti/preparati-alla-visita?tipo=specialistica&ho=referti,farmaci&temi=capire,esami"],

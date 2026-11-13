@@ -24,13 +24,14 @@ const PAGE_CONTEXT: Record<string, string> = {
   "/inizia": "Ti aiutiamo a scegliere il servizio adatto",
   "/punto-di-partenza": "Gratis: 10 aree da conoscere e una scheda da portare al medico",
   "/strumenti/preparati-alla-visita": "Gratis: cosa portare e cosa chiedere, in 2 minuti",
-  "/servizi/archivio": "In preparazione",
+  "/famiglia": "I referti di tutta la famiglia, i numeri nel tempo, i promemoria",
   "/servizi/prevenzione": "In preparazione",
   "/strumenti/domande-per-il-medico": "Prepara la lista delle domande per la visita",
 };
 
 /** Parole con cui si cerca una pagina senza conoscerne il nome. */
 const PAGE_ALIASES: Record<string, string[]> = {
+  "/famiglia": ["famiglia", "genitore", "mamma", "papà", "andamento", "nel tempo", "storico", "promemoria", "archivio"],
   "/punto-di-partenza": ["check-up", "checkup", "prevenzione", "controlli", "da dove partire", "esami da fare", "scheda per il medico"],
 };
 

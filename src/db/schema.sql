@@ -423,3 +423,54 @@ ALTER TABLE waitlist ADD CONSTRAINT waitlist_interest_check CHECK (interest IN (
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS cap text CHECK (cap IS NULL OR cap ~ '^[0-9]{5}$');
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS source text CHECK (source IS NULL OR source IN ('diretto', 'google', 'facebook', 'instagram', 'tiktok', 'whatsapp', 'email', 'medico', 'altro'));
 INSERT INTO schema_migrations(version) VALUES (8) ON CONFLICT DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Schema v9 (13/11/2026): salute nel tempo e famiglia.
+--  * family_profiles: i familiari di cui il titolare gestisce i referti, con la dichiarazione della base
+--    (consenso, genitore di minore, tutela). Il titolare non ha una riga: è profile_id NULL.
+--  * documents.profile_id: a chi appartiene il referto.
+--  * reminders: visite, controlli da ripetere, altro. Le date le mette la persona.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS family_profiles (
+  id uuid PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name text NOT NULL CHECK (char_length(name) BETWEEN 1 AND 40),
+  relation text NOT NULL CHECK (relation IN ('genitore', 'figlio', 'partner', 'nonno', 'altro')),
+  birth_year integer CHECK (birth_year IS NULL OR (birth_year BETWEEN 1900 AND 2100)),
+  basis text NOT NULL CHECK (basis IN ('consenso', 'genitore-minore', 'tutela')),
+  basis_version text NOT NULL,
+  basis_declared_at timestamptz NOT NULL DEFAULT now(),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS family_profiles_user_idx ON family_profiles(user_id, created_at);
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS profile_id uuid REFERENCES family_profiles(id) ON DELETE CASCADE;
+
+CREATE TABLE IF NOT EXISTS reminders (
+  id uuid PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  profile_id uuid REFERENCES family_profiles(id) ON DELETE CASCADE,
+  kind text NOT NULL CHECK (kind IN ('visita', 'controllo', 'altro')),
+  title text NOT NULL CHECK (char_length(title) BETWEEN 1 AND 80),
+  due_date date NOT NULL,
+  note text CHECK (note IS NULL OR char_length(note) <= 300),
+  questions jsonb NOT NULL DEFAULT '[]',
+  done_at timestamptz,
+  email_sent_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS reminders_user_idx ON reminders(user_id, due_date);
+CREATE INDEX IF NOT EXISTS reminders_due_idx ON reminders(due_date) WHERE done_at IS NULL AND email_sent_at IS NULL;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON family_profiles, reminders TO app_rls;
+ALTER TABLE family_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reminders ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS family_profiles_owner ON family_profiles;
+CREATE POLICY family_profiles_owner ON family_profiles USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid) WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
+DROP POLICY IF EXISTS reminders_owner ON reminders;
+CREATE POLICY reminders_owner ON reminders USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid) WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
+
+ALTER TABLE consents DROP CONSTRAINT IF EXISTS consents_kind_check;
+ALTER TABLE consents ADD CONSTRAINT consents_kind_check CHECK (kind IN ('terms', 'privacy', 'health-data', 'marketing', 'subject-declaration', 'second-opinion', 'video-consult', 'family-delegation'));
+ALTER TABLE waitlist DROP CONSTRAINT IF EXISTS waitlist_interest_check;
+ALTER TABLE waitlist ADD CONSTRAINT waitlist_interest_check CHECK (interest IN ('completo', 'secondo-parere', 'strutture', 'archivio', 'visite', 'prevenzione', 'domicilio', 'famiglia'));
+INSERT INTO schema_migrations(version) VALUES (9) ON CONFLICT DO NOTHING;

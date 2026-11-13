@@ -8,7 +8,7 @@
 export type EcosystemStatus = "demo" | "free" | "in-preparation";
 
 export interface EcosystemService {
-  id: "referti" | "secondo-parere" | "archivio" | "visite" | "prevenzione" | "guide";
+  id: "referti" | "secondo-parere" | "famiglia" | "visite" | "prevenzione" | "guide";
   name: string;
   short: string;
   href: string;
@@ -56,11 +56,11 @@ export const ECOSYSTEM: EcosystemService[] = [
     icon: "book",
   },
   {
-    id: "archivio",
-    name: "Archivio salute",
-    short: "I tuoi documenti sanitari ordinati in un unico posto, con accessi che decidi tu.",
-    href: "/servizi/archivio",
-    status: "in-preparation",
+    id: "famiglia",
+    name: "Famiglia e salute nel tempo",
+    short: "I referti di tutta la famiglia in un posto solo, con i numeri messi in fila negli anni e le visite già preparate.",
+    href: "/famiglia",
+    status: "demo",
     icon: "folder",
   },
   {

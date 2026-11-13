@@ -145,10 +145,13 @@ test.describe("home «Evoluzione v2»", () => {
     // V3: il doppio ingresso aggiunge circa mezza schermata (una su telefono), in parte recuperata accorciando il blocco del referto.
     // Fase 3: obiettivo 11 schermate su telefono e 6 su desktop (mezzo schermo di margine per i font).
     // Ciclo 2, fase 3: su telefono sotto gli 8.000 px circa (era 9.272), cioè meno di 9,6 schermate da 844 px.
-    expect(h, "schermate").toBeLessThan(isMobile ? 9.6 : 6.5);
+    // 13/11/2026 (Famiglia e salute nel tempo): un blocco nuovo, il motivo per restare. Compatto (su telefono senza grafico),
+    // aggiunge circa 0,8 schermate su desktop e 0,6 su telefono: limiti a 7 e 9,9.
+    expect(h, "schermate").toBeLessThan(isMobile ? 9.9 : 7);
     const words = (await main.innerText()).split(/\s+/).length;
     // V3: il doppio ingresso porta circa 55 parole, in parte compensate togliendo le rassicurazioni del blocco referto.
-    expect(words).toBeLessThan(630);
+    // 13/11/2026: il blocco Famiglia porta circa 85 parole su desktop (metà sono numeri e date del grafico di esempio).
+    expect(words).toBeLessThan(isMobile ? 630 : 720);
     await expectAccessible(page);
   });
 
@@ -266,7 +269,7 @@ test.describe("percorsi A, C, D", () => {
     await page.setViewportSize(isMobile ? { width: 390, height: 844 } : { width: 1440, height: 900 });
     await page.goto("/area-personale");
     const nav = page.getByRole("navigation", { name: "Area personale" }).last();
-    for (const label of isMobile ? ["Referti", "Medico", "Pareri"] : ["I miei documenti e report", "Visite e videoconsulti", "I miei pareri"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
+    for (const label of isMobile ? ["Referti", "Numeri", "Famiglia", "Medico"] : ["I miei documenti e report", "Nel tempo", "La famiglia", "Promemoria", "Visite e videoconsulti", "I miei pareri"]) await expect(nav.getByRole("link", { name: label })).toBeVisible();
     for (const [path, h] of [["/area-personale/secondo-parere", "I miei pareri"], ["/area-personale/appuntamenti", "I miei appuntamenti"], ["/area-personale/ordini", "Pagamenti"]] as const) {
       await page.goto(path);
       await expect(page.getByRole("heading", { name: h, level: 1 })).toBeVisible({ timeout: 15_000 });

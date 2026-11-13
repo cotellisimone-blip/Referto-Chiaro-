@@ -181,6 +181,9 @@ export const DESCRIPTOR = "Referti, secondo parere e videoconsulti con medici ab
  */
 export const HERO_SUBTITLE = "Il tuo referto spiegato in parole semplici, valore per valore. E quando serve una persona, medici abilitati e identificabili: in video o a casa tua.";
 
+/** 13/11/2026: sottotitolo della home con la promessa «famiglia e nel tempo»; «medici abilitati e identificabili» resta. */
+export const HERO_PROMISE_SUBTITLE = "I referti di tutti in un posto solo, spiegati in parole semplici e messi in fila negli anni. E quando serve una persona, medici abilitati e identificabili: in video o a casa.";
+
 type Env = Record<string, string | undefined>;
 
 function envCents(env: Env, key: string, fallback: number): number {

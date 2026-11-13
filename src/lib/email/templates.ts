@@ -76,3 +76,17 @@ export function opinionReadyEmail(to: string, areaUrl: string): EmailMessage {
     ),
   };
 }
+
+/** Promemoria (13/11/2026): solo che c'è un promemoria e quando. Niente titolo, niente persona, niente esami. */
+export function reminderEmail(to: string, areaUrl: string, whenText: string): EmailMessage {
+  return {
+    to,
+    tag: "reminder",
+    subject: "Hai un promemoria — Cura Privata",
+    text: `Hai un promemoria nella tua area personale di Cura Privata: ${whenText}.\n\nPer riservatezza non scriviamo qui di che cosa si tratta: lo trovi entrando.\n\n${areaUrl}\n\nCura Privata`,
+    html: layout(
+      "Hai un promemoria",
+      `<p style="margin:0">Hai un promemoria nella tua area personale: <strong>${esc(whenText)}</strong>.</p><p style="margin:12px 0 0">Per riservatezza non scriviamo qui di che cosa si tratta: lo trovi entrando.</p>${button(areaUrl, "Apri i promemoria")}`,
+    ),
+  };
+}
