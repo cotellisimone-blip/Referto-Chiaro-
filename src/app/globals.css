@@ -226,6 +226,12 @@
   fieldset {
     min-width: 0;
   }
+  /* Una griglia senza colonne dichiarate ne crea una «implicita», che di suo si allarga quanto il titolo o la parola
+     più lunga che contiene: su telefono un titolo che non va a capo portava la pagina fuori dallo schermo.
+     Qui la colonna implicita non supera mai il contenitore. */
+  .grid {
+    grid-auto-columns: minmax(0, 1fr);
+  }
   body {
     background: var(--color-canvas);
     color: var(--color-ink);
@@ -645,8 +651,11 @@
   .fade-in {
     animation: fade-in 220ms var(--ease-out-soft) both;
   }
+  /* Solo opacità e nessun «fill»: una trasformazione che resta applicata a fine animazione farebbe da contenitore
+     agli elementi fissi della pagina (barra in basso dell'area personale, barra d'aiuto della home, barra di lettura),
+     che finirebbero in fondo al contenuto invece che attaccati allo schermo. */
   .page-enter {
-    animation: fade-in 260ms var(--ease-out-soft) both;
+    animation: page-in 260ms var(--ease-out-soft);
   }
   .rise-in {
     animation: rise-in 450ms var(--ease-out-soft) both;
@@ -749,6 +758,11 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
   }
 }
 
@@ -1454,13 +1468,27 @@
     box-shadow: var(--shadow-lift);
     animation: back-to-top-in 220ms var(--ease-out-soft) both;
   }
-  /* Nell'area personale su mobile c'è la barra in basso: il pulsante sale sopra di lei. */
-  [data-bottom-nav] .back-to-top {
-    bottom: calc(84px + env(safe-area-inset-bottom));
+  /* Nell'area personale su mobile c'è la barra in basso: il pulsante sale sopra di lei.
+     Il pulsante sta nel layout, fuori dall'area: per questo si guarda il body. */
+  @media (max-width: 1023.98px) {
+    body:has([data-bottom-nav]) .back-to-top {
+      bottom: calc(84px + env(safe-area-inset-bottom));
+    }
+    /* La barra resta sullo schermo anche in fondo alla pagina: il piè di pagina le lascia il posto, così l'ultima riga si legge. */
+    body:has([data-bottom-nav]) .site-footer {
+      padding-bottom: calc(4.25rem + env(safe-area-inset-bottom));
+    }
   }
-  @media (min-width: 1024px) {
-    [data-bottom-nav] .back-to-top {
-      bottom: calc(16px + env(safe-area-inset-bottom));
+  .area-tabbar a {
+    padding-inline: 0.25rem;
+  }
+  /* Barra in basso con il testo grande su schermi stretti: le cinque voci restano intere («Medico», non «Medi…»). */
+  @media (max-width: 359.98px) {
+    html[data-size="large"] .area-tabbar a {
+      padding-inline: 0.125rem;
+    }
+    html[data-size="large"] .area-tabbar-label {
+      font-size: 0.8125rem;
     }
   }
 
@@ -3530,6 +3558,93 @@ input[type="search"]::-webkit-search-decoration {
     font-size: 1rem;
     line-height: 1.45;
     color: var(--color-muted);
+  }
+  /* Confronto tra referti nel dossier. Da tablet è una tabella a tre colonne. Quando la scheda è stretta (telefono,
+     testo grande) ogni rilevazione va su due righe: data e valore in alto, intervallo stampato sotto.
+     La soglia è in rem dentro una «container query»: così segue la scheda e anche il testo grande, non lo schermo. */
+  .cmp-card {
+    container-type: inline-size;
+  }
+  .cmp-table {
+    margin-top: 0.75rem;
+    width: 100%;
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .cmp-table th {
+    padding: 0.375rem 0.75rem 0.375rem 0;
+    text-align: left;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+  .cmp-table td {
+    border-top: 1px solid var(--color-line);
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    color: var(--color-ink-soft);
+  }
+  .cmp-table th:last-child,
+  .cmp-table td:last-child {
+    padding-right: 0;
+  }
+  /* Le date si leggono meglio con le cifre normali: quelle a larghezza fissa restano ai valori, che si confrontano in colonna. */
+  .cmp-table td:first-child {
+    font-variant-numeric: normal;
+  }
+  .cmp-table .cmp-value {
+    white-space: nowrap;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .cmp-table .cmp-unit {
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+  .cmp-label {
+    display: none;
+  }
+  @container (max-width: 26rem) {
+    .cmp-table,
+    .cmp-table tbody {
+      display: block;
+    }
+    /* L'intestazione resta per i lettori di schermo, ma non occupa spazio. */
+    .cmp-table thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .cmp-table tbody tr {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.125rem 1rem;
+      border-top: 1px solid var(--color-line);
+      padding-block: 0.625rem;
+    }
+    .cmp-table td {
+      display: block;
+      min-width: 0;
+      border-top: 0;
+      padding: 0;
+    }
+    .cmp-table .cmp-value {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      text-align: right;
+    }
+    .cmp-table .cmp-ref {
+      flex-basis: 100%;
+      overflow-wrap: anywhere;
+      color: var(--color-muted);
+    }
+    .cmp-label {
+      display: inline;
+    }
   }
   /* Coppie «voce: valore» nelle schede di riepilogo. */
   .kv {

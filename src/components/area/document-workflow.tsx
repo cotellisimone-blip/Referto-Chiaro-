@@ -15,6 +15,7 @@ import { INFORMATIVE_NOTE, coreService } from "@/domain/offerta";
 import { api, formatDate } from "./api";
 import { StatusChip } from "./status-chip";
 import { WORKFLOW_STEPS } from "./new-document";
+import { ConfirmButton } from "@/components/ui/confirm-button";
 
 interface Doc {
   id: string;
@@ -79,6 +80,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
   const [reports, setReports] = useState<Rep[]>([]);
   const [enrichment, setEnrichment] = useState<ReportEnrichment | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [removeError, setRemoveError] = useState(false);
   const [confirmed, setConfirmed] = useState<string[]>([]);
   const [highlight, setHighlight] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
@@ -207,8 +209,13 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
   }
 
   async function remove() {
-    if (!window.confirm("Eliminare questo referto e i suoi report? L'operazione non si può annullare.")) return;
-    await api(`/api/v1/area/documents/${documentId}`, { method: "DELETE" });
+    setRemoveError(false);
+    try {
+      await api(`/api/v1/area/documents/${documentId}`, { method: "DELETE" });
+    } catch {
+      setRemoveError(true);
+      return;
+    }
     router.push("/area-personale");
     router.refresh();
   }
@@ -237,13 +244,18 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
         <Link href="/area-personale" className="back-link">
           <ArrowLeft aria-hidden /> Tutti i referti
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 flex-wrap items-center justify-end gap-3">
           <StatusChip status={activeReport ? activeReport.status : doc.status} />
-          <button type="button" onClick={remove} className="danger-link">
+          <ConfirmButton className="danger-link" question="Eliminare il referto e i suoi report? Non si può annullare." yes="Sì, elimina" onConfirm={() => void remove()}>
             <Trash2 aria-hidden className="h-[1.125rem] w-[1.125rem]" /> Elimina
-          </button>
+          </ConfirmButton>
         </div>
       </div>
+      {removeError ? (
+        <p role="alert" className="field-error mb-6">
+          Non siamo riusciti a eliminare il referto. Riprova tra poco.
+        </p>
+      ) : null}
       <Stepper steps={WORKFLOW_STEPS} step={step} label="Avanzamento del referto" />
 
       {phase === "reading" ? (

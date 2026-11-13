@@ -32,6 +32,8 @@ Tema scuro: si ridefiniscono i token, non i componenti. Attenzione: nel tema scu
 - Bersagli da toccare alti almeno 44 px (pulsanti normali 54 px, grandi 62 px).
 - Pulsante «aA»: tutto il sito cresce del 12,5 %. Quando è acceso il pulsante è pieno e turchese. Sotto i 396 px con il testo grande (e sotto i 360 px sempre) passa nel menu, con la scritta «Testo più grande».
 - Nessuna pagina scorre di lato: verificato da 320 a 1440 px, con testo normale e grande (vedi «Verifica»).
+- Le griglie senza colonne dichiarate non si allargano oltre il contenitore (regola `.grid` in `globals.css`): un titolo lungo si accorcia con i puntini, non sposta la pagina.
+- Le barre fisse (barra in basso dell'area personale, barra d'aiuto della home, barra di lettura) restano attaccate allo schermo: la transizione di pagina anima solo l'opacità. Una trasformazione lasciata sulla pagina le farebbe scorrere via con il contenuto.
 
 ## I mattoni
 | Classe | A che cosa serve |
@@ -44,9 +46,11 @@ Tema scuro: si ridefiniscono i token, non i componenti. Attenzione: nel tema scu
 | `field-label`, `field-input`, `field-hint`, `field-check`, `field-error`, `field-ok` | campi, consensi, errori ed esiti |
 | `option-row`, `choice-pills` / `choice-pill`, `slot-grid` / `slot-pill`, `switch`, `tab-pills` / `tab-pill` | scelte, fasce orarie, interruttori, sezioni |
 | `callout` (`-warn`, `-danger`, `-compact`), `sim-box`, `empty-state`, `empty-note` | avvisi, simulazioni dichiarate, stati vuoti |
+| `ConfirmButton` (`src/components/ui/confirm-button.tsx`) | **l'unica** conferma per le azioni che non si annullano (elimina, annulla, ricomincia): la domanda compare nella pagina, con «No» e la risposta che conferma. Nessuna finestra del browser |
 | `Stepper` (`src/components/report/stepper.tsx`) | **l'unico** indicatore a passi: da tablet i nomi sotto i pallini, su telefono una riga «Passo 2 di 5 · nome» che va a capo senza coprire nulla |
 | `timeline`, `kv`, `kv-rows`, `side-card`, `link-list`, `dot-list`, `num-list`, `check-list` | storici, coppie etichetta/valore, colonne laterali, elenchi |
 | `stat-grid` / `stat-card` / `stat-sub`, `data-table-wrap` / `data-table` | numeri e tabelle dell'amministrazione (le tabelle scorrono dentro il loro riquadro) |
+| `cmp-card` / `cmp-table` | confronto tra referti nel dossier: tabella a tre colonne da tablet, due righe per rilevazione quando la scheda è stretta (segue la scheda e il testo grande, non lo schermo) |
 | `video-room…`, `announce…`, `how-card`, `svc-card…`, `pdp-…` | blocchi propri di una pagina |
 
 ## Regole di scrittura applicate ai testi
@@ -75,7 +79,7 @@ Stato al 13 novembre 2026, sull'ultimo salvataggio di questo ramo.
 |---|---|
 | Tipi (`npx tsc --noEmit`) e stile del codice (`npx eslint .`) | puliti |
 | Prove di logica (`npx vitest run`) | 238 superate, 2 saltate per scelta |
-| Prove sul sito compilato, computer 1440 px e telefono 390 px (`npx playwright test`) | 342 in tutto: 280 superate, 62 saltate perché valgono per un solo formato, nessuna fallita |
+| Prove sul sito compilato, computer 1440 px e telefono 390 px (`npx playwright test`) | 348 in tutto: 284 superate, 64 saltate perché valgono per un solo formato, nessuna fallita |
 | Prove della versione vetrina (`npm run test:e2e:vetrina`) | 27 superate, 1 saltata, nessuna fallita |
 | Accessibilità automatica (axe, WCAG 2.2 AA) | dentro le prove sopra, tema chiaro e scuro |
 
@@ -84,6 +88,8 @@ Controlli fatti a mano con gli strumenti in `cura-privata/grafica-top/strumenti/
 - **Niente scorre di lato.** 40 pagine a 320, 360, 390, 768, 1024, 1280 e 1440 px con testo normale; le stesse a 320, 340, 360, 375, 390, 412, 768, 1024, 1280 e 1440 px con testo grande. Nessun elemento fuori dallo schermo (`sweep.cjs`).
 - **Percorsi interi con testo grande a 320 e 360 px.** Richiesta di visita, videoconsulto e secondo parere in tutti gli stati; prova a tre ruoli; portale medico e amministrazione; area personale; percorso del referto; referto di esempio. Ogni schermata resta larga quanto lo schermo.
 - **Tema scuro su telefono.** Portali, amministrazione e richieste.
+- **Area personale piena, su schermi stretti.** Un account con tutti e cinque i referti di esempio, un referto fermo alla verifica dei valori, due dossier (uno con il titolo lungo), pagamenti e impostazioni: 12 pagine a 320, 340, 360, 375, 390, 412 e 768 px, con testo normale e grande. Si controlla che niente esca dallo schermo, che niente esca dalla propria scheda e che le voci della barra in basso si leggano intere: 168 controlli, nessun difetto.
+- **Confronto punto per punto.** Dopo la regola sulle griglie, 50 pagine fotografate per intero a 390, 820 e 1440 px e a 360 px con testo grande, prima e dopo: 192 fotografie su 200 identiche al pixel; nelle altre 8 cambia solo l'ora scritta nella pagina.
 - **Lettura a occhio.** Ogni pagina guardata a 1440 e 390 px dopo ogni blocco di lavoro.
 
 Difetti trovati in questo giro e corretti (prima del giro non erano coperti da prove):
@@ -93,6 +99,12 @@ Difetti trovati in questo giro e corretti (prima del giro non erano coperti da p
 3. Nel Punto di Partenza, con il testo grande, l'elenco delle dieci aree e le scelte dell'obiettivo allargavano la pagina.
 4. Nelle richieste, a 320 px con testo grande, le righe dei documenti uscivano dalla scheda e il nome del passo copriva i pallini.
 5. Un pulsante lungo del lato medico («Proponi un altro orario») allargava la pagina a 320 px con testo grande.
+6. **Su telefono le barre fisse non restavano sullo schermo.** La barra in basso dell'area personale, la barra d'aiuto della home e la barra di lettura delle guide finivano in fondo al contenuto: le tratteneva la transizione di pagina. Ora una prova lo controlla sulle tre pagine.
+7. Nell'area personale, su telefono, il pulsante «torna su» copriva la barra in basso e la barra copriva l'ultima riga del piè di pagina.
+8. «Elimina» (referto e dossier) chiedeva conferma con una finestra del browser: piccola, fuori dal tema, e assente dove le finestre di sistema sono bloccate. Ora la domanda è nella pagina, con una prova.
+9. Nel dossier, con il testo grande sotto i 390 px, la tabella dei confronti usciva dalla scheda e a 320 px allargava la pagina. Ora nelle schede strette ogni rilevazione va su due righe, con una prova.
+10. Nel cruscotto, a 320 px con testo grande, un dossier con il titolo lungo allargava la pagina (colonna implicita della griglia). La regola ora vale per tutte le griglie.
+11. Nella barra in basso, a 320 px con testo grande, «Medico» diventava «Medi…». Accanto a un indirizzo email lungo l'etichetta «demo» veniva tagliata.
 
 ## Limiti dichiarati
 - **Fotografie.** Sono le immagini illustrative fornite dal titolare (solo pazienti, con la dicitura «Immagine illustrativa»). Il passo che alza ancora la qualità è un servizio fotografico vero, con liberatorie.

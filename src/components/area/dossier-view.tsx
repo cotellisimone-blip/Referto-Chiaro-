@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2, Trash2 } from "lucide-react";
 import type { DossierContent } from "@/domain/dossier/build-dossier";
 import { api, formatDate } from "./api";
 import { StatusChip } from "./status-chip";
+import { ConfirmButton } from "@/components/ui/confirm-button";
 
 interface Dossier {
   id: string;
@@ -20,6 +21,7 @@ export function DossierView({ dossierId }: { dossierId: string }) {
   const router = useRouter();
   const [d, setD] = useState<Dossier | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [removeError, setRemoveError] = useState(false);
   useEffect(() => {
     let alive = true;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -41,8 +43,13 @@ export function DossierView({ dossierId }: { dossierId: string }) {
   }, [dossierId]);
 
   async function remove() {
-    if (!window.confirm("Eliminare questo dossier? I referti restano.")) return;
-    await api(`/api/v1/area/dossiers/${dossierId}`, { method: "DELETE" });
+    setRemoveError(false);
+    try {
+      await api(`/api/v1/area/dossiers/${dossierId}`, { method: "DELETE" });
+    } catch {
+      setRemoveError(true);
+      return;
+    }
     router.push("/area-personale/dossier");
     router.refresh();
   }
@@ -56,13 +63,18 @@ export function DossierView({ dossierId }: { dossierId: string }) {
         <Link href="/area-personale/dossier" className="back-link">
           <ArrowLeft aria-hidden /> Tutti i dossier
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 flex-wrap items-center justify-end gap-3">
           <StatusChip status={d.status} />
-          <button type="button" onClick={remove} className="danger-link">
+          <ConfirmButton className="danger-link" question="Eliminare il dossier? I referti restano." yes="Sì, elimina" onConfirm={() => void remove()}>
             <Trash2 aria-hidden className="h-[1.125rem] w-[1.125rem]" /> Elimina
-          </button>
+          </ConfirmButton>
         </div>
       </div>
+      {removeError ? (
+        <p role="alert" className="field-error mb-6">
+          Non siamo riusciti a eliminare il dossier. Riprova tra poco.
+        </p>
+      ) : null}
       <h1 className="area-title">{d.title}</h1>
 
       {d.status === "queued" || d.status === "processing" ? (
@@ -106,24 +118,29 @@ export function DossierView({ dossierId }: { dossierId: string }) {
               ) : (
                 <ul className="mt-4 space-y-4">
                   {d.content.comparisons.map((c) => (
-                    <li key={c.nameExact} className="card p-5 sm:p-6">
+                    <li key={c.nameExact} className="card cmp-card p-5 sm:p-6">
                       <p className="area-h3">{c.nameExact}</p>
-                      <table className="tabular mt-3 w-full text-base">
-                        <thead className="text-[0.9375rem] text-muted">
-                          <tr>
-                            <th scope="col" className="py-1.5 pr-3 text-left font-semibold">Data</th>
-                            <th scope="col" className="py-1.5 pr-3 text-left font-semibold">Valore</th>
-                            <th scope="col" className="py-1.5 text-left font-semibold">Intervallo stampato</th>
+                      {/* Da tablet è una tabella; nelle schede strette (telefono, testo grande) ogni rilevazione va su due righe.
+                          I ruoli sono scritti a mano perché la tabella resti tale per i lettori di schermo anche quando cambia forma. */}
+                      <table role="table" className="cmp-table">
+                        <thead role="rowgroup">
+                          <tr role="row">
+                            <th role="columnheader" scope="col">Data</th>
+                            <th role="columnheader" scope="col">Valore</th>
+                            <th role="columnheader" scope="col">Intervallo stampato</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody role="rowgroup">
                           {c.points.map((p) => (
-                            <tr key={p.documentId} className="border-t border-line">
-                              <td className="py-2 pr-3 text-ink-soft">{formatDate(p.reportDate)}</td>
-                              <td className="whitespace-nowrap py-2 pr-3 font-bold text-ink">
-                                {p.valueExact} <span className="font-normal text-muted">{c.unitExact}</span>
+                            <tr role="row" key={p.documentId}>
+                              <td role="cell">{formatDate(p.reportDate)}</td>
+                              <td role="cell" className="cmp-value">
+                                {p.valueExact} <span className="cmp-unit">{c.unitExact}</span>
                               </td>
-                              <td className="py-2 text-ink-soft">{p.referenceExact ?? "non riportato"}</td>
+                              <td role="cell" className="cmp-ref">
+                                <span aria-hidden className="cmp-label">Intervallo stampato: </span>
+                                {p.referenceExact ?? "non riportato"}
+                              </td>
                             </tr>
                           ))}
                         </tbody>

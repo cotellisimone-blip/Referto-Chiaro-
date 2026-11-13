@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
 import { FlaskConical, Loader2, Phone, RotateCcw, ShieldCheck, Stethoscope, UserRound } from "lucide-react";
@@ -9,6 +8,9 @@ import { PRESTAZIONI, prestazionePrice, type PrestazioneKind } from "@/domain/pr
 import { formatEuro } from "@/domain/offerta";
 import { resetDemo } from "./store";
 import { WaitlistForm } from "@/components/site/waitlist-form";
+import { ConfirmButton } from "@/components/ui/confirm-button";
+
+export { ConfirmButton };
 
 const TONE: Record<RequestStatus, string> = {
   ricevuta: "bg-mist text-teal-deep",
@@ -139,39 +141,6 @@ export function RoleBar({ active }: { active: "paziente" | "medico" | "amministr
         </div>
       </div>
     </div>
-  );
-}
-
-/**
- * Conferma in due tocchi, nella pagina (niente finestre del browser: su telefono e nelle anteprime possono essere
- * bloccate). Il primo tocco mostra la domanda e due pulsanti grandi.
- */
-export function ConfirmButton({ children, question, yes, onConfirm, className }: { children: React.ReactNode; question: string; yes: string; onConfirm: () => void; className: string }) {
-  const [asking, setAsking] = useState(false);
-  if (!asking) {
-    return (
-      <button type="button" className={className} onClick={() => setAsking(true)}>
-        {children}
-      </button>
-    );
-  }
-  return (
-    <span role="group" aria-label="Conferma" className="flex flex-wrap items-center gap-2 rounded-[1.25rem] border border-warn/50 bg-cream px-4 py-3">
-      <span className="w-full text-base font-semibold text-ink sm:w-auto sm:flex-1">{question}</span>
-      <button type="button" className="btn btn-sm min-h-11 btn-secondary" onClick={() => setAsking(false)} autoFocus>
-        No
-      </button>
-      <button
-        type="button"
-        className="btn btn-sm min-h-11 btn-primary"
-        onClick={() => {
-          setAsking(false);
-          onConfirm();
-        }}
-      >
-        {yes}
-      </button>
-    </span>
   );
 }
 

@@ -39,10 +39,11 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
     router.push("/");
     router.refresh();
   }
+  // Il nome si accorcia con i puntini, l'etichetta «demo» resta sempre intera accanto.
   const who = (
-    <span className="min-w-0 truncate">
-      {displayName ?? email}
-      {isDemo ? <span className="chip ml-2 bg-cream text-ink">demo</span> : null}
+    <span className="flex min-w-0 items-center gap-2">
+      <span className="min-w-0 truncate">{displayName ?? email}</span>
+      {isDemo ? <span className="chip shrink-0 bg-cream text-ink">demo</span> : null}
     </span>
   );
   return (
@@ -113,7 +114,7 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
           <LogOut aria-hidden className="h-[1.125rem] w-[1.125rem]" /> Esci
         </button>
       </div>
-      <nav aria-label="Area personale" className="no-print fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
+      <nav aria-label="Area personale" className="area-tabbar no-print fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
         <ul className="mx-auto grid max-w-lg grid-cols-5">
           {[ITEMS[0], ITEMS[1], { href: "/area-personale/nuovo", label: "Nuovo", short: "Nuovo", icon: FilePlus2, exact: true }, ITEMS[2], ITEMS[5]].map(({ href, label, short, icon: Icon, exact }) => {
             const active = isActive(href, exact);
@@ -122,12 +123,12 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
                 <Link
                   href={href}
                   aria-current={active ? "page" : undefined}
-                  className={clsx("flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-[0.875rem] font-bold leading-tight", active ? "text-teal-deep" : "text-muted")}
+                  className={clsx("flex min-h-16 flex-col items-center justify-center gap-1 text-[0.875rem] font-bold leading-tight", active ? "text-teal-deep" : "text-muted")}
                 >
                   <span className={clsx("flex h-8 w-12 items-center justify-center rounded-full", active && "bg-marker-soft")}>
                     <Icon aria-hidden className="h-5 w-5" />
                   </span>
-                  <span className="max-w-full truncate">
+                  <span className="area-tabbar-label max-w-full truncate">
                     {short}
                     {label === "Nuovo" ? <span className="sr-only"> referto</span> : null}
                   </span>
