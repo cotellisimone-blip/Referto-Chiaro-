@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { clsx } from "clsx";
-import { ArrowRight, Check, Copy, Link2, ListChecks, Printer, Search, Trash2, X } from "lucide-react";
+import { ArrowRight, Check, Copy, Link2, ListChecks, Plus, Printer, Trash2, X } from "lucide-react";
+import { SearchField } from "@/components/ui/search-field";
 import { normalizeQuery } from "@/lib/search-index";
 
 export interface ExamOption {
@@ -90,31 +91,14 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
   }
 
   return (
-    <div className="container-rc grid gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-12 lg:py-14">
+    <div className="container-rc tool-body grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-12">
       {/* Colonna 1: scelta degli esami */}
       <section aria-labelledby="scegli-titolo" className="no-print min-w-0">
-        <h2 id="scegli-titolo" className="display-lg text-[1.75rem] sm:text-[2.25rem]">
-          1. Quali esami hai fatto?
+        <h2 id="scegli-titolo" className="display-md">
+          <span className="text-teal">1.</span> Quali esami hai fatto?
         </h2>
-        <label className="mt-5 flex items-center gap-3 rounded-2xl border border-line bg-paper px-4 py-3 shadow-[var(--shadow-card)] focus-within:border-teal">
-          <Search aria-hidden className="h-5 w-5 shrink-0 text-teal" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Cerca: TSH, emocromo, ecografia…"
-            autoComplete="off"
-            className="min-w-0 flex-1 bg-transparent text-lg text-ink outline-none placeholder:text-muted"
-            aria-label="Cerca un esame"
-          />
-          {query ? (
-            <button type="button" onClick={() => setQuery("")} className="inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-mist">
-              <X aria-hidden className="h-4 w-4" />
-              <span className="sr-only">Cancella la ricerca</span>
-            </button>
-          ) : null}
-        </label>
-        <p className="mt-2 text-sm text-muted" aria-live="polite">
+        <SearchField value={query} onChange={setQuery} label="Cerca un esame" placeholder="Cerca: TSH, emocromo, ecografia…" className="mt-5" />
+        <p className="mt-3 text-base text-muted" aria-live="polite">
           {q ? `${filtered.length} ${filtered.length === 1 ? "esame trovato" : "esami trovati"}` : `${options.length} esami disponibili`}
           {selected.length ? ` · ${selected.length} ${selected.length === 1 ? "scelto" : "scelti"}` : ""}
         </p>
@@ -123,8 +107,8 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
           <ul className="mt-4 flex flex-wrap gap-2" aria-label="Esami scelti">
             {selected.map((s) => (
               <li key={s}>
-                <button type="button" onClick={() => toggle(s)} className="chip bg-strong text-on-strong hover:bg-strong-soft">
-                  {bySlug.get(s)!.name} <X aria-hidden className="h-3.5 w-3.5" />
+                <button type="button" onClick={() => toggle(s)} className="chip min-h-11 bg-strong px-4 text-on-strong hover:bg-strong-soft">
+                  {bySlug.get(s)!.name} <X aria-hidden className="h-4 w-4" />
                   <span className="sr-only">(togli)</span>
                 </button>
               </li>
@@ -133,15 +117,15 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
         ) : null}
 
         <div className="mt-6 space-y-3">
-          {grouped.length === 0 ? <p className="rounded-2xl bg-mist px-5 py-6 text-ink-soft">Nessun esame con questo nome. Prova con la sigla stampata sul referto.</p> : null}
+          {grouped.length === 0 ? <p className="empty-state">Nessun esame con questo nome. Prova con la sigla stampata sul referto.</p> : null}
           {grouped.map((c) => {
             const openByDefault = Boolean(q) || c.items.some((o) => selected.includes(o.slug)) || c.id === "emocromo";
             return (
               <details key={`${c.id}-${q ? "q" : "all"}`} open={openByDefault} className="group card overflow-hidden">
-                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-5 py-3 font-semibold text-ink [&::-webkit-details-marker]:hidden">
+                <summary className="flex min-h-[3.75rem] cursor-pointer list-none items-center justify-between gap-3 px-5 py-3 text-lg font-bold text-ink [&::-webkit-details-marker]:hidden">
                   <span>
                     {c.title}
-                    <span className="ml-2 text-sm font-normal text-muted">{c.items.length}</span>
+                    <span className="ml-2 text-base font-medium text-muted">{c.items.length}</span>
                   </span>
                   <span aria-hidden className="flex h-8 w-8 items-center justify-center rounded-full bg-mist text-teal transition-transform group-open:rotate-180">
                     <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -158,7 +142,7 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
                           <input type="checkbox" className="check-box" checked={on} onChange={() => toggle(o.slug)} />
                           <span className="min-w-0">
                             <span className="block font-semibold text-ink">{o.name}</span>
-                            <span className="block text-sm text-muted">
+                            <span className="block text-base leading-snug text-muted">
                               {o.questions.length} domande{o.aliases.length ? ` · ${o.aliases.slice(0, 2).join(", ")}` : ""}
                             </span>
                           </span>
@@ -176,28 +160,29 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
       {/* Colonna 2: la lista */}
       <section aria-labelledby="lista-titolo" className="min-w-0 lg:sticky lg:top-24 lg:self-start" ref={listRef}>
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 id="lista-titolo" className="display-lg text-[1.75rem] sm:text-[2.25rem]">
-            2. La tua lista
+          <h2 id="lista-titolo" className="display-md">
+            <span className="text-teal">2.</span> La tua lista
           </h2>
           {total ? (
-            <p className="no-print text-[0.9375rem] text-muted" aria-live="polite">
+            <p className="no-print text-base text-muted" aria-live="polite">
               <span className="tabular font-semibold text-ink">{done.size}</span> / <span className="tabular">{total}</span> fatte in visita
             </p>
           ) : null}
         </div>
 
         {!selected.length ? (
-          <div className="card mt-5 grid gap-6 p-6 sm:grid-cols-[auto_1fr] sm:items-center sm:p-8">
-            <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-mist">
-              <ListChecks aria-hidden className="h-8 w-8 text-teal" />
+          <div className="list-col mt-5 grid grid-cols-[minmax(0,1fr)] gap-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-start">
+            <span aria-hidden className="tile-ico">
+              <ListChecks />
             </span>
             <div>
-              <p className="text-xl font-bold text-ink">Scegli almeno un esame.</p>
-              <p className="mt-1 text-lg text-ink-soft">La lista si compone da sola, qui. Se non trovi un esame, cerca la sigla stampata sul referto.</p>
-              <p className="mt-3 flex flex-wrap gap-2">
+              <p className="text-xl font-extrabold text-ink">Scegli almeno un esame.</p>
+              <p className="mt-1.5 text-lg text-ink-soft">La lista si compone da sola, qui. Se non trovi un esame, cerca la sigla stampata sul referto.</p>
+              <p className="mt-5 text-base font-semibold text-muted">Oppure parti da uno dei più richiesti:</p>
+              <p className="mt-2 flex flex-wrap gap-2">
                 {["emocromo", "tsh", "glicemia", "colesterolo-ldl"].filter((s) => bySlug.has(s)).map((s) => (
-                  <button key={s} type="button" onClick={() => toggle(s)} className="chip bg-paper text-ink ring-1 ring-line hover:bg-mist">
-                    + {bySlug.get(s)!.name}
+                  <button key={s} type="button" onClick={() => toggle(s)} className="chip min-h-11 bg-mist px-4 text-ink hover:bg-marker-soft">
+                    <Plus aria-hidden className="h-4 w-4 text-teal" /> {bySlug.get(s)!.name}
                   </button>
                 ))}
               </p>
@@ -215,13 +200,13 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
               <button type="button" onClick={copyLink} className="btn btn-secondary btn-sm">
                 {copied === "link" ? <Check aria-hidden className="h-4 w-4" /> : <Link2 aria-hidden className="h-4 w-4" />} {copied === "link" ? "Link copiato" : "Copia il link"}
               </button>
-              <button type="button" onClick={() => { setSelected([]); setDone(new Set()); }} className="btn btn-ghost btn-sm ml-auto">
+              <button type="button" onClick={() => { setSelected([]); setDone(new Set()); }} className="btn btn-ghost btn-sm">
                 <Trash2 aria-hidden className="h-4 w-4" /> Svuota
               </button>
             </div>
             <div className="p-5 sm:p-7">
               <p className="eyebrow">Domande per il medico</p>
-              <p className="mt-2 text-[0.9375rem] text-muted">
+              <p className="mt-2 text-base text-muted">
                 Esami: {sections.map((s) => s.exam.name).join(", ")}. Lista preparata con Cura Privata, dalle guide agli esami. Non contiene valori né dati personali.
               </p>
               <ol className="mt-6 space-y-7">
@@ -229,8 +214,8 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
                   <li key={s.exam.slug}>
                     <h3 className="flex items-center justify-between gap-3 text-lg font-bold text-ink">
                       {s.exam.name}
-                      <Link href={`/guide/${s.exam.slug}`} className="no-print link text-sm font-medium">
-                        Guida
+                      <Link href={`/guide/${s.exam.slug}`} className="no-print link inline-flex min-h-11 shrink-0 items-center text-base font-semibold">
+                        Leggi la guida
                       </Link>
                     </h3>
                     {s.questions.length ? (
@@ -240,7 +225,7 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
                         ))}
                       </ul>
                     ) : (
-                      <p className="mt-2 text-sm text-muted">Le domande di questo esame sono già comprese sopra.</p>
+                      <p className="mt-2 text-base text-muted">Le domande di questo esame sono già comprese sopra.</p>
                     )}
                   </li>
                 ))}
@@ -253,13 +238,13 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
                   </ul>
                 </li>
               </ol>
-              <div className="mt-8 rounded-2xl bg-cream/70 px-4 py-3 text-[0.9375rem] text-ink">
+              <div className="mt-8 rounded-2xl bg-cream/70 px-4 py-3.5 text-base text-ink">
                 Spazio per le risposte: porta carta e penna, oppure scrivi le note sul telefono durante la visita. Le spiegazioni informative non sostituiscono una valutazione medica.
               </div>
-              <p className="no-print mt-6 text-[0.9375rem] text-muted">
+              <p className="no-print mt-6 text-base text-muted">
                 Vuoi capire anche i valori del referto?{" "}
-                <Link href="/referti/esempio" className="link">
-                  Prova la demo <ArrowRight aria-hidden className="inline h-3.5 w-3.5" />
+                <Link href="/referti/esempio" className="link font-semibold">
+                  Guarda un referto di esempio <ArrowRight aria-hidden className="inline h-4 w-4" />
                 </Link>
               </p>
             </div>

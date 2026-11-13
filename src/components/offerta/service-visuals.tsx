@@ -1,4 +1,4 @@
-import { Clock3, FileCheck2, FileText, Home, PenLine, Receipt, Stethoscope, UserRound, Video } from "lucide-react";
+import { Check, Clock3, FileCheck2, FileText, Home, ListChecks, PenLine, Printer, Receipt, Stethoscope, UserRound, Video } from "lucide-react";
 
 /*
  * I «pezzi di prodotto» che aprono le pagine dei servizi con un medico. Nessun volto di medico, nessun nome,
@@ -80,6 +80,41 @@ export function DoctorCaseVisual({ className = "" }: { className?: string }) {
       <p className="glass case-chip">
         <PenLine className="h-5 w-5 shrink-0 text-teal" />
         Parere firmato, non modificabile
+      </p>
+    </div>
+  );
+}
+
+/** La lista che esce da «Preparati alla visita»: poche voci d'esempio, prese dallo strumento. */
+export function VisitListVisual({ items, className = "" }: { items: string[]; className?: string }) {
+  return (
+    <div aria-hidden className={`case-visual tone-capisci ${className}`}>
+      <div className="glow-teal absolute -inset-8 rounded-full" />
+      <div className="glass relative rounded-[1.75rem] p-5">
+        <p className="flex items-center justify-between gap-3">
+          <span className="inline-flex items-center gap-3 text-[1.0625rem] font-extrabold text-ink">
+            <span className="tile-ico tile-ico-sm tile-ico-tone h-10 w-10 rounded-xl">
+              <ListChecks />
+            </span>
+            La tua lista
+          </span>
+          <span className="rounded-full bg-mist px-2.5 py-0.5 text-sm font-bold text-ink-soft">Esempio</span>
+        </p>
+        <p className="mt-5 text-sm font-bold uppercase tracking-[0.12em] text-[var(--tone-accent)]">Da chiedere al medico</p>
+        <ul className="mt-2.5 grid gap-2 text-[0.9375rem] font-semibold leading-snug text-ink">
+          {items.map((q) => (
+            <li key={q} className="flex items-start gap-2.5 rounded-xl bg-canvas px-3 py-2.5">
+              <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md bg-[linear-gradient(180deg,#00827b,#006c66)] text-on-strong">
+                <Check className="h-3.5 w-3.5" strokeWidth={3} />
+              </span>
+              {q}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p className="glass case-chip">
+        <Printer className="h-5 w-5 shrink-0 text-teal" />
+        Da stampare o tenere sul telefono
       </p>
     </div>
   );

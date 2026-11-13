@@ -4,8 +4,10 @@ import { useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { clsx } from "clsx";
-import { ArrowLeft, ArrowRight, Check, ClipboardList, Copy, ListChecks, Printer, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Briefcase, Check, Copy, Info, ListChecks, MessageCircleQuestionMark, PencilLine, Printer, RotateCcw, type LucideIcon } from "lucide-react";
 import { HAVE, TOPICS, VISIT_TYPES, buildVisitPlan, parseVisitParams, type HaveId, type TopicId, type VisitType } from "@/content/preparati-visita";
+
+const STEPS = ["Che visita è", "Che cosa hai", "Di che cosa parlare"];
 
 /**
  * «Preparati alla visita in 2 minuti». Tre domande pratiche (che visita, che cosa hai, di che cosa vuoi parlare)
@@ -52,121 +54,163 @@ export function VisitPrep() {
     ...plan.ask.map((x, i) => `${i + 1}. ${x}`),
   ].join("\n");
 
-  const STEPS = ["Che visita è", "Che cosa hai", "Di che cosa parlare"];
+  const COLS: { title: string; short: string; icon: LucideIcon; items: string[]; check: boolean }[] = [
+    { title: "Da portare", short: "Da portare", icon: Briefcase, items: plan.bring, check: true },
+    { title: "Da preparare prima", short: "Da preparare", icon: PencilLine, items: plan.prepare, check: true },
+    { title: "Da chiedere al medico", short: "Da chiedere", icon: MessageCircleQuestionMark, items: plan.ask, check: false },
+  ];
 
   return (
-    <div className="container-rc py-10 sm:py-14">
-      <div ref={topRef} tabIndex={-1} className="outline-none" aria-live="polite">
-        {step <= 3 ? (
-          <ol className="no-print flex flex-wrap gap-2" aria-label="Avanzamento">
-            {STEPS.map((s, i) => (
-              <li key={s} aria-current={step === i + 1 ? "step" : undefined} className={clsx("chip", step === i + 1 ? "bg-strong text-on-strong" : step > i + 1 ? "bg-marker-soft text-teal-deep" : "bg-mist text-muted")}>
-                {step > i + 1 ? <Check aria-hidden className="h-4 w-4" /> : null}
-                {i + 1}. {s}
-              </li>
-            ))}
-          </ol>
-        ) : null}
-      </div>
+    <div className="container-rc tool-body">
+      {step <= 3 ? (
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,46rem)_minmax(0,21rem)] lg:justify-between lg:gap-14">
+          <div ref={topRef} tabIndex={-1} className="pdp-top min-w-0 outline-none">
+            <p className="sr-only" aria-live="polite">
+              Passo {step} di {STEPS.length}: {STEPS[step - 1]}
+            </p>
+            <ol className="pdp-stepper no-print mb-8" style={{ "--steps": STEPS.length } as React.CSSProperties} aria-label="Avanzamento">
+              {STEPS.map((s, i) => {
+                const n = i + 1;
+                const state = n < step ? "done" : n === step ? "current" : "todo";
+                return (
+                  <li key={s} className={clsx("pdp-step", `pdp-step-${state}`)} aria-current={state === "current" ? "step" : undefined}>
+                    <span aria-hidden className="pdp-step-dot">
+                      {state === "done" ? <Check className="h-4 w-4" /> : n}
+                    </span>
+                    <span className="pdp-step-label">
+                      <span aria-hidden className="pdp-step-count">
+                        Passo {n} di {STEPS.length} ·{" "}
+                      </span>
+                      {s}
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+            {step === 1 ? (
+              <fieldset>
+                <legend className="pdp-q">Che visita hai in programma?</legend>
+                <p className="mt-2 text-lg text-muted">Una sola scelta: la lista cambia in base alla visita.</p>
+                <div className="mt-5 grid gap-3">
+                  {VISIT_TYPES.map((v) => (
+                    <label key={v.id} className={clsx("pdp-option", type === v.id && "is-on")}>
+                      <input
+                        type="radio"
+                        name="tipo"
+                        checked={type === v.id}
+                        onChange={() => {
+                          setType(v.id);
+                          sync({ type: v.id });
+                        }}
+                      />
+                      <span className="text-lg font-semibold text-ink">{v.label}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className="no-print mt-8 flex gap-3">
+                  <button type="button" className="btn btn-primary btn-lg w-full sm:w-auto sm:min-w-48" disabled={!type} onClick={() => go(2)}>
+                    Avanti <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                  </button>
+                </div>
+              </fieldset>
+            ) : null}
 
-      {step === 1 ? (
-        <fieldset className="mt-8 max-w-2xl">
-          <legend className="text-[1.75rem] font-bold leading-tight text-ink">Che visita hai in programma?</legend>
-          <div className="mt-5 grid gap-3">
-            {VISIT_TYPES.map((v) => (
-              <label key={v.id} className={clsx("flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border bg-paper px-5 py-3 text-lg font-semibold text-ink", type === v.id ? "border-teal bg-mist" : "border-line hover:border-teal/50")}>
-                <input
-                  type="radio"
-                  name="tipo"
-                  checked={type === v.id}
-                  onChange={() => {
-                    setType(v.id);
-                    sync({ type: v.id });
-                  }}
-                  className="h-5 w-5 accent-[var(--color-teal)]"
-                />
-                {v.label}
-              </label>
-            ))}
-          </div>
-          <button type="button" className="btn btn-primary btn-lg mt-8" disabled={!type} onClick={() => go(2)}>
-            Avanti <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-          </button>
-        </fieldset>
-      ) : null}
+            {step === 2 ? (
+              <fieldset>
+                <legend className="pdp-q">Che cosa hai già, o prendi?</legend>
+                <p className="mt-2 text-lg text-muted">Spunta quello che vale per te. Puoi anche non spuntare nulla.</p>
+                <div className="mt-5 grid gap-3">
+                  {HAVE.map((h) => (
+                    <label key={h.id} className={clsx("pdp-option", have.includes(h.id) && "is-on")}>
+                      <input
+                        type="checkbox"
+                        checked={have.includes(h.id)}
+                        onChange={() => {
+                          const n = toggle(have, h.id);
+                          setHave(n);
+                          sync({ have: n });
+                        }}
+                      />
+                      <span className="text-lg font-semibold text-ink">{h.label}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className="no-print mt-8 flex flex-col-reverse gap-3 sm:flex-row">
+                  <button type="button" className="btn btn-secondary btn-lg" onClick={() => go(1)}>
+                    <ArrowLeft aria-hidden className="h-5 w-5" /> Indietro
+                  </button>
+                  <button type="button" className="btn btn-primary btn-lg sm:min-w-48" onClick={() => go(3)}>
+                    Avanti <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                  </button>
+                </div>
+              </fieldset>
+            ) : null}
 
-      {step === 2 ? (
-        <fieldset className="mt-8 max-w-2xl">
-          <legend className="text-[1.75rem] font-bold leading-tight text-ink">Che cosa hai già, o prendi?</legend>
-          <p className="mt-2 text-lg text-muted">Spunta quello che vale per te. Puoi anche non spuntare nulla.</p>
-          <div className="mt-5 grid gap-3">
-            {HAVE.map((h) => (
-              <label key={h.id} className={clsx("flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border bg-paper px-5 py-3 text-lg font-semibold text-ink", have.includes(h.id) ? "border-teal bg-mist" : "border-line hover:border-teal/50")}>
-                <input
-                  type="checkbox"
-                  checked={have.includes(h.id)}
-                  onChange={() => {
-                    const n = toggle(have, h.id);
-                    setHave(n);
-                    sync({ have: n });
-                  }}
-                  className="h-5 w-5 accent-[var(--color-teal)]"
-                />
-                {h.label}
-              </label>
-            ))}
+            {step === 3 ? (
+              <fieldset>
+                <legend className="pdp-q">Di che cosa vuoi parlare?</legend>
+                <p className="mt-2 text-lg text-muted">Scegli uno o più argomenti: ti suggeriamo le domande da fare.</p>
+                <div className="mt-5 grid gap-3">
+                  {TOPICS.map((t) => (
+                    <label key={t.id} className={clsx("pdp-option", topics.includes(t.id) && "is-on")}>
+                      <input
+                        type="checkbox"
+                        checked={topics.includes(t.id)}
+                        onChange={() => {
+                          const n = toggle(topics, t.id);
+                          setTopics(n);
+                          sync({ topics: n });
+                        }}
+                      />
+                      <span className="text-lg font-semibold text-ink">{t.label}</span>
+                    </label>
+                  ))}
+                </div>
+                <div className="no-print mt-8 flex flex-col-reverse gap-3 sm:flex-row">
+                  <button type="button" className="btn btn-secondary btn-lg" onClick={() => go(2)}>
+                    <ArrowLeft aria-hidden className="h-5 w-5" /> Indietro
+                  </button>
+                  <button type="button" className="btn btn-primary btn-lg" onClick={() => go(4)}>
+                    <ListChecks aria-hidden className="h-5 w-5" /> Crea la mia lista
+                  </button>
+                </div>
+              </fieldset>
+            ) : null}
           </div>
-          <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row">
-            <button type="button" className="btn btn-ghost btn-lg" onClick={() => go(1)}>
-              <ArrowLeft aria-hidden className="h-5 w-5" /> Indietro
-            </button>
-            <button type="button" className="btn btn-primary btn-lg" onClick={() => go(3)}>
-              Avanti <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-            </button>
-          </div>
-        </fieldset>
-      ) : null}
 
-      {step === 3 ? (
-        <fieldset className="mt-8 max-w-2xl">
-          <legend className="text-[1.75rem] font-bold leading-tight text-ink">Di che cosa vuoi parlare?</legend>
-          <p className="mt-2 text-lg text-muted">Scegli uno o più argomenti: ti suggeriamo le domande da fare.</p>
-          <div className="mt-5 grid gap-3">
-            {TOPICS.map((t) => (
-              <label key={t.id} className={clsx("flex min-h-14 cursor-pointer items-center gap-4 rounded-2xl border bg-paper px-5 py-3 text-lg font-semibold text-ink", topics.includes(t.id) ? "border-teal bg-mist" : "border-line hover:border-teal/50")}>
-                <input
-                  type="checkbox"
-                  checked={topics.includes(t.id)}
-                  onChange={() => {
-                    const n = toggle(topics, t.id);
-                    setTopics(n);
-                    sync({ topics: n });
-                  }}
-                  className="h-5 w-5 accent-[var(--color-teal)]"
-                />
-                {t.label}
-              </label>
-            ))}
-          </div>
-          <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row">
-            <button type="button" className="btn btn-ghost btn-lg" onClick={() => go(2)}>
-              <ArrowLeft aria-hidden className="h-5 w-5" /> Indietro
-            </button>
-            <button type="button" className="btn btn-primary btn-lg" onClick={() => go(4)}>
-              <ListChecks aria-hidden className="h-5 w-5" /> Crea la mia lista
-            </button>
-          </div>
-        </fieldset>
+          <aside aria-label="La tua lista, finora" className="pdp-aside no-print hidden lg:block">
+            <p className="text-xl font-extrabold text-ink">La tua lista, finora</p>
+            <dl className="pdp-aside-stats">
+              {COLS.map(({ short, icon: Icon, items }) => (
+                <div key={short}>
+                  <dt>
+                    <span aria-hidden className="pdp-ico pdp-ico-sm">
+                      <Icon strokeWidth={2} />
+                    </span>
+                    <span>{short}</span>
+                  </dt>
+                  <dd className="stat-num">
+                    {items.length} <span className="text-[0.75em] font-semibold">{items.length === 1 ? "voce" : "voci"}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-5 flex items-start gap-2 text-[0.9375rem] text-muted">
+              <Info aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+              Si aggiorna a ogni risposta. Non chiediamo sintomi, valori o dati personali.
+            </p>
+          </aside>
+        </div>
       ) : null}
 
       {step === 4 ? (
-        <div className="mt-2">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div ref={topRef} tabIndex={-1} className="pdp-top outline-none">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="eyebrow">La tua lista</p>
-              <h2 className="display-lg mt-3 text-[2rem] sm:text-[2.5rem]">Pronto per la visita.</h2>
+              <h2 className="display-lg mt-3">Pronto per la visita.</h2>
             </div>
-            <div className="no-print flex flex-wrap gap-2">
+            <div className="no-print flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
               <button type="button" className="btn btn-primary" onClick={() => window.print()}>
                 <Printer aria-hidden className="h-5 w-5" /> Stampa
               </button>
@@ -190,30 +234,32 @@ export function VisitPrep() {
               </button>
             </div>
           </div>
-          <div className="mt-8 grid gap-5 lg:grid-cols-3">
-            {[
-              { title: "Da portare", items: plan.bring, check: true },
-              { title: "Da preparare prima", items: plan.prepare, check: true },
-              { title: "Da chiedere al medico", items: plan.ask, check: false },
-            ].map((col) => (
-              <section key={col.title} aria-labelledby={`col-${col.title}`} className="card p-6">
-                <h3 id={`col-${col.title}`} className="flex items-center gap-2 text-xl font-bold text-ink">
-                  <ClipboardList aria-hidden className="h-5 w-5 text-teal" /> {col.title}
+          <div className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-4 sm:gap-5 lg:grid-cols-3">
+            {COLS.map(({ title, icon: Icon, items, check }) => (
+              <section key={title} aria-labelledby={`col-${title}`} className="list-col">
+                <h3 id={`col-${title}`} className="list-col-head">
+                  <span aria-hidden className="tile-ico tile-ico-sm">
+                    <Icon />
+                  </span>
+                  {title}
+                  <span aria-hidden className="list-col-count">
+                    {items.length}
+                  </span>
                 </h3>
-                {col.check ? (
-                  <ul className="mt-4 space-y-3">
-                    {col.items.map((x) => (
+                {check ? (
+                  <ul className="tick-list">
+                    {items.map((x) => (
                       <li key={x}>
-                        <label className="flex items-start gap-3 text-lg text-ink">
-                          <input type="checkbox" className="mt-1.5 h-5 w-5 shrink-0 accent-[var(--color-teal)]" />
-                          {x}
+                        <label>
+                          <input type="checkbox" />
+                          <span>{x}</span>
                         </label>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <ol className="mt-4 list-decimal space-y-3 pl-6 text-lg text-ink">
-                    {col.items.map((x) => (
+                  <ol className="num-list num-list-mist mt-5 text-[1.0625rem] leading-snug text-ink">
+                    {items.map((x) => (
                       <li key={x}>{x}</li>
                     ))}
                   </ol>
@@ -221,14 +267,14 @@ export function VisitPrep() {
               </section>
             ))}
           </div>
-          <p className="mt-6 text-[1.0625rem] text-ink-soft">
+          <p className="mt-7 text-lg text-ink-soft">
             Hai fatto degli esami?{" "}
             <Link href="/strumenti/domande-per-il-medico" className="link font-semibold">
               Aggiungi le domande specifiche per ogni esame
             </Link>
             .
           </p>
-          <p className="mt-2 text-[0.9375rem] text-muted">Questa lista non dice nulla sulla tua salute e non sostituisce il colloquio con il medico. In caso di emergenza chiama il 112.</p>
+          <p className="mt-2 text-base text-muted">Questa lista non dice nulla sulla tua salute e non sostituisce il colloquio con il medico. In caso di emergenza chiama il 112.</p>
         </div>
       ) : null}
     </div>

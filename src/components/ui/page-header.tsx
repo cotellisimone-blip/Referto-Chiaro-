@@ -74,7 +74,7 @@ export function PageHeader({
   compact = false,
 }: {
   eyebrow?: string;
-  title: string;
+  title: ReactNode;
   lead?: ReactNode;
   children?: ReactNode;
   art?: HeaderArt;

@@ -8,7 +8,7 @@ export function DraftNotice() {
         <FileWarning />
       </span>
       <div>
-        <p className="callout-title">Bozza, da revisionare</p>
+        <p className="callout-title tracking-[0.04em]">BOZZA — DA REVISIONARE</p>
         <p className="callout-text">Questo testo è una bozza di lavoro e non è stato approvato da un consulente legale. Non descrive un servizio attivo e non va considerato un documento legalmente valido.</p>
       </div>
     </div>

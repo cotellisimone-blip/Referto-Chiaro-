@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Download, Loader2, RotateCcw } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, Loader2, RotateCcw, ScanEye } from "lucide-react";
 import lab001 from "@/fixtures/synthetic/referto-lab-001.json";
 import type { Explanation } from "@/domain/reporting/explanation-schema";
 import { Facsimile as FacsimileBase, revealFacsimileLine } from "@/components/report/facsimile";
@@ -154,7 +154,7 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
 
       {/* STEP 0 — DOCUMENTO */}
       {step === 0 ? (
-        <section className="fade-in mt-10 grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-12 [&>*]:min-w-0" aria-labelledby="step-titolo">
+        <section className="fade-in mt-8 grid gap-8 sm:mt-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-12 [&>*]:min-w-0" aria-labelledby="step-titolo">
           <div>
             <h2 id="step-titolo" ref={headingRef} tabIndex={-1} className="display text-[1.75rem] outline-none sm:text-[2.25rem]">
               Questo è il referto di esempio.
@@ -162,7 +162,7 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
             <p className="mt-4 text-lg text-muted">
               Un esame del sangue inventato, di una persona che non esiste. Nella versione reale qui vedresti il tuo documento, conservato in modo privato.
             </p>
-            <dl className="mt-6 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-[0.9375rem]">
+            <dl className="mt-6 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2.5 text-[1.0625rem] leading-snug">
               <dt className="text-muted">Laboratorio</dt>
               <dd className="text-ink">{DOC.laboratoryName}</dd>
               <dt className="text-muted">Data</dt>
@@ -172,11 +172,14 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
               <dt className="text-muted">Voci lette</dt>
               <dd className="text-ink">{DOC.observations.length}, di cui una non leggibile</dd>
             </dl>
-            <p className="mt-6 rounded-xl bg-cream/70 px-4 py-3 text-[0.9375rem] text-ink">
-              Abbiamo inserito di proposito una cifra rovinata alla riga 8: vedrai che il sistema non prova a indovinarla.
-            </p>
-            <button type="button" className="btn btn-primary mt-8 w-full sm:w-auto" onClick={() => goTo(1)}>
-              Controlla i valori estratti <ArrowRight aria-hidden className="h-4 w-4" />
+            <div className="callout callout-warn mt-6">
+              <span aria-hidden className="callout-ico">
+                <ScanEye />
+              </span>
+              <p className="callout-text mt-0 self-center text-ink">Abbiamo inserito di proposito una cifra rovinata alla riga 8: vedrai che il sistema non prova a indovinarla.</p>
+            </div>
+            <button type="button" className="btn btn-primary btn-lg mt-8 w-full sm:w-auto" onClick={() => goTo(1)}>
+              Controlla i valori estratti <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
             </button>
           </div>
           <Facsimile highlightLine={null} />
@@ -185,7 +188,7 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
 
       {/* STEP 1 — CONTROLLO VALORI */}
       {step === 1 ? (
-        <section className="fade-in mt-10" aria-labelledby="step-titolo">
+        <section className="fade-in mt-8 sm:mt-10" aria-labelledby="step-titolo">
           <div className="max-w-2xl">
             <h2 id="step-titolo" ref={headingRef} tabIndex={-1} className="display text-[1.75rem] outline-none sm:text-[2.25rem]">
               Controlla prima i valori.
@@ -195,24 +198,24 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
             </p>
           </div>
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start [&>*]:min-w-0">
+          <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10 [&>*]:min-w-0">
             <VerificationList observations={DOC.observations} confirmed={confirmed} onToggle={toggle} onSetAll={setConfirmed} onHighlight={setHighlight} onReveal={reveal} />
 
             <div className="lg:sticky lg:top-28">
               <Facsimile highlightLine={highlight} compact />
-              <p className="mt-3 text-sm text-muted">Passa sopra o seleziona una voce per vedere la riga corrispondente.</p>
+              <p className="mt-3 hidden text-base text-muted lg:block">Passa sopra una voce, o selezionala, per vedere la riga corrispondente.</p>
             </div>
           </div>
 
           <div className="mt-10 flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
             <button type="button" className="btn btn-ghost" onClick={() => goTo(0)}>
-              <ArrowLeft aria-hidden className="h-4 w-4" /> Torna al documento
+              <ArrowLeft aria-hidden className="h-5 w-5" /> Torna al documento
             </button>
-            <div className="flex flex-col items-stretch gap-2 sm:items-end">
-              <button type="button" className="btn btn-primary" disabled={confirmed.length === 0} onClick={generate} aria-describedby="hint-genera">
-                Genera la spiegazione <ArrowRight aria-hidden className="h-4 w-4" />
+            <div className="flex flex-col items-stretch gap-2.5 sm:items-end">
+              <button type="button" className="btn btn-primary btn-lg" disabled={confirmed.length === 0} onClick={generate} aria-describedby="hint-genera">
+                Genera la spiegazione <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </button>
-              <p id="hint-genera" className="text-center text-sm text-muted sm:text-right">
+              <p id="hint-genera" className="text-center text-base text-muted sm:text-right">
                 {confirmed.length === 0 ? "Conferma almeno un valore per continuare." : "Nessun dato lascia questa demo: è tutto inventato."}
               </p>
             </div>
@@ -222,29 +225,29 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
 
       {/* STEP 2/3 — SPIEGAZIONE + PDF */}
       {step >= 2 ? (
-        <section className="fade-in mt-10" aria-labelledby="step-titolo" aria-busy={report.status === "loading"}>
+        <section className="fade-in mt-8 sm:mt-10" aria-labelledby="step-titolo" aria-busy={report.status === "loading"}>
           <h2 id="step-titolo" ref={headingRef} tabIndex={-1} className="display max-w-2xl text-[1.75rem] outline-none sm:text-[2.25rem]">
             Il tuo referto, in parole semplici.
           </h2>
 
           {report.status === "loading" ? (
             <div className="mt-8 space-y-4" role="status">
-              <p className="flex items-center gap-2 text-muted">
-                <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> Prepariamo la spiegazione e controlliamo che i numeri coincidano…
+              <p className="flex items-center gap-2.5 text-lg text-ink-soft">
+                <Loader2 aria-hidden className="h-5 w-5 shrink-0 animate-spin text-teal" /> Prepariamo la spiegazione e controlliamo che i numeri coincidano…
               </p>
               {[0, 1, 2].map((i) => (
-                <div key={i} className="h-28 animate-pulse rounded-2xl bg-mist" />
+                <div key={i} className="h-28 animate-pulse rounded-[var(--radius-lg)] bg-mist" />
               ))}
             </div>
           ) : null}
 
           {report.status === "error" ? (
-            <div className="mt-8 rounded-2xl border border-danger/30 bg-paper p-6" role="alert">
-              <p className="font-semibold text-danger">Non è stato possibile generare la spiegazione.</p>
-              <p className="mt-2 text-muted">{report.message}</p>
-              <div className="mt-5 flex flex-wrap gap-3">
+            <div className="mt-8 rounded-[var(--radius-lg)] border border-danger/30 bg-paper p-6 sm:p-7" role="alert">
+              <p className="text-xl font-extrabold text-danger">Non è stato possibile generare la spiegazione.</p>
+              <p className="mt-2 text-[1.0625rem] text-ink-soft">{report.message}</p>
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <button type="button" className="btn btn-primary" onClick={generate}>
-                  <RotateCcw aria-hidden className="h-4 w-4" /> Riprova
+                  <RotateCcw aria-hidden className="h-5 w-5" /> Riprova
                 </button>
                 <button type="button" className="btn btn-secondary" onClick={() => goTo(1)}>
                   Torna al controllo valori
@@ -254,35 +257,35 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
           ) : null}
 
           {report.status === "ready" ? (
-            <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start [&>*]:min-w-0">
+            <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] lg:items-start lg:gap-10 [&>*]:min-w-0">
               <ExplanationView explanation={report.explanation} onReveal={reveal} />
 
               <aside className="space-y-5 lg:sticky lg:top-28" aria-label="Documento e download">
-                <div className="card p-5 sm:p-6">
-                  <h3 className="font-serif text-xl">Scarica il riepilogo</h3>
-                  <p className="mt-2 text-[0.9375rem] text-muted">
-                    Un PDF A4 con valori, spiegazioni e domande, marcato <strong className="text-ink">DEMO – DATI SINTETICI</strong>.
+                <div className="form-card form-card-accent">
+                  <h3 className="form-card-title">Scarica il riepilogo</h3>
+                  <p className="form-card-text">
+                    Un PDF in formato A4 con valori, spiegazioni e domande, marcato <strong className="text-ink">DEMO – DATI SINTETICI</strong>.
                   </p>
                   <button
                     type="button"
-                    className="btn btn-primary mt-5 w-full"
+                    className="btn btn-primary btn-lg mt-5 w-full max-sm:px-4"
                     onClick={() => {
                       setStep(3);
                       void downloadPdf();
                     }}
                     disabled={pdfState === "loading"}
                   >
-                    {pdfState === "loading" ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <Download aria-hidden className="h-4 w-4" />}
+                    {pdfState === "loading" ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <Download aria-hidden className="h-5 w-5" />}
                     Scarica il PDF di esempio
                   </button>
-                  <p className="mt-3 min-h-5 text-center text-sm" role="status">
+                  <p className={pdfState === "done" || pdfState === "error" ? "mt-4 text-center text-base font-semibold" : undefined} role="status">
                     {pdfState === "done" ? <span className="text-sage-deep">Documento scaricato.</span> : null}
                     {pdfState === "error" ? <span className="text-danger">Download non riuscito. Riprova.</span> : null}
                   </p>
                 </div>
                 <Facsimile highlightLine={highlight} compact />
                 <button type="button" className="btn btn-ghost w-full" onClick={restart}>
-                  <RotateCcw aria-hidden className="h-4 w-4" /> Ricomincia l&apos;esempio
+                  <RotateCcw aria-hidden className="h-5 w-5" /> Ricomincia l&apos;esempio
                 </button>
               </aside>
             </div>
@@ -290,51 +293,53 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
 
           {report.status === "ready" ? (
             <div className="mt-12" data-testid="esempio-fine">
-              <div className="rounded-[var(--radius-lg)] border border-line bg-paper p-6 sm:p-8">
-                <p className="font-serif text-2xl" id="esempio-utile">
-                  Ti è stato utile?
-                </p>
-                {utile === null ? (
-                  <div className="mt-4 flex flex-wrap gap-3" role="group" aria-labelledby="esempio-utile">
-                    <button
-                      type="button"
-                      className="btn btn-secondary min-h-11"
-                      onClick={() => {
-                        setUtile("si");
-                        track("esempio-utile-si");
-                      }}
-                    >
-                      Sì, è chiaro
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-ghost min-h-11"
-                      onClick={() => {
-                        setUtile("no");
-                        track("esempio-utile-no");
-                      }}
-                    >
-                      Non molto
-                    </button>
-                  </div>
-                ) : (
-                  <p role="status" className="mt-3 text-muted">
-                    {utile === "si" ? "Grazie. Lo contiamo, senza sapere chi sei." : "Grazie: ce lo segniamo, senza sapere chi sei, per migliorare le spiegazioni."}
+              <div className="cta-card">
+                <div>
+                  <p className="form-card-title" id="esempio-utile">
+                    Ti è stato utile?
                   </p>
-                )}
-                <p className="mt-4 max-w-2xl text-muted">
-                  Il servizio per i referti reali non è ancora attivo: stiamo completando le verifiche cliniche, legali e di sicurezza.
-                </p>
-                {vetrina ? null : (
-                  <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                    <Link href={startHref} className="btn btn-primary">
-                      Rendi chiaro il mio referto <ArrowRight aria-hidden className="h-4 w-4" />
-                    </Link>
-                    <Link href="/servizi" className="btn btn-ghost">
-                      Vedi servizi e prezzi
-                    </Link>
-                  </div>
-                )}
+                  {utile === null ? (
+                    <div className="mt-5 flex flex-wrap gap-3" role="group" aria-labelledby="esempio-utile">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => {
+                          setUtile("si");
+                          track("esempio-utile-si");
+                        }}
+                      >
+                        Sì, è chiaro
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost"
+                        onClick={() => {
+                          setUtile("no");
+                          track("esempio-utile-no");
+                        }}
+                      >
+                        Non molto
+                      </button>
+                    </div>
+                  ) : (
+                    <p role="status" className="mt-4 max-w-md text-lg font-semibold text-ink">
+                      {utile === "si" ? "Grazie. Lo contiamo, senza sapere chi sei." : "Grazie: ce lo segniamo, senza sapere chi sei, per migliorare le spiegazioni."}
+                    </p>
+                  )}
+                </div>
+                <div className="lg:max-w-[24rem] xl:max-w-[36rem]">
+                  <p className="text-[1.0625rem] text-ink-soft">Il servizio per i referti reali non è ancora attivo: stiamo completando le verifiche cliniche, legali e di sicurezza.</p>
+                  {vetrina ? null : (
+                    <div className="mt-5 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+                      <Link href={startHref} className="btn btn-primary btn-lg max-sm:px-4 sm:whitespace-nowrap">
+                        Rendi chiaro il mio referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                      </Link>
+                      <Link href="/servizi" className="btn btn-ghost">
+                        Vedi servizi e prezzi
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
               {vetrina ? <ProvaAvvisami servizio="capisci" titolo="Vuoi la stessa spiegazione per il tuo referto?" /> : null}
             </div>

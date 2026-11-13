@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -59,6 +59,16 @@ const POPULAR = ["emocromo", "glicemia", "colesterolo-ldl", "tsh", "creatinina",
 export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categories: { id: string; title: string; lead: string }[] }) {
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState<string | null>(null);
+  const topRef = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLHeadingElement>(null);
+  /** Cambia argomento: l'elenco è tutto nuovo, quindi si riparte dal suo inizio e non dal fondo della pagina. */
+  function pick(id: string | null) {
+    setCat(id);
+    requestAnimationFrame(() => {
+      topRef.current?.scrollIntoView({ block: "start" });
+      if (id) headRef.current?.focus({ preventScroll: true });
+    });
+  }
   const q = normalizeQuery(query);
   const filtered = useMemo(() => {
     let list = guides;
@@ -85,7 +95,7 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
   const filtering = Boolean(q) || Boolean(cat);
 
   return (
-    <div className="container-rc finder">
+    <div ref={topRef} className="container-rc finder scroll-mt-24">
       <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
         <SearchField value={query} onChange={setQuery} label="Cerca una guida" placeholder={`Cerca tra ${guides.length} guide: TSH, emocromo…`} />
         <Link href="/strumenti/domande-per-il-medico" className="btn btn-secondary btn-lg">
@@ -101,8 +111,10 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
 
       {cat ? (
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-          <h2 className="display-md">{categories.find((c) => c.id === cat)?.title}</h2>
-          <button type="button" onClick={() => setCat(null)} className="btn btn-secondary btn-sm">
+          <h2 ref={headRef} tabIndex={-1} className="display-md outline-none">
+            {categories.find((c) => c.id === cat)?.title}
+          </h2>
+          <button type="button" onClick={() => pick(null)} className="btn btn-secondary btn-sm">
             <ArrowLeft aria-hidden className="h-4 w-4" /> Tutti gli argomenti
           </button>
         </div>
@@ -150,7 +162,7 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
                   const Icon = CATEGORY_ICON[c.id] ?? BookOpenText;
                   return (
                     <li key={c.id}>
-                      <button type="button" onClick={() => setCat(c.id)} className="row-card">
+                      <button type="button" onClick={() => pick(c.id)} className="row-card">
                         <span aria-hidden className="tile-ico tile-ico-sm">
                           <Icon />
                         </span>

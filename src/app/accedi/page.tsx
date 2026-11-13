@@ -23,8 +23,8 @@ export default function AccediPage() {
             : "Nessuna password da ricordare: un link via email. Oppure entra con l'account demo e prova subito."
         }
       />
-      <div className="container-rc py-10 sm:py-14">
-        <Suspense fallback={<div className="h-64 animate-pulse rounded-2xl bg-mist" />}>
+      <div className="container-rc page-body">
+        <Suspense fallback={<div className="h-64 animate-pulse rounded-[var(--radius-xl)] bg-mist" />}>
           <LoginAtRequest />
         </Suspense>
       </div>

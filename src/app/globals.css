@@ -3316,6 +3316,7 @@ input[type="search"]::-webkit-search-decoration {
     min-height: 2.75rem;
     align-items: flex-start;
     gap: 0.875rem;
+    padding-block: 0.5rem;
     font-size: 1.0625rem;
     line-height: 1.45;
     color: var(--color-ink);
@@ -3336,6 +3337,56 @@ input[type="search"]::-webkit-search-decoration {
     font-size: 1.0625rem;
     font-weight: 600;
     color: var(--color-danger);
+  }
+
+  /* Schede dei moduli (accesso, richieste): carta ampia, titolo netto. La scheda «demo» porta la tinta di marca. */
+  .form-card {
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 1.5rem 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  .form-card-accent {
+    border-color: color-mix(in srgb, var(--color-sage) 26%, transparent);
+    background:
+      radial-gradient(26rem 14rem at 100% 0%, color-mix(in srgb, var(--color-marker) 30%, transparent), transparent 66%),
+      linear-gradient(160deg, var(--color-tint-capisci), var(--color-paper) 72%);
+    box-shadow: var(--shadow-lift);
+  }
+  @media (min-width: 640px) {
+    .form-card {
+      padding: 2.25rem;
+    }
+  }
+  .form-card-title {
+    font-size: clamp(1.5rem, 1.35rem + 0.6vw, 1.75rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .form-card-text {
+    margin-top: 0.625rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+  .field-ok {
+    border-radius: 1.25rem;
+    background: var(--color-mist);
+    padding: 1.125rem 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+  .field-ok-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-ink);
   }
 
   /* Scelta tra poche voci: pillole grandi con il pallino della radio dentro. */
@@ -3908,6 +3959,74 @@ input[type="search"]::-webkit-search-decoration {
     line-height: 1;
     color: var(--color-teal-deep);
     box-shadow: var(--shadow-card);
+  }
+  .num-list-mist > li::before {
+    background: var(--color-mist);
+    box-shadow: none;
+  }
+  /* Strumenti gratuiti: il corpo sotto l'apertura e le colonne della lista finale. */
+  .tool-body {
+    padding-block: clamp(1.25rem, 0.75rem + 2vw, 2.75rem) clamp(2rem, 1.25rem + 3vw, 4rem);
+  }
+  .list-col {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 1.375rem 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  @media (min-width: 640px) {
+    .list-col {
+      padding: 1.75rem;
+    }
+  }
+  .list-col-head {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-ink);
+  }
+  .list-col-count {
+    margin-left: auto;
+    border-radius: 999px;
+    background: var(--color-mist);
+    padding: 0.125rem 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: var(--color-teal-deep);
+  }
+  .tick-list {
+    display: grid;
+    margin-top: 1rem;
+  }
+  .tick-list > li + li {
+    border-top: 1px solid var(--color-line);
+  }
+  .tick-list label {
+    display: flex;
+    min-height: 2.75rem;
+    cursor: pointer;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding-block: 0.75rem;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: var(--color-ink);
+  }
+  .tick-list input {
+    width: 1.375rem;
+    height: 1.375rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    accent-color: var(--color-teal);
+  }
+  .tick-list label:has(input:checked) {
+    color: var(--color-muted);
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in srgb, currentColor 50%, transparent);
   }
   /* Scheda laterale degli articoli: collegamenti e strumenti a portata di mano. */
   .side-card {
@@ -4932,14 +5051,15 @@ input[type="search"]::-webkit-search-decoration {
 .pdp-step-done .pdp-step-dot { border-color: var(--color-teal); background: var(--color-teal); color: var(--color-paper); }
 .pdp-step-current { color: var(--color-ink); font-weight: 800; }
 .pdp-step-current .pdp-step-dot { border-color: var(--color-teal); background: var(--color-teal); color: var(--color-paper); box-shadow: 0 0 0 5px var(--color-marker-soft); }
-.pdp-step-label { display: none; }
-.pdp-step-current .pdp-step-label { position: absolute; left: 1rem; right: 1rem; bottom: 0.75rem; display: block; text-align: center; line-height: 1.3; }
+/* I nomi degli altri passi non si vedono su telefono, ma restano nella lista per i lettori di schermo. */
+.pdp-step-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.pdp-step-current .pdp-step-label { left: 1rem; right: 1rem; bottom: 0.75rem; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; text-align: center; line-height: 1.3; }
 .pdp-step-count { font-weight: 600; color: var(--color-muted); }
 @media (min-width: 768px) {
-  .pdp-stepper { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: start; padding: 1.25rem 1rem 1.1rem; }
+  .pdp-stepper { display: grid; grid-template-columns: repeat(var(--steps, 5), minmax(0, 1fr)); align-items: start; padding: 1.25rem 1rem 1.1rem; }
   .pdp-step, .pdp-step:not(:first-child) { position: relative; flex-direction: column; gap: 0.55rem; text-align: center; }
   .pdp-step:not(:first-child)::before { position: absolute; top: calc(1.125rem - 1.5px); left: calc(-50% + 1.75rem); right: calc(50% + 1.75rem); margin: 0; }
-  .pdp-step-label, .pdp-step-current .pdp-step-label { position: static; display: block; }
+  .pdp-step-label, .pdp-step-current .pdp-step-label { position: static; display: block; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; }
   .pdp-step-count { display: none; }
 }
 
@@ -5053,7 +5173,8 @@ input[type="search"]::-webkit-search-decoration {
 @media (max-width: 639px) { .pdp-cta { min-height: 4.25rem; font-size: 1.25rem; padding-inline: 1.1rem; } }
 
 /* Landing */
-.pdp-hero { position: relative; overflow: hidden; background: radial-gradient(52rem 26rem at 88% -10%, var(--color-marker-soft), transparent 62%), linear-gradient(180deg, var(--tone-bg), var(--color-canvas)); }
+.pdp-hero { position: relative; isolation: isolate; overflow: hidden; background: radial-gradient(70rem 13rem at 50% 104%, var(--aurora-foot, rgb(207 243 236 / 0.8)), transparent 72%), var(--aurora-soft); }
+.pdp-hero > .container-rc { position: relative; z-index: 2; }
 .pdp-hero-facts { display: grid; gap: 0.6rem; font-size: 1.0625rem; color: var(--color-ink-soft); }
 .pdp-hero-facts li { display: flex; align-items: flex-start; gap: 0.6rem; }
 .pdp-hero-facts svg { margin-top: 0.15rem; height: 1.25rem; width: 1.25rem; flex-shrink: 0; color: var(--color-teal); }
@@ -5111,8 +5232,18 @@ input[type="search"]::-webkit-search-decoration {
   .pdp-stage { padding-top: 0.25rem; }
 }
 
-/* Fase 3 · Facsimile del referto: identico all'originale da 640 px; su telefono le colonne vanno a capo intere. */
+/* Fase 3 · Facsimile del referto: identico all'originale da 640 px; su telefono le colonne vanno a capo intere.
+   Da 640 px il carattere si regola sulla riga più lunga (--facs-chars), così il documento entra intero nel riquadro;
+   se una riga è davvero troppo lunga scorre il riquadro, mai la pagina. */
 .facs-text { white-space: pre; }
+.facs-list { font-size: 0.9375rem; }
+@media (min-width: 640px) {
+  .facs-scroll { container-type: inline-size; overflow-x: auto; }
+  .facs-list { width: max-content; min-width: 100%; font-size: 0.8125rem; }
+  @supports (width: 1cqw) {
+    .facs-list { font-size: clamp(0.75rem, calc((100cqw - 4rem) / (var(--facs-chars, 62) * 0.61)), 0.9375rem); }
+  }
+}
 @media (max-width: 639px) {
   .facs-text { display: flex; flex-wrap: wrap; column-gap: 1.1rem; white-space: normal; min-width: 0; }
   .facs-gap { display: none; }
