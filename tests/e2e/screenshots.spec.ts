@@ -105,7 +105,6 @@ test.describe("screenshots", () => {
     await page.screenshot({ path: `${dir}/area-5-servizio.png`, fullPage: true });
     await page.getByRole("button", { name: /e ricevi il report/ }).click();
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
-    await page.getByRole("link", { name: "Torna al referto" }).first().click();
     await page.getByRole("heading", { name: "Il tuo referto, in parole semplici." }).waitFor({ timeout: 20_000 });
     await settle(page);
     await page.screenshot({ path: `${dir}/area-6-report.png`, fullPage: true });

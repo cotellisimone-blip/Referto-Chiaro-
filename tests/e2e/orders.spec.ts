@@ -65,8 +65,7 @@ test.describe("ordini e pagamenti simulati", () => {
     await expect(page).toHaveURL(/\/area-personale\/ordini\/[0-9a-f-]{36}$/);
     await expect(page).not.toHaveURL(new RegExp(o.id));
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
-    await expect(page.getByText("Pagamento registrato")).toBeVisible();
-    await page.getByRole("link", { name: "Torna al referto" }).click();
+    // Ciclo 5: il pagamento riuscito apre subito il report.
     await expect(page.getByRole("heading", { name: "Il tuo referto, in parole semplici." })).toBeVisible({ timeout: 20_000 });
     const orders = (await (await ctx.request.get("/api/v1/area/orders")).json()).orders as { status: string }[];
     expect(orders.map((x) => x.status).sort()).toEqual(["failed", "paid"]);

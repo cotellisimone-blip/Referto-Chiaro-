@@ -262,10 +262,10 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
 
               {/* Su schermi larghi il documento resta in vista mentre si legge: è l'ultimo blocco della colonna e si ferma in alto. */}
               <aside className="flex flex-col gap-5" aria-label="Documento e download">
-                <div className="form-card form-card-accent">
-                  <h3 className="form-card-title">Scarica il riepilogo</h3>
+                <div id="scarica-riepilogo" className="form-card form-card-accent scroll-mt-28">
+                  <h3 className="form-card-title">Il foglio per il medico</h3>
                   <p className="form-card-text">
-                    Un PDF in formato A4 con valori, spiegazioni e domande, marcato <strong className="text-ink">DEMO – DATI SINTETICI</strong>.
+                    Da stampare: valori, posizione e domande in prima pagina. Marcato <strong className="text-ink">DEMO – DATI SINTETICI</strong>.
                   </p>
                   <button
                     type="button"

@@ -11,7 +11,7 @@ import { clsx } from "clsx";
 // scheda in home, la pagina Capisci e l'esempio raccontano lo stesso referto.
 const VALUES = [
   { name: "Glicemia", value: "92", unit: "mg/dL", range: "70 – 99", pos: 64, note: "Dentro l'intervallo del laboratorio" },
-  { name: "Colesterolo LDL", value: "134", unit: "mg/dL", range: "< 115", pos: 86, out: true, note: "Sopra l'intervallo del laboratorio" },
+  { name: "Colesterolo LDL", value: "134", unit: "mg/dL", range: "< 115", pos: 82, band: [0, 70], out: true, note: "Sopra l'intervallo del laboratorio" },
   { name: "Creatinina", value: "0,89", unit: "mg/dL", range: "0,70 – 1,20", pos: 40, note: "Dentro l'intervallo del laboratorio" },
 ] as const;
 
@@ -27,7 +27,7 @@ function ValueRow({ v, compact = false }: { v: (typeof VALUES)[number]; compact?
           {v.value} <span className="text-sm font-medium text-muted">{v.unit}</span>
         </span>
       </p>
-      <span className="range-bar mt-2.5">
+      <span className="range-bar mt-2.5" style={"band" in v ? { ["--band-start" as string]: `${v.band[0]}%`, ["--band-end" as string]: `${v.band[1]}%` } : undefined}>
         <i />
         <b className={"out" in v ? "out" : undefined} style={{ left: `${v.pos}%` }} />
       </span>

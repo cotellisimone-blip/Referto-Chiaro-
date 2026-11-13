@@ -2,6 +2,27 @@
 
 Un ciclo = analisi, cinque fasi proposte, approvazione di Simone, esecuzione. Il più recente sta in cima. La storia precedente al ciclo 1 è in `docs/archivio/DECISION_LOG.md`.
 
+## Ciclo 5 · 13/11/2026
+
+**Base:** ramo `claude/project-thread-rkexez` @ 93bdc85 (PR #7 «Luce», sopra le PR #6 e #5, tutte aperte). **Metodo:** master prompt «Evoluzione produttiva» v3. **Analisi:** `ANALISI_CICLO_5.md` nella cartella del progetto (`cura-privata/ciclo-5/`). **Approvazione:** Simone, 13/11 alle 14:12 UTC, fasi 1–4 («Approvo tutte, impegnati molto sulla grafica»); la quinta proposta era «nessun intervento giustificato». **Ramo:** `claude/project-thread-huh54j`, PR sopra la #7.
+
+**Ostacolo:** il report a pagamento consegnava meno di quanto la home promette: nessuna barra, nessuna posizione, e per scoprire l'unico valore fuori dall'intervallo stampato bisognava leggere cinque schede.
+
+| Fase | Cosa è cambiato | Stato |
+|---|---|---|
+| 1. Il report fa vedere subito che cosa guardare | In cima «A colpo d'occhio»: quanti valori, quanti dentro, sopra e sotto l'intervallo stampato, e quali chiedere al medico (un tocco porta alla scheda). Ogni valore è una scheda con barra dell'intervallo, limiti scritti come sul referto e posizione in parole con icona (mai solo colore); prima quelli fuori, già aperti; gli altri si aprono con un tocco, «Apri tutte» per leggerli insieme. Le domande per il medico nominano l'esame. Tutto calcolato dal codice (`src/domain/reporting/glance.ts`), mai dall'AI. Report su telefono: da 9,9 a 5,9 schermate | completata e verificata |
+| 2. Dal referto al report senza perdersi, da telefono | Da 7 a 5 tocchi dopo l'accesso. Ogni passo si apre dal suo inizio (prima, dopo «Salva», restava in vista il piè di pagina). Il comando del passo resta attaccato al fondo dello schermo (`.step-bar`, sticky). Prezzo e «Paga … e ricevi il report» in cima al passo del servizio. Dopo il pagamento si arriva direttamente al report, con la nota «Pagamento registrato». Nell'area personale su telefono il piè di pagina è ridotto a marchio, 112 e note legali. Stripe non è stato toccato: cambia solo dove si atterra al ritorno | completata e verificata (con testo grande il comando «Conferma tutti» esce dalla prima schermata; «Salva» e «Paga» restano in vista) |
+| 3. Il PDF diventa il foglio per il medico | Prima pagina: «A colpo d'occhio», tabella dei valori con barra e posizione (prima quelli fuori, con bordo scuro, grassetto e triangolo: si leggono anche in bianco e nero), domande per il medico, righe per gli appunti se c'è spazio. Seconda pagina: termini, «In breve e limiti». Referto di esempio: da 3 a 2 pagine | completata e verificata (i referti più lunghi, come emocromo e profilo epatico, restano a 3 pagine) |
+| 4. Pagine più leggere su telefoni datati | La ricerca nel browser non porta più con sé guide, glossario e validazione (`src/lib/search-core.ts`): JavaScript trasferito sulla home da 282 a 241 KB (−15%), Referti da 261 a 210, Prezzi da 251 a 197, Guide da 243 a 189 (−22%). Il tempo di blocco su CPU 4× non cambia in modo misurabile (circa 300 ms). Guadagno sotto la soglia di un quarto fissata nell'analisi: fermato qui. Il resto è il peso di React e Next | parzialmente completata |
+
+**Decisioni prese approvando:** a report pronto l'indicatore dei cinque passi non compare (il percorso è finito e il colpo d'occhio sta nella prima schermata). Le schede dei valori dentro l'intervallo nascono chiuse. Le domande sui valori fuori intervallo hanno una forma fissa: «<Esame>: il numero è sopra l'intervallo stampato dal laboratorio. Che cosa significa nel mio caso, se significa qualcosa?» (oltre tre esami dallo stesso lato, una domanda sola senza nomi). Nessun aggettivo clinico: solo «dentro», «sopra», «sotto», «non confrontabile».
+
+**Test (13/11, `npm run controlli`):** lint e tipi puliti, 246 test unitari, e2e desktop e telefono 289 passati e 65 saltati, e2e vetrina 27 passati e 1 saltato, 0 falliti. Aggiornati i golden della spiegazione deterministica (cambia solo la domanda sui valori fuori intervallo). Nuovi: `tests/unit/glance.test.ts`, `tests/e2e/ciclo5.spec.ts`.
+
+**Ipotesi da verificare dopo il lancio:** che «4 dentro, 1 sopra» sia letto come utile e non allarmante (segnali: «Ti è stato utile?» e richieste di videoconsulto dal report).
+
+**Limiti nuovi:** la barra è schematica, non in scala: mostra da che parte del limite sta il numero, non di quanto. Un intervallo stampato in una forma non riconosciuta dà «Non confrontabile» e nessuna barra.
+
 ## Ciclo 4 · 12/11/2026 (sera)
 
 **Base:** ramo `claude/project-thread-t5hahw` @ a9306b8 (PR #6 sopra la PR #5, entrambe aperte). **Metodo:** master prompt «Evoluzione produttiva» v3. **Analisi:** `ANALISI_CICLO_4.md` nella cartella del progetto (`cura-privata/ciclo-4/`). **Approvazione:** Simone, 12/11 alle 20:30 UTC, fasi 1–4 («Tutte tranne la 5»).

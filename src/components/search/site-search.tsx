@@ -4,7 +4,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 import Link from "next/link";
 import { clsx } from "clsx";
 import { ArrowRight, BookOpenText, FileText, Search, SpellCheck, X } from "lucide-react";
-import { searchIndex, type SearchItem, type SearchKind } from "@/lib/search-index";
+import { searchIndex, type SearchItem, type SearchKind } from "@/lib/search-core";
 
 export const SEARCH_OPEN_EVENT = "cp-search-open";
 const RECENT_KEY = "cp-search-recent";

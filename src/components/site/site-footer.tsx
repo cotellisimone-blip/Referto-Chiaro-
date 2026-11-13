@@ -34,7 +34,7 @@ export function SiteFooter() {
           <div className="col-span-2 max-w-md md:col-span-3 lg:col-span-1">
             {/* «.it» solo quando il sito gira davvero su un dominio .it (PUBLIC_BASE_URL). */}
             <Logo inverse withTld={SITE_URL.endsWith(".it")} />
-            <p className="mt-6 text-[1.625rem] font-extrabold leading-[1.18] tracking-[-0.025em] text-ink">{PAYOFF}</p>
+            <p className="footer-payoff mt-6 text-[1.625rem] font-extrabold leading-[1.18] tracking-[-0.025em] text-ink">{PAYOFF}</p>
             <OwnerLine />
             <p className="footer-emergency mt-7 text-ink">
               <span className="stat-num text-[1.75rem] text-danger">112</span>

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { isReadable, type Observation } from "@/domain/extraction/schema";
 import { parseLocaleNumber } from "@/domain/extraction/numbers";
+import { outOfRangeQuestions } from "@/domain/reporting/glance";
 import { describeRangePosition, parseReferenceRange, positionInPrintedRange } from "@/domain/extraction/reference";
 import { findGlossaryEntry } from "@/domain/reporting/glossary";
 import type { CannotProcess, Explanation, ExplanationItem } from "@/domain/reporting/explanation-schema";
@@ -198,9 +199,8 @@ export class ClaudeExplanationProvider implements AiExplanationProvider {
     const summary = badFields.has("summary") || NUMBER.test(draft.summary) ? STANDARD_SUMMARY(items.length) : draft.summary.trim();
     let questions = draft.questionsForDoctor.filter((q, n) => !badFields.has(`question:${n}`) && !NUMBER.test(q)).map((q) => q.trim()).slice(0, 5);
     if (questions.length === 0) questions = STANDARD_QUESTIONS;
-    if (items.some((i) => !i.printedRangeNote.startsWith("Il numero riportato rientra"))) {
-      questions = [...questions, "Alcuni numeri sono fuori dall'intervallo stampato: che cosa significa nel mio caso, se significa qualcosa?"];
-    }
+    // Ciclo 5: le domande sui valori fuori dall'intervallo stampato le scrive il codice, con il nome dell'esame, e vanno per prime.
+    questions = [...outOfRangeQuestions(items), ...questions];
 
     this.lastTrace = { outcome: sanitized ? "sanitized" : attempts > 1 ? "retried-ok" : "ok", attempts, usage, violations: violations.map((x) => x.v) };
     return {

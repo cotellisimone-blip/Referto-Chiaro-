@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { FaqList } from "./faq-list";
 import { SearchField } from "./search-field";
-import { normalizeQuery } from "@/lib/search-index";
+import { normalizeQuery } from "@/lib/search-core";
 
 type Item = { q: string; a: string; topic: string };
 

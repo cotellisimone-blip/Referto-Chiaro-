@@ -1,5 +1,6 @@
 import { isReadable } from "@/domain/extraction/schema";
 import { parseLocaleNumber } from "@/domain/extraction/numbers";
+import { outOfRangeQuestions } from "@/domain/reporting/glance";
 import { describeRangePosition, parseReferenceRange, positionInPrintedRange } from "@/domain/extraction/reference";
 import { findGlossaryEntry } from "@/domain/reporting/glossary";
 import type { CannotProcess, Explanation, ExplanationItem } from "@/domain/reporting/explanation-schema";
@@ -65,12 +66,11 @@ export class DeterministicDemoExplanationProvider implements ExplanationProvider
       summary: `Questo documento riporta ${items.length === 1 ? "un valore" : `${items.length} valori`} di laboratorio che hai confermato. Qui trovi i numeri esattamente come sono stampati e una spiegazione generale dei termini. Il riepilogo non valuta la tua situazione clinica.`,
       items,
       excludedObservations: excluded,
+      // Ciclo 5: prima le domande che nominano gli esami fuori dall'intervallo stampato, poi quelle generali.
       questionsForDoctor: [
+        ...outOfRangeQuestions(items),
         "Quali informazioni sulla mia storia e sul mio stato di salute servono per leggere correttamente questi risultati?",
         "Ci sono valori che secondo lei è utile approfondire o confrontare con esami precedenti?",
-        ...(items.some((i) => !i.printedRangeNote.startsWith("Il numero riportato rientra"))
-          ? ["Alcuni numeri sono fuori dall'intervallo stampato: che cosa significa nel mio caso, se significa qualcosa?"]
-          : []),
         "C'è qualcosa che dovrei chiarire o portare alla prossima visita?",
       ],
       limitations: [

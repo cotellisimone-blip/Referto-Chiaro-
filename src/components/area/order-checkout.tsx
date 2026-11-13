@@ -26,6 +26,12 @@ function backHref(o: Pick<Order, "service" | "refId" | "documentId">): string {
   return o.documentId ? `/area-personale/documenti/${o.documentId}` : "/area-personale/ordini";
 }
 
+/** Ciclo 5, fase 2: per «Capisci» dopo il pagamento si va dritti al report, senza una pagina di passaggio. */
+function reportHref(o: Pick<Order, "service" | "documentId" | "provider">): string | null {
+  if ((o.service !== "essenziale" && o.service !== "completo") || !o.documentId) return null;
+  return `/area-personale/documenti/${o.documentId}?pagato=1${o.provider === "simulated" ? "&prova=1" : ""}`;
+}
+
 const POLL_MS = 1500;
 const POLL_MAX = 40;
 
@@ -57,6 +63,12 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
     const tick = async (n: number) => {
       const o = await load();
       if (!alive || !o) return;
+      // Ritorno dal fornitore di pagamento con esito positivo: appena l'ordine risulta pagato si apre il report.
+      const direct = o.status === "paid" && esito === "ok" ? reportHref(o) : null;
+      if (direct) {
+        router.replace(direct);
+        return;
+      }
       if (o.provider !== "simulated" && o.status === "pending" && esito === "ok" && n < POLL_MAX) {
         setPolling(true);
         timer = setTimeout(() => void tick(n + 1), POLL_MS);
@@ -67,13 +79,18 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
       alive = false;
       if (timer) clearTimeout(timer);
     };
-  }, [load, esito]);
+  }, [load, esito, router]);
 
   async function simulate(outcome: "pagato" | "fallito" | "annullato") {
     setBusy(true);
     setError(null);
     try {
       const r = await api<{ order: Order }>(`/api/v1/area/orders/${orderId}/simula`, { method: "POST", body: { esito: outcome } });
+      const direct = outcome === "pagato" && r.order.status === "paid" ? reportHref(r.order) : null;
+      if (direct) {
+        router.push(direct);
+        return; // il comando resta occupato finché non si apre il report
+      }
       setOrder(r.order);
       if (outcome === "annullato" && order) router.push(backHref(order));
     } catch (e) {
@@ -133,28 +150,6 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
         <ArrowLeft aria-hidden /> Tutti gli ordini
       </Link>
       <h1 className="area-title mt-3">Il tuo ordine.</h1>
-
-      <dl className="kv card mt-6 p-5 sm:grid-cols-2 sm:p-7">
-        <div>
-          <dt>Servizio</dt>
-          <dd className="text-[1.375rem] font-extrabold leading-tight tracking-tight">{SERVICE_NAME[order.service]}</dd>
-        </div>
-        <div>
-          <dt>Importo</dt>
-          <dd className="tabular text-[1.375rem] font-extrabold leading-tight tracking-tight">{formatEuro(order.amountCents)}</dd>
-        </div>
-        <div>
-          <dt>Stato</dt>
-          <dd className="mt-1.5">
-            <StatusChip status={order.status} kind="order" />
-          </dd>
-        </div>
-        <div>
-          <dt>Creato il</dt>
-          <dd>{formatDateTime(order.createdAt)}</dd>
-        </div>
-      </dl>
-
       {error ? (
         <p role="alert" className="field-error mt-4">
           {error}
@@ -166,7 +161,10 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
           <h2 id="sim-titolo" className="area-h2">
             Pagamento simulato — nessun addebito
           </h2>
-          <p className="mt-2 text-[1.0625rem] text-ink">Questa è una dimostrazione: non serve nessuna carta e nessun importo verrà addebitato. Scegli l&apos;esito da provare.</p>
+          <p className="mt-2 text-[1.1875rem] font-extrabold leading-snug text-ink">
+            {SERVICE_NAME[order.service]} · <span className="tabular">{formatEuro(order.amountCents)}</span>
+          </p>
+          <p className="mt-1.5 text-[1.0625rem] text-ink">È una dimostrazione: non serve una carta e non viene addebitato nulla.{reportHref(order) ? " Dopo la conferma si apre il report." : ""}</p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <button type="button" className="btn btn-primary btn-lg max-sm:px-4" disabled={busy} onClick={() => simulate("pagato")}>
               {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
@@ -240,6 +238,29 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
           </Link>
         </section>
       ) : null}
+
+      <h2 className="sr-only">Dettagli dell&apos;ordine</h2>
+      <dl className="kv card mt-6 p-5 sm:grid-cols-2 sm:p-7">
+        <div>
+          <dt>Servizio</dt>
+          <dd className="text-[1.375rem] font-extrabold leading-tight tracking-tight">{SERVICE_NAME[order.service]}</dd>
+        </div>
+        <div>
+          <dt>Importo</dt>
+          <dd className="tabular text-[1.375rem] font-extrabold leading-tight tracking-tight">{formatEuro(order.amountCents)}</dd>
+        </div>
+        <div>
+          <dt>Stato</dt>
+          <dd className="mt-1.5">
+            <StatusChip status={order.status} kind="order" />
+          </dd>
+        </div>
+        <div>
+          <dt>Creato il</dt>
+          <dd>{formatDateTime(order.createdAt)}</dd>
+        </div>
+      </dl>
+
     </div>
   );
 }

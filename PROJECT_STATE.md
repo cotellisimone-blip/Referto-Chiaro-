@@ -46,6 +46,9 @@ Foto: solo pazienti, sempre con «Immagine illustrativa»; **mai foto di medici*
 - Ogni servizio compare una volta sola in Servizi e in Prezzi (ciclo 4, `tests/e2e/ciclo4.spec.ts`). Il paziente non vede mai la barra dei ruoli.
 - Domicilio e video si chiudono con un riepilogo scritto e un prossimo passo. Annullamento: rimborso intero fino a 2 ore prima (domicilio) o 1 ora prima (video); regola proposta, da confermare con un legale.
 - La pagina del domicilio dice che il medico può, se lo ritiene, lasciare una prescrizione su ricetta bianca (approvato il 12/11).
+- Il report apre con «A colpo d'occhio»; la posizione rispetto all'intervallo stampato è calcolata dal codice (`src/domain/reporting/glance.ts`), mai dall'AI, e si dice solo con «dentro», «sopra», «sotto», «non confrontabile». Prima i valori fuori intervallo; report su telefono sotto le 6 schermate (ciclo 5, `tests/e2e/ciclo5.spec.ts`).
+- Dal referto al report: cinque tocchi, comando del passo attaccato al fondo dello schermo su telefono, dopo il pagamento si atterra sul report (ciclo 5).
+- Il PDF è «il foglio per il medico»: valori, posizione e domande in prima pagina.
 - Prima di ogni PR: `npm run controlli` (stessi passi del workflow GitHub).
 
 ## Problemi noti
@@ -55,7 +58,7 @@ Foto: solo pazienti, sempre con «Immagine illustrativa»; **mai foto di medici*
 - Le richieste delle prestazioni con un medico vivono nel browser, non nell'account; videoconsulto e secondo parere hanno due implementazioni (fase 5 del ciclo 4, non approvata).
 - Valutazione AI dal vivo mai eseguita: costo e qualità per referto solo stimati in `docs/COSTI_OPERATIVI.md` (serve una chiave Anthropic per misurarli).
 - Antivirus sui caricamenti assente; CSP con `script-src 'unsafe-inline'`; nessun penetration test.
-- Circa 700 KB di JavaScript (non compresso) anche su pagine quasi statiche.
+- JavaScript: 190–240 KB trasferiti per pagina dopo il ciclo 5 (home 711 KB non compressi); il resto è React e Next, non si riduce senza cambiare architettura.
 
 ## Dove guardare
 | Cosa | File |

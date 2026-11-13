@@ -6,7 +6,7 @@ import Link from "next/link";
 import { clsx } from "clsx";
 import { ArrowRight, Check, Copy, Link2, ListChecks, Plus, Printer, Trash2, X } from "lucide-react";
 import { SearchField } from "@/components/ui/search-field";
-import { normalizeQuery } from "@/lib/search-index";
+import { normalizeQuery } from "@/lib/search-core";
 
 export interface ExamOption {
   slug: string;
