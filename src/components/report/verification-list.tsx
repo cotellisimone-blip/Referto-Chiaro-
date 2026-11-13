@@ -37,12 +37,12 @@ export function VerificationList({
   return (
     <fieldset>
       <legend className="sr-only">Valori estratti dal documento</legend>
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-muted" aria-live="polite">
-          <span className="tabular font-semibold text-ink">{confirmed.length}</span> di {readableIds.length} valori leggibili confermati
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <p className="text-[1.0625rem] text-ink-soft" aria-live="polite">
+          <span className="tabular font-bold text-ink">{confirmed.length}</span> di {readableIds.length} valori leggibili confermati
         </p>
-        <button type="button" className="btn btn-ghost min-h-11 text-sm" onClick={() => onSetAll(allConfirmed ? [] : readableIds)}>
-          <CheckCheck aria-hidden className="h-4 w-4" />
+        <button type="button" className="btn btn-secondary btn-sm max-sm:w-full" onClick={() => onSetAll(allConfirmed ? [] : readableIds)}>
+          <CheckCheck aria-hidden className="h-5 w-5" />
           {allConfirmed ? "Togli tutte le conferme" : "Conferma tutti i valori leggibili"}
         </button>
       </div>
@@ -56,7 +56,7 @@ export function VerificationList({
               key={o.id}
               onMouseEnter={() => onHighlight(o.sourceLine)}
               onFocus={() => onHighlight(o.sourceLine)}
-              className={clsx("rounded-2xl border bg-paper p-4 transition-colors duration-150 sm:p-5", !ok ? "border-dashed border-muted/40 bg-canvas" : checked ? "border-teal/60 shadow-[var(--shadow-card)]" : "border-line")}
+              className={clsx("rounded-[1.25rem] border bg-paper p-4 transition-colors duration-150 sm:p-5", !ok ? "border-dashed border-muted/40 bg-canvas" : checked ? "border-teal/60 shadow-[var(--shadow-card)]" : "border-line")}
             >
               <div className="flex items-start gap-4">
                 {ok ? (
@@ -67,28 +67,35 @@ export function VerificationList({
                 <div className="min-w-0 flex-1">
                   <label htmlFor={ok ? inputId : undefined} className={clsx("block", ok && "cursor-pointer")}>
                     <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                      <span className="font-semibold text-ink">{o.nameRaw}</span>
-                      <span className="tabular font-mono text-[0.9375rem]">
+                      <span className="text-lg font-bold leading-snug text-ink">{o.nameRaw}</span>
+                      <span className="tabular whitespace-nowrap text-lg">
                         {ok ? (
                           <>
-                            <strong className="text-ink">{o.valueRaw}</strong> <span className="text-muted">{o.unitRaw}</span>
+                            <strong className="font-extrabold text-ink">{o.valueRaw}</strong> <span className="text-muted">{o.unitRaw}</span>
                           </>
                         ) : (
-                          <span className="text-warn">non leggibile</span>
+                          <span className="font-semibold text-warn">non leggibile</span>
                         )}
                       </span>
                     </span>
-                    <span className="mt-1 block text-sm text-muted">
-                      Intervallo stampato: <span className="tabular">{o.referenceRaw ?? "non riportato"}</span>
+                    <span className="mt-1 block text-base text-muted">
+                      Intervallo stampato: <span className="tabular text-ink-soft">{o.referenceRaw ?? "non riportato"}</span>
                     </span>
                   </label>
-                  <p id={`${inputId}-src`} className="mt-2 flex items-center gap-1.5 text-xs text-muted">
-                    <ScanEye aria-hidden className="h-3.5 w-3.5" /> Pagina {o.sourcePage}, riga {o.sourceLine}
-                    <button type="button" className="ml-1 underline underline-offset-2 hover:text-teal lg:hidden" onClick={() => onReveal(o.sourceLine)}>
-                      mostra
+                  {/* Su computer il documento è accanto e la riga si accende al passaggio; su telefono e tablet la si raggiunge con un tocco. */}
+                  <p id={`${inputId}-src`} className="mt-2 text-[0.9375rem] text-muted">
+                    <span className="hidden items-center gap-1.5 lg:inline-flex">
+                      <ScanEye aria-hidden className="h-4 w-4 shrink-0" /> Pagina {o.sourcePage}, riga {o.sourceLine}
+                    </span>
+                    <button
+                      type="button"
+                      className="inline-flex min-h-11 items-center gap-2 rounded-full bg-mist px-4 font-semibold text-teal-deep lg:hidden"
+                      onClick={() => onReveal(o.sourceLine)}
+                    >
+                      <ScanEye aria-hidden className="h-4 w-4 shrink-0" /> Vedi nel documento: riga {o.sourceLine}
                     </button>
                   </p>
-                  {!ok ? <p className="mt-3 rounded-lg bg-cream/70 px-3 py-2 text-sm text-ink">Valore non leggibile: verifica il documento originale. Non lo includeremo nella spiegazione.</p> : null}
+                  {!ok ? <p className="mt-3 rounded-xl bg-cream/70 px-4 py-3 text-base text-ink">Valore non leggibile: verifica il documento originale. Non lo includeremo nella spiegazione.</p> : null}
                 </div>
               </div>
             </li>

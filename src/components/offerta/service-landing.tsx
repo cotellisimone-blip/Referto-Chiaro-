@@ -1,61 +1,62 @@
 import Link from "next/link";
 import { ArrowRight, Check, CircleDashed, Clock3, Gift, UserRound, X } from "lucide-react";
 import { clsx } from "clsx";
-import { CORE_SERVICES, INFORMATIVE_NOTE, PRICE_NOTE, VETRINA_TRY, coreService, priceDisplay, publicPricesEnabled, serviceStart, type CoreServiceId } from "@/domain/offerta";
+import { INFORMATIVE_NOTE, PRICE_NOTE, VETRINA_TRY, coreService, publicPricesEnabled, serviceStart, type CoreServiceId } from "@/domain/offerta";
 import { WAITLIST_INTEREST } from "@/content/stato-progetto";
 import { WaitlistForm } from "@/components/site/waitlist-form";
 import { TrackView } from "@/components/site/track";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS, VIDEOS } from "@/content/media";
+import { Photo } from "@/components/ui/photo";
+import { Wave } from "@/components/ui/wave";
 import { PriceTag } from "./price-tag";
 import { readFlags } from "@/lib/feature-flags";
 import { VideoSlot } from "./video-slot";
 import { ReportTransform } from "./report-visuals";
-import { CallCard, OpinionSheet } from "./next-levels";
+import { CallCard, OpinionSheet } from "./service-visuals";
+import { OtherServices } from "./other-services";
 
 /**
- * L'identità di ciascuna pagina servizio, dentro la stessa marca:
- * Capisci = turchese e menta, velocità e chiarezza · Parla con un medico = caldo e umano ·
- * Secondo parere = autorevole, fondo blu profondo. Titolo e azione dal copy «Evoluzione v2»;
+ * L'identità di ciascuna pagina servizio, dentro la stessa marca (grafica «Luce», 12/11/2026):
+ * Capisci = luce di menta e il referto che diventa report · Videoconsulto = luce calda e una persona ·
+ * Secondo parere = fondo petrolio e il foglio firmato. Titolo e azione dal copy «Evoluzione v2»;
  * nome, frase, tempi, prezzo e contenuti restano quelli di src/domain/offerta.ts.
  */
 const VIEW_EVENT: Record<CoreServiceId, string> = { capisci: "visita-capisci", "parla-con-un-medico": "visita-medico", "secondo-parere": "visita-parere" };
 
-const IDENTITY: Record<CoreServiceId, { headline: string; cta: string; hero: string; strong: boolean; track: string }> = {
-  capisci: { headline: "Il tuo referto, finalmente leggibile.", cta: "Rendi chiaro il mio referto", hero: "stage-mint", strong: false, track: "cta-capisci" },
-  "parla-con-un-medico": { headline: "Non sai quale specialista ti serve? Parti da un medico.", cta: "Prenota il videoconsulto", hero: "stage-warm", strong: false, track: "cta-medico" },
-  "secondo-parere": { headline: "Quando vuoi un'altra valutazione, da uno specialista.", cta: "Richiedi un secondo parere", hero: "scope-strong stage-blue", strong: true, track: "cta-parere" },
+const IDENTITY: Record<CoreServiceId, { eyebrow: string; headline: string; cta: string; strong: boolean; track: string }> = {
+  capisci: { eyebrow: "Capisci il tuo referto", headline: "Il tuo referto, finalmente leggibile.", cta: "Rendi chiaro il mio referto", strong: false, track: "cta-capisci" },
+  "parla-con-un-medico": { eyebrow: "Videoconsulto con un medico", headline: "Non sai quale specialista ti serve? Parti da un medico.", cta: "Prenota il videoconsulto", strong: false, track: "cta-medico" },
+  "secondo-parere": { eyebrow: "Secondo parere specialistico", headline: "Quando vuoi un'altra valutazione, da uno specialista.", cta: "Richiedi un secondo parere", strong: true, track: "cta-parere" },
 };
 
 function HeroVisual({ id }: { id: CoreServiceId }) {
   if (id === "capisci") {
     return (
-      // Ciclo 3, fase 3: su telefono la trasformazione si vede più sotto, nel «prima e dopo» con il cursore.
-      <div className="relative hidden sm:block sm:pr-2">
+      // Su telefono la trasformazione si vede più sotto, nel «prima e dopo» con il cursore.
+      <div className="relative mx-auto hidden w-full max-w-[34rem] sm:block lg:mr-0">
         <ReportTransform />
       </div>
     );
   }
   if (id === "parla-con-un-medico") {
-    const photo = ILLUSTRATIVE_PHOTOS.scrivaniaPortrait;
     return (
-      <div className="relative mx-auto w-full max-w-[26rem] pb-8 lg:ml-auto lg:mr-0">
-        <span aria-hidden className="absolute -right-8 -top-8 h-44 w-44 rounded-full bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--tone-accent)_40%,transparent),transparent)]" />
+      // Su telefono la scheda di vetro sta sotto il viso (sporge dal bordo della foto), da tablet in su le si appoggia sopra.
+      <div className="relative mx-auto w-full max-w-[26rem] pb-[4.75rem] sm:pb-7 lg:ml-auto lg:mr-0">
         {SHOW_ILLUSTRATIVE_PHOTOS ? (
-          <figure className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] rounded-tl-[7rem] shadow-[var(--shadow-float)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} fetchPriority="high" decoding="async" className="h-full w-full object-cover" />
+          <figure className="svc-photo">
+            <Photo photo={ILLUSTRATIVE_PHOTOS.ritratto} sizes="(min-width: 1024px) 26rem, 92vw" priority />
             <figcaption className="caption-illus right-3 top-3">Immagine illustrativa</figcaption>
           </figure>
         ) : (
-          <div className="aspect-[4/5] rounded-[2.5rem] bg-[var(--tone-bg)]" />
+          <div className="aspect-[4/3] rounded-[2.5rem] bg-[var(--tone-bg)] sm:aspect-[4/5]" />
         )}
-        <CallCard className="absolute bottom-0 left-4 right-10 lg:-left-12 lg:right-16" />
+        <CallCard className="absolute bottom-0 left-3 right-3 sm:left-4 sm:right-10 lg:-left-12 lg:right-16" />
       </div>
     );
   }
   return (
     <div className="relative mx-auto w-full max-w-[27rem] lg:ml-auto lg:mr-0">
-      <span aria-hidden className="absolute -inset-6 rounded-[3rem] border border-white/10" />
+      <span aria-hidden className="absolute -inset-5 rounded-[2.5rem] border border-white/10 sm:-inset-6" />
       <OpinionSheet className="relative rotate-[1.5deg] sm:p-8" />
     </div>
   );
@@ -63,7 +64,7 @@ function HeroVisual({ id }: { id: CoreServiceId }) {
 
 /**
  * Pagina di un servizio protagonista: un titolo che parte dal bisogno, il prezzo, un'azione sola, che cosa include.
- * Stesso scheletro per i tre servizi, tre identità. Il riquadro «stato» dice sempre la verità.
+ * Stesso scheletro per i tre servizi, tre identità. Il riquadro «versione dimostrativa» dice sempre la verità.
  */
 export function ServiceLanding({
   id,
@@ -80,7 +81,6 @@ export function ServiceLanding({
   const vetrina = readFlags().vetrina;
   const start = serviceStart(id);
   const interest = WAITLIST_INTEREST[id];
-  const others = CORE_SERVICES.filter((x) => x.id !== id).sort((a, b) => a.level.n - b.level.n);
   const facts = [
     { icon: Clock3, label: "Tempi", text: s.timing },
     { icon: UserRound, label: "Chi se ne occupa", text: s.who },
@@ -89,28 +89,25 @@ export function ServiceLanding({
   return (
     <div className={`tone-${s.tone}`}>
       <TrackView event={VIEW_EVENT[id]} />
-      {/* HERO del servizio */}
-      <section aria-labelledby="servizio-titolo" className={clsx("relative overflow-hidden", `tone-${s.tone}`, look.hero)}>
-        <div className={clsx("container-rc grid grid-cols-[minmax(0,1fr)] items-center gap-12 pb-16 pt-10 sm:pt-14 lg:gap-16 lg:pb-24 lg:pt-20", id === "capisci" ? "lg:grid-cols-[0.92fr_1.08fr]" : "lg:grid-cols-[1.12fr_0.88fr]")}>
+
+      {/* APERTURA del servizio. Lo «scope» scuro sta sul contenuto, così l'onda prende il colore della pagina. */}
+      <section aria-labelledby="servizio-titolo" className={clsx("svc-hero", look.strong && "bg-petrol")}>
+        <div className={clsx("container-rc svc-hero-grid", look.strong && `scope-strong tone-${s.tone}`)}>
           <div>
-            <p className="eyebrow !text-[var(--tone-accent)]">
-              Livello {s.level.n} · {s.name}
-            </p>
-            <h1 id="servizio-titolo" className="display-xl mt-5 text-[2.375rem] text-ink sm:text-[3.25rem] lg:text-[3.75rem]">
+            <p className="eyebrow tone-text">{look.eyebrow}</p>
+            <h1 id="servizio-titolo" className="page-title mt-4">
               {look.headline}
             </h1>
-            <p className="mt-6 max-w-2xl text-xl text-ink-soft sm:text-[1.375rem] sm:leading-snug">{s.oneLiner}</p>
-            <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:gap-10">
+            <p className="lead mt-5 max-w-[36rem]">{s.oneLiner}</p>
+            <div className="svc-buy">
               {prices ? <PriceTag id={s.id} size="lg" /> : null}
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Link href={start.href} data-track={look.track} className={clsx("btn btn-lg", look.strong ? "btn-mint" : "btn-primary")}>
-                  {vetrina ? start.label : look.cta} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-                </Link>
-              </div>
+              <Link href={start.href} data-track={look.track} className={clsx("btn btn-lg", look.strong ? "btn-mint" : "btn-primary")}>
+                {vetrina ? start.label : look.cta} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              </Link>
             </div>
             {vetrina ? (
-              // Ciclo 2, fase 1. Profilo vetrina: il servizio non è aperto. L'azione principale porta alla lista d'attesa;
-              // accanto, la prova senza registrazione (esempio o account demo condiviso). Mai un modulo di registrazione.
+              // Profilo vetrina: il servizio non è aperto. L'azione principale porta alla lista d'attesa; accanto,
+              // la prova senza registrazione (esempio o account demo condiviso). Mai un modulo di registrazione.
               <div className="mt-5 max-w-xl" data-testid="vetrina-avviso">
                 <p className="text-lg text-ink-soft">Il servizio non è ancora aperto. Lasciaci la tua email e ti avvisiamo quando parte; intanto puoi provarlo con dati inventati.</p>
                 <Link href={VETRINA_TRY[id].href} className="link mt-2 inline-flex min-h-11 items-center text-lg font-semibold">
@@ -118,92 +115,98 @@ export function ServiceLanding({
                 </Link>
               </div>
             ) : secondaryCta ? (
-              <p className="mt-5">
+              <p className="mt-4">
                 <Link href={secondaryCta.href} className="link inline-flex min-h-11 items-center text-lg font-semibold">
                   {secondaryCta.label}
                 </Link>
               </p>
             ) : null}
-            {id === "capisci" ? <p className="mt-3 max-w-xl text-[1.0625rem] text-muted">{INFORMATIVE_NOTE}</p> : null}
+            {id === "capisci" ? <p className="mt-2 max-w-xl text-[1rem] text-muted">{INFORMATIVE_NOTE}</p> : null}
           </div>
           <HeroVisual id={id} />
         </div>
+        <Wave className="text-canvas" />
       </section>
 
-      {/* IN BREVE: tempi, chi se ne occupa, che cosa ricevi */}
-      <section aria-label="In breve" className="border-b border-line bg-paper">
-        <div className="container-rc py-7 sm:py-10">
-          <dl className="grid gap-4 sm:gap-6 md:grid-cols-3 md:gap-0 md:divide-x md:divide-line">
-            {facts.map(({ icon: Icon, label, text }) => (
-              <div key={label} className="md:px-8 md:first:pl-0 md:last:pr-0">
-                <dt className="flex items-center gap-3 text-lg font-bold text-ink">
-                  <Icon aria-hidden className="tone-text h-6 w-6 shrink-0" strokeWidth={1.8} />
-                  {label}
-                </dt>
-                <dd className="mt-1.5 text-[1.0625rem] leading-snug text-ink-soft">{text}</dd>
-              </div>
-            ))}
-          </dl>
-          <p role="note" className="mt-7 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-line pt-5 text-[1.0625rem] text-ink-soft">
-            <CircleDashed aria-hidden className="h-5 w-5 shrink-0 text-warn" />
-            <span>
-              <strong className="text-ink">Versione dimostrativa:</strong> provi tutto su documenti inventati, senza addebiti.
-            </span>
-            <Link href="/stato-del-progetto" className="link font-semibold">
-              Che cosa manca per il servizio reale
-            </Link>
-          </p>
-          {prices ? <p className="mt-2 text-[0.9375rem] text-muted">{PRICE_NOTE}</p> : null}
+      {/* IN BREVE: tempi, chi se ne occupa, che cosa ricevi. Una scheda sola, a cavallo dell'onda. */}
+      <section aria-label="In breve">
+        <div className="container-rc">
+          <div className="svc-facts">
+            <dl className="svc-facts-grid">
+              {facts.map(({ icon: Icon, label, text }) => (
+                <div key={label} className="svc-fact">
+                  <dt>
+                    <span aria-hidden className="tile-ico tile-ico-sm tile-ico-tone">
+                      <Icon />
+                    </span>
+                    {label}
+                  </dt>
+                  <dd>{text}</dd>
+                </div>
+              ))}
+            </dl>
+            <p role="note" className="svc-note">
+              <CircleDashed aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-warn" />
+              <span>
+                <strong className="text-ink">Versione dimostrativa:</strong> provi tutto su documenti inventati, senza addebiti.{" "}
+                <Link href="/stato-del-progetto" className="link font-semibold">
+                  Che cosa manca per il servizio reale
+                </Link>
+              </span>
+            </p>
+          </div>
+          {prices ? <p className="mt-3 px-1 text-[0.9375rem] text-muted">{PRICE_NOTE}</p> : null}
         </div>
       </section>
 
-      {/* COME FUNZIONA: tre passi su una linea, non tre schede */}
-      <section aria-labelledby="passi-titolo" className="py-10 sm:py-20">
+      {/* COME FUNZIONA: tre passi sul filo */}
+      <section aria-labelledby="passi-titolo" className="section">
         <div className="container-rc">
           <h2 id="passi-titolo" className="display-lg">
             Come funziona, in tre passi.
           </h2>
-          <ol className="relative mt-7 grid gap-6 sm:mt-10 sm:gap-8 md:grid-cols-3 md:gap-10">
-            <span aria-hidden className="absolute left-6 right-[16%] top-6 hidden h-0.5 bg-[linear-gradient(90deg,var(--tone-accent),transparent)] opacity-40 md:block" />
+          <ol className="steps mt-7 sm:mt-12">
             {s.steps.map((st, i) => (
-              <li key={st.title} className="relative flex gap-5 md:block">
-                <span aria-hidden className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--tone-accent)] text-xl font-extrabold text-canvas ring-8 ring-canvas">
+              <li key={st.title} className="step">
+                <span aria-hidden className="step-num">
                   {i + 1}
                 </span>
                 <div>
-                  <h3 className="text-[1.3125rem] font-bold leading-tight text-ink sm:text-[1.5rem] md:mt-6">
+                  <h3 className="step-title">
                     <span className="sr-only">Passo {i + 1}: </span>
                     {st.title}
                   </h3>
-                  <p className="mt-2 text-lg text-ink-soft">{st.text}</p>
+                  <p className="step-text">{st.text}</p>
                 </div>
               </li>
             ))}
           </ol>
 
-          {/* CHE COSA INCLUDE (60) · QUANDO NON È LA STRADA GIUSTA (40) */}
-          <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-4 sm:mt-14 sm:gap-5 lg:grid-cols-[1.35fr_0.85fr] lg:gap-6">
-            <div className="rounded-[2rem] border border-[color-mix(in_srgb,var(--tone-accent)_20%,transparent)] bg-[linear-gradient(160deg,var(--tone-bg),var(--color-paper)_80%)] p-5 sm:p-10">
-              <h2 id="include-titolo" className="text-[1.75rem] font-extrabold tracking-[-0.01em] text-ink">
+          {/* CHE COSA INCLUDE · QUANDO NON È LA STRADA GIUSTA */}
+          <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-4 sm:mt-16 lg:grid-cols-[1.35fr_0.85fr] lg:gap-6">
+            <div className="incl-card">
+              <h2 id="include-titolo" className="box-title">
                 Che cosa include
               </h2>
-              <ul className="mt-5 space-y-3.5 text-lg text-ink">
+              <ul className="check-list">
                 {s.includes.map((t) => (
-                  <li key={t} className="flex gap-3.5">
-                    <span aria-hidden className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--tone-accent)] text-canvas">
-                      <Check className="h-4 w-4" strokeWidth={3} />
+                  <li key={t}>
+                    <span aria-hidden className="check-dot">
+                      <Check />
                     </span>
                     {t}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="rounded-[2rem] border border-line bg-paper p-5 sm:p-10">
-              <h2 className="text-[1.75rem] font-extrabold leading-tight tracking-[-0.01em] text-ink">Quando non è la strada giusta</h2>
-              <ul className="mt-5 space-y-3.5 text-lg text-ink-soft">
+            <div className="excl-card">
+              <h2 className="box-title">Quando non è la strada giusta</h2>
+              <ul className="check-list text-ink-soft">
                 {s.notFor.map((t) => (
-                  <li key={t} className="flex gap-3.5">
-                    <X aria-hidden className="mt-1 h-5 w-5 shrink-0 text-danger" />
+                  <li key={t}>
+                    <span aria-hidden className="cross-dot">
+                      <X />
+                    </span>
                     {t}
                   </li>
                 ))}
@@ -214,10 +217,10 @@ export function ServiceLanding({
       </section>
 
       {vetrina && interest ? (
-        <section id="avvisami" aria-labelledby="avvisami-titolo" className="scroll-mt-24 border-b border-line bg-mist py-12 sm:py-16">
+        <section id="avvisami" aria-labelledby="avvisami-titolo" className="panel-section section scroll-mt-24 bg-mist">
           <div className="container-rc max-w-2xl">
             <p className="eyebrow">Lista d&apos;attesa</p>
-            <h2 id="avvisami-titolo" className="display-lg mt-3 text-[2rem] sm:text-[2.5rem]">
+            <h2 id="avvisami-titolo" className="display-lg mt-3">
               Avvisami quando parte.
             </h2>
             <p className="mt-3 text-lg text-ink-soft">Solo la tua email, per un interesse non vincolante. Non scrivere informazioni sulla tua salute.</p>
@@ -232,45 +235,15 @@ export function ServiceLanding({
 
       {/* VIDEO: solo quando il filmato esiste davvero */}
       {VIDEOS[s.id]?.src ? (
-        <section aria-label="Video del servizio" className="py-12 sm:py-20">
+        <section aria-label="Video del servizio" className="section">
           <div className="container-rc max-w-4xl">
             <VideoSlot id={s.id} />
           </div>
         </section>
       ) : null}
 
-      {/* GLI ALTRI DUE LIVELLI */}
-      <section aria-labelledby="altri-titolo" className="bg-paper py-10 sm:py-20">
-        <div className="container-rc">
-          <h2 id="altri-titolo" className="display-lg text-[2rem] sm:text-[2.5rem]">
-            Gli altri livelli di Cura Privata
-          </h2>
-          <ul className="mt-6 grid gap-4 sm:mt-8 sm:gap-5 md:grid-cols-2">
-            {others.map((o) => (
-              <li key={o.id} className={`tone-${o.tone}`}>
-                <Link href={o.href} className="level-step group">
-                  <span className="flex items-start justify-between gap-4">
-                    <span className="text-[0.9375rem] font-bold uppercase tracking-[0.08em] text-[var(--tone-accent)]">
-                      Livello {o.level.n} · {o.level.verb}
-                    </span>
-                    {prices ? (
-                      <span className="text-right">
-                        {priceDisplay(o.id).lead ? <span className="block text-[0.9375rem] font-semibold text-ink-soft">{priceDisplay(o.id).lead}</span> : null}
-                        <span className="stat-num block whitespace-nowrap text-[1.5rem] text-ink">{priceDisplay(o.id).amount}</span>
-                      </span>
-                    ) : null}
-                  </span>
-                  <span className="mt-3 block text-[1.625rem] font-bold leading-tight text-ink">{o.name}</span>
-                  <span className="mt-2 hidden text-lg text-ink-soft sm:block">{o.forWhom}</span>
-                  <span className="tone-text mt-auto inline-flex min-h-11 items-center gap-2 pt-4 text-lg font-bold">
-                    Scopri <ArrowRight aria-hidden className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      {/* GLI ALTRI SERVIZI */}
+      <OtherServices exclude={id} />
     </div>
   );
 }

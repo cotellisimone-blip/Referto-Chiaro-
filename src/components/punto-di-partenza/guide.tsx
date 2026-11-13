@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
+import { Stepper } from "@/components/report/stepper";
 import {
   Apple,
   ArrowLeft,
@@ -189,29 +190,10 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
         <p className="sr-only" aria-live="polite">
           Passo {step} di {STEPS.length}: {STEPS[step - 1]}
         </p>
-        <ol className="pdp-stepper" aria-label="Avanzamento">
-          {STEPS.map((s, i) => {
-            const n = i + 1;
-            const state = n < step ? "done" : n === step ? "current" : "todo";
-            return (
-              <li key={s} className={clsx("pdp-step", `pdp-step-${state}`)} aria-current={state === "current" ? "step" : undefined}>
-                <span aria-hidden className="pdp-step-dot">
-                  {state === "done" ? <Check className="h-4 w-4" /> : n}
-                </span>
-                <span className="pdp-step-label">
-                  <span aria-hidden className="pdp-step-count">
-                    Passo {n} di {STEPS.length} ·{" "}
-                  </span>
-                  <span className="sr-only">{state === "done" ? "Completato: " : state === "todo" ? "Da fare: " : "In corso: "}</span>
-                  {s}
-                </span>
-              </li>
-            );
-          })}
-        </ol>
+        <Stepper steps={STEPS} step={step - 1} label="Avanzamento" />
       </div>
 
-      <div className={clsx("mt-8 grid gap-8", step < 5 && "lg:grid-cols-[minmax(0,1fr)_21.5rem]")}>
+      <div className={clsx("mt-8 grid grid-cols-1 gap-8", step < 5 && "lg:grid-cols-[minmax(0,1fr)_21.5rem]")}>
         <div className="min-w-0">
           {step === 1 ? (
             <fieldset>
@@ -222,7 +204,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
               </legend>
               <p className="mt-2 text-lg text-muted">Una sola scelta: serve a dare un ordine alla scheda.</p>
               <div className="pdp-stage">
-              <div className="mt-5 grid gap-3">
+              <div className="mt-5 grid grid-cols-1 gap-3">
                 {GOALS.map((g) => {
                   const Icon = GOAL_ICON[g.id];
                   return (
@@ -253,7 +235,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
               </legend>
               <p className="mt-2 text-lg text-muted">Spunta quello che hai, anche se non ricordi i valori. Nessun numero, nessun dettaglio.</p>
               <div className="pdp-stage">
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {HAVE.map((h) => (
                   <label key={h.id} className={clsx("pdp-option", a.have.includes(h.id) && "is-on")}>
                     <input type="checkbox" checked={a.have.includes(h.id)} onChange={() => update({ have: toggleHave(a.have, h.id) })} />
@@ -273,7 +255,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
               </h2>
               <p className="mt-2 text-lg text-muted">Cinque domande veloci. Puoi sempre scegliere di non rispondere.</p>
               <div className="pdp-stage">
-              <div className="mt-6 grid gap-4">
+              <div className="mt-6 grid grid-cols-1 gap-4">
                 {CONTEXT_QUESTIONS.map((q) => (
                   <fieldset key={q.key} className="pdp-ctx">
                     <legend className="float-left w-full text-xl font-bold text-ink">{q.label}</legend>
@@ -300,7 +282,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
               </h2>
               <p className="mt-2 max-w-2xl text-lg text-muted">Per ogni area, segna se hai già informazioni recenti. L&apos;etichetta dice di che tipo di tema si tratta, non come stai.</p>
               <div className="pdp-stage">
-              <ul className="mt-6 grid gap-4 md:grid-cols-2">
+              <ul className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
                 {AREAS.map((ar) => {
                   const on = isDocumented(a, ar.id);
                   return (
@@ -402,7 +384,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 </dl>
               </div>
 
-              <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)_minmax(0,1fr)]">
+              <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)_minmax(0,1fr)]">
                 <ResultCol
                   title="Già documentato"
                   desc="Aree su cui hai già informazioni recenti."
@@ -453,7 +435,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                 </p>
               ))}
 
-              <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+              <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
                 <section aria-labelledby="pdp-scheda" className="pdp-panel pdp-panel-scheda">
                   <div className="flex items-start gap-5">
                     <span className="no-print hidden shrink-0 sm:block">

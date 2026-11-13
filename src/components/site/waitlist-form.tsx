@@ -11,7 +11,7 @@ type State = { kind: "idle" } | { kind: "sending" } | { kind: "done"; already: b
 
 const AVVISAMI_EVENT: Partial<Record<Interest, string>> = { completo: "avvisami-capisci", visite: "avvisami-medico", "secondo-parere": "avvisami-parere", domicilio: "avvisami-domicilio" };
 
-const INPUT = "mt-1.5 block min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-ink placeholder:text-muted/70 focus:border-teal";
+const INPUT = "field-input";
 
 /**
  * Lista d'attesa. In questa versione dimostrativa non viene inviata alcuna email:
@@ -69,15 +69,15 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false, de
   if (state.kind === "done") {
     return (
       <div role="status" className={compact ? "" : "card p-6 sm:p-8"}>
-        <p className="flex items-center gap-2 font-semibold text-ink">
-          <CircleCheck aria-hidden className="h-5 w-5 text-sage-deep" /> {state.already ? "Eri già in lista." : "Interesse registrato."}
+        <p className="flex items-center gap-2.5 text-xl font-bold text-ink">
+          <CircleCheck aria-hidden className="h-6 w-6 shrink-0 text-sage-deep" /> {state.already ? "Eri già in lista." : "Interesse registrato."}
         </p>
-        <p className="mt-3 text-muted">
+        <p className="mt-3 text-[1.0625rem] text-ink-soft">
           In questa versione dimostrativa non inviamo alcuna email: la tua iscrizione è solo un&apos;espressione di interesse non vincolante. Non ti scriveremo finché il servizio non sarà attivo e non ci sarà alcun obbligo per te.
         </p>
         {AVVISAMI_EVENT[interest] ? (
           <div className="mt-5 border-t border-line pt-5" data-testid="waitlist-next">
-            <p className="text-sm font-semibold text-ink">Intanto, gratis e senza registrarti:</p>
+            <p className="text-[1.0625rem] font-bold text-ink">Intanto, gratis e senza registrarti:</p>
             <ul className="mt-2 space-y-1">
               <li>
                 <Link href="/punto-di-partenza" className="link inline-flex min-h-11 items-center">
@@ -97,30 +97,30 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false, de
   }
 
   return (
-    <form onSubmit={submit} noValidate className={compact ? "space-y-4" : "card space-y-4 p-6 sm:p-8"} aria-label="Lista d'attesa">
-      <p className="text-muted">
+    <form onSubmit={submit} noValidate className={compact ? "space-y-5" : "card space-y-5 p-6 sm:p-8"} aria-label="Lista d'attesa">
+      <p className="text-[1.0625rem] text-ink-soft">
         {compact
           ? "Solo la tua email: nessuna email in questa versione dimostrativa, nessun impegno. Non inserire dati sanitari."
           : "Lascia la tua email per manifestare interesse. In questa versione dimostrativa non inviamo email e l'iscrizione non è vincolante. Non inserire dati sanitari."}
       </p>
       <div>
-        <label htmlFor={`${uid}-email`} className="block text-sm font-semibold text-ink">
+        <label htmlFor={`${uid}-email`} className="field-label">
           Indirizzo email
         </label>
         <input id={`${uid}-email`} type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={INPUT} placeholder="nome@esempio.it" maxLength={254} />
       </div>
       {capMode ? (
         <div>
-          <label htmlFor={`${uid}-cap`} className="block text-sm font-semibold text-ink">
+          <label htmlFor={`${uid}-cap`} className="field-label">
             {capMode === "required" ? "CAP dove vorresti la visita" : "Il tuo CAP (facoltativo)"}
           </label>
-          <input id={`${uid}-cap`} type="text" inputMode="numeric" autoComplete="postal-code" required={capMode === "required"} value={cap} onChange={(e) => setCap(e.target.value)} className={`${INPUT} max-w-40`} placeholder="25122" maxLength={5} />
-          <p className="mt-1 text-sm text-muted">Solo il CAP, non l&apos;indirizzo: ci dice in quali zone c&apos;è richiesta.</p>
+          <input id={`${uid}-cap`} type="text" inputMode="numeric" autoComplete="postal-code" required={capMode === "required"} value={cap} onChange={(e) => setCap(e.target.value)} className={`${INPUT} max-w-44`} placeholder="25122" maxLength={5} />
+          <p className="field-hint">Solo il CAP, non l&apos;indirizzo: ci dice in quali zone c&apos;è richiesta.</p>
         </div>
       ) : null}
       {interest === "strutture" ? (
         <div>
-          <label htmlFor={`${uid}-org`} className="block text-sm font-semibold text-ink">
+          <label htmlFor={`${uid}-org`} className="field-label">
             Nome della struttura (facoltativo)
           </label>
           <input id={`${uid}-org`} type="text" autoComplete="organization" value={organization} onChange={(e) => setOrganization(e.target.value)} className={INPUT} maxLength={120} />
@@ -129,14 +129,14 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false, de
       {/* La nota libera c'è solo per le strutture: per i servizi sanitari un campo aperto inviterebbe a scrivere dati di salute. */}
       {interest === "strutture" ? (
         <div>
-          <label htmlFor={`${uid}-note`} className="block text-sm font-semibold text-ink">
+          <label htmlFor={`${uid}-note`} className="field-label">
             Nota (facoltativa)
           </label>
-          <textarea id={`${uid}-note`} rows={3} value={note} onChange={(e) => setNote(e.target.value)} className={`${INPUT} min-h-24 py-3`} maxLength={500} />
+          <textarea id={`${uid}-note`} rows={3} value={note} onChange={(e) => setNote(e.target.value)} className={INPUT} maxLength={500} />
         </div>
       ) : null}
-      <label className="flex min-h-11 items-start gap-3 text-sm text-ink">
-        <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 rounded accent-[var(--color-teal)]" />
+      <label className="field-check">
+        <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
         <span>
           Ho letto l&apos;
           <Link href="/privacy-policy" className="link">
@@ -146,12 +146,12 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false, de
         </span>
       </label>
       {state.kind === "error" ? (
-        <p role="alert" className="rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">
+        <p role="alert" className="field-error">
           {state.message}
         </p>
       ) : null}
-      <button type="submit" className="btn btn-primary min-h-11" disabled={state.kind === "sending"}>
-        {state.kind === "sending" ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null}
+      <button type="submit" className="btn btn-primary btn-lg w-full sm:w-auto" disabled={state.kind === "sending"}>
+        {state.kind === "sending" ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
         {interest === "domicilio" ? "Avvisami per la mia zona" : "Iscrivimi alla lista d'attesa"}
       </button>
     </form>

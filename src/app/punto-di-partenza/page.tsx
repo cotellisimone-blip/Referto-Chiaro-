@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowDown, Ban, ClipboardList, Clock3, FileCheck2, Layers, LayoutGrid, Lock, ScanSearch, ShieldCheck } from "lucide-react";
+import { ArrowDown, ArrowRight, Ban, ClipboardList, Clock3, FileCheck2, Layers, LayoutGrid, Lock, ScanSearch, ShieldCheck } from "lucide-react";
 import { AreaIcon, CategoryChip, PuntoDiPartenzaGuide, type PdpPrices } from "@/components/punto-di-partenza/guide";
+import { Photo } from "@/components/ui/photo";
 import { Reveal } from "@/components/ui/reveal";
+import { Wave } from "@/components/ui/wave";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { AREAS, CATEGORY_HINT, NOT_ROUTINE, NOT_ROUTINE_SOURCE, type AreaCategory } from "@/content/punto-di-partenza";
 import { coreService, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
@@ -37,7 +40,7 @@ const PASSI = [
 ];
 
 /** Tre aree dai nomi brevi per l'anteprima della scheda nell'hero. */
-const HERO_AREAS: string[] = ["pressione", "ematologia", "rene"];
+const HERO_AREAS: string[] = ["pressione", "rene", "tiroide"];
 const CATS: AreaCategory[] = ["base", "contextual", "not-routine"];
 const CAT_ICON = {
   base: ShieldCheck,
@@ -52,7 +55,7 @@ export default function PuntoDiPartenzaPage() {
   const medico = coreService("parla-con-un-medico");
   const cp = priceDisplay("capisci");
   // Fase 3: non la stessa paziente di «Parla con un medico» e delle sezioni della home.
-  const photo = ILLUSTRATIVE_PHOTOS.heroSquare;
+  const photo = ILLUSTRATIVE_PHOTOS.hero;
   const prices: PdpPrices = {
     capisci: showPrices ? { lead: cp.lead, amount: cp.amount } : null,
     medico: showPrices ? priceDisplay("parla-con-un-medico").amount : null,
@@ -62,7 +65,7 @@ export default function PuntoDiPartenzaPage() {
     <>
       {/* HERO */}
       <section aria-labelledby="pdp-titolo" className="no-print tone-partenza pdp-hero">
-        <div className="container-rc grid items-center gap-10 pb-8 pt-10 sm:pb-12 sm:pt-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:pb-16">
+        <div className="container-rc grid items-center gap-10 pb-14 pt-8 sm:pb-20 sm:pt-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:pb-24">
           <div>
             <p className="eyebrow">Gratis · Punto di Partenza</p>
             <h1 id="pdp-titolo" className="display-xl mt-5">
@@ -91,7 +94,7 @@ export default function PuntoDiPartenzaPage() {
           <div className="pdp-hero-visual">
             {SHOW_ILLUSTRATIVE_PHOTOS ? (
               <figure className="pdp-hero-photo">
-                <img src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} decoding="async" style={{ objectPosition: "38% 0%" }} />
+                <Photo photo={photo} sizes="(min-width: 1024px) 30rem, 92vw" priority style={{ objectPosition: "38% 0%" }} />
                 <figcaption className="caption-illus right-4 top-4">Immagine illustrativa</figcaption>
               </figure>
             ) : null}
@@ -113,10 +116,11 @@ export default function PuntoDiPartenzaPage() {
             </div>
           </div>
         </div>
+        <Wave className="text-canvas" />
       </section>
 
       {/* LA GUIDA: subito sotto la hero (Fase 3). Le spiegazioni vengono dopo. */}
-      <section id="guida" aria-labelledby="pdp-guida" className="pdp-guide-section scroll-mt-24 pb-12 pt-8 sm:pb-16 sm:pt-12">
+      <section id="guida" aria-labelledby="pdp-guida" className="pdp-guide-section scroll-mt-24 pb-12 pt-4 sm:pb-16 sm:pt-8">
         <div className="container-rc">
           <div className="no-print mb-7 max-w-3xl">
             <p className="eyebrow">Guida interattiva</p>
@@ -188,7 +192,7 @@ export default function PuntoDiPartenzaPage() {
       </section>
 
       {/* LE TRE NATURE + IL BOX CHE CI DISTINGUE */}
-      <section aria-labelledby="pdp-nature" className="no-print bg-mist py-12 sm:py-16">
+      <section aria-labelledby="pdp-nature" className="no-print section panel-section grain bg-mist">
         <div className="container-rc grid gap-8 lg:grid-cols-[1fr_1fr] lg:gap-10">
           <div>
             <p className="eyebrow">Tre etichette</p>
@@ -242,11 +246,19 @@ export default function PuntoDiPartenzaPage() {
         </div>
       </section>
 
-      <section aria-label="Il passo dopo" className="no-print border-t border-line/70 bg-paper py-12">
+      <section aria-label="Il passo dopo" className="no-print section">
         <div className="container-rc">
-          <p className="max-w-3xl font-serif text-2xl font-semibold leading-snug text-ink">
-            Prima capisci da dove parti. Poi, quando arrivano i risultati, Cura Privata ti aiuta a leggerli e a scegliere il passo successivo.
-          </p>
+          <div className="cta-card">
+            <p className="display-md max-w-[40rem]">Prima capisci da dove parti. Poi, quando arrivano i risultati, ti aiutiamo a leggerli e a scegliere il passo successivo.</p>
+            <div className="flex flex-col gap-3">
+              <Link href={capisci.href} className="btn btn-primary btn-lg">
+                {capisci.name} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              </Link>
+              <Link href="/servizi" className="btn btn-secondary btn-lg">
+                Guarda tutti i servizi
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </>

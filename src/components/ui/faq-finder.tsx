@@ -1,13 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
+import Link from "next/link";
 import { FaqList } from "./faq-list";
+import { SearchField } from "./search-field";
 import { normalizeQuery } from "@/lib/search-index";
 
 type Item = { q: string; a: string; topic: string };
 
-/** Domande frequenti con ricerca dal vivo: senza query, i gruppi per argomento. */
+/**
+ * Domande frequenti, grafica «Luce»: a sinistra la ricerca e gli argomenti (restano in vista mentre scorri),
+ * a destra le risposte. Su telefono gli argomenti diventano una riga di pillole. Senza query: i gruppi per argomento.
+ */
 export function FaqFinder({ items, groups }: { items: Item[]; groups: readonly { key: string; title: string }[] }) {
   const [query, setQuery] = useState("");
   const q = normalizeQuery(query);
@@ -20,48 +24,52 @@ export function FaqFinder({ items, groups }: { items: Item[]; groups: readonly {
     });
   }, [items, q]);
   return (
-    <div className="container-rc space-y-10 py-10 sm:py-14">
-      <div>
-        <label className="flex max-w-2xl items-center gap-3 rounded-2xl border border-line bg-paper px-4 py-3 shadow-[var(--shadow-card)] focus-within:border-teal">
-          <Search aria-hidden className="h-5 w-5 shrink-0 text-teal" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Cerca: prezzo, email, familiare…"
-            autoComplete="off"
-            aria-label="Cerca tra le domande"
-            className="min-w-0 flex-1 bg-transparent text-lg text-ink outline-none placeholder:text-muted"
-          />
-          {query ? (
-            <button type="button" onClick={() => setQuery("")} className="inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-mist">
-              <X aria-hidden className="h-4 w-4" />
-              <span className="sr-only">Cancella la ricerca</span>
-            </button>
-          ) : null}
-        </label>
+    <div className="container-rc faq-layout">
+      <div className="faq-side">
+        <SearchField value={query} onChange={setQuery} label="Cerca tra le domande" placeholder="Cerca: prezzo, email…" />
         {found ? (
           <p className="mt-3 text-[1.0625rem] text-muted" aria-live="polite">
             {found.length} {found.length === 1 ? "risposta" : "risposte"} per «{query.trim()}»
           </p>
-        ) : null}
-      </div>
-      {found ? (
-        found.length ? (
-          <FaqList items={found} />
         ) : (
-          <p className="rounded-[var(--radius-lg)] bg-mist px-6 py-8 text-lg text-ink">Nessuna risposta con queste parole. Prova con una parola sola, oppure scrivici dalla pagina Contatti.</p>
-        )
-      ) : (
-        groups.map((g) => (
-          <section key={g.key} aria-labelledby={`faq-${g.key}`}>
-            <h2 id={`faq-${g.key}`} className="mb-5 text-[1.75rem] font-bold text-ink">
-              {g.title}
-            </h2>
-            <FaqList items={items.filter((f) => f.topic === g.key)} />
-          </section>
-        ))
-      )}
+          <nav aria-label="Argomenti" className="mt-4">
+            <ul className="faq-topics">
+              {groups.map((g) => (
+                <li key={g.key}>
+                  <a href={`#faq-${g.key}`} className="faq-topic">
+                    {g.title}
+                    <span aria-hidden>{items.filter((f) => f.topic === g.key).length}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+      </div>
+      <div className="min-w-0 space-y-9 sm:space-y-12">
+        {found ? (
+          found.length ? (
+            <FaqList items={found} />
+          ) : (
+            <div className="empty-state">
+              <p className="text-xl font-bold text-ink">Nessuna risposta con queste parole.</p>
+              <p className="mt-2 text-lg text-ink-soft">Prova con una parola sola, più semplice.</p>
+              <Link href="/contatti" className="btn btn-secondary mt-5">
+                Vai ai contatti
+              </Link>
+            </div>
+          )
+        ) : (
+          groups.map((g) => (
+            <section key={g.key} id={`faq-${g.key}`} aria-labelledby={`faq-${g.key}-titolo`} className="scroll-mt-28">
+              <h2 id={`faq-${g.key}-titolo`} className="display-md mb-5">
+                {g.title}
+              </h2>
+              <FaqList items={items.filter((f) => f.topic === g.key)} />
+            </section>
+          ))
+        )}
+      </div>
     </div>
   );
 }

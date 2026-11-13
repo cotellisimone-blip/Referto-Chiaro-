@@ -71,7 +71,7 @@ export const SERVICES: Service[] = [
       "Un medico abilitato, identificabile",
       "Un quesito clinico specifico",
       "Valutazione dei documenti originali",
-      "Parere scritto sotto la responsabilità del medico",
+      "Videoconsulto e sintesi scritta sotto la responsabilità dello specialista",
     ],
     excludes: ["Risposte generate dall'intelligenza artificiale", "Urgenze o casi che richiedono una visita in presenza"],
     exampleHref: "/servizi/secondo-parere",

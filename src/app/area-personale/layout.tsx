@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { safeAreaNext } from "@/lib/auth/next-path";
 import { getCurrentUser } from "@/lib/auth/session";
 import { AreaNav } from "@/components/area/area-nav";
+import { AreaShell } from "@/components/area/area-shell";
 import { AreaProvaAvvisami, VetrinaProvider } from "@/components/site/prova-avvisami";
 import { isVetrina } from "@/domain/offerta";
 
@@ -26,8 +27,7 @@ async function Gate({ children }: { children: React.ReactNode }) {
     redirect(next === "/area-personale" ? "/accedi?next=/area-personale" : `/accedi?next=${encodeURIComponent(next)}`);
   }
   return (
-    <div data-bottom-nav className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 pb-28 pt-6 sm:pt-10 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-10 lg:pb-16">
-      <AreaNav email={user.email} displayName={user.displayName} isDemo={user.isDemo} />
+    <AreaShell nav={<AreaNav email={user.email} displayName={user.displayName} isDemo={user.isDemo} />}>
       <VetrinaProvider vetrina={isVetrina()}>
         <div className="min-w-0">
           {children}
@@ -35,7 +35,7 @@ async function Gate({ children }: { children: React.ReactNode }) {
           <AreaProvaAvvisami />
         </div>
       </VetrinaProvider>
-    </div>
+    </AreaShell>
   );
 }
 

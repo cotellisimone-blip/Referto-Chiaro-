@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { MoveHorizontal } from "lucide-react";
 
 /** Righe del referto di esempio (sintetico, persona inesistente). Le spiegazioni descrivono, non valutano. */
 const ROWS = [
@@ -10,17 +11,19 @@ const ROWS = [
   { name: "Creatinina", value: "0,89", unit: "mg/dL", range: "0,70 – 1,20", plain: "Una sostanza prodotta dai muscoli ed eliminata dai reni. Il tuo valore è dentro l'intervallo stampato." },
 ];
 
+/** Su telefono una riga in meno (la stessa nei due fogli): il confronto resta chiaro e la pagina più corta. */
+const ONLY_WIDE = "Emoglobina glicata";
+
 function After() {
   return (
     <>
-      <p className="eyebrow">Spiegato da Cura Privata</p>
-      <ul className="mt-4 space-y-3">
+      <ul className="mt-11 space-y-3">
         {ROWS.map((r) => (
-          <li key={r.name} className={`rounded-2xl border p-4 ${r.flag ? "border-warn/40 bg-cream" : "border-line bg-mist/60"}`}>
+          <li key={r.name} className={`rounded-2xl border p-4 ${r.flag ? "border-warn/35 bg-cream" : "border-line bg-canvas"} ${r.name === ONLY_WIDE ? "hidden sm:block" : ""}`}>
             <p className="flex flex-wrap items-baseline justify-between gap-2">
-              <span className="text-lg font-bold text-ink">{r.name}</span>
-              <span className="tabular text-lg font-bold text-ink">
-                {r.value} <span className="text-[0.9375rem] font-normal text-muted">{r.unit}</span>
+              <span className="text-lg font-extrabold text-ink">{r.name}</span>
+              <span className="tabular text-lg font-extrabold text-ink">
+                {r.value} <span className="text-[0.9375rem] font-medium text-muted">{r.unit}</span>
               </span>
             </p>
             <p className="mt-1 text-[1.0625rem] leading-snug text-ink-soft">{r.plain}</p>
@@ -36,8 +39,8 @@ const COLS = "grid grid-cols-[1.3fr_0.6fr_0.7fr_1fr] gap-2 sm:grid-cols-[1.4fr_0
 function Before() {
   return (
     <>
-      <p className="text-[0.8125rem] font-bold uppercase tracking-wider text-[#5b6b70] sm:text-sm sm:tracking-widest">Laboratorio Analisi · referto n. 000000</p>
-      <div className="mt-4 border-y border-[#d9dfe0] py-2 text-[0.8125rem] text-[#3b4a4f] sm:text-[0.9375rem]">
+      <p className="mt-11 text-[0.8125rem] font-bold uppercase tracking-wider text-[#5b6b70] sm:text-sm sm:tracking-widest">Laboratorio Analisi · referto n. 000000</p>
+      <div className="mt-3 border-y border-[#d9dfe0] py-2 text-[0.8125rem] text-[#3b4a4f] sm:text-[0.9375rem]">
         <p className={`${COLS} border-b border-dashed border-[#d9dfe0] pb-2 font-bold`}>
           <span>ESAME</span>
           <span>RIS.</span>
@@ -45,7 +48,7 @@ function Before() {
           <span>VAL. RIF.</span>
         </p>
         {ROWS.map((r) => (
-          <p key={r.name} className={`${COLS} py-3 sm:py-5`}>
+          <p key={r.name} className={`${COLS} py-3 sm:py-5 ${r.name === ONLY_WIDE ? "max-sm:hidden" : ""}`}>
             <span className="uppercase">{r.name}</span>
             <span className="font-bold">
               {r.value}
@@ -72,29 +75,36 @@ export function BeforeAfter() {
   return (
     <figure className="mx-auto max-w-5xl">
       {/* Il cursore, a ogni larghezza */}
-      <div className="relative overflow-hidden rounded-[1.75rem] border border-line bg-paper shadow-[var(--shadow-float)] sm:rounded-[2rem]">
+      <div className="ba-frame">
         {/* DOPO (sotto): spiegato */}
         <div className="p-5 sm:p-8" aria-hidden={pos > 95}>
           <After />
         </div>
-        {/* PRIMA (sopra, ritagliato dal cursore): il referto com'è */}
+        {/* PRIMA (sopra, ritagliato dal cursore): il referto com'è. Resta carta chiara anche nel tema scuro. */}
         <div aria-hidden className="absolute inset-0 border-r-2 border-teal bg-[#FBFBF8] p-5 font-mono sm:p-8" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
           <Before />
         </div>
+        {/* Le due etichette restano agli angoli; ognuna sparisce quando il suo foglio è quasi coperto. */}
+        <span aria-hidden className="ba-tag left-5 bg-[#e9ecea] text-[#44545a] sm:left-8" data-off={pos < 16 ? "" : undefined}>
+          <span className="sm:hidden">Prima</span>
+          <span className="hidden sm:inline">Il referto com&apos;è</span>
+        </span>
+        <span aria-hidden className="ba-tag right-5 bg-marker-soft text-teal-deep sm:right-8" data-off={pos > 84 ? "" : undefined}>
+          <span className="sm:hidden">Dopo</span>
+          <span className="hidden sm:inline">Spiegato da Cura Privata</span>
+        </span>
         {/* maniglia */}
         <span aria-hidden className="pointer-events-none absolute inset-y-0 z-10 flex w-0 items-center justify-center" style={{ left: `${pos}%` }}>
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-teal text-xl font-bold text-white shadow-[var(--shadow-lift)]">↔</span>
+          <span className="ba-handle">
+            <MoveHorizontal className="h-6 w-6" strokeWidth={2.2} />
+          </span>
         </span>
         <label htmlFor={id} className="sr-only">
           Sposta per confrontare il referto originale e quello spiegato
         </label>
         <input id={id} type="range" min={0} max={100} value={pos} onChange={(e) => setPos(Number(e.target.value))} className="before-after-range absolute inset-0 z-20 h-full w-full cursor-ew-resize opacity-0" />
       </div>
-      <figcaption className="mt-4 flex flex-wrap justify-between gap-x-2 gap-y-1 text-[1.0625rem] text-muted">
-        <span>← Il referto com&apos;è</span>
-        <span className="order-last w-full text-center sm:order-none sm:w-auto">Referto di esempio, dati inventati</span>
-        <span>Lo stesso, spiegato →</span>
-      </figcaption>
+      <figcaption className="mt-4 text-center text-[1rem] text-muted">Referto di esempio, con dati inventati.</figcaption>
     </figure>
   );
 }

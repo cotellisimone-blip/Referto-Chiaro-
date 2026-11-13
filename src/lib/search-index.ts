@@ -25,7 +25,7 @@ const PAGE_CONTEXT: Record<string, string> = {
   "/referti": "Capisci il tuo referto: valori e sigle in parole semplici",
   "/referti/esempio": "Guarda un referto di esempio, inventato",
   "/servizi": "Tutti i servizi e il loro stato reale",
-  "/servizi/secondo-parere": "Un medico valuta i tuoi documenti e risponde per iscritto",
+  "/servizi/secondo-parere": "Uno specialista esamina i documenti, ne parlate in video, ricevi una sintesi scritta",
   "/servizi/parla-con-un-medico": "Videoconsulto con un medico, con i documenti già letti",
   "/servizi/visita-a-domicilio": "Un medico di medicina generale a casa tua, a Brescia città",
   "/prezzi": "I servizi a confronto, con prezzi e tempi",

@@ -3,13 +3,14 @@
  * «Parla con un medico» diventa «Videoconsulto». «Guide» si vede dai 1280 px in su (sotto resta nel menu, nel fondo
  * pagina e nella ricerca), così la testata non va a capo a 1024 px.
  */
-export const MAIN_NAV: readonly { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; wideOnly?: boolean }[] = [
-  { href: "/referti", label: "Capisci il referto", tone: "capisci" },
-  { href: "/servizi/visita-a-domicilio", label: "A domicilio", tone: "medico" },
-  { href: "/servizi/parla-con-un-medico", label: "Videoconsulto", tone: "medico" },
-  { href: "/servizi/secondo-parere", label: "Secondo parere", tone: "parere" },
-  { href: "/prezzi", label: "Prezzi", tone: null },
-  { href: "/guide", label: "Guide", tone: null, wideOnly: true },
+export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book";
+export const MAIN_NAV: readonly { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; icon: NavIcon; wideOnly?: boolean }[] = [
+  { href: "/referti", label: "Capisci il referto", tone: "capisci", icon: "file" },
+  { href: "/servizi/visita-a-domicilio", label: "A domicilio", tone: "medico", icon: "home" },
+  { href: "/servizi/parla-con-un-medico", label: "Videoconsulto", tone: "medico", icon: "video" },
+  { href: "/servizi/secondo-parere", label: "Secondo parere", tone: "parere", icon: "stethoscope" },
+  { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro" },
+  { href: "/guide", label: "Guide", tone: null, icon: "book", wideOnly: true },
 ];
 
 /** Fondo pagina snello: tre colonne, una dozzina di voci. Le note legali stanno nella riga in basso. */

@@ -169,7 +169,7 @@ export function SiteSearch() {
             onChange={(e) => setQuery(e.target.value)}
             className="min-w-0 flex-1 bg-transparent text-lg text-ink outline-none placeholder:text-muted sm:text-xl"
           />
-          <button type="button" onClick={() => setOpen(false)} className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink hover:bg-mist">
+          <button type="button" onClick={() => setOpen(false)} className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink hover:bg-mist">
             <X aria-hidden className="h-5 w-5" />
             <span className="sr-only">Chiudi la ricerca</span>
           </button>
@@ -224,8 +224,8 @@ export function SiteSearch() {
             const { label, Icon } = KIND[g.kind];
             return (
               <div key={g.kind} className="px-2 py-2 sm:px-3">
-                <p className="flex items-center gap-2 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-[0.1em] text-muted">
-                  <Icon aria-hidden className="h-3.5 w-3.5" /> {label}
+                <p className="flex items-center gap-2 px-3 pb-1 pt-2 text-[0.9375rem] font-bold text-muted">
+                  <Icon aria-hidden className="h-4 w-4" /> {label}
                 </p>
                 <ul aria-label={label}>
                   {g.items.map((item) => (
@@ -235,7 +235,7 @@ export function SiteSearch() {
                           <span className="block truncate text-[1.0625rem] font-semibold text-ink">
                             <Highlight text={item.title} query={query} />
                           </span>
-                          <span className="block truncate text-sm text-muted">{item.context}</span>
+                          <span className="block text-[0.9375rem] leading-snug text-muted max-sm:line-clamp-2 sm:truncate">{item.context}</span>
                         </span>
                         <ArrowRight aria-hidden className="h-4 w-4 shrink-0 text-teal opacity-0 transition-opacity" />
                       </Link>
@@ -247,7 +247,7 @@ export function SiteSearch() {
           })}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-2.5 text-xs text-muted sm:px-5">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-4 py-2.5 text-[0.9375rem] text-muted sm:px-5">
           <span className="hidden sm:inline">
             <kbd className="kbd">↑</kbd> <kbd className="kbd">↓</kbd> per scorrere · <kbd className="kbd">Invio</kbd> per aprire · <kbd className="kbd">Esc</kbd> per chiudere
           </span>
@@ -293,7 +293,7 @@ export function SearchTrigger({ variant = "icon", className, placeholder = "Cerc
   if (variant === "compact") {
     return (
       <button type="button" onClick={() => openSiteSearch()} className={clsx("search-compact", className)}>
-        <Search aria-hidden className="h-4 w-4 shrink-0 text-teal" />
+        <Search aria-hidden className="h-5 w-5 shrink-0" />
         <span className="hidden truncate 2xl:inline">Cerca</span>
         <kbd aria-hidden className="kbd ml-1 hidden 2xl:inline">⌘K</kbd>
         <span className="sr-only">Apri la ricerca</span>
@@ -301,7 +301,7 @@ export function SearchTrigger({ variant = "icon", className, placeholder = "Cerc
     );
   }
   return (
-    <button type="button" onClick={() => openSiteSearch()} className={clsx("inline-flex items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:bg-mist", className ?? "h-11 w-11")}>
+    <button type="button" onClick={() => openSiteSearch()} className={className ?? "icon-btn icon-btn-solid"}>
       <Search aria-hidden className="h-5 w-5" />
       <span className="sr-only">Cerca nel sito</span>
     </button>

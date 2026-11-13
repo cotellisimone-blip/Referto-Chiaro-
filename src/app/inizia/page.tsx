@@ -17,14 +17,14 @@ export default function IniziaPage() {
     { id: "domicilio" as const, name: dom.name, href: dom.href, startHref: PRESTAZIONI.domicilio.startHref, startLabel: "Richiedi la visita", price: publicPricesEnabled() ? prestazionePrice("domicilio") : null, timing: dom.timing, need: dom.need },
   ];
   return (
-    <section aria-labelledby="inizia-titolo" className="bg-ivory-wash">
-      <div className="container-rc py-12 sm:py-16">
+    <section aria-labelledby="inizia-titolo" className="page-hero">
+      <div className="container-rc page-hero-inner page-hero-flat">
         <p className="eyebrow">Ti aiutiamo a scegliere</p>
-        <h1 id="inizia-titolo" className="display-xl mt-5 max-w-3xl">
+        <h1 id="inizia-titolo" className="page-title mt-4">
           Da dove vuoi cominciare?
         </h1>
-        <p className="mt-6 max-w-2xl text-xl text-ink-soft">Una risposta sola, sul tuo bisogno. Non è un consulto e non ti chiediamo nulla sulla tua salute.</p>
-        <div className="mt-10">
+        <p className="lead mt-5 max-w-[38rem]">Una risposta sola, su ciò che ti serve. Non è un consulto e non ti chiediamo nulla sulla tua salute.</p>
+        <div className="mt-8 sm:mt-11">
           <NeedPicker services={services} headingId="inizia-titolo" />
         </div>
       </div>

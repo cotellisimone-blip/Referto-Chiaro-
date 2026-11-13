@@ -28,29 +28,29 @@ export function OrdersList() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="display text-[2rem] sm:text-[2.5rem]">Pagamenti</h1>
-      <p className="mt-3 text-muted">Lo storico dei tuoi acquisti. In questa versione dimostrativa i pagamenti sono simulati e non viene addebitato nulla.</p>
+      <h1 className="area-title">Pagamenti</h1>
+      <p className="area-lead">Lo storico dei tuoi acquisti. In questa versione dimostrativa i pagamenti sono simulati e non viene addebitato nulla.</p>
       {error ? (
-        <p role="alert" className="mt-6 text-danger">
+        <p role="alert" className="field-error mt-6">
           {error}
         </p>
       ) : null}
       {!orders && !error ? <div className="mt-8 h-40 animate-pulse rounded-2xl bg-mist" aria-busy="true" /> : null}
-      {orders && orders.length === 0 ? <p className="mt-8 rounded-2xl border border-line bg-paper p-6 text-muted">Non hai ancora ordini.</p> : null}
+      {orders && orders.length === 0 ? <p className="mt-8 rounded-[var(--radius-lg)] border border-dashed border-muted/40 bg-paper p-6 text-[1.0625rem] text-ink-soft">Non hai ancora ordini.</p> : null}
       {orders && orders.length > 0 ? (
         <ul className="mt-8 space-y-3" aria-label="Elenco ordini">
           {orders.map((o) => (
-            <li key={o.id} className="card flex flex-wrap items-center justify-between gap-3 p-4 sm:p-5">
+            <li key={o.id} className="card flex flex-wrap items-center justify-between gap-x-4 gap-y-3 p-5 sm:p-6">
               <div className="min-w-0">
-                <p className="font-serif text-xl">Servizio {SERVICE_NAME[o.service]}</p>
-                <p className="mt-1 text-sm text-muted">
+                <p className="area-h3 text-xl">Servizio {SERVICE_NAME[o.service]}</p>
+                <p className="meta mt-1">
                   {formatDateTime(o.createdAt)} · <span className="tabular">{formatEuro(o.amountCents)}</span>
                   {o.provider === "simulated" ? " · pagamento simulato" : ""}
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <StatusChip status={o.status} kind="order" />
-                <Link href={`/area-personale/ordini/${o.id}`} className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-teal hover:bg-mist">
+                <Link href={`/area-personale/ordini/${o.id}`} className="btn btn-secondary btn-sm">
                   Dettagli<span className="sr-only"> dell&apos;ordine {SERVICE_NAME[o.service]} del {formatDateTime(o.createdAt)}</span>
                 </Link>
               </div>

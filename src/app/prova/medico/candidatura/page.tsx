@@ -10,8 +10,8 @@ export default function Page() {
       <div className="space-y-6">
         <div>
           <p className="eyebrow">Per i medici · prova</p>
-          <h1 className="display mt-3 text-[2rem] sm:text-[2.5rem]">Candidati come medico</h1>
-          <p className="mt-2 max-w-2xl text-[1.0625rem] text-ink-soft">Recapito professionale, iscrizione all&apos;Ordine, prestazioni, zone e fasce. Ricevi richieste solo dopo la verifica dell&apos;amministrazione e l&apos;abilitazione alla prestazione.</p>
+          <h1 className="area-title mt-3">Candidati come medico</h1>
+          <p className="area-lead">Recapito professionale, iscrizione all&apos;Ordine, prestazioni, zone e fasce. Ricevi richieste solo dopo la verifica dell&apos;amministrazione e l&apos;abilitazione alla prestazione.</p>
         </div>
         <DoctorApply />
       </div>

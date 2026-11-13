@@ -37,7 +37,7 @@ export const VIDEOS: Record<"principale" | "capisci" | "secondo-parere" | "parla
   "secondo-parere": {
     id: "secondo-parere",
     title: "Come funziona il secondo parere",
-    description: "La tua domanda, i documenti che scegli, il parere scritto e firmato da un medico.",
+    description: "La tua domanda, i documenti che scegli, il videoconsulto e la sintesi scritta dello specialista.",
     durationLabel: "circa 30 secondi",
     src: null,
     poster: null,
@@ -58,17 +58,29 @@ export const VIDEOS: Record<"principale" | "capisci" | "secondo-parere" | "parla
 export const AUTHORIZED_PHOTOS: { src: string; alt: string; consentRef: string; usage: "hero" | "editorial" }[] = [];
 
 /**
- * Immagini illustrative di pazienti, ritagliate dal pacchetto «Memorabile» del titolare (senza logo né testo).
- * Mai medici: nessun volto viene presentato come un professionista reale. Sono marcate «immagine illustrativa».
+ * Immagini illustrative di pazienti, ritagliate dal pacchetto «Memorabile» del titolare (senza logo né testo) e
+ * portate al doppio dei pixel con un ingrandimento non generativo (12/11/2026): nessun volto nuovo, nessun dettaglio
+ * inventato. Mai medici: nessun volto viene presentato come un professionista reale. Sono marcate «immagine illustrativa».
  * Per toglierle tutte: SHOW_ILLUSTRATIVE_PHOTOS = false (il sito torna alle composizioni disegnate).
  */
 export const SHOW_ILLUSTRATIVE_PHOTOS = true;
+
+export interface SitePhoto {
+  src: string;
+  /** Versione a metà risoluzione per gli schermi piccoli. */
+  srcSmall?: string;
+  width: number;
+  height: number;
+  alt: string;
+}
+
 export const ILLUSTRATIVE_PHOTOS = {
-  hero: { src: "/media/paziente-hero.webp", width: 704, height: 560, alt: "Una donna sorride, pensierosa, a casa sua." },
-  scrivania: { src: "/media/paziente-scrivania.webp", width: 425, height: 914, alt: "Una donna alla scrivania con un referto in mano, il telefono e un quaderno." },
-  /** Ritagli pensati per il telefono (1:1 e 4:5): mai un taglio casuale della versione desktop. */
-  heroSquare: { src: "/media/paziente-hero-1x1.webp", width: 544, height: 544, alt: "Una donna sorride, pensierosa, a casa sua." },
-  scrivaniaPortrait: { src: "/media/paziente-scrivania-4x5.webp", width: 424, height: 530, alt: "Una donna con gli occhiali guarda il telefono, con un referto in mano." },
-  preparatiPortrait: { src: "/media/paziente-preparati-4x5.webp", width: 424, height: 530, alt: "Una donna con gli occhiali legge il telefono, con un referto in mano." },
-  preparati: { src: "/media/paziente-preparati.webp", width: 425, height: 884, alt: "Una donna legge un referto e controlla il telefono." },
-} as const;
+  /** Apertura della home: il volto, in orizzontale. */
+  hero: { src: "/media/paziente-hero.webp", srcSmall: "/media/paziente-hero-sm.webp", width: 1424, height: 1096, alt: "Una donna sorride, pensierosa, a casa sua." },
+  /** Ritratto 4:5: la paziente con gli occhiali guarda il telefono. */
+  ritratto: { src: "/media/paziente-ritratto.webp", srcSmall: "/media/paziente-ritratto-sm.webp", width: 850, height: 1062, alt: "Una donna con gli occhiali guarda il telefono, con un referto in mano." },
+  /** La stessa scena per intero, in verticale. */
+  scrivania: { src: "/media/paziente-scrivania.webp", srcSmall: "/media/paziente-scrivania-sm.webp", width: 850, height: 1804, alt: "Una donna alla scrivania con un referto in mano, il telefono e un quaderno." },
+  /** Dettaglio in orizzontale: le mani, il referto, il telefono. */
+  mani: { src: "/media/paziente-mani.webp", srcSmall: "/media/paziente-mani-sm.webp", width: 1420, height: 844, alt: "Due mani tengono un referto e un telefono, davanti a una tazza e a un quaderno." },
+} as const satisfies Record<string, SitePhoto>;

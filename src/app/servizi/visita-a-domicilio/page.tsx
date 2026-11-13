@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, CalendarClock, CheckCircle2, ClipboardCheck, FileText, Home, Pill, Signpost, X } from "lucide-react";
+import { ArrowRight, CalendarClock, Check, CircleDashed, ClipboardCheck, Clock3, FileText, Gift, Home, Pill, Signpost, UserRound, X } from "lucide-react";
 import { TrackView } from "@/components/site/track";
 import { WaitlistForm } from "@/components/site/waitlist-form";
 import { cancelTerms } from "@/domain/prestazioni/engine";
 import { FaqList } from "@/components/ui/faq-list";
-import { CoverageCheck, PrestazioniGrid } from "@/components/prestazioni/public";
+import { Wave } from "@/components/ui/wave";
+import { CoverageCheck } from "@/components/prestazioni/public";
 import { EmergencyNumbers } from "@/components/prestazioni/ui";
+import { HomeVisitVisual } from "@/components/offerta/service-visuals";
+import { OtherServices } from "@/components/offerta/other-services";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
 import { PRICE_NOTE, isVetrina, publicPricesEnabled } from "@/domain/offerta";
 
@@ -16,10 +19,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/servizi/visita-a-domicilio" },
 };
 
+const FACTS = [
+  { icon: Clock3, label: "Tempi", text: "Scegli tu tra le fasce libere. La visita dura circa 45 minuti." },
+  { icon: UserRound, label: "Chi viene", text: "Un medico di medicina generale, abilitato e identificabile: leggi il suo nome prima di pagare." },
+  { icon: Gift, label: "Che cosa ti resta", text: "Un riepilogo scritto della visita, con il prossimo passo indicato dal medico." },
+];
+
 const STEPS = [
-  { icon: Home, title: "Verifichi comune e CAP", text: "Vedi subito se arriviamo da te e le fasce davvero libere." },
-  { icon: CalendarClock, title: "Scegli una fascia", text: "È una richiesta: il medico la conferma o ne propone un'altra." },
-  { icon: ClipboardCheck, title: "Confermi quando sai tutto", text: "Nome del medico, orario, indirizzo e prezzo totale prima di pagare." },
+  { icon: Home, title: "Verifichi comune e CAP", text: "Sai subito se arriviamo da te e quali fasce sono libere." },
+  { icon: CalendarClock, title: "Scegli una fascia", text: "È una richiesta: il medico la conferma o te ne propone un'altra." },
+  { icon: ClipboardCheck, title: "Confermi quando sai tutto", text: "Nome del medico, orario, indirizzo e prezzo totale: li vedi prima di pagare." },
 ];
 
 const NOT_FOR = [
@@ -45,75 +54,169 @@ const FAQ_DOMICILIO = [
   { q: "E se ho bisogno subito?", a: "Questo non è un servizio di urgenza. Per le emergenze sanitarie chiama il 112. Per la continuità assistenziale pubblica chiama il 116117 negli orari previsti." },
 ];
 
+/**
+ * Visita a domicilio, grafica «Luce»: stessa ossatura delle altre pagine servizio (apertura con la tinta calda,
+ * fatti in breve a cavallo dell'onda, passi sul filo, include/esclude), più la verifica di comune e CAP.
+ */
 export default function VisitaADomicilioPage() {
   const info = PRESTAZIONI.domicilio;
   const prices = publicPricesEnabled();
   const vetrina = isVetrina();
   return (
-    <>
+    <div className="tone-medico">
       <TrackView event="visita-domicilio" />
-      <section aria-labelledby="dom-titolo" className="tone-medico stage-warm">
-        <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-8 pb-12 pt-10 sm:pt-16 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+
+      {/* APERTURA */}
+      <section aria-labelledby="dom-titolo" className="svc-hero">
+        <div className="container-rc svc-hero-grid">
           <div>
-            <p className="eyebrow">Novità · Brescia città, area pilota</p>
-            <h1 id="dom-titolo" className="display-xl mt-4">Il medico a casa tua.</h1>
-            <p className="mt-5 max-w-2xl text-xl text-ink-soft">{info.title}: per esigenze non urgenti, per te o per un familiare. Vedi solo le fasce davvero disponibili.</p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <p className="eyebrow tone-text">Novità · Brescia città</p>
+            <h1 id="dom-titolo" className="page-title mt-4">
+              Il medico a casa tua.
+            </h1>
+            <p className="lead mt-5 max-w-[36rem]">Un medico di medicina generale ti visita a casa, per esigenze non urgenti: per te o per un familiare. Scegli tra le fasce davvero libere.</p>
+            <div className="svc-buy">
+              {prices ? (
+                <p className="price-tag">
+                  <span className="stat-num block text-[2.75rem] leading-none text-ink">{prestazionePrice("domicilio")}</span>
+                  <span className="mt-1 block text-[0.9375rem] text-muted">prezzo fisso, {info.durationLabel}</span>
+                </p>
+              ) : null}
               <Link href={info.startHref} data-track="cta-domicilio" className="btn btn-primary btn-lg">
                 {vetrina ? "Provala nella demo" : "Richiedi la visita"} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
-              <a href="#copertura" className="btn btn-secondary btn-lg">Arrivate da me?</a>
             </div>
+            <p className="mt-4">
+              <a href="#copertura" className="link inline-flex min-h-11 items-center text-lg font-semibold">
+                Arriviamo da te? Verifica il CAP
+              </a>
+            </p>
           </div>
-          <div className="card p-6 sm:p-8">
-            <p className="text-[0.9375rem] font-semibold uppercase tracking-wide text-muted">{info.mode}</p>
-            {prices ? <p className="mt-2 text-[2.75rem] font-bold leading-none text-ink">{prestazionePrice("domicilio")}</p> : null}
-            <p className="mt-1 text-[1.0625rem] text-ink-soft">prezzo fisso, {info.durationLabel}</p>
-            <ul className="mt-5 space-y-2 text-[1.0625rem] text-ink">
-              {info.includes.map((x) => (
-                <li key={x} className="flex gap-2"><CheckCircle2 aria-hidden className="mt-1 h-5 w-5 shrink-0 text-teal" /> {x}</li>
+          <HomeVisitVisual />
+        </div>
+        <Wave className="text-canvas" />
+      </section>
+
+      {/* IN BREVE */}
+      <section aria-label="In breve">
+        <div className="container-rc">
+          <div className="svc-facts">
+            <dl className="svc-facts-grid">
+              {FACTS.map(({ icon: Icon, label, text }) => (
+                <div key={label} className="svc-fact">
+                  <dt>
+                    <span aria-hidden className="tile-ico tile-ico-sm tile-ico-tone">
+                      <Icon />
+                    </span>
+                    {label}
+                  </dt>
+                  <dd>{text}</dd>
+                </div>
               ))}
-            </ul>
-            {prices ? <p className="mt-4 text-sm text-muted">{PRICE_NOTE}</p> : null}
+            </dl>
+            <p role="note" className="svc-note">
+              <CircleDashed aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-warn" />
+              <span>
+                <strong className="text-ink">Versione dimostrativa:</strong> medici, fasce e pagamenti sono simulati, senza addebiti.{" "}
+                <Link href="/stato-del-progetto" className="link font-semibold">
+                  Che cosa manca per il servizio reale
+                </Link>
+              </span>
+            </p>
           </div>
+          {prices ? <p className="mt-3 px-1 text-[0.9375rem] text-muted">{PRICE_NOTE}</p> : null}
         </div>
       </section>
 
-      <section aria-labelledby="come-titolo" className="py-10 sm:py-16">
+      {/* COME FUNZIONA */}
+      <section aria-labelledby="come-titolo" className="section">
         <div className="container-rc">
-          <h2 id="come-titolo" className="display-lg">Come funziona</h2>
-          <ol className="mt-7 grid gap-4 md:grid-cols-3">
-            {STEPS.map(({ icon: Icon, title, text }, i) => (
-              <li key={title} className="card p-6">
-                <Icon aria-hidden className="h-8 w-8 text-teal" />
-                <p className="mt-3 text-xl font-bold text-ink">{i + 1}. {title}</p>
-                <p className="mt-1 text-[1.0625rem] text-ink-soft">{text}</p>
+          <h2 id="come-titolo" className="display-lg">
+            Come funziona, in tre passi.
+          </h2>
+          <ol className="steps mt-7 sm:mt-12">
+            {STEPS.map((st, i) => (
+              <li key={st.title} className="step">
+                <span aria-hidden className="step-num">
+                  {i + 1}
+                </span>
+                <div>
+                  <h3 className="step-title">
+                    <span className="sr-only">Passo {i + 1}: </span>
+                    {st.title}
+                  </h3>
+                  <p className="step-text">{st.text}</p>
+                </div>
               </li>
             ))}
           </ol>
-        </div>
-      </section>
 
-      <section id="copertura" aria-labelledby="copertura-titolo" className="scroll-mt-28 bg-mist py-10 sm:py-16">
-        <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2 lg:items-start">
-          <div>
-            <h2 id="copertura-titolo" className="display-lg">Dove arriviamo</h2>
-            <p className="mt-4 text-xl text-ink-soft">Brescia città, come area pilota. Allargheremo la zona quando avremo medici sufficienti per garantire le fasce che mostriamo.</p>
-            <div className="mt-6"><EmergencyNumbers /></div>
+          <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-4 sm:mt-16 lg:grid-cols-[1.35fr_0.85fr] lg:gap-6">
+            <div className="incl-card">
+              <h2 className="box-title">Che cosa include</h2>
+              <ul className="check-list">
+                {info.includes.map((t) => (
+                  <li key={t}>
+                    <span aria-hidden className="check-dot">
+                      <Check />
+                    </span>
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="excl-card">
+              <h2 id="nonper-titolo" className="box-title">
+                Quando non è la strada giusta
+              </h2>
+              <ul className="check-list text-ink-soft">
+                {NOT_FOR.map((t) => (
+                  <li key={t}>
+                    <span aria-hidden className="cross-dot">
+                      <X />
+                    </span>
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <CoverageCheck />
         </div>
       </section>
 
-      <section aria-labelledby="dopo-titolo" className="py-10 sm:py-16">
+      {/* DOVE ARRIVIAMO: la verifica di comune e CAP */}
+      <section id="copertura" aria-labelledby="copertura-titolo" className="panel-section section scroll-mt-24 bg-tone-soft">
+        <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
+          <div>
+            <p className="eyebrow tone-text">Area pilota</p>
+            <h2 id="copertura-titolo" className="display-lg mt-3">
+              Dove arriviamo
+            </h2>
+            <p className="lead mt-4">Per ora a Brescia città. Allarghiamo la zona solo quando abbiamo abbastanza medici per garantire le fasce che mostriamo.</p>
+          </div>
+          <div className="grid gap-4">
+            <CoverageCheck />
+            <EmergencyNumbers />
+          </div>
+        </div>
+      </section>
+
+      {/* DOPO LA VISITA */}
+      <section aria-labelledby="dopo-titolo" className="section">
         <div className="container-rc">
-          <h2 id="dopo-titolo" className="display-lg">Che cosa ti resta dopo la visita</h2>
-          <ul className="mt-7 grid gap-4 md:grid-cols-3">
+          <h2 id="dopo-titolo" className="display-lg">
+            Che cosa ti resta dopo la visita
+          </h2>
+          <ul className="mt-7 grid gap-3 sm:mt-10 sm:gap-5 lg:grid-cols-3">
             {AFTER.map(({ icon: Icon, title, text }) => (
-              <li key={title} className="card p-6">
-                <Icon aria-hidden className="h-8 w-8 text-teal" />
-                <p className="mt-3 text-xl font-bold text-ink">{title}</p>
-                <p className="mt-1 text-[1.0625rem] text-ink-soft">{text}</p>
+              <li key={title} className="tile-card">
+                <span aria-hidden className="tile-ico tile-ico-tone">
+                  <Icon />
+                </span>
+                <div>
+                  <h3 className="tile-card-title">{title}</h3>
+                  <p className="tile-card-text">{text}</p>
+                </div>
               </li>
             ))}
           </ul>
@@ -121,42 +224,33 @@ export default function VisitaADomicilioPage() {
       </section>
 
       {vetrina ? (
-        <section id="avvisami" aria-labelledby="avvisami-titolo" className="scroll-mt-28 bg-mist py-10 sm:py-16">
-          <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2 lg:items-start">
+        <section id="avvisami" aria-labelledby="avvisami-titolo" className="panel-section section scroll-mt-24 bg-mist">
+          <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2 lg:items-start lg:gap-12">
             <div>
-              <h2 id="avvisami-titolo" className="display-lg">Avvisami quando parte nella mia zona</h2>
-              <p className="mt-4 text-xl text-ink-soft">Il servizio non è ancora attivo. Lascia email e CAP: partiamo dalle zone in cui c&apos;è più richiesta.</p>
+              <p className="eyebrow">Lista d&apos;attesa</p>
+              <h2 id="avvisami-titolo" className="display-lg mt-3">
+                Avvisami quando parte nella mia zona
+              </h2>
+              <p className="lead mt-4">Il servizio non è ancora attivo. Lascia email e CAP: partiamo dalle zone in cui c&apos;è più richiesta.</p>
             </div>
             <WaitlistForm interest="domicilio" />
           </div>
         </section>
       ) : null}
 
-      <section aria-labelledby="nonper-titolo" className="bg-paper py-10 sm:py-16">
+      {/* DOMANDE */}
+      <section aria-labelledby="faq-dom-titolo" className="section">
         <div className="container-rc">
-          <h2 id="nonper-titolo" className="display-lg">Quando non è il servizio giusto</h2>
-          <ul className="mt-6 grid gap-3 sm:grid-cols-3">
-            {NOT_FOR.map((x) => (
-              <li key={x} className="flex gap-3 rounded-xl border border-line bg-paper px-5 py-4 text-[1.0625rem] text-ink"><X aria-hidden className="mt-1 h-5 w-5 shrink-0 text-danger" /> {x}</li>
-            ))}
-          </ul>
+          <h2 id="faq-dom-titolo" className="display-md">
+            Domande sulla visita a domicilio
+          </h2>
+          <div className="mt-5 sm:mt-8">
+            <FaqList items={FAQ_DOMICILIO} />
+          </div>
         </div>
       </section>
 
-      <section aria-labelledby="altre-titolo" className="bg-ivory-wash py-10 sm:py-16">
-        <div className="container-rc">
-          <h2 id="altre-titolo" className="display-lg">Se ti serve altro</h2>
-          <p className="mt-3 max-w-2xl text-xl text-ink-soft">Per un dubbio che si chiarisce a distanza basta un videoconsulto. Per un&apos;altra valutazione su una diagnosi o una proposta di cura c&apos;è il secondo parere di uno specialista.</p>
-          <div className="mt-7"><PrestazioniGrid only={["video", "parere"]} /></div>
-        </div>
-      </section>
-
-      <section aria-labelledby="faq-dom-titolo" className="py-10 sm:py-16">
-        <div className="container-rc">
-          <h2 id="faq-dom-titolo" className="display-lg">Domande sulla visita a domicilio</h2>
-          <div className="mt-7"><FaqList items={FAQ_DOMICILIO} /></div>
-        </div>
-      </section>
-    </>
+      <OtherServices exclude="domicilio" />
+    </div>
   );
 }

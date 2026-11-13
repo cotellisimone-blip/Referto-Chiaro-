@@ -17,7 +17,7 @@ export default function EsempioPage() {
         title="Esplora un referto di esempio."
         lead="Dal documento al foglio per la visita in quattro passaggi. Nessuna registrazione, nessun dato personale: il referto e la persona sono inventati."
       />
-      <div className="container-rc py-10 sm:py-14">
+      <div className="container-rc tool-body">
         <DemoFlow vetrina={isVetrina()} startHref={serviceStart("capisci").href} />
       </div>
     </>

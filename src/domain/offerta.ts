@@ -179,7 +179,7 @@ export const DESCRIPTOR = "Referti, secondo parere e videoconsulti con medici ab
  * Sottotitolo della home (ciclo 1): dice in una riga che cosa ricevi e chi c'è se serve.
  * «medici abilitati e identificabili» resta per scelta del titolare (11/11/2026).
  */
-export const HERO_SUBTITLE = "Il tuo referto spiegato valore per valore, in parole semplici. Se serve, ne parli con medici abilitati e identificabili.";
+export const HERO_SUBTITLE = "Il tuo referto spiegato in parole semplici, valore per valore. E quando serve una persona, medici abilitati e identificabili: in video o a casa tua.";
 
 type Env = Record<string, string | undefined>;
 

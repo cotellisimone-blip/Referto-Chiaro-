@@ -25,7 +25,7 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
         <h2 className="px-5 pt-5 text-xl font-bold text-ink sm:px-6">I tuoi valori, come sono scritti nel referto</h2>
         <div className="mt-3">
           <table className="w-full text-left text-[1rem] sm:text-[1.0625rem]">
-            <thead className="border-y border-line bg-canvas text-sm text-muted">
+            <thead className="border-y border-line bg-canvas text-[0.9375rem] text-muted">
               <tr>
                 <th scope="col" className="px-4 py-2 font-semibold sm:px-6">Esame</th>
                 <th scope="col" className="px-2 py-2 font-semibold sm:px-3">Valore</th>
@@ -43,9 +43,9 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
                   <td className="tabular whitespace-nowrap px-2 py-3 font-semibold text-ink sm:px-3">
                     {it.originalValueExact} <span className="font-normal text-muted">{it.originalUnitExact}</span>
                   </td>
-                  <td className="tabular hidden px-3 py-3 font-mono text-ink-soft sm:table-cell">{it.originalReferenceExact ?? "—"}</td>
+                  <td className="tabular hidden px-3 py-3 text-ink-soft sm:table-cell">{it.originalReferenceExact ?? "—"}</td>
                   <td className="px-3 py-3 sm:px-6">
-                    <button type="button" className="inline-flex min-h-11 items-center gap-1 whitespace-nowrap text-sm font-semibold text-teal-deep hover:underline" onClick={() => onReveal(it.sourceCitation.line)}>
+                    <button type="button" className="inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap text-[0.9375rem] font-semibold text-teal-deep hover:underline" onClick={() => onReveal(it.sourceCitation.line)}>
                       <ScanEye aria-hidden className="h-4 w-4 shrink-0" /> p.&nbsp;{it.sourceCitation.page}, r.&nbsp;{it.sourceCitation.line}
                       <span className="sr-only">: mostra {it.nameExact} nel documento</span>
                     </button>
@@ -90,7 +90,7 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
                     </li>
                   ))}
                 </ul>
-                <p className="mt-1 text-sm text-muted">Stesso esame e stessa unità di misura. Che cosa significhi la differenza lo può dire solo il medico.</p>
+                <p className="mt-1 text-base text-muted">Stesso esame e stessa unità di misura. Che cosa significhi la differenza lo può dire solo il medico.</p>
               </div>
             ) : null}
             {enrichment?.factors[it.sourceObservationId] ? (
@@ -104,7 +104,7 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
                     <li key={f}>{f}</li>
                   ))}
                 </ul>
-                <p className="pb-2 text-sm text-muted">
+                <p className="pb-2 text-base text-muted">
                   Informazioni generali, non riferite a te. Approfondisci nella guida{" "}
                   <Link href={`/guide/${enrichment.factors[it.sourceObservationId].guideSlug}`} className="link">
                     {enrichment.factors[it.sourceObservationId].guideTitle}
@@ -113,11 +113,11 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
                 </p>
               </details>
             ) : null}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3">
-              <span className="text-sm text-muted">{it.limits}</span>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line pt-3">
+              <span className="min-w-0 flex-1 basis-64 text-base text-muted">{it.limits}</span>
               <button
                 type="button"
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-mist px-3.5 text-sm font-semibold text-teal-deep hover:bg-line/60"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-mist px-4 text-[0.9375rem] font-semibold text-teal-deep hover:bg-line/60"
                 onClick={() => onReveal(it.sourceCitation.line)}
               >
                 <ScanEye aria-hidden className="h-4 w-4" /> Pag. {it.sourceCitation.page}, riga {it.sourceCitation.line}
@@ -143,15 +143,10 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
 
       <div className="card p-6 sm:p-7">
         <p className="eyebrow">Per la visita</p>
-        <h3 className="mt-3 font-serif text-2xl sm:text-[1.75rem]">Domande da portare al medico</h3>
-        <ol className="mt-5 space-y-4">
-          {explanation.questionsForDoctor.map((q, i) => (
-            <li key={q} className="flex gap-4 text-lg">
-              <span aria-hidden className="num w-7 shrink-0 text-2xl text-sage">
-                {i + 1}
-              </span>
-              <span>{q}</span>
-            </li>
+        <h3 className="mt-3 text-2xl font-extrabold tracking-tight text-ink sm:text-[1.75rem]">Domande da portare al medico</h3>
+        <ol className="num-list num-list-mist mt-5 text-lg leading-snug text-ink">
+          {explanation.questionsForDoctor.map((q) => (
+            <li key={q}>{q}</li>
           ))}
         </ol>
       </div>

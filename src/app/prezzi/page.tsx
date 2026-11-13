@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Check, Clock3, UserRound } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Clock3, UserRound } from "lucide-react";
 import { OFFER_ICON, OfferPrice } from "@/components/offerta/service-triad";
+import { FaqList } from "@/components/ui/faq-list";
+import { Wave } from "@/components/ui/wave";
 import { offerItems } from "@/domain/prestazioni/offerta-completa";
 import { PRESTAZIONI, type PrestazioneKind } from "@/domain/prestazioni/listino";
 import { cancelTerms } from "@/domain/prestazioni/engine";
@@ -24,60 +26,68 @@ const PAY_FAQ = [
   ["Come pago?", "Con carta, tramite un fornitore di pagamenti certificato: Cura Privata non vede né conserva i dati della carta."],
 ] as const;
 
+/**
+ * Prezzi, grafica «Luce»: i quattro servizi a confronto, righe allineate tra le schede (per chi, prezzo, tempi,
+ * che cosa include, azione). Nomi, prezzi e tempi arrivano dal listino unico.
+ */
 export default function PrezziPage() {
   const prices = publicPricesEnabled();
   const upgrade = upgradeEnabled();
   return (
     <>
-      <section aria-labelledby="prezzi-titolo" className="bg-ivory-wash">
-        <div className="container-rc pb-10 pt-12 sm:pt-16">
+      <section aria-labelledby="prezzi-titolo" className="page-hero page-hero-wave">
+        <div className="container-rc page-hero-inner page-hero-overlap">
           <p className="eyebrow">Prezzi</p>
-          <h1 id="prezzi-titolo" className="display-xl mt-5 max-w-3xl">
-            <span className="marker">Un prezzo chiaro</span>, prima di pagare.
+          <h1 id="prezzi-titolo" className="page-title mt-4 max-w-[16ch]">
+            Un prezzo chiaro, prima di pagare.
           </h1>
-          <p className="mt-6 max-w-2xl text-xl text-ink-soft">Il referto spiegato, oppure un medico: a casa, in video o per un secondo parere. In questa versione dimostrativa nessun pagamento è reale.</p>
+          <p className="lead mt-5 max-w-[40rem]">Il referto spiegato, oppure un medico: a casa, in video o per un secondo parere. Nessun abbonamento. In questa versione dimostrativa nessun pagamento è reale.</p>
         </div>
+        <Wave className="text-canvas" />
       </section>
-      <section aria-label="Confronto dei servizi" className="pb-16 pt-6 sm:pb-24">
+
+      <section aria-label="Confronto dei servizi" className="price-section">
         <div className="container-rc">
-          <ul className="grid grid-cols-[minmax(0,1fr)] gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <ul className="price-grid">
             {offerItems().map((s) => {
               const Icon = OFFER_ICON[s.icon];
               const start = s.kind ? { href: PRESTAZIONI[s.kind].startHref, label: START_LABEL[s.kind] } : serviceStart(s.coreId!);
               return (
                 <li key={s.key} className={`tone-${s.tone}`}>
-                  <article className="service-card tone-band p-6" aria-labelledby={`prezzo-${s.key}`} data-servizio={s.key}>
-                    <div className="flex items-start gap-3">
-                      <span className="tone-icon h-12 w-12 shrink-0">
-                        <Icon aria-hidden className="h-6 w-6" />
+                  <article className="price-card" aria-labelledby={`prezzo-${s.key}`} data-servizio={s.key}>
+                    <div className="price-card-head">
+                      <span aria-hidden className="tile-ico tile-ico-tone">
+                        <Icon />
                       </span>
-                      <h2 id={`prezzo-${s.key}`} className="text-[1.375rem] font-bold leading-tight text-ink">
+                      <h2 id={`prezzo-${s.key}`} className="price-card-name">
                         {s.name}
                       </h2>
                     </div>
-                    <p className="mt-3 text-[1.0625rem] text-ink-soft xl:min-h-[4.75em]">{s.forWhom}</p>
-                    {prices ? <OfferPrice item={s} size="lg" className="mt-4" /> : null}
-                    <p className="mt-4 flex items-start gap-2 text-[1.0625rem] text-ink">
-                      <Clock3 aria-hidden className="tone-text mt-1 h-5 w-5 shrink-0" />
+                    <p className="price-card-for">{s.forWhom}</p>
+                    <div className="price-card-price">{prices ? <OfferPrice item={s} size="lg" /> : null}</div>
+                    <p className="svc-meta price-card-time">
+                      <Clock3 aria-hidden />
                       {s.timing}
                     </p>
-                    <details className="mt-4 border-t border-line pt-3">
-                      <summary className="flex min-h-11 cursor-pointer items-center text-[1.0625rem] font-semibold text-ink">Che cosa include</summary>
-                      <p className="mt-2 flex items-start gap-2 text-[1.0625rem] text-ink">
-                        <UserRound aria-hidden className="tone-text mt-1 h-5 w-5 shrink-0" />
+                    <details className="price-details">
+                      <summary>
+                        Che cosa include <ChevronDown aria-hidden className="h-5 w-5" />
+                      </summary>
+                      <p className="svc-meta">
+                        <UserRound aria-hidden />
                         {s.who}
                       </p>
-                      <ul className="mt-3 space-y-2.5 text-[1.0625rem] text-ink-soft">
+                      <ul>
                         {s.includes.map((x) => (
-                          <li key={x} className="flex gap-2.5">
-                            <Check aria-hidden className="tone-text mt-1 h-5 w-5 shrink-0" />
+                          <li key={x}>
+                            <Check aria-hidden />
                             {x}
                           </li>
                         ))}
                       </ul>
                     </details>
-                    <div className="mt-auto flex flex-col gap-1 pt-5">
-                      <Link href={start.href} className="btn btn-primary">
+                    <div className="price-card-foot">
+                      <Link href={start.href} className="btn btn-primary w-full">
                         {start.label} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                       </Link>
                       <Link href={s.href} className="link inline-flex min-h-11 items-center justify-center font-semibold">
@@ -89,7 +99,7 @@ export default function PrezziPage() {
               );
             })}
           </ul>
-          <p className="mt-6 text-[1.0625rem] text-muted">{PRICE_NOTE}</p>
+          <p className="mt-5 px-1 text-[1rem] text-muted">{PRICE_NOTE}</p>
           {upgrade && prices ? (
             <p className="mt-4 rounded-2xl bg-mist px-5 py-4 text-lg text-ink">
               Hai già usato «Capisci il tuo referto»? Per parlarne con un medico ti scaliamo quanto pagato per il referto: {formatEuro(upgradeCostCents("capisci", "parla-con-un-medico"))}.
@@ -97,19 +107,17 @@ export default function PrezziPage() {
           ) : null}
         </div>
       </section>
-      <section aria-labelledby="pagamenti-titolo" className="border-t border-line/70 bg-paper py-16 sm:py-24">
-        <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <h2 id="pagamenti-titolo" className="display-lg text-[2rem] sm:text-[2.5rem]">
-            Pagamenti, senza sorprese
-          </h2>
-          <dl className="space-y-6">
-            {PAY_FAQ.map(([q, a]) => (
-              <div key={q}>
-                <dt className="text-xl font-bold text-ink">{q}</dt>
-                <dd className="mt-1 text-lg text-ink-soft">{a}</dd>
-              </div>
-            ))}
-          </dl>
+
+      <section aria-labelledby="pagamenti-titolo" className="section">
+        <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[0.7fr_1.3fr] lg:gap-14">
+          <div>
+            <p className="eyebrow">Pagamenti</p>
+            <h2 id="pagamenti-titolo" className="display-lg mt-3">
+              Senza sorprese.
+            </h2>
+            <p className="lead mt-4">Vedi sempre prezzo e tempi prima di pagare. Con un medico, paghi solo dopo la sua conferma.</p>
+          </div>
+          <FaqList items={PAY_FAQ.map(([q, a]) => ({ q, a }))} />
         </div>
       </section>
     </>

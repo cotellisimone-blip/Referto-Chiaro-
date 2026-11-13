@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, BookOpenText, ClipboardList, ListChecks, Search } from "lucide-react";
+import { ArrowRight, BookOpenText, ClipboardList, Compass, ListChecks, Search, X } from "lucide-react";
 import { Section } from "@/components/ui/section";
-import { ServiceTriad } from "@/components/offerta/service-triad";
+import { Wave } from "@/components/ui/wave";
+import { LinkCards } from "@/components/ui/link-cards";
+import { CapisciFeature, DoctorServices } from "@/components/offerta/service-triad";
+import { StepsVisual } from "@/components/offerta/service-visuals";
 import { FaqList } from "@/components/ui/faq-list";
 import { FAQ } from "@/content/faq";
+import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 
 export const metadata: Metadata = {
   title: "I servizi",
@@ -22,63 +26,88 @@ const NOT_DONE = [
 ];
 
 const FREE = [
-  { icon: ClipboardList, title: "Preparati alla visita in 2 minuti", href: "/strumenti/preparati-alla-visita", text: "Cosa portare e cosa chiedere, in una lista da stampare." },
-  { icon: ListChecks, title: "Domande per il medico", href: "/strumenti/domande-per-il-medico", text: "Le domande giuste per gli esami che hai fatto." },
+  { icon: ClipboardList, title: "Preparati alla visita", href: "/strumenti/preparati-alla-visita", text: "In 2 minuti, la lista di cosa portare e cosa chiedere." },
+  { icon: ListChecks, title: "Domande per il medico", href: "/strumenti/domande-per-il-medico", text: "Le domande utili per gli esami che hai fatto." },
   { icon: BookOpenText, title: "Guide agli esami", href: "/guide", text: "Che cosa misura un esame e come si legge, con le fonti." },
-  { icon: Search, title: "Glossario", href: "/glossario", text: "Le sigle del referto spiegate in una riga." },
+  { icon: Search, title: "Glossario", href: "/glossario", text: "Le sigle del referto, spiegate in una riga." },
 ];
 
+/**
+ * Servizi, grafica «Luce»: prima il referto (automatico, in grande), poi i servizi con un medico, ognuno con
+ * disponibilità e richiesta diretta. In fondo gli strumenti gratuiti e che cosa non facciamo.
+ */
 export default function ServiziPage() {
+  const pdp = puntoDiPartenzaEnabled();
+  const free = pdp ? [{ icon: Compass, title: "Punto di Partenza", href: "/punto-di-partenza", text: "Non hai ancora esami? Capisci da dove cominciare." }, ...FREE.slice(0, 3)] : FREE;
   return (
     <>
-      <section aria-labelledby="servizi-titolo" className="bg-ivory-wash">
-        <div className="container-rc pb-12 pt-12 sm:pt-16">
-          <p className="eyebrow">I servizi di Cura Privata</p>
-          <h1 id="servizi-titolo" className="display-xl mt-5 max-w-4xl">
-            Dal referto al medico, <span className="marker">un passo alla volta.</span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-xl text-ink-soft">Il referto spiegato, il medico a casa o in video, il secondo parere. Non sai quale ti serve? Rispondi a una domanda e te lo diciamo noi.</p>
-          <Link href="/inizia" className="btn btn-secondary btn-lg mt-8">
-            Ti aiutiamo a scegliere <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-          </Link>
+      <section aria-labelledby="servizi-titolo" className="page-hero page-hero-wave">
+        <div className="container-rc page-hero-inner page-hero-overlap page-hero-split">
+          <div>
+            <p className="eyebrow">I servizi</p>
+            <h1 id="servizi-titolo" className="page-title mt-4 max-w-[17ch]">
+              Dal referto al medico, un passo alla volta.
+            </h1>
+            <p className="lead mt-5 max-w-[38rem]">Parti dal tuo referto, spiegato in parole semplici. Quando serve una persona c&apos;è un medico: a casa, in video o per un secondo parere.</p>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+              <Link href="/inizia" className="btn btn-primary btn-lg">
+                Ti aiutiamo a scegliere <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              </Link>
+              <Link href="/prezzi" className="link inline-flex min-h-11 items-center text-lg font-semibold">
+                Confronta prezzi e tempi
+              </Link>
+            </div>
+          </div>
+          <StepsVisual />
+        </div>
+        <Wave className="text-canvas" />
+      </section>
+
+      {/* IL REFERTO: da qui si parte */}
+      <div className="container-rc">
+        <CapisciFeature className="svc-feature-overlap" />
+      </div>
+
+      {/* CON UN MEDICO */}
+      <section id="con-un-medico" aria-labelledby="medico-titolo" className="section scroll-mt-24">
+        <div className="container-rc">
+          <div className="max-w-3xl">
+            <p className="eyebrow">Con un medico</p>
+            <h2 id="medico-titolo" className="display-lg mt-3">
+              Quando serve una persona.
+            </h2>
+            <p className="lead mt-4">Il prezzo è fisso e paghi solo dopo che il medico ha confermato: prima vedi nome, orario e importo.</p>
+          </div>
+          <div className="mt-7 sm:mt-10">
+            <DoctorServices />
+          </div>
+          <p className="mt-5 text-[1.0625rem] text-muted">
+            Versione dimostrativa: medici, fasce e pagamenti sono simulati.{" "}
+            <Link href="/stato-del-progetto" className="link font-semibold">
+              Stato del progetto
+            </Link>
+          </p>
         </div>
       </section>
-      <div id="con-un-medico" className="container-rc scroll-mt-28 py-12 sm:py-16">
-        <ServiceTriad headingLevel={2} />
-        <p className="mt-6 max-w-3xl text-lg text-ink-soft">Con un medico il prezzo è fisso e paghi solo dopo che il medico ha confermato: vedi nome, orario e importo prima.</p>
-        <p className="mt-4 text-[1.0625rem] text-muted">
-          <Link href="/prezzi" className="link font-semibold">
-            Confronta prezzi e tempi
-          </Link>
-          <span aria-hidden> · </span>
-          <Link href="/stato-del-progetto" className="link">
-            Stato del progetto
-          </Link>
-        </p>
-      </div>
-      <Section id="gratis" tone="paper" eyebrow="Gratis, per tutti" title="Strumenti e guide, senza registrarti.">
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {FREE.map(({ icon: Icon, title, href, text }) => (
-            <li key={href}>
-              <Link href={href} className="card card-lift flex h-full flex-col p-6">
-                <Icon aria-hidden className="h-7 w-7 text-teal" />
-                <span className="mt-4 text-xl font-bold leading-snug text-ink">{title}</span>
-                <span className="mt-1 text-[1.0625rem] text-ink-soft">{text}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+
+      <Section id="gratis" tone="mist" eyebrow="Gratis, per tutti" title="Strumenti e guide, senza registrarti.">
+        <LinkCards items={free} />
       </Section>
-      <Section id="non-facciamo" tone="paper" eyebrow="Per chiarezza" title="Che cosa non facciamo.">
-        <ul className="grid gap-3 sm:grid-cols-2">
+
+      <Section id="non-facciamo" eyebrow="Per chiarezza" title="Che cosa non facciamo." size="md">
+        <ul className="excl-grid">
           {NOT_DONE.map((x) => (
-            <li key={x} className="rounded-xl border border-line bg-canvas px-5 py-4 text-ink">
+            <li key={x}>
+              <span aria-hidden className="cross-dot">
+                <X />
+              </span>
               {x}
             </li>
           ))}
         </ul>
       </Section>
-      <Section id="faq-servizi" eyebrow="Domande" title="Prima di scegliere.">
+
+      <Section id="faq-servizi" eyebrow="Domande" title="Prima di scegliere." size="md">
         <FaqList items={FAQ.filter((f) => f.topic === "pagamenti" || f.topic === "servizio").slice(0, 5)} />
       </Section>
     </>

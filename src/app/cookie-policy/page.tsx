@@ -8,9 +8,9 @@ export default function Page() {
   return (
     <>
       <PageHeader compact eyebrow="Note legali" title="Cookie" lead="Quali cookie usa il sito, e quali no." />
-      <div className="container-rc py-12 sm:py-16">
+      <div className="container-rc page-body">
         <DraftNotice />
-        <div className="mt-10">
+        <div className="mt-8 sm:mt-10">
           <Prose>
             <h2>Cookie tecnici</h2>
             <ul>

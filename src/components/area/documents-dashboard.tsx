@@ -106,10 +106,10 @@ export function DocumentsDashboard() {
       <div className="card grain grid gap-8 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_0.7fr] lg:items-center">
         <div>
           <p className="eyebrow">Il tuo archivio</p>
-          <h1 className="display-lg mt-3">Nessun referto, per ora.</h1>
-          <p className="mt-4 text-lg text-muted">Aggiungi un referto di esempio e segui il percorso completo: lettura, controllo dei valori, spiegazione e PDF.</p>
-          <Link href="/area-personale/nuovo" className="btn btn-primary mt-6">
-            <FilePlus2 aria-hidden className="h-4 w-4" /> Aggiungi un referto
+          <h1 className="area-title mt-3">Nessun referto, per ora.</h1>
+          <p className="area-lead">Aggiungi un referto di esempio e segui il percorso completo: lettura, controllo dei valori, spiegazione e PDF.</p>
+          <Link href="/area-personale/nuovo" className="btn btn-primary btn-lg mt-6">
+            <FilePlus2 aria-hidden className="h-5 w-5" /> Aggiungi un referto
           </Link>
         </div>
         <div className="mx-auto w-full max-w-[300px]">
@@ -132,24 +132,24 @@ export function DocumentsDashboard() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Il tuo spazio</p>
-          <h1 className="display-lg mt-3">I tuoi referti</h1>
-          <p className="mt-3 text-lg text-muted">Ogni documento mostra a che punto è. Apri un referto per continuare da dove eri rimasto.</p>
+          <h1 className="area-title mt-3">I tuoi referti</h1>
+          <p className="area-lead">Ogni documento mostra a che punto è. Apri un referto per continuare da dove eri rimasto.</p>
         </div>
         <Link href="/area-personale/nuovo" className="btn btn-primary">
-          <FilePlus2 aria-hidden className="h-4 w-4" /> Nuovo referto
+          <FilePlus2 aria-hidden className="h-5 w-5" /> Nuovo referto
         </Link>
       </div>
 
       {/* Ciclo 3, fase 2: prima il prossimo passo, poi un riepilogo in una riga (al posto di quattro tessere che
           su telefono occupavano uno schermo intero). */}
-      <section aria-labelledby="prossimo-titolo" className="card mt-6 grid gap-5 overflow-hidden border-teal/30 bg-[linear-gradient(135deg,var(--color-marker-soft),var(--color-paper)_60%)] p-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:p-7" data-testid="prossimo-passo">
+      <section aria-labelledby="prossimo-titolo" className="form-card form-card-accent mt-6 grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center" data-testid="prossimo-passo">
         <div className="min-w-0">
           <p className="eyebrow">Prossimo passo</p>
-          <h2 id="prossimo-titolo" className="mt-2 text-[1.5rem] font-bold leading-tight text-ink">{summary.next.title}</h2>
-          <p className="mt-2 text-lg text-ink-soft">{summary.next.text}</p>
+          <h2 id="prossimo-titolo" className="form-card-title mt-3">{summary.next.title}</h2>
+          <p className="form-card-text">{summary.next.text}</p>
         </div>
-        <Link href={summary.next.href} className="btn btn-primary sm:whitespace-nowrap">
-          {summary.next.cta} <ArrowRight aria-hidden className="btn-arrow h-4 w-4" />
+        <Link href={summary.next.href} className="btn btn-primary btn-lg sm:whitespace-nowrap">
+          {summary.next.cta} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
         </Link>
       </section>
 
@@ -165,7 +165,7 @@ export function DocumentsDashboard() {
       </ul>
 
       {/* Elenco referti */}
-      <h2 id="referti" className="mt-12 scroll-mt-28 text-[1.375rem] font-bold text-ink">Tutti i referti</h2>
+      <h2 id="referti" className="area-h2 mt-12 scroll-mt-28">Tutti i referti</h2>
       <ul className="mt-4 grid gap-4 md:grid-cols-2" aria-label="Elenco dei referti">
         {data.documents.map((d) => {
           const reps = data.reports.filter((r) => r.documentId === d.id);
@@ -176,10 +176,10 @@ export function DocumentsDashboard() {
           return (
             <li key={d.id} className="card card-lift card-glow relative flex flex-col p-5 sm:p-6">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="font-serif text-[1.375rem] leading-tight">{d.title}</h3>
+                <h3 className="area-h2 text-[1.375rem]">{d.title}</h3>
                 <StatusChip status={status} />
               </div>
-              <p className="mt-2 text-sm text-muted">
+              <p className="meta mt-2">
                 Aggiunto il {formatDateTime(d.createdAt)}
                 {d.observationCount ? ` · ${d.observationCount} voci lette` : ""}
               </p>
@@ -189,14 +189,14 @@ export function DocumentsDashboard() {
                     <span key={s} data-on={p.on[i]} data-live={p.live === i} />
                   ))}
                 </div>
-                <p aria-hidden className="mt-1.5 flex justify-between text-[0.75rem] text-muted">
+                <p aria-hidden className="mt-2 flex justify-between text-[0.9375rem] font-semibold text-muted">
                   <span>{STEPS[Math.max(0, Math.min(p.count, STEPS.length) - 1)]}</span>
                   <span className="tabular">
                     {p.count}/{STEPS.length}
                   </span>
                 </p>
               </div>
-              {d.errorMessage ? <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{d.errorMessage}</p> : null}
+              {d.errorMessage ? <p className="field-error mt-3">{d.errorMessage}</p> : null}
               <div className="mt-auto pt-5">
                 <Link href={`/area-personale/documenti/${d.id}`} className={clsx("btn w-full sm:w-auto", d.status === "needs-verification" && summary.next.href !== `/area-personale/documenti/${d.id}` ? "btn-primary" : "btn-secondary")}>
                   {d.status === "needs-verification" ? "Controlla i valori" : d.status === "verified" && !active && !ready ? "Scegli il servizio" : ready ? "Apri il report" : "Apri"}
@@ -211,7 +211,7 @@ export function DocumentsDashboard() {
       {/* Dossier */}
       <section aria-labelledby="dossier-titolo" className="mt-12">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 id="dossier-titolo" className="text-[1.375rem] font-bold text-ink">I tuoi dossier</h2>
+          <h2 id="dossier-titolo" className="area-h2">I tuoi dossier</h2>
           <Link href="/area-personale/dossier" className="link text-[1.0625rem] font-semibold">
             Tutti i dossier
           </Link>
@@ -225,15 +225,15 @@ export function DocumentsDashboard() {
                     <FolderOpen aria-hidden className="h-6 w-6 text-teal" />
                   </span>
                   <span className="min-w-0">
-                    <span className="block truncate font-semibold text-ink">{x.title}</span>
-                    <span className="block text-sm text-muted">{formatDateTime(x.createdAt)}</span>
+                    <span className="block truncate text-[1.0625rem] font-bold text-ink">{x.title}</span>
+                    <span className="block text-base text-muted">{formatDateTime(x.createdAt)}</span>
                   </span>
                 </Link>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="mt-3 rounded-2xl border border-dashed border-line bg-paper px-5 py-4 text-ink-soft">
+          <p className="mt-3 rounded-[var(--radius-lg)] border border-dashed border-muted/40 bg-paper px-5 py-4 text-[1.0625rem] text-ink-soft">
             Un dossier mette insieme due o più report pronti e mostra gli stessi esami uno accanto all&apos;altro.{" "}
             {summary.readyCount >= 2 ? (
               <Link href="/area-personale/dossier/nuovo" className="link font-semibold">

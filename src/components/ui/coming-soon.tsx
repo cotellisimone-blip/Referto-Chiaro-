@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, CircleDashed, ShieldCheck } from "lucide-react";
+import { CircleDashed } from "lucide-react";
 import { PageHeader, type HeaderArt } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { WaitlistForm } from "@/components/site/waitlist-form";
 
 /**
- * Pagina di un servizio Cura Privata «In preparazione».
+ * Pagina di un servizio Cura Privata «In preparazione», grafica «Luce».
  * Descrive com'è pensato, che cosa serve prima di aprirlo e offre solo una lista d'attesa (email, nessun dato sanitario).
  * Nessun pulsante di prenotazione, caricamento o pagamento: il kit lo vieta finché il servizio non esiste davvero.
  */
@@ -31,51 +31,64 @@ export function ComingSoonPage({
   return (
     <>
       <PageHeader art={art} eyebrow={eyebrow} title={title} lead={lead}>
-        <p className="mt-7 inline-flex items-center gap-2.5 rounded-xl border border-line bg-paper px-4 py-3 text-[1.0625rem] font-semibold text-ink">
-          <CircleDashed aria-hidden className="h-5 w-5 text-teal" />
+        <p className="mt-6 flex max-w-[38rem] items-start gap-2.5 text-[1.0625rem] font-semibold leading-snug text-ink">
+          <CircleDashed aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-warn" />
           Servizio in preparazione: oggi non è attivo e non raccoglie documenti.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <a href="#avvisami" className="btn btn-primary">
+          <a href="#avvisami" className="btn btn-primary btn-lg">
             Avvisami quando parte
           </a>
-          <Link href="/referti" className="btn btn-secondary">
+          <Link href="/servizi" className="btn btn-secondary btn-lg">
             Che cosa puoi fare oggi
           </Link>
         </div>
       </PageHeader>
-      <Section id="come-sara" eyebrow="Come lo stiamo pensando" title="Un'idea chiara, prima ancora del servizio.">
-        <ol className="grid gap-5 md:grid-cols-3">
-          {plan.map((p, i) => (
-            <li key={p.title} className="card p-6 sm:p-7">
-              <span aria-hidden className="num text-[2.75rem] text-sage">
-                0{i + 1}
-              </span>
-              <h3 className="mt-3 text-xl font-bold text-ink">{p.title}</h3>
-              <p className="mt-2 text-lg text-ink-soft">{p.text}</p>
-            </li>
-          ))}
-        </ol>
-        {notes ? <div className="mt-8 max-w-3xl text-lg text-muted">{notes}</div> : null}
-      </Section>
-      <Section id="prima-di-aprire" tone="paper" eyebrow="Prima di aprirlo" title="Che cosa deve essere pronto.">
-        <ul className="grid gap-3 sm:grid-cols-2">
+
+      <section aria-labelledby="come-sara-titolo" id="come-sara" className="section scroll-mt-24">
+        <div className="container-rc">
+          <div className="max-w-3xl">
+            <p className="eyebrow">Come lo stiamo pensando</p>
+            <h2 id="come-sara-titolo" className="display-lg mt-3">
+              Un&apos;idea chiara, prima ancora del servizio.
+            </h2>
+          </div>
+          <ol className="steps mt-7 sm:mt-12">
+            {plan.map((p, i) => (
+              <li key={p.title} className="step">
+                <span aria-hidden className="step-num">
+                  {i + 1}
+                </span>
+                <div>
+                  <h3 className="step-title">{p.title}</h3>
+                  <p className="step-text">{p.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          {notes ? <div className="mt-8 max-w-3xl text-lg text-ink-soft">{notes}</div> : null}
+        </div>
+      </section>
+
+      <Section id="prima-di-aprire" eyebrow="Prima di aprirlo" title="Che cosa deve essere pronto." size="md">
+        <ul className="status-list status-list-grid">
           {prerequisites.map((x) => (
-            <li key={x} className="flex gap-3 rounded-xl border border-line bg-canvas px-5 py-4 text-ink">
-              <ShieldCheck aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-teal" />
+            <li key={x}>
+              <CircleDashed aria-hidden />
               {x}
             </li>
           ))}
         </ul>
-        <p className="mt-6 max-w-3xl text-muted">Finché questi punti non sono chiusi e documentati, il servizio resta spento. Non c&apos;è una data promessa.</p>
+        <p className="mt-6 max-w-3xl text-lg text-ink-soft">Finché questi punti non sono chiusi e documentati, il servizio resta spento. Non c&apos;è una data promessa.</p>
       </Section>
+
       <Section id="avvisami" tone="mist" eyebrow="Lista d'attesa" title="Avvisami quando parte." lead="Solo la tua email, per un interesse non vincolante. Non scrivere informazioni sulla tua salute.">
         <div className="max-w-2xl">
           <WaitlistForm interest={interest} />
         </div>
-        <p className="mt-8">
-          <Link href="/servizi" className="inline-flex items-center gap-2 font-semibold text-teal hover:underline">
-            Tutti i servizi di Cura Privata <ArrowRight aria-hidden className="h-4 w-4" />
+        <p className="mt-6">
+          <Link href="/servizi" className="link inline-flex min-h-11 items-center text-lg font-semibold">
+            Tutti i servizi di Cura Privata
           </Link>
         </p>
       </Section>

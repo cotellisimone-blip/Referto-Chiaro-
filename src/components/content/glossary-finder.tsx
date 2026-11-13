@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, X } from "lucide-react";
+import { SearchField } from "@/components/ui/search-field";
 import { normalizeQuery } from "@/lib/search-index";
 
 export interface TermCard {
@@ -37,63 +37,46 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
 
   return (
     <>
-      <div className="container-rc py-6">
-        <p role="note" className="max-w-3xl text-[0.9375rem] text-muted">
+      <div className="container-rc finder-head">
+        <SearchField value={query} onChange={setQuery} label="Cerca un termine" placeholder={`Cerca tra ${all.length} termini: HbA1c, VES…`} className="max-w-2xl" />
+        {filtered ? (
+          <p className="mt-3 text-base text-muted" aria-live="polite">
+            {filtered.length} {filtered.length === 1 ? "termine" : "termini"} per «{query.trim()}»
+          </p>
+        ) : null}
+        <p role="note" className="mt-3 max-w-3xl text-base text-muted">
           Bozze editoriali in attesa di revisione medica. Per le guide complete sugli esami vedi{" "}
           <Link href="/guide" className="link">
             Guide
           </Link>
           .
         </p>
-        <label className="mt-6 flex max-w-2xl items-center gap-3 rounded-2xl border border-line bg-paper px-4 py-3 shadow-[var(--shadow-card)] focus-within:border-teal">
-          <Search aria-hidden className="h-5 w-5 shrink-0 text-teal" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Cerca tra ${all.length} termini: HbA1c, VES, ematocrito…`}
-            autoComplete="off"
-            aria-label="Cerca un termine"
-            className="min-w-0 flex-1 bg-transparent text-lg text-ink outline-none placeholder:text-muted"
-          />
-          {query ? (
-            <button type="button" onClick={() => setQuery("")} className="inline-flex h-11 w-11 items-center justify-center rounded-full hover:bg-mist">
-              <X aria-hidden className="h-4 w-4" />
-              <span className="sr-only">Cancella la ricerca</span>
-            </button>
-          ) : null}
-        </label>
-        {filtered ? (
-          <p className="mt-3 text-sm text-muted" aria-live="polite">
-            {filtered.length} {filtered.length === 1 ? "termine" : "termini"} per «{query.trim()}»
-          </p>
-        ) : null}
       </div>
       {filtered ? null : (
-          <nav aria-label="Lettere" className="glossary-letters sticky z-30 border-b border-line/70 bg-canvas/95 py-2 backdrop-blur">
-            <ul className="container-rc flex gap-1 overflow-x-auto sm:flex-wrap">
-              {groups.map((g) => (
-                <li key={g.letter}>
-                  <a href={`#lettera-${g.letter}`} className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-mist text-lg font-semibold text-ink hover:bg-marker-soft">
-                    {g.letter}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        <nav aria-label="Lettere" className="glossary-letters sticky z-30 border-b border-line/70 bg-canvas/95 py-2 backdrop-blur">
+          <ul className="container-rc flex gap-1.5 overflow-x-auto sm:flex-wrap">
+            {groups.map((g) => (
+              <li key={g.letter}>
+                <a href={`#lettera-${g.letter}`} className="letter-pill">
+                  {g.letter}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       )}
-      <div className="container-rc space-y-10 py-10 sm:py-14">
+      <div className="container-rc finder-body space-y-10">
         {filtered ? (
           filtered.length ? (
-            <dl className="divide-y divide-line rounded-[var(--radius-lg)] border border-line bg-paper">
+            <dl className="term-list">
               {filtered.map((e) => (
                 <Row key={e.slug} e={e} />
               ))}
             </dl>
           ) : (
-            <div className="rounded-[var(--radius-lg)] bg-mist px-6 py-10 text-center">
+            <div className="empty-state">
               <p className="text-xl font-bold text-ink">Nessun termine con questo nome.</p>
-              <p className="mt-2 text-ink-soft">Prova con una parte della parola, oppure cerca l&apos;esame tra le guide.</p>
+              <p className="mt-2 text-lg text-ink-soft">Prova con una parte della parola, oppure cerca l&apos;esame tra le guide.</p>
               <Link href="/guide" className="btn btn-secondary mt-5">
                 Vai alle guide
               </Link>
@@ -102,8 +85,10 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
         ) : (
           groups.map((g) => (
             <section key={g.letter} id={`lettera-${g.letter}`} aria-labelledby={`lettera-${g.letter}-titolo`} className="scroll-mt-44">
-              <h2 id={`lettera-${g.letter}-titolo`} className="font-serif text-3xl text-ink">{g.letter}</h2>
-              <dl className="mt-4 divide-y divide-line rounded-[var(--radius-lg)] border border-line bg-paper">
+              <h2 id={`lettera-${g.letter}-titolo`} className="letter-head">
+                {g.letter}
+              </h2>
+              <dl className="term-list mt-3">
                 {g.entries.map((e) => (
                   <Row key={e.slug} e={e} />
                 ))}
@@ -118,12 +103,12 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
 
 function Row({ e }: { e: TermCard }) {
   return (
-    <div className="grid gap-1 px-5 py-4 text-lg sm:grid-cols-[240px_1fr] sm:gap-6">
-      <dt className="font-semibold text-ink">
+    <div className="grid gap-1 px-5 py-4 text-lg sm:grid-cols-[260px_1fr] sm:gap-6 sm:px-7">
+      <dt className="font-bold text-ink">
         <Link href={`/glossario/${e.slug}`} className="link inline-flex min-h-11 items-center">
           {e.term}
         </Link>
-        {e.aliases.length ? <span className="block text-sm font-normal text-muted">{e.aliases.slice(0, 2).join(" · ")}</span> : null}
+        {e.aliases.length ? <span className="block text-[0.9375rem] font-normal text-muted">{e.aliases.slice(0, 2).join(" · ")}</span> : null}
       </dt>
       {/* Ciclo 2, fase 4: su telefono due righe per voce (la definizione intera è nella scheda del termine). */}
       <dd className="line-clamp-2 text-[1.0625rem] text-ink-soft sm:line-clamp-none">{e.definition}</dd>

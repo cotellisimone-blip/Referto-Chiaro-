@@ -45,7 +45,7 @@ export function TableOfContents({ items }: { items: { id: string; label: string 
   }, [items]);
   return (
     <nav aria-label="In questa pagina" className="no-print">
-      <p className="text-sm font-semibold text-ink">In questa pagina</p>
+      <p className="text-base font-bold text-ink">In questa pagina</p>
       <ul className="mt-3">
         {items.map((i) => (
           <li key={i.id}>

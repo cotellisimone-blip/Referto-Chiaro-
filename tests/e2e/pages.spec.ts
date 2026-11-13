@@ -69,8 +69,10 @@ test.describe("tema scuro", () => {
   }
 });
 
-test("il selettore del tema forza il tema scuro e lo ricorda", async ({ page }) => {
+test("il selettore del tema forza il tema scuro e lo ricorda", async ({ page, isMobile }) => {
   await gotoReady(page, "/");
+  // Su telefono il selettore del tema sta dentro il menu: prima si apre quello.
+  if (isMobile) await page.getByRole("button", { name: "Apri il menu" }).click();
   const toggle = page.getByRole("button", { name: /cambia tema/ }).first();
   await toggle.click(); // auto -> chiaro
   await toggle.click(); // chiaro -> scuro

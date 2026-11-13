@@ -2,43 +2,39 @@ import { clsx } from "clsx";
 import { Check } from "lucide-react";
 
 /**
- * Indicatore di avanzamento a passi: numeri in cerchio, barra che si riempie, stato annunciato ai lettori di schermo.
- * Su telefono i nomi non starebbero in colonna («Docu…»): restano i numeri e, sotto, il nome intero del passo attuale.
+ * Indicatore di avanzamento a passi, lo stesso in tutto il sito: pallini numerati uniti da una linea.
+ * Da tablet in su ogni pallino ha il suo nome. Su telefono i nomi non starebbero in colonna («Docu…»):
+ * restano i numeri e, sotto, una riga con il nome intero del passo attuale, che va a capo quando serve
+ * (schermi stretti, testo grande). I nomi di tutti i passi restano nella lista per i lettori di schermo.
  */
-export function Stepper({ steps, step, label }: { steps: readonly string[]; step: number; label: string }) {
-  const current = Math.min(Math.max(step, 0), steps.length - 1);
+export function Stepper({ steps, step, label, className }: { steps: readonly string[]; step: number; label: string; className?: string }) {
+  const current = step >= 0 && step < steps.length ? steps[step] : null;
   return (
-    <nav aria-label={label} className="no-print">
-      <ol className="grid gap-2" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
+    <nav aria-label={label} className={clsx("pdp-stepper no-print", className)}>
+      <ol className="pdp-steps" style={{ "--steps": steps.length } as React.CSSProperties}>
         {steps.map((s, i) => {
           const state = i < step ? "done" : i === step ? "current" : "todo";
           return (
-            <li key={s} aria-current={state === "current" ? "step" : undefined} className="min-w-0">
-              <div className={clsx("h-2 rounded-full transition-colors duration-300", state === "todo" ? "bg-line" : state === "done" ? "bg-sage" : "bg-teal")} />
-              <p className={clsx("mt-3 flex items-center gap-2 text-sm font-semibold sm:text-[0.9375rem]", state === "todo" ? "text-muted" : "text-ink")}>
-                <span
-                  className={clsx(
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm sm:h-7 sm:w-7 sm:text-xs",
-                    state === "done" ? "bg-sage text-white" : state === "current" ? "bg-strong text-on-strong" : "border border-line bg-paper text-muted",
-                  )}
-                  aria-hidden
-                >
-                  {state === "done" ? <Check className="h-3.5 w-3.5" /> : i + 1}
-                </span>
-                <span className="sr-only sm:not-sr-only sm:truncate">{s}</span>
-                <span className="sr-only">{state === "done" ? " (completato)" : state === "current" ? " (passaggio attuale)" : ""}</span>
-              </p>
+            <li key={s} className={clsx("pdp-step", `pdp-step-${state}`)} aria-current={state === "current" ? "step" : undefined}>
+              <span aria-hidden className="pdp-step-dot">
+                {state === "done" ? <Check className="h-4 w-4" /> : i + 1}
+              </span>
+              <span className="pdp-step-label">
+                {s}
+                {state === "done" ? <span className="sr-only"> (completato)</span> : null}
+              </span>
             </li>
           );
         })}
       </ol>
-      {/* Solo telefono, solo visivo: il nome è già nella lista per i lettori di schermo. */}
-      <p aria-hidden data-step-current className="mt-3 text-lg font-bold leading-snug text-ink sm:hidden">
-        <span className="font-semibold text-muted">
-          Passo {current + 1} di {steps.length} ·{" "}
-        </span>
-        {steps[current]}
-      </p>
+      {current ? (
+        <p aria-hidden className="pdp-step-now" data-step-current="">
+          <span className="pdp-step-count">
+            Passo {step + 1} di {steps.length} ·
+          </span>{" "}
+          <span className="pdp-step-name">{current}</span>
+        </p>
+      ) : null}
     </nav>
   );
 }

@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { ArrowRight, Ban, Clock3, FolderHeart, Phone, Sparkles } from "lucide-react";
+import { ArrowRight, Phone } from "lucide-react";
 import { Reveal } from "@/components/ui/reveal";
+import { Wave } from "@/components/ui/wave";
+import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { MiniReport } from "@/components/offerta/report-visuals";
 import { BeforeAfter } from "@/components/offerta/before-after";
@@ -15,24 +17,14 @@ import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { HERO_SUBTITLE, PAYOFF_LINES, PRICE_NOTE, coreService, entryPriceLabel, isVetrina, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
 
 /*
- * Home di Cura Privata. 11/11/2026, «home più calma» su richiesta del titolare: troppe volte «medico», troppe
- * informazioni. Cinque blocchi dopo la hero, e i servizi con un medico si presentano una volta sola (i tre livelli):
- * 1 hero (payoff, due azioni, fotografia) · 1b doppio ingresso · 2 il referto prima e dopo, con il cursore ·
- * 3 i livelli · 4 fiducia, in quattro fatti · 5 chiusura con il 112.
+ * Home di Cura Privata, grafica «Luce» (12/11/2026). Resta la «home calma» voluta dal titolare: sei blocchi, i servizi
+ * con un medico presentati una volta sola.
+ * 1 apertura (annuncio, payoff in tre tappe, due azioni, la fotografia fusa nella luce) · 1b i due ingressi ·
+ * 2 il referto prima e dopo, con il cursore · 3 il percorso sul filo · 4 fiducia, in quattro fatti · 5 chiusura con il 112.
  * «Preparati alla visita» resta nel menu e nel piè di pagina. Prezzi e nomi da src/domain/offerta.ts.
  */
-
-const MICROTRUST = [
-  { icon: Sparkles, text: "Digitale e automatico" },
-  { icon: Clock3, text: "Di norma pochi minuti" },
-  { icon: FolderHeart, text: "PDF e area personale" },
-  { icon: Ban, text: "Nessuna diagnosi" },
-];
-
 export default function Home() {
   const prices = publicPricesEnabled();
-  const photo = ILLUSTRATIVE_PHOTOS.hero;
-  const square = ILLUSTRATIVE_PHOTOS.heroSquare;
   const capisci = coreService("capisci");
   const pdp = puntoDiPartenzaEnabled();
   const capisciPrice = priceDisplay("capisci");
@@ -40,21 +32,17 @@ export default function Home() {
     <>
       <TrackView event="visita-home" />
 
-      {/* 1 · HERO */}
-      <section aria-labelledby="hero-titolo" className="hero2">
-        <div className="container-rc relative">
-          <div className="pt-6 lg:max-w-[52%] lg:py-16">
+      {/* 1 · APERTURA */}
+      <section aria-labelledby="hero-titolo" className="hero">
+        <div className="container-rc hero-inner">
+          <div className="hero-copy">
             {/* 12/11/2026: in evidenza la prestazione con un medico davvero disponibile (il domicilio quando ha copertura). */}
             <FeaturedPrestazione vetrina={isVetrina()} />
-            <h1 id="hero-titolo" className="display-xl hero-payoff text-ink">
-              <span className="block">{PAYOFF_LINES[0]}</span>
-              <span className="block">
-                <span className="marker marker-animate">{PAYOFF_LINES[1]}</span>
-              </span>
-              <span className="block">{PAYOFF_LINES[2]}</span>
+            <h1 id="hero-titolo" className="payoff">
+              <span>{PAYOFF_LINES[0]}</span> <span>{PAYOFF_LINES[1]}</span> <span>{PAYOFF_LINES[2]}</span>
             </h1>
-            <p className="mt-6 max-w-[32rem] text-xl text-ink-soft sm:text-[1.375rem] sm:leading-snug">{HERO_SUBTITLE}</p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <p className="lead mt-6 max-w-[34rem]">{HERO_SUBTITLE}</p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href={capisci.href} data-track="cta-capisci" className="btn btn-primary btn-lg">
                 Ho un referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
@@ -62,9 +50,9 @@ export default function Home() {
                 Scopri tutti i servizi
               </Link>
             </div>
-            {/* Ciclo 1: prezzo e ingresso gratuito già nella prima schermata, anche su telefono */}
+            {/* Prezzo e ingresso gratuito già nella prima schermata, anche su telefono */}
             {prices || pdp ? (
-              <p className="hero-facts mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-lg text-ink-soft">
+              <p className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-0.5 text-[1.0625rem] text-ink-soft">
                 {prices ? (
                   <span>
                     <strong className="text-ink">{capisciPrice.lead ? `${capisciPrice.lead} ${capisciPrice.amount}` : capisciPrice.amount}</strong>
@@ -80,39 +68,38 @@ export default function Home() {
             ) : null}
           </div>
         </div>
-        {/* Una sola immagine: ritaglio 1:1 su telefono (sotto le azioni), fotografia larga che esce dal margine su desktop */}
-        <div className="hero2-visual">
+        {/* La fotografia si fonde nella luce dell'apertura; sopra, un pezzo vero di prodotto su vetro. */}
+        <div className="hero-photo">
           {SHOW_ILLUSTRATIVE_PHOTOS ? (
-            <figure className="hero2-photo">
-              <picture>
-                <source media="(min-width: 1024px)" srcSet={photo.src} width={photo.width} height={photo.height} />
-                <img src={square.src} width={square.width} height={square.height} alt={square.alt} fetchPriority="high" decoding="async" />
-              </picture>
-              <figcaption className="caption-illus right-4 top-4">Immagine illustrativa</figcaption>
+            <figure className="contents">
+              <Photo photo={ILLUSTRATIVE_PHOTOS.hero} sizes="(min-width: 1024px) 50vw, 100vw" priority />
+              <figcaption className="caption-illus">Immagine illustrativa</figcaption>
             </figure>
           ) : null}
-          <MiniReport className="hero2-card" />
+          <MiniReport className="hero-card" />
         </div>
+        <Wave double className="text-canvas" />
       </section>
 
-      {/* 1b · DOPPIO INGRESSO (V3): senza esami → Punto di Partenza, gratis; con un referto → Capisci */}
+      {/* 1b · I DUE INGRESSI (V3): senza esami → Punto di Partenza, gratis; con un referto → Capisci */}
       {pdp ? <DualEntry /> : null}
 
       {/* 2 · IL PRODOTTO D'INGRESSO, con il referto prima e dopo (cursore, anche su telefono) */}
-      <section id="referto" aria-labelledby="referto-titolo" className="tone-capisci bg-mist py-10 sm:py-16">
+      <section id="referto" aria-labelledby="referto-titolo" className="panel-section grain section mt-8 bg-mist sm:mt-12">
         <div className="container-rc">
-          <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-            <div>
-              <p className="eyebrow">
-                Livello {capisci.level.n} · {capisci.level.verb}
-              </p>
-              <h2 id="referto-titolo" className="display-lg mt-4 text-[2.25rem] sm:text-[3.25rem]">
+          <div className="referto-grid">
+            <div className="referto-copy">
+              <p className="eyebrow">{capisci.name}</p>
+              <h2 id="referto-titolo" className="display-lg mt-4">
                 {pdp ? "Come diventa chiaro un referto." : "Parti dal tuo referto."}
               </h2>
-              <p className="mt-4 max-w-xl text-xl text-ink-soft">Sposta il cursore: a sinistra il referto com&apos;è, a destra lo stesso spiegato in parole semplici.</p>
+              <p className="lead mt-4 max-w-xl">Sposta il cursore: a sinistra il referto com&apos;è, a destra lo stesso referto, spiegato valore per valore.</p>
             </div>
-            <div className="flex flex-col gap-4 lg:items-end">
-              {prices ? <PriceTag id="capisci" size="hero" /> : null}
+            <Reveal className="referto-demo">
+              <BeforeAfter />
+            </Reveal>
+            <div className="referto-buy flex flex-col gap-5 lg:items-end">
+              {prices ? <PriceTag id="capisci" size="hero" className="lg:text-right" /> : null}
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <Link href={capisci.href} data-track="cta-capisci" className="btn btn-primary btn-lg sm:whitespace-nowrap">
                   Rendi chiaro il mio referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
@@ -123,85 +110,81 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <Reveal className="mt-8 sm:mt-10">
-            <BeforeAfter />
-          </Reveal>
-          {pdp ? null : (
-          <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-7 lg:grid-cols-4">
-            {MICROTRUST.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-center gap-3 text-lg font-semibold leading-tight text-ink">
-                <Icon aria-hidden className="h-6 w-6 shrink-0 text-teal" strokeWidth={1.8} />
-                {text}
-              </li>
-            ))}
-          </ul>
-          )}
         </div>
       </section>
 
-      {/* 3 · I LIVELLI: unico punto in cui si presentano i servizi con un medico */}
-      <section aria-labelledby="livelli-titolo" className="py-10 sm:py-14">
+      {/* 3 · IL PERCORSO: unico punto in cui si presentano i servizi con un medico */}
+      <section aria-labelledby="livelli-titolo" className="section">
         <div className="container-rc">
-          <div className="lg:flex lg:items-start lg:justify-between lg:gap-10">
-            <h2 id="livelli-titolo" className="display-lg max-w-xl">
+          <div className="max-w-3xl lg:mx-auto lg:text-center">
+            <p className="eyebrow">Il percorso</p>
+            <h2 id="livelli-titolo" className="display-lg mt-4">
               {pdp ? "Parti gratis. Poi scegli tu fin dove arrivare." : "Tre livelli. Scegli tu fin dove arrivare."}
             </h2>
-            <p className="mt-4 max-w-xs text-xl text-ink-soft lg:mt-2 lg:text-right">
-              <Link href="/inizia" className="link font-semibold">
+            <p className="lead mt-4">
+              Ogni tappa vale da sola: entri da quella che ti serve.{" "}
+              <Link href="/inizia" className="link whitespace-nowrap font-semibold">
                 Ti aiutiamo a scegliere
               </Link>
             </p>
           </div>
-          <div className="mt-7 lg:-mt-6">
+          <div className="mt-8 lg:mt-12">
             <Journey withStart={pdp} />
           </div>
-          {prices ? <p className="mt-6 text-[1.0625rem] text-muted">{PRICE_NOTE}</p> : null}
+          {prices ? <p className="mt-6 text-[1rem] text-muted lg:mt-8 lg:text-center">{PRICE_NOTE}</p> : null}
         </div>
       </section>
 
       {/* 4 · FIDUCIA */}
-      <section aria-labelledby="fiducia-titolo" className="scope-strong bg-strong py-8 sm:py-14">
+      <section aria-labelledby="fiducia-titolo" className="panel-section scope-strong section bg-petrol">
         <div className="container-rc">
           <Trust />
         </div>
       </section>
 
       {/* 5 · CHIUSURA */}
-      <section aria-labelledby="chiusura-titolo" className="scope-strong stage-teal py-8 sm:py-14">
-        <div className="container-rc grid grid-cols-[minmax(0,1fr)] items-end gap-8 lg:grid-cols-[1.3fr_0.7fr]">
-          <div>
-            {pdp ? (
+      <section aria-labelledby="chiusura-titolo" className="section">
+        <div className="container-rc">
+          <div className="closing-card">
+            {SHOW_ILLUSTRATIVE_PHOTOS ? (
+              <figure className="closing-photo">
+                {/* Su telefono il dettaglio delle mani, in orizzontale; da tablet in su la scena con la persona. */}
+                <Photo photo={ILLUSTRATIVE_PHOTOS.mani} sizes="100vw" className="closing-photo-wide" />
+                <Photo photo={ILLUSTRATIVE_PHOTOS.scrivania} sizes="(min-width: 900px) 46vw, 1px" className="closing-photo-tall" />
+                <figcaption className="caption-illus right-4 top-4">Immagine illustrativa</figcaption>
+              </figure>
+            ) : null}
+            <div className="closing-copy">
               <h2 id="chiusura-titolo" className="display-lg">
-                Prima capisci da dove parti.
-                <span className="mt-2 block text-[#7be0d2]">Poi, quando arrivano i risultati, ti aiutiamo a leggerli.</span>
+                {pdp ? "Prima capisci da dove parti." : "Hai già un referto?"}
               </h2>
-            ) : (
-              <h2 id="chiusura-titolo" className="display-xl">
-                Hai già un referto?
-                <span className="mt-2 block text-[#7be0d2]">Rendilo chiaro{prices ? ` da ${entryPriceLabel()}` : ""}.</span>
-              </h2>
-            )}
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link href={capisci.href} data-track="cta-capisci" className="btn btn-mint btn-lg">
-                Rendi chiaro il mio referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-              </Link>
-              {pdp ? (
-                <Link href="/punto-di-partenza" data-track="cta-pdp" className="btn btn-secondary btn-lg">
-                  Inizia gratis dal Punto di Partenza
+              <p className="lead mt-3 max-w-[26rem] font-semibold text-teal">
+                {pdp ? "Poi, quando arrivano i risultati, ti aiutiamo a leggerli." : `Rendilo chiaro${prices ? ` da ${entryPriceLabel()}` : ""}.`}
+              </p>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Link href={capisci.href} data-track="cta-capisci" className="btn btn-primary btn-lg whitespace-nowrap">
+                  Rendi chiaro il mio referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                 </Link>
-              ) : (
-                <Link href="/inizia" className="btn btn-secondary btn-lg">
-                  Ti aiutiamo a scegliere
-                </Link>
-              )}
+                {pdp ? (
+                  <Link href="/punto-di-partenza" data-track="cta-pdp" className="btn btn-secondary btn-lg whitespace-nowrap">
+                    Parti gratis, senza esami
+                  </Link>
+                ) : (
+                  <Link href="/inizia" className="btn btn-secondary btn-lg">
+                    Ti aiutiamo a scegliere
+                  </Link>
+                )}
+              </div>
+              <p className="emergency-note mt-7">
+                <span aria-hidden>
+                  <Phone className="h-4 w-4" />
+                </span>
+                <span>
+                  <strong>Non per le emergenze.</strong> Se stai male adesso chiama il <strong>112</strong>.
+                </span>
+              </p>
             </div>
           </div>
-          <p className="flex items-start gap-4 rounded-2xl border border-white/25 bg-black/15 p-5 text-lg text-ink">
-            <Phone aria-hidden className="mt-1 h-6 w-6 shrink-0 text-danger" />
-            <span>
-              <strong>Non per le emergenze.</strong> Se stai male adesso chiama il <strong>112</strong>.
-            </span>
-          </p>
         </div>
       </section>
 

@@ -2,45 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Home, MapPin } from "lucide-react";
+import { clsx } from "clsx";
+import { ArrowRight, CircleCheck, Home, MapPin, Stethoscope, Video } from "lucide-react";
 import { availability, checkCoverage, featuredKind, type PrestazioniState } from "@/domain/prestazioni/engine";
-import { PRESTAZIONI, PRESTAZIONI_ORDER, type PrestazioneKind } from "@/domain/prestazioni/listino";
+import { PRESTAZIONI, type PrestazioneKind } from "@/domain/prestazioni/listino";
 import { usePrestazioni } from "./store";
-import { PrestazioneCard } from "./patient";
-import { Price, ZoneWaitlist, formatSlot, inputCls } from "./ui";
+import { Price, ZoneWaitlist, formatSlot } from "./ui";
 
 /**
  * Parte pubblica delle prestazioni con un medico. Lo stato di apertura viene dalla prova (browser);
- * prima dell'idratazione si mostra la versione statica, uguale allo stato iniziale, così la pagina non salta.
+ * prima dell'idratazione si mostra lo stato iniziale, così la pagina non salta.
  */
-
-function StaticCard({ kind }: { kind: PrestazioneKind }) {
-  const info = PRESTAZIONI[kind];
-  return (
-    <article className="card flex h-full flex-col p-5 sm:p-6" data-prestazione={kind}>
-      <h3 className="text-xl font-bold leading-snug text-ink">{info.title}</h3>
-      <p className="mt-0.5 text-[0.9375rem] text-muted">{info.mode}</p>
-      <p className="mt-4 text-[2rem] font-bold leading-none text-ink"><Price kind={kind} /></p>
-      <p className="mt-1 text-[0.9375rem] text-muted">{info.durationLabel}, prezzo fisso</p>
-      <div className="mt-auto pt-5">
-        <Link href={info.href} className="btn btn-secondary w-full">Scopri di più <ArrowRight aria-hidden className="h-4 w-4" /></Link>
-      </div>
-    </article>
-  );
-}
-
-/** Le tre prestazioni con un medico, ognuna raggiungibile direttamente (pagina Servizi, pagine servizio). */
-export function PrestazioniGrid({ only }: { only?: PrestazioneKind[] }) {
-  const s = usePrestazioni();
-  const kinds = only ?? PRESTAZIONI_ORDER;
-  // La data si legge solo nel browser (mai durante il prerender).
-  const now = s ? new Date() : null;
-  return (
-    <div className={kinds.length === 2 ? "grid gap-4 md:grid-cols-2" : "grid gap-4 md:grid-cols-3"}>
-      {kinds.map((k) => (s && now ? <PrestazioneCard key={k} s={s} kind={k} now={now} /> : <StaticCard key={k} kind={k} />))}
-    </div>
-  );
-}
 
 const ACTION_LABEL: Record<PrestazioneKind, string> = { domicilio: "Richiedi la visita", video: "Prenota il videoconsulto", parere: "Richiedi il secondo parere" };
 
@@ -68,15 +40,16 @@ export function PrestazioneAction({ kind }: { kind: PrestazioneKind }) {
   );
 }
 
-const FEATURE_COPY: Record<PrestazioneKind, { eyebrow: (s: PrestazioniState) => string; title: string; cta: string }> = {
-  domicilio: { eyebrow: (s) => `Novità · ${s.coverage.comune} città`, title: "Il medico a casa tua.", cta: "Richiedi la visita" },
-  video: { eyebrow: () => "Disponibile ora", title: "Parla con un medico, in video.", cta: "Prenota il videoconsulto" },
-  parere: { eyebrow: () => "Disponibile ora", title: "Un secondo parere specialistico.", cta: "Richiedi il secondo parere" },
+const FEATURE_COPY: Record<PrestazioneKind, { eyebrow: (s: PrestazioniState) => string; title: string; cta: string; icon: typeof Home }> = {
+  domicilio: { eyebrow: (s) => `Novità · ${s.coverage.comune} città`, title: "Il medico a casa tua", cta: "Richiedi la visita", icon: Home },
+  video: { eyebrow: () => "Disponibile ora", title: "Un medico, in video", cta: "Prenota il videoconsulto", icon: Video },
+  parere: { eyebrow: () => "Disponibile ora", title: "Un secondo parere specialistico", cta: "Richiedi il secondo parere", icon: Stethoscope },
 };
 
 /**
  * In home: il domicilio quando ha copertura; se no, un'altra prestazione davvero disponibile; se nessuna è aperta,
  * niente (la home dà già la precedenza agli strumenti gratuiti e a «Capisci»).
+ * Grafica «Luce»: un annuncio di vetro sopra il titolo, con il punto vivo, il prezzo e le due azioni.
  */
 export function FeaturedPrestazione({ vetrina = false }: { vetrina?: boolean }) {
   const s = usePrestazioni();
@@ -85,21 +58,28 @@ export function FeaturedPrestazione({ vetrina = false }: { vetrina?: boolean }) 
   if (!kind) return null;
   const info = PRESTAZIONI[kind];
   const copy = FEATURE_COPY[kind];
-  const av = s && now ? availability(s, kind, now) : null;
+  const Icon = copy.icon;
   return (
-    <div className="featured-prestazione" data-in-evidenza={kind}>
-      <p className="eyebrow">{s ? copy.eyebrow(s) : "Novità · Brescia città"}</p>
-      <p className="mt-2 text-[1.625rem] font-bold leading-tight text-ink sm:text-[1.875rem]">{copy.title}</p>
-      <p className="mt-1.5 text-[1.0625rem] text-ink-soft">
-        {info.title} · <strong className="text-ink"><Price kind={kind} /></strong>
-        {av?.next && now ? <> · prima fascia {formatSlot(av.next, now)}</> : null}
+    <div className="announce" data-in-evidenza={kind}>
+      <span aria-hidden className="tile-ico tile-ico-sm">
+        <Icon />
+      </span>
+      <p className="announce-kicker">
+        <span aria-hidden className="live-dot" />
+        {s ? copy.eyebrow(s) : "Novità · Brescia città"}
       </p>
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 sm:mt-4">
-        <Link href={info.startHref} data-track={`cta-${kind}`} className="btn btn-primary">
-          {kind === "domicilio" ? <Home aria-hidden className="h-4 w-4" /> : null} {vetrina ? "Provala nella demo" : copy.cta} <ArrowRight aria-hidden className="btn-arrow h-4 w-4" />
+      <p className="announce-title">
+        {copy.title}
+        {"\u00a0"}· <Price kind={kind} />
+      </p>
+      <p className="announce-actions">
+        <Link href={info.startHref} data-track={`cta-${kind}`} className="announce-cta">
+          {vetrina ? "Provala nella demo" : copy.cta} <ArrowRight aria-hidden className="h-4 w-4" />
         </Link>
-        <Link href={info.href} className="link inline-flex min-h-11 items-center font-semibold">Come funziona</Link>
-      </div>
+        <Link href={info.href} className="announce-more">
+          Come funziona
+        </Link>
+      </p>
     </div>
   );
 }
@@ -112,7 +92,7 @@ export function CoverageCheck() {
   const [res, setRes] = useState<null | { ok: boolean; text: string; href: string; cta: string; waitCap?: string }>(null);
   return (
     <form
-      className="card space-y-4 p-5 sm:p-7"
+      className="form-card space-y-5"
       onSubmit={(e) => {
         e.preventDefault();
         if (!s) return;
@@ -137,17 +117,34 @@ export function CoverageCheck() {
         );
       }}
     >
-      <p className="flex items-center gap-2 text-xl font-bold text-ink"><MapPin aria-hidden className="h-5 w-5 text-teal" /> Arriviamo da te?</p>
+      <div className="form-card-head">
+        <span aria-hidden className="tile-ico tile-ico-sm tile-ico-tone">
+          <MapPin />
+        </span>
+        <p className="form-card-title">Arriviamo da te?</p>
+      </div>
       <div className="grid gap-4 sm:grid-cols-[2fr_1fr_auto] sm:items-end">
-        <label className="block text-[1.0625rem] font-semibold text-ink">Comune<input value={comune} onChange={(e) => setComune(e.target.value)} required autoComplete="address-level2" className={inputCls} /></label>
-        <label className="block text-[1.0625rem] font-semibold text-ink">CAP<input value={cap} onChange={(e) => setCap(e.target.value)} required inputMode="numeric" autoComplete="postal-code" maxLength={6} placeholder="25122" className={inputCls} /></label>
-        <button type="submit" className="btn btn-secondary">Verifica</button>
+        <label className="field-label">
+          Comune
+          <input value={comune} onChange={(e) => setComune(e.target.value)} required autoComplete="address-level2" className="field-input" />
+        </label>
+        <label className="field-label">
+          CAP
+          <input value={cap} onChange={(e) => setCap(e.target.value)} required inputMode="numeric" autoComplete="postal-code" maxLength={6} placeholder="25122" className="field-input" />
+        </label>
+        <button type="submit" className="btn btn-secondary min-h-[3.5rem]">
+          Verifica
+        </button>
       </div>
       <div aria-live="polite">
         {res ? (
-          <div className={res.ok ? "rounded-xl bg-marker-soft p-4" : "rounded-xl bg-cream p-4"}>
-            <p className="flex items-start gap-2 text-[1.0625rem] text-ink">{res.ok ? <CheckCircle2 aria-hidden className="mt-1 h-5 w-5 shrink-0 text-teal" /> : null} {res.text}</p>
-            <Link href={res.href} className={res.waitCap ? "btn btn-secondary mt-3" : "btn btn-primary mt-3"}>{res.cta} <ArrowRight aria-hidden className="h-4 w-4" /></Link>
+          <div className={res.ok ? "field-ok" : "rounded-[1.25rem] bg-cream px-5 py-[1.125rem]"}>
+            <p className="flex items-start gap-2.5 text-[1.0625rem] font-semibold text-ink">
+              {res.ok ? <CircleCheck aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-teal" /> : null} {res.text}
+            </p>
+            <Link href={res.href} className={clsx("btn btn-wrap mt-4 max-sm:w-full max-sm:px-4", res.waitCap ? "btn-secondary" : "btn-primary")}>
+              {res.cta} <ArrowRight aria-hidden className="btn-arrow h-5 w-5 shrink-0" />
+            </Link>
             {res.waitCap ? <ZoneWaitlist cap={res.waitCap} /> : null}
           </div>
         ) : null}

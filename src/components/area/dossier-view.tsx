@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2, Trash2 } from "lucide-react";
 import type { DossierContent } from "@/domain/dossier/build-dossier";
 import { api, formatDate } from "./api";
 import { StatusChip } from "./status-chip";
+import { ConfirmButton } from "@/components/ui/confirm-button";
 
 interface Dossier {
   id: string;
@@ -20,6 +21,7 @@ export function DossierView({ dossierId }: { dossierId: string }) {
   const router = useRouter();
   const [d, setD] = useState<Dossier | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [removeError, setRemoveError] = useState(false);
   useEffect(() => {
     let alive = true;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -41,8 +43,13 @@ export function DossierView({ dossierId }: { dossierId: string }) {
   }, [dossierId]);
 
   async function remove() {
-    if (!window.confirm("Eliminare questo dossier? I referti restano.")) return;
-    await api(`/api/v1/area/dossiers/${dossierId}`, { method: "DELETE" });
+    setRemoveError(false);
+    try {
+      await api(`/api/v1/area/dossiers/${dossierId}`, { method: "DELETE" });
+    } catch {
+      setRemoveError(true);
+      return;
+    }
     router.push("/area-personale/dossier");
     router.refresh();
   }
@@ -53,90 +60,100 @@ export function DossierView({ dossierId }: { dossierId: string }) {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <Link href="/area-personale/dossier" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-teal hover:underline">
-          <ArrowLeft aria-hidden className="h-4 w-4" /> Tutti i dossier
+        <Link href="/area-personale/dossier" className="back-link">
+          <ArrowLeft aria-hidden /> Tutti i dossier
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 flex-wrap items-center justify-end gap-3">
           <StatusChip status={d.status} />
-          <button type="button" onClick={remove} className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-danger hover:bg-danger/10">
-            <Trash2 aria-hidden className="h-4 w-4" /> Elimina
-          </button>
+          <ConfirmButton className="danger-link" question="Eliminare il dossier? I referti restano." yes="Sì, elimina" onConfirm={() => void remove()}>
+            <Trash2 aria-hidden className="h-[1.125rem] w-[1.125rem]" /> Elimina
+          </ConfirmButton>
         </div>
       </div>
-      <h1 className="display text-[2rem] sm:text-[2.5rem]">{d.title}</h1>
+      {removeError ? (
+        <p role="alert" className="field-error mb-6">
+          Non siamo riusciti a eliminare il dossier. Riprova tra poco.
+        </p>
+      ) : null}
+      <h1 className="area-title">{d.title}</h1>
 
       {d.status === "queued" || d.status === "processing" ? (
-        <p className="mt-4 flex items-center gap-2 text-lg text-muted" role="status">
-          <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> Ordiniamo i referti e cerchiamo gli esami confrontabili…
+        <p className="mt-4 flex items-start gap-2.5 text-lg text-ink-soft" role="status">
+          <Loader2 aria-hidden className="mt-1 h-5 w-5 shrink-0 animate-spin text-teal" /> Ordiniamo i referti e cerchiamo gli esami confrontabili…
         </p>
       ) : null}
       {d.status === "error" ? (
-        <p role="alert" className="mt-4 rounded-xl border border-danger/30 bg-paper px-4 py-3 text-danger">
+        <p role="alert" className="field-error mt-4">
           {d.errorMessage}
         </p>
       ) : null}
 
       {d.content ? (
-        <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] [&>*]:min-w-0">
-          <div className="space-y-6">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-10 [&>*]:min-w-0">
+          <div className="space-y-10">
             <section aria-labelledby="cron-titolo">
-              <h2 id="cron-titolo" className="font-serif text-2xl">
+              <h2 id="cron-titolo" className="area-h2">
                 Cronologia dei referti
               </h2>
-              <ol className="mt-4 space-y-3 border-l-2 border-line pl-6">
+              <ol className="mt-5 space-y-5 border-l-2 border-line pl-6">
                 {d.content.entries.map((e) => (
                   <li key={e.documentId} className="relative">
-                    <span aria-hidden className="absolute -left-[1.95rem] top-1.5 h-3 w-3 rounded-full bg-teal" />
-                    <p className="font-semibold text-ink">
+                    <span aria-hidden className="absolute -left-[2.0625rem] top-1.5 h-3.5 w-3.5 rounded-full bg-teal shadow-[0_0_0_4px_var(--color-marker-soft)]" />
+                    <p className="text-[1.0625rem] font-bold text-ink">
                       {formatDate(e.reportDate)} · {e.title.replace(" — esempio sintetico", "")}
                     </p>
-                    <p className="text-sm text-muted">{e.laboratoryName}</p>
-                    <p className="mt-1 text-[0.9375rem] text-ink">{e.explanation.summary}</p>
+                    <p className="meta">{e.laboratoryName}</p>
+                    <p className="mt-1.5 text-[1.0625rem] text-ink-soft">{e.explanation.summary}</p>
                   </li>
                 ))}
               </ol>
             </section>
 
             <section aria-labelledby="conf-titolo">
-              <h2 id="conf-titolo" className="font-serif text-2xl">
+              <h2 id="conf-titolo" className="area-h2">
                 Esami confrontabili
               </h2>
               {d.content.comparisons.length === 0 ? (
-                <p className="mt-3 text-muted">Nessun esame compare in più referti con lo stesso nome e la stessa unità.</p>
+                <p className="mt-3 text-[1.0625rem] text-muted">Nessun esame compare in più referti con lo stesso nome e la stessa unità.</p>
               ) : (
                 <ul className="mt-4 space-y-4">
                   {d.content.comparisons.map((c) => (
-                    <li key={c.nameExact} className="card p-5">
-                      <p className="font-semibold text-ink">{c.nameExact}</p>
-                      <table className="tabular mt-3 w-full text-sm">
-                        <thead className="text-muted">
-                          <tr>
-                            <th scope="col" className="py-1 text-left font-medium">Data</th>
-                            <th scope="col" className="py-1 text-left font-medium">Valore</th>
-                            <th scope="col" className="py-1 text-left font-medium">Intervallo stampato</th>
+                    <li key={c.nameExact} className="card cmp-card p-5 sm:p-6">
+                      <p className="area-h3">{c.nameExact}</p>
+                      {/* Da tablet è una tabella; nelle schede strette (telefono, testo grande) ogni rilevazione va su due righe.
+                          I ruoli sono scritti a mano perché la tabella resti tale per i lettori di schermo anche quando cambia forma. */}
+                      <table role="table" className="cmp-table">
+                        <thead role="rowgroup">
+                          <tr role="row">
+                            <th role="columnheader" scope="col">Data</th>
+                            <th role="columnheader" scope="col">Valore</th>
+                            <th role="columnheader" scope="col">Intervallo stampato</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody role="rowgroup">
                           {c.points.map((p) => (
-                            <tr key={p.documentId} className="border-t border-line">
-                              <td className="py-1.5">{formatDate(p.reportDate)}</td>
-                              <td className="py-1.5 font-mono">
-                                {p.valueExact} {c.unitExact}
+                            <tr role="row" key={p.documentId}>
+                              <td role="cell">{formatDate(p.reportDate)}</td>
+                              <td role="cell" className="cmp-value">
+                                {p.valueExact} <span className="cmp-unit">{c.unitExact}</span>
                               </td>
-                              <td className="py-1.5 font-mono text-muted">{p.referenceExact ?? "non riportato"}</td>
+                              <td role="cell" className="cmp-ref">
+                                <span aria-hidden className="cmp-label">Intervallo stampato: </span>
+                                {p.referenceExact ?? "non riportato"}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
-                      <p className="mt-3 text-[0.9375rem] text-teal-deep">{c.deltaText}</p>
+                      <p className="mt-3 text-[1.0625rem] font-semibold text-teal-deep">{c.deltaText}</p>
                     </li>
                   ))}
                 </ul>
               )}
               {d.content.notComparable.length ? (
-                <div className="mt-4 rounded-2xl border border-dashed border-muted/40 p-5">
-                  <p className="font-semibold text-ink">Non confrontati</p>
-                  <ul className="mt-2 space-y-1 text-[0.9375rem] text-muted">
+                <div className="mt-4 rounded-[var(--radius-lg)] border border-dashed border-muted/40 p-5 sm:p-6">
+                  <p className="area-h3">Non confrontati</p>
+                  <ul className="mt-2 space-y-1 text-[1.0625rem] text-muted">
                     {d.content.notComparable.map((n) => (
                       <li key={n.nameExact}>
                         <span className="text-ink">{n.nameExact}</span>: {n.reason}
@@ -148,24 +165,21 @@ export function DossierView({ dossierId }: { dossierId: string }) {
             </section>
           </div>
           <aside className="space-y-5">
-            <div className="rounded-2xl bg-cream/60 p-5 text-[0.9375rem] text-ink">
-              <p className="font-semibold">Limiti di questo dossier</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5">
+            <div className="rounded-[var(--radius-lg)] bg-cream/60 p-5 text-[1.0625rem] text-ink sm:p-6">
+              <p className="area-h3">Limiti di questo dossier</p>
+              <ul className="mt-2 list-disc space-y-1.5 pl-5">
                 {d.content.limitations.map((l) => (
                   <li key={l}>{l}</li>
                 ))}
               </ul>
             </div>
-            <div className="card p-5">
-              <p className="font-semibold text-ink">Domande per la visita</p>
-              <ul className="mt-3 space-y-2 text-[0.9375rem]">
+            <div className="side-card">
+              <p className="side-card-title">Domande per la visita</p>
+              <ol className="num-list num-list-mist mt-4 text-[1.0625rem] leading-snug text-ink">
                 {[...new Set(d.content.entries.flatMap((e) => e.explanation.questionsForDoctor))].slice(0, 6).map((q) => (
-                  <li key={q} className="flex gap-3">
-                    <span aria-hidden className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sage" />
-                    <span>{q}</span>
-                  </li>
+                  <li key={q}>{q}</li>
                 ))}
-              </ul>
+              </ol>
             </div>
           </aside>
         </div>

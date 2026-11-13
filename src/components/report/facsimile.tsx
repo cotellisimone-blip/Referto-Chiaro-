@@ -36,16 +36,26 @@ export function Facsimile({ doc, highlightLine, compact = false }: { doc: Facsim
     box.scrollTo({ top: Math.max(0, top), behavior: reduce ? "auto" : "smooth" });
   }, [highlightLine]);
 
+  // La riga più lunga decide la grandezza del carattere: da tablet in su il documento entra intero nel riquadro.
+  const chars = Math.max(40, ...doc.sourceLines.map((l) => l.text.length));
+
   return (
     <figure data-facsimile className="card overflow-hidden" aria-label={doc.isSynthetic ? "Facsimile del referto sintetico" : "Testo del documento"}>
       <figcaption className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-mist/60 px-5 py-3">
-        <span className="inline-flex items-center gap-2 text-sm font-semibold text-ink">
-          <FileText aria-hidden className="h-4 w-4 text-teal" /> Pagina 1 di {doc.pageCount}
+        <span className="inline-flex items-center gap-2 text-base font-semibold text-ink">
+          <FileText aria-hidden className="h-5 w-5 text-teal" /> Pagina 1 di {doc.pageCount}
         </span>
         {doc.isSynthetic ? <span className="chip bg-cream text-ink">Esempio sintetico</span> : null}
       </figcaption>
-      <div ref={scroller} tabIndex={0} role="region" aria-label="Testo del documento, scorrevole" className={clsx("doc-paper relative sm:overflow-x-auto", compact ? "max-h-[420px] overflow-y-auto" : "")}>
-        <ol className="py-3 font-mono text-[0.9375rem] leading-8 text-ink sm:min-w-[560px] sm:text-[0.8125rem]">
+      <div
+        ref={scroller}
+        tabIndex={0}
+        role="region"
+        aria-label="Testo del documento, scorrevole"
+        className={clsx("facs-scroll doc-paper relative", compact ? "max-h-[420px] overflow-y-auto" : "")}
+        style={{ "--facs-chars": chars } as React.CSSProperties}
+      >
+        <ol className="facs-list py-3 font-mono leading-8 text-ink">
           {doc.sourceLines.map((l) => (
             <li
               key={l.line}

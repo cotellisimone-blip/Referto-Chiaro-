@@ -3,13 +3,13 @@ import { ChevronRight } from "lucide-react";
 
 export function Breadcrumbs({ items }: { items: { name: string; path: string }[] }) {
   return (
-    <nav aria-label="Percorso" className="text-sm text-muted">
+    <nav aria-label="Percorso" className="text-base text-muted">
       <ol className="flex flex-wrap items-center gap-1">
         {items.map((it, i) => {
           const last = i === items.length - 1;
           return (
             <li key={it.path} className="flex items-center gap-1">
-              {i > 0 ? <ChevronRight aria-hidden className="h-3.5 w-3.5" /> : null}
+              {i > 0 ? <ChevronRight aria-hidden className="h-4 w-4" /> : null}
               {last ? (
                 <span aria-current="page" className="text-ink">
                   {it.name}

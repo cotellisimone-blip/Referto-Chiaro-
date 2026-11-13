@@ -1,32 +1,31 @@
 import Link from "next/link";
-import { ArrowRight, Ban, Building2, Cpu, Eye, LockKeyhole } from "lucide-react";
+import { ArrowRight, Ban, Building2, Eye, LockKeyhole, Sparkles } from "lucide-react";
 import { readTitolare } from "@/domain/titolare";
 
 const POINTS = [
-  { icon: Eye, q: "Chi vede i documenti", a: "Tu, e solo chi scegli tu." },
-  { icon: Cpu, q: "Che cosa resta automatico", a: "La spiegazione del referto. Nessun medico la rivede, e i numeri restano quelli del documento." },
-  { icon: LockKeyhole, q: "Dati e privacy", a: "Mai venduti né usati per la pubblicità. Nelle email, mai il contenuto del referto." },
-  { icon: Ban, q: "Che cosa non facciamo", a: "Diagnosi automatiche, prescrizioni, urgenze." },
+  { icon: Eye, q: "Chi vede i tuoi documenti", a: "Tu. E soltanto chi scegli tu, quando lo scegli." },
+  { icon: Sparkles, q: "Che cosa è automatico", a: "La spiegazione del referto. Nessun medico la rivede, e i numeri restano quelli del tuo documento." },
+  { icon: LockKeyhole, q: "I tuoi dati", a: "Mai venduti, mai usati per la pubblicità. Nelle email non scriviamo mai che cosa c'è nel referto." },
+  { icon: Ban, q: "Che cosa non facciamo", a: "Diagnosi automatiche e urgenze. Se stai male adesso, il numero giusto è il 112." },
 ];
 
 /**
- * Fiducia, detta con fatti: chi vede che cosa, quando c'è un medico, che cosa resta automatico, che cosa non si fa.
- * Un elenco editoriale (dl) su fondo forte, non una griglia di schede. Va dentro una sezione `.scope-strong`.
+ * Fiducia, detta con fatti: chi vede che cosa, che cosa resta automatico, come trattiamo i dati, che cosa non si fa.
+ * Quattro riquadri di vetro su fondo petrolio. Va dentro una sezione `.scope-strong`.
  */
 export function Trust() {
   const t = readTitolare();
   // «Chi c'è dietro» compare solo con i dati veri del titolare (nome + P.IVA): nessun segnaposto.
-  const points = t
-    ? [{ icon: Building2, q: "Chi c'è dietro", a: `${t.name}, P.IVA ${t.vat}${t.address ? `, ${t.address}` : ""}.` }, ...POINTS]
-    : POINTS;
+  const points = t ? [{ icon: Building2, q: "Chi c'è dietro", a: `${t.name}, P.IVA ${t.vat}${t.address ? `, ${t.address}` : ""}.` }, ...POINTS] : POINTS;
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:gap-20">
-      <div className="lg:sticky lg:top-28 lg:self-start">
-        <p className="eyebrow">Fiducia</p>
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-9 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-16">
+      <div>
+        <p className="eyebrow">In chiaro</p>
         <h2 id="fiducia-titolo" className="display-lg mt-4 text-ink">
           Pochi fatti, detti chiari.
         </h2>
-        <div className="mt-8 flex flex-col items-start gap-3">
+        <p className="lead mt-4">Niente promesse: solo come funziona, davvero.</p>
+        <div className="mt-8 flex flex-col items-start gap-2">
           <Link href="/sicurezza-e-privacy" className="btn btn-mint btn-lg">
             Sicurezza e privacy <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
@@ -35,14 +34,14 @@ export function Trust() {
           </Link>
         </div>
       </div>
-      <dl className="trust-list">
+      <dl className="fact-grid">
         {points.map(({ icon: Icon, q, a }) => (
-          <div key={q}>
-            <dt className="flex items-center gap-3 text-xl font-bold text-ink">
-              <Icon aria-hidden className="h-6 w-6 shrink-0 text-teal" strokeWidth={1.8} />
+          <div key={q} className="fact">
+            <dt>
+              <Icon aria-hidden strokeWidth={1.8} />
               {q}
             </dt>
-            <dd className="text-xl leading-snug text-ink-soft">{a}</dd>
+            <dd>{a}</dd>
           </div>
         ))}
       </dl>

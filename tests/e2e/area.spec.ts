@@ -134,6 +134,121 @@ test.describe("area personale", () => {
     await ctx.close();
   });
 
+  test("telefono stretto con testo grande: confronto del dossier, cruscotto e barra in basso restano dentro lo schermo", async ({ browser, isMobile }) => {
+    test.skip(!isMobile, "solo telefono");
+    const ctx = await browser.newContext({ viewport: { width: 320, height: 760 } });
+    await ctx.addInitScript(() => {
+      try {
+        localStorage.setItem("rc-size", "large");
+      } catch {
+        // senza memoria del browser la prova non ha senso, ma non deve rompersi qui
+      }
+    });
+    await signup(ctx.request, `stretto-${Date.now()}@test.invalid`);
+    const d1 = await createReadyDocument(ctx.request, "demo-referto-lab-001");
+    const d2 = await createReadyDocument(ctx.request, "demo-referto-lipidico-004");
+    // Titolo lungo di proposito: nel cruscotto non va a capo e non deve allargare la pagina.
+    const c = await ctx.request.post("/api/v1/area/dossiers", { data: { title: "Visita di dicembre con il cardiologo", documentIds: [d1.id, d2.id] } });
+    expect(c.status()).toBe(201);
+    const { id } = await c.json();
+    const page = await ctx.newPage();
+    const fits = async (what: string) => {
+      const m = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, vw: window.innerWidth }));
+      expect(m.sw, what).toBeLessThanOrEqual(m.vw);
+    };
+    for (const width of [320, 360, 390]) {
+      await page.setViewportSize({ width, height: 760 });
+      await page.goto(`/area-personale/dossier/${id}`);
+      await expect(page.locator("html")).toHaveAttribute("data-size", "large");
+      await expect(page.getByRole("heading", { name: "Esami confrontabili" })).toBeVisible({ timeout: 15_000 });
+      await fits(`dossier a ${width} px`);
+      // Nella scheda stretta ogni rilevazione va su due righe, con l'etichetta scritta; niente esce dalla scheda.
+      const card = page.locator(".cmp-card").first();
+      await expect(card.getByText("Intervallo stampato:").first()).toBeVisible();
+      const spill = await card.evaluate((el) => {
+        const inner = el.getBoundingClientRect().right - parseFloat(getComputedStyle(el).paddingRight);
+        return Math.max(...[...el.querySelectorAll("td")].map((td) => td.getBoundingClientRect().right - inner));
+      });
+      expect(spill, `celle dentro la scheda a ${width} px`).toBeLessThanOrEqual(0.5);
+      // Per i lettori di schermo resta una tabella: intestazioni e righe ci sono ancora.
+      await expect(card.getByRole("table")).toHaveCount(1);
+      await expect(card.getByRole("columnheader")).toHaveCount(3);
+      await expect(card.getByRole("row")).toHaveCount(3);
+      // Barra in basso: le cinque voci si leggono intere.
+      const cut = await page.locator(".area-tabbar-label").evaluateAll((els) => els.filter((e) => e.scrollWidth > e.clientWidth + 0.5).map((e) => e.textContent));
+      expect(cut, `voci troncate nella barra a ${width} px`).toEqual([]);
+      await page.goto("/area-personale");
+      await expect(page.getByRole("heading", { name: "I tuoi dossier" })).toBeVisible({ timeout: 15_000 });
+      await expect(page.getByRole("link", { name: /Visita di dicembre con il cardiologo/ })).toBeVisible();
+      await fits(`cruscotto a ${width} px`);
+    }
+    // Da tablet torna la tabella a tre colonne, con le intestazioni visibili e senza l'etichetta ripetuta.
+    await page.setViewportSize({ width: 820, height: 900 });
+    await page.goto(`/area-personale/dossier/${id}`);
+    const wide = page.locator(".cmp-card").first();
+    await expect(wide.getByRole("columnheader", { name: "Intervallo stampato" })).toBeVisible({ timeout: 15_000 });
+    await expect(wide.getByText("Intervallo stampato:").first()).toBeHidden();
+    await ctx.close();
+  });
+
+  test("eliminare un dossier o un referto: la conferma è dentro la pagina, senza finestre del browser", async ({ browser }) => {
+    const ctx = await browser.newContext();
+    await signup(ctx.request, `elimina-${Date.now()}@test.invalid`);
+    const d1 = await createReadyDocument(ctx.request, "demo-referto-lab-001");
+    const d2 = await createReadyDocument(ctx.request, "demo-referto-lipidico-004");
+    const c = await ctx.request.post("/api/v1/area/dossiers", { data: { title: "Da eliminare", documentIds: [d1.id, d2.id] } });
+    expect(c.status()).toBe(201);
+    const dossierId = (await c.json()).id as string;
+    const page = await ctx.newPage();
+    // Una finestra del browser («confirm») qui sarebbe un difetto: si annota e si chiude, e a fine prova l'elenco deve essere vuoto.
+    const dialogs: string[] = [];
+    page.on("dialog", (d) => {
+      dialogs.push(d.message());
+      void d.dismiss();
+    });
+    const fits = () => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
+
+    // Dossier. «No» ed Esc lasciano tutto com'è e riportano il fuoco sul comando; «Sì, elimina» lo toglie e i referti restano.
+    await page.goto(`/area-personale/dossier/${dossierId}`);
+    await expect(page.getByRole("heading", { name: "Da eliminare" })).toBeVisible({ timeout: 15_000 });
+    const elimina = page.getByRole("button", { name: "Elimina", exact: true });
+    await elimina.click();
+    const domanda = page.getByRole("group", { name: "Eliminare il dossier? I referti restano." });
+    await expect(domanda).toBeVisible();
+    await expect(domanda.getByRole("button", { name: "No", exact: true })).toBeFocused();
+    expect(await fits()).toBe(true);
+    await domanda.getByRole("button", { name: "No", exact: true }).click();
+    await expect(domanda).toBeHidden();
+    await expect(elimina).toBeFocused();
+    await elimina.click();
+    await expect(domanda).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(domanda).toBeHidden();
+    await expect(elimina).toBeFocused();
+    expect((await ctx.request.get(`/api/v1/area/dossiers/${dossierId}`)).status()).toBe(200);
+    await elimina.click();
+    await domanda.getByRole("button", { name: "Sì, elimina" }).click();
+    await expect(page).toHaveURL(/\/area-personale\/dossier$/);
+    expect((await ctx.request.get(`/api/v1/area/dossiers/${dossierId}`)).status()).toBe(404);
+    expect((await ctx.request.get(`/api/v1/area/documents/${d1.id}`)).status()).toBe(200);
+
+    // Referto. La domanda dice che cosa sparisce; con la domanda aperta la pagina resta larga quanto lo schermo e accessibile.
+    await page.goto(`/area-personale/documenti/${d1.id}`);
+    await expect(page.getByRole("heading", { name: "Il tuo referto, in parole semplici." })).toBeVisible({ timeout: 20_000 });
+    await page.getByRole("button", { name: "Elimina", exact: true }).click();
+    const domandaReferto = page.getByRole("group", { name: "Eliminare il referto e i suoi report? Non si può annullare." });
+    await expect(domandaReferto).toBeVisible();
+    expect(await fits()).toBe(true);
+    const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+    expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
+    await domandaReferto.getByRole("button", { name: "Sì, elimina" }).click();
+    await expect(page).toHaveURL(/\/area-personale$/);
+    expect((await ctx.request.get(`/api/v1/area/documents/${d1.id}`)).status()).toBe(404);
+    expect((await ctx.request.get(`/api/v1/area/documents/${d2.id}`)).status()).toBe(200);
+    expect(dialogs).toEqual([]);
+    await ctx.close();
+  });
+
   test("link di accesso monouso e scaduto; eliminazione account; upload reale bloccato anche da autenticati", async ({ browser }) => {
     const ctx = await browser.newContext();
     const email = `once-${Date.now()}@test.invalid`;

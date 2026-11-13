@@ -36,15 +36,15 @@ export function LogoMark({
 
 export function Logo({ className, withTld = false, inverse = false }: { className?: string; withTld?: boolean; inverse?: boolean }) {
   return (
-    <span className={clsx("inline-flex items-center gap-2.5", className)}>
-      <LogoMark className="h-8 w-8 shrink-0 xl:h-9 xl:w-9" variant={inverse ? "inverse" : "color"} />
+    <span className={clsx("brand-logo inline-flex items-center gap-2.5", className)}>
+      <LogoMark className="brand-logo-mark h-8 w-8 shrink-0 xl:h-9 xl:w-9" variant={inverse ? "inverse" : "color"} />
       <span
         className={clsx(
-          "whitespace-nowrap font-sans text-[1.3125rem] font-extrabold xl:text-[1.4375rem] leading-none tracking-[-0.025em]",
+          "brand-logo-word whitespace-nowrap font-sans text-[1.3125rem] font-extrabold xl:text-[1.4375rem] leading-none tracking-[-0.025em]",
           inverse ? "text-white" : "text-brand",
         )}
       >
-        Cura <span className={inverse ? "text-marker" : "text-teal"}>Privata</span>
+        Cura <span className={inverse ? "text-[#7be0d2]" : "text-teal"}>Privata</span>
         {withTld ? <span className={clsx("text-base font-semibold", inverse ? "text-white/70" : "text-muted")}>.it</span> : null}
       </span>
     </span>

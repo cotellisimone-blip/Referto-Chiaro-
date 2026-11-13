@@ -36,25 +36,25 @@ export function NewDocument({ samples, uploadsEnabled }: { samples: SyntheticSam
   return (
     <div>
       <Stepper steps={WORKFLOW_STEPS} step={0} label="Avanzamento del nuovo referto" />
-      <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_0.8fr] [&>*]:min-w-0">
+      <div className="mt-8 grid gap-8 sm:mt-10 xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] xl:gap-10 [&>*]:min-w-0">
         <section aria-labelledby="scegli-titolo">
-          <h1 id="scegli-titolo" className="display text-[1.75rem] sm:text-[2.25rem]">
+          <h1 id="scegli-titolo" className="area-title">
             Scegli un referto di esempio.
           </h1>
-          <p className="mt-3 text-lg text-muted">Sono tutti inventati: nessuna persona reale, nessun laboratorio reale. Servono a provare il percorso completo.</p>
+          <p className="area-lead">Sono tutti inventati: nessuna persona reale, nessun laboratorio reale. Servono a provare il percorso completo.</p>
           <ul className="mt-6 space-y-3" aria-label="Referti di esempio">
             {samples.map((s) => {
               const active = s.id === selected;
               return (
                 <li key={s.id}>
-                  <label className={clsx("flex cursor-pointer gap-4 rounded-2xl border bg-paper p-4 transition-colors sm:p-5", active ? "border-teal/60 shadow-[var(--shadow-card)]" : "border-line hover:border-teal/40")}>
-                    <input type="radio" name="sample" value={s.id} checked={active} onChange={() => setSelected(s.id)} className="mt-1 h-5 w-5 shrink-0 accent-[var(--color-teal)]" />
+                  <label className={clsx("flex cursor-pointer gap-4 rounded-[1.25rem] border-[1.5px] bg-paper p-4 transition-colors sm:p-5", active ? "border-teal bg-[color-mix(in_srgb,var(--color-marker-soft)_45%,var(--color-paper))] shadow-[var(--shadow-card)]" : "border-line hover:border-teal/50")}>
+                    <input type="radio" name="sample" value={s.id} checked={active} onChange={() => setSelected(s.id)} className="mt-0.5 h-6 w-6 shrink-0 accent-[var(--color-teal)]" />
                     <span className="min-w-0 flex-1">
                       <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                        <span className="font-semibold text-ink">{s.title}</span>
-                        <span className="tabular text-sm text-muted">{formatDate(s.reportDate)}</span>
+                        <span className="text-lg font-bold leading-snug text-ink">{s.title}</span>
+                        <span className="tabular text-base text-muted">{formatDate(s.reportDate)}</span>
                       </span>
-                      <span className="mt-1 block text-sm text-muted">
+                      <span className="mt-1 block text-base text-ink-soft">
                         {s.description} {s.observationCount} voci{s.hasUnreadable ? ", una non leggibile" : ""}.
                       </span>
                     </span>
@@ -64,13 +64,13 @@ export function NewDocument({ samples, uploadsEnabled }: { samples: SyntheticSam
             })}
           </ul>
           {error ? (
-            <p role="alert" className="mt-4 rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">
+            <p role="alert" className="field-error mt-4">
               {error}
             </p>
           ) : null}
-          <button type="button" className="btn btn-primary mt-6" onClick={create} disabled={busy || !selected}>
-            {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <FileText aria-hidden className="h-4 w-4" />}
-            Aggiungi e leggi il documento <ArrowRight aria-hidden className="h-4 w-4" />
+          <button type="button" className="btn btn-primary btn-lg mt-6 w-full max-sm:px-4 sm:w-auto" onClick={create} disabled={busy || !selected}>
+            {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <FileText aria-hidden className="h-5 w-5" />}
+            Aggiungi e leggi il documento <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </button>
         </section>
 
@@ -78,22 +78,22 @@ export function NewDocument({ samples, uploadsEnabled }: { samples: SyntheticSam
           {uploadsEnabled ? (
             <UploadBox />
           ) : (
-            <div className="rounded-[var(--radius-lg)] border-2 border-dashed border-line bg-canvas p-6 sm:p-8">
+            <div className="rounded-[var(--radius-lg)] border-2 border-dashed border-line bg-canvas p-6 sm:p-7">
               <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-mist">
-                  <Lock aria-hidden className="h-5 w-5 text-muted" />
+                <span aria-hidden className="tile-ico tile-ico-sm">
+                  <Lock />
                 </span>
-                <h2 id="upload-titolo" className="font-serif text-xl">
+                <h2 id="upload-titolo" className="side-card-title text-xl">
                   Carica un tuo referto
                 </h2>
               </div>
-              <p className="mt-4 text-[0.9375rem] text-muted">
+              <p className="mt-4 text-base text-ink-soft">
                 Non ancora attivo. Il caricamento di documenti reali si accende solo dopo le verifiche cliniche, legali e di sicurezza: fino ad allora il server rifiuta qualsiasi file, anche se qualcuno provasse ad aggirare questa pagina.
               </p>
               <button type="button" className="btn btn-secondary mt-5 w-full" disabled aria-disabled="true">
-                <Upload aria-hidden className="h-4 w-4" /> Carica un file
+                <Upload aria-hidden className="h-5 w-5" /> Carica un file
               </button>
-              <p className="mt-3 text-center text-xs text-muted">Stato del servizio: in preparazione.</p>
+              <p className="mt-3 text-center text-[0.9375rem] text-muted">Stato del servizio: in preparazione.</p>
             </div>
           )}
         </aside>

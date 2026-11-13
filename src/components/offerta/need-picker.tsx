@@ -24,7 +24,7 @@ const WHY = {
   capisci: "Il tuo referto diventa un report chiaro, con i valori controllati da te e le domande da fare al medico. È automatico: nessun medico lo rivede.",
   domicilio: "Un medico di medicina generale viene a casa, per esigenze non urgenti, e lascia un riepilogo scritto con il prossimo passo. Per ora a Brescia città.",
   "parla-con-un-medico": "Un medico di medicina generale o internista legge prima i tuoi documenti e, in video, ti aiuta a capire il prossimo passo. Non devi scegliere tu la specialità.",
-  "secondo-parere": "Uno specialista della disciplina appropriata valuta i tuoi documenti e risponde per iscritto alla tua domanda.",
+  "secondo-parere": "Uno specialista della disciplina appropriata esamina i tuoi documenti, ne parla con te in video e ti lascia una sintesi scritta sulla tua domanda.",
 } as const;
 const TONE = { capisci: "capisci", domicilio: "medico", "parla-con-un-medico": "medico", "secondo-parere": "parere", tool: "capisci" } as const;
 const ICON = { capisci: FileText, domicilio: Home, "parla-con-un-medico": Video, "secondo-parere": Stethoscope, tool: ClipboardList } as const;
@@ -44,18 +44,18 @@ export function NeedPicker({ services, headingId }: { services: PickerService[];
   const Icon = need ? ICON[need] : null;
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-7 lg:grid-cols-[1.08fr_0.92fr] lg:gap-12">
       <fieldset aria-describedby={`${name}-nota`}>
-        <legend className="text-[1.375rem] font-bold text-ink" id={headingId ? `${headingId}-domanda` : undefined}>
+        <legend className="text-[1.375rem] font-extrabold tracking-[-0.01em] text-ink" id={headingId ? `${headingId}-domanda` : undefined}>
           Che cosa ti serve oggi?
         </legend>
-        <div className="mt-5 grid gap-3">
+        <div className="mt-4 grid gap-2.5 sm:gap-3">
           {options.map((o) => {
             const OIcon = ICON[o.id];
             return (
               <label key={o.id} className={clsx("need-option", `tone-${TONE[o.id]}`)}>
-                <span className="tone-icon h-12 w-12 shrink-0">
-                  <OIcon aria-hidden className="h-6 w-6" />
+                <span aria-hidden className="tile-ico tile-ico-sm tile-ico-tone">
+                  <OIcon />
                 </span>
                 <span className="flex-1">{o.label}</span>
                 <input type="radio" name={name} value={o.id} checked={need === o.id} onChange={() => setNeed(o.id)} className="h-6 w-6 shrink-0 accent-[var(--tone-accent)]" />
@@ -63,23 +63,23 @@ export function NeedPicker({ services, headingId }: { services: PickerService[];
             );
           })}
         </div>
-        <p id={`${name}-nota`} className="mt-5 text-[1.0625rem] text-muted">
+        <p id={`${name}-nota`} className="mt-4 text-[1.0625rem] text-muted">
           Non ti chiediamo sintomi né dati sanitari: scegli in base a ciò che ti serve. Per un&apos;urgenza chiama il 112.
         </p>
       </fieldset>
 
-      <div aria-live="polite" className="min-h-[1px] lg:pt-12">
+      <div aria-live="polite" className="min-h-[1px] lg:pt-[2.875rem]">
         {need && Icon ? (
-          <div key={need} className={clsx("scene-pop overflow-hidden rounded-[2rem] border border-[color-mix(in_srgb,var(--tone-accent)_25%,transparent)] bg-[linear-gradient(165deg,var(--tone-bg),var(--color-paper)_75%)] p-7 shadow-[var(--shadow-float)] sm:p-9", `tone-${TONE[need]}`)}>
-            <p className="eyebrow !text-[var(--tone-accent)]">{service?.level ? `Ti consigliamo · livello ${service.level.n}` : "Ti consigliamo"}</p>
-            <div className="mt-5 flex items-center gap-4">
-              <span className="tone-icon h-14 w-14 shrink-0">
-                <Icon aria-hidden className="h-7 w-7" />
+          <div key={need} className={clsx("need-result scene-pop", `tone-${TONE[need]}`)}>
+            <p className="eyebrow eyebrow-plain tone-text">Ti consigliamo</p>
+            <div className="mt-4 flex items-center gap-4">
+              <span aria-hidden className="tile-ico tile-ico-tone">
+                <Icon />
               </span>
-              <p className="text-[1.75rem] font-extrabold leading-tight tracking-[-0.01em] text-ink">{service ? service.name : "Preparati alla visita in 2 minuti"}</p>
+              <p className="text-[1.5rem] font-extrabold leading-[1.15] tracking-[-0.02em] text-ink sm:text-[1.75rem]">{service ? service.name : "Preparati alla visita in 2 minuti"}</p>
             </div>
-            <p className="mt-5 text-lg text-ink-soft">{service ? WHY[service.id] : TOOL.why}</p>
-            <dl className="mt-6 grid gap-3 border-t border-line pt-5 text-lg">
+            <p className="mt-4 text-lg leading-[1.5] text-ink-soft">{service ? WHY[service.id] : TOOL.why}</p>
+            <dl className="mt-5 grid gap-3 border-t border-line pt-5 text-lg sm:grid-cols-2">
               {service ? (
                 <>
                   {service.price ? (
@@ -100,18 +100,23 @@ export function NeedPicker({ services, headingId }: { services: PickerService[];
                 </div>
               )}
             </dl>
-            <Link href={service ? service.href : "/strumenti/preparati-alla-visita"} data-track={service ? `cta-${TONE[service.id]}` : undefined} className="btn btn-primary btn-lg mt-7 w-full sm:w-auto">
+            <Link href={service ? service.href : "/strumenti/preparati-alla-visita"} data-track={service ? `cta-${TONE[service.id]}` : undefined} className="btn btn-primary btn-lg mt-6 w-full sm:w-auto">
               {service ? "Scopri il servizio" : "Inizia, è gratis"} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
             </Link>
           </div>
         ) : (
-          <div className="flex min-h-56 flex-col items-start justify-center gap-4 rounded-[2rem] border-2 border-dashed border-line bg-paper/60 p-8">
-            <span aria-hidden className="flex gap-2">
-              {ORDER.map((id) => (
-                <span key={id} className={clsx("h-3 w-10 rounded-full bg-[var(--tone-accent)] opacity-70", `tone-${TONE[id]}`)} />
-              ))}
+          <div className="need-empty">
+            <span aria-hidden className="flex -space-x-2">
+              {ORDER.map((id) => {
+                const EIcon = ICON[id];
+                return (
+                  <span key={id} className={clsx("tile-ico tile-ico-sm tile-ico-tone", `tone-${TONE[id]}`)}>
+                    <EIcon />
+                  </span>
+                );
+              })}
             </span>
-            <p className="text-xl text-ink-soft">Scegli una risposta: ti indichiamo il servizio adatto, con prezzo e tempi.</p>
+            <p className="text-xl leading-snug text-ink-soft">Scegli una risposta: ti indichiamo il servizio adatto, con prezzo e tempi.</p>
           </div>
         )}
       </div>
