@@ -89,12 +89,15 @@ export function personaSubtitle(
 
 /** Iniziali per il cerchio della persona (massimo due lettere). */
 export function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
+  // Solo le parole che iniziano con una lettera: «Lucia (esempio)» → «L», non «L(».
+  const parts = name
+    .replace(/\([^)]*\)/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter((w) => /^\p{L}/u.test(w));
   if (!parts.length) return "?";
   return (
-    parts.length === 1
-      ? parts[0].slice(0, 2)
-      : parts[0][0] + parts[parts.length - 1][0]
+    parts.length === 1 ? parts[0][0] : parts[0][0] + parts[parts.length - 1][0]
   ).toUpperCase();
 }
 

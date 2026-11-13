@@ -315,7 +315,9 @@ describe("persone e piano", () => {
         declaration: true,
       }).success,
     ).toBe(false);
-    expect(initials("Lucia (esempio)")).toBe("L(");
+    expect(initials("Lucia (esempio)")).toBe("L");
+    expect(initials("Papà")).toBe("P");
+    expect(initials("(?)")).toBe("?");
     expect(initials("Lucia Rossi")).toBe("LR");
     expect(profileIdForDb("io")).toBeNull();
   });
