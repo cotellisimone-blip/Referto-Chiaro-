@@ -23,11 +23,11 @@ export function CallCard({ className = "" }: { className?: string }) {
   );
 }
 
-/** Il parere scritto: un foglio firmato. */
+/** La sintesi scritta del secondo parere: un foglio firmato. */
 export function OpinionSheet({ className = "" }: { className?: string }) {
   return (
     <div aria-hidden className={`scope-light sheet p-6 ${className}`}>
-      <p className="text-sm font-bold uppercase tracking-[0.14em] text-[#24618a]">Parere scritto</p>
+      <p className="text-sm font-bold uppercase tracking-[0.14em] text-[#24618a]">Sintesi scritta</p>
       <p className="mt-3 text-lg font-bold leading-snug text-ink">La tua domanda, e la risposta dello specialista.</p>
       <div className="mt-4 space-y-2.5">
         {[100, 94, 62].map((w, i) => (
@@ -36,7 +36,7 @@ export function OpinionSheet({ className = "" }: { className?: string }) {
       </div>
       <div className="mt-5 flex items-end justify-between gap-4 border-t border-line pt-4">
         <span className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-ink-soft">
-          <PenLine className="h-4 w-4 text-[#24618a]" /> Firmato dal medico
+          <PenLine className="h-4 w-4 text-[#24618a]" /> Firmata dallo specialista
         </span>
         <svg viewBox="0 0 120 40" className="h-9 w-28" fill="none">
           <path d="M4 30 C 14 6, 22 6, 24 22 S 34 36, 42 18 S 54 8, 58 24 S 72 30, 80 14 S 96 20, 116 12" stroke="#24618a" strokeWidth="2.4" strokeLinecap="round" />
@@ -79,7 +79,7 @@ export function DoctorCaseVisual({ className = "" }: { className?: string }) {
       </div>
       <p className="glass case-chip">
         <PenLine className="h-5 w-5 shrink-0 text-teal" />
-        Parere firmato, non modificabile
+        Sintesi firmata, non modificabile
       </p>
     </div>
   );

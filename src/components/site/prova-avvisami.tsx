@@ -32,30 +32,25 @@ export function ProvaAvvisami({ servizio, titolo }: { servizio?: Servizio; titol
   const [scelto, setScelto] = useState<Servizio>(servizio ?? servizioDaPercorso(path));
   const corrente = SERVIZI.find((s) => s.id === scelto)!;
   return (
-    <section aria-labelledby="prova-avvisami-titolo" className="card mt-8 p-6 sm:p-8" data-testid="prova-avvisami">
-      <p className="eyebrow flex items-center gap-2">
+    <section aria-labelledby="prova-avvisami-titolo" className="form-card mt-8" data-testid="prova-avvisami">
+      <p className="eyebrow eyebrow-plain flex items-center gap-2">
         <BellRing aria-hidden className="h-4 w-4" /> Ti è piaciuta la prova?
       </p>
-      <h2 id="prova-avvisami-titolo" className="mt-2 font-serif text-2xl text-ink sm:text-3xl">
+      <h2 id="prova-avvisami-titolo" className="form-card-title mt-3">
         {titolo ?? "Avvisami quando parte."}
       </h2>
-      <fieldset className="mt-4">
-        <legend className="text-sm font-semibold text-ink">Per quale servizio?</legend>
-        <div className="mt-2 flex flex-wrap gap-2">
+      <fieldset className="mt-5">
+        <legend className="field-label">Per quale servizio?</legend>
+        <div className="choice-pills mt-3">
           {SERVIZI.map((s) => (
-            <label
-              key={s.id}
-              className={`inline-flex min-h-11 cursor-pointer items-center rounded-full border px-4 text-sm font-semibold transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-teal ${
-                scelto === s.id ? "border-teal bg-teal text-white" : "border-line bg-paper text-ink hover:border-teal"
-              }`}
-            >
-              <input type="radio" name="prova-servizio" value={s.id} checked={scelto === s.id} onChange={() => setScelto(s.id)} className="sr-only" />
+            <label key={s.id} className="choice-pill">
+              <input type="radio" name="prova-servizio" value={s.id} checked={scelto === s.id} onChange={() => setScelto(s.id)} />
               {s.label}
             </label>
           ))}
         </div>
       </fieldset>
-      <div className="mt-5">
+      <div className="mt-6">
         <WaitlistForm key={corrente.interest} interest={corrente.interest} afterTrial compact />
       </div>
     </section>

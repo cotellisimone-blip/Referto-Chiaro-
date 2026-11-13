@@ -24,7 +24,7 @@ const WHY = {
   capisci: "Il tuo referto diventa un report chiaro, con i valori controllati da te e le domande da fare al medico. È automatico: nessun medico lo rivede.",
   domicilio: "Un medico di medicina generale viene a casa, per esigenze non urgenti, e lascia un riepilogo scritto con il prossimo passo. Per ora a Brescia città.",
   "parla-con-un-medico": "Un medico di medicina generale o internista legge prima i tuoi documenti e, in video, ti aiuta a capire il prossimo passo. Non devi scegliere tu la specialità.",
-  "secondo-parere": "Uno specialista della disciplina appropriata valuta i tuoi documenti e risponde per iscritto alla tua domanda.",
+  "secondo-parere": "Uno specialista della disciplina appropriata esamina i tuoi documenti, ne parla con te in video e ti lascia una sintesi scritta sulla tua domanda.",
 } as const;
 const TONE = { capisci: "capisci", domicilio: "medico", "parla-con-un-medico": "medico", "secondo-parere": "parere", tool: "capisci" } as const;
 const ICON = { capisci: FileText, domicilio: Home, "parla-con-un-medico": Video, "secondo-parere": Stethoscope, tool: ClipboardList } as const;

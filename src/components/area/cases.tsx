@@ -287,14 +287,22 @@ export function CaseDetail({ caseId }: { caseId: string }) {
         </section>
       ) : null}
       {["submitted", "accepted"].includes(c.status) && !c.awaitingPayment ? <p className="text-[1.0625rem] text-ink-soft" aria-live="polite">In attesa del medico. Questa pagina si aggiorna da sola.</p> : null}
-      <section aria-labelledby="storico-titolo">
-        <h2 id="storico-titolo" className="area-h2">Storico</h2>
-        <ol className="mt-3 space-y-2 text-base text-muted">
-          {data.events.map((e) => (
-            <li key={e.id}>
-              <span className="tabular">{formatDateTime(e.createdAt)}</span> · <span className="text-ink">{EVENT[e.kind] ?? e.kind}</span>{e.detail ? ` — ${e.detail}` : ""}
-            </li>
-          ))}
+      <section aria-labelledby="storico-titolo" className="side-card">
+        <h2 id="storico-titolo" className="side-card-title">
+          Storico
+        </h2>
+        <ol className="timeline mt-4">
+          {data.events.map((e) => {
+            const label = EVENT[e.kind] ?? e.kind;
+            const detail = eventDetail(label, e.detail);
+            return (
+              <li key={e.id}>
+                <span className="timeline-when">{label}</span>
+                {formatDateTime(e.createdAt)}
+                {detail ? ` · ${detail}` : ""}
+              </li>
+            );
+          })}
         </ol>
       </section>
       {["answered", "declined"].includes(c.status) ? (
@@ -312,6 +320,13 @@ export function CaseDetail({ caseId }: { caseId: string }) {
       ) : null}
     </div>
   );
+}
+
+/** Il dettaglio di un passo ripete spesso il nome del passo («Pagamento registrato: …»): si mostra senza il doppione. */
+export function eventDetail(label: string, detail: string | null): string {
+  if (!detail) return "";
+  const rest = detail.startsWith(`${label}: `) ? detail.slice(label.length + 2) : detail;
+  return rest.charAt(0).toUpperCase() + rest.slice(1);
 }
 
 /** Facsimile del referto per il medico (lettura sola). */

@@ -55,7 +55,7 @@ export function Price({ kind, cents }: { kind: PrestazioneKind; cents?: number |
 }
 
 /** Fasce raggruppate per giorno: pulsanti grandi, uno per orario. */
-export function SlotPicker({ slots, value, onChange, legend, now = new Date() }: { slots: string[]; value: string | null; onChange: (iso: string) => void; legend: string; now?: Date }) {
+export function SlotPicker({ slots, value, onChange, legend, now = new Date(), big = false }: { slots: string[]; value: string | null; onChange: (iso: string) => void; legend: string; now?: Date; big?: boolean }) {
   const days = new Map<string, string[]>();
   for (const s of slots) {
     const k = new Date(s).toDateString();
@@ -63,12 +63,12 @@ export function SlotPicker({ slots, value, onChange, legend, now = new Date() }:
   }
   return (
     <fieldset>
-      <legend className="text-lg font-semibold text-ink">{legend}</legend>
-      <div className="mt-3 space-y-4">
+      <legend className={big ? "form-card-title" : "area-h3"}>{legend}</legend>
+      <div className="mt-4 space-y-5">
         {[...days.values()].map((list) => (
           <div key={list[0]}>
-            <p className="text-[0.9375rem] font-semibold text-ink-soft">{formatDay(list[0], now)}</p>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <p className="text-base font-bold text-ink-soft">{formatDay(list[0], now)}</p>
+            <div className="slot-grid mt-2">
               {list.map((s) => (
                 <label key={s} className={clsx("slot-pill", value === s && "slot-pill-on")}>
                   <input type="radio" name={legend} value={s} checked={value === s} onChange={() => onChange(s)} className="sr-only" />
@@ -85,23 +85,28 @@ export function SlotPicker({ slots, value, onChange, legend, now = new Date() }:
 
 export function DemoNotice({ children }: { children?: React.ReactNode }) {
   return (
-    <div role="note" className="flex items-start gap-3 rounded-2xl border border-dashed border-warn/60 bg-cream p-4 text-[0.9375rem] text-ink-soft">
-      <FlaskConical aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-warn" />
-      <p>
-        <strong className="text-ink">Prova dimostrativa.</strong> Medici, fasce, pagamenti, video, documenti e comunicazioni sono simulati e restano in questo browser. {children}
-      </p>
+    <div role="note" className="callout callout-warn">
+      <span aria-hidden className="callout-ico">
+        <FlaskConical />
+      </span>
+      <div>
+        <p className="callout-title">Prova dimostrativa</p>
+        <p className="callout-text">Medici, fasce, pagamenti, video, documenti e comunicazioni sono simulati e restano in questo browser. {children}</p>
+      </div>
     </div>
   );
 }
 
 export function EmergencyNumbers({ compact = false }: { compact?: boolean }) {
   return (
-    <p className={clsx("flex items-start gap-3 rounded-2xl border border-line bg-paper text-ink", compact ? "p-3 text-[0.9375rem]" : "p-4 text-[1.0625rem]")}>
-      <Phone aria-hidden className="mt-1 h-5 w-5 shrink-0 text-danger" />
-      <span>
-        Prestazione privata per esigenze <strong>non urgenti</strong>. Per le emergenze sanitarie chiama il <strong>112</strong>. Per la continuità assistenziale pubblica chiama il <strong>116117</strong> negli orari previsti.
+    <div role="note" className={clsx("callout callout-danger", compact && "callout-compact")}>
+      <span aria-hidden className="callout-ico">
+        <Phone />
       </span>
-    </p>
+      <p className="callout-text mt-0 self-center text-ink">
+        Prestazione privata per esigenze <strong>non urgenti</strong>. Per le emergenze sanitarie chiama il <strong>112</strong>. Per la continuità assistenziale pubblica chiama il <strong>116117</strong> negli orari previsti.
+      </p>
+    </div>
   );
 }
 
@@ -116,7 +121,7 @@ export function RoleBar({ active }: { active: "paziente" | "medico" | "amministr
   return (
     <div className="border-b border-line bg-mist/70">
       <div className="container-rc flex flex-wrap items-center gap-2 py-2">
-        <span className="sr-only sm:not-sr-only sm:mr-1 sm:text-sm sm:font-semibold sm:text-ink-soft">Prova come:</span>
+        <span className="sr-only sm:not-sr-only sm:mr-1 sm:text-base sm:font-bold sm:text-ink-soft">Prova come:</span>
         <nav aria-label="Prova come" className="grid flex-1 grid-cols-3 gap-1.5 sm:flex sm:flex-none sm:gap-2">
           {ROLES.map(({ href, label, icon: Icon }) => {
             const on = active && href.endsWith(active);
@@ -151,8 +156,8 @@ export function ConfirmButton({ children, question, yes, onConfirm, className }:
     );
   }
   return (
-    <span role="group" aria-label="Conferma" className="flex flex-wrap items-center gap-2 rounded-xl border border-warn/50 bg-cream px-3 py-2">
-      <span className="text-[0.9375rem] text-ink">{question}</span>
+    <span role="group" aria-label="Conferma" className="flex flex-wrap items-center gap-2 rounded-[1.25rem] border border-warn/50 bg-cream px-4 py-3">
+      <span className="w-full text-base font-semibold text-ink sm:w-auto sm:flex-1">{question}</span>
       <button type="button" className="btn btn-sm min-h-11 btn-secondary" onClick={() => setAsking(false)} autoFocus>
         No
       </button>
@@ -174,7 +179,7 @@ export function ConfirmButton({ children, question, yes, onConfirm, className }:
 export function ZoneWaitlist({ cap }: { cap: string }) {
   return (
     <div className="mt-4 border-t border-line pt-4" data-avvisami-zona={cap}>
-      <p className="text-lg font-bold text-ink">Avvisami quando arrivate al {cap}</p>
+      <p className="area-h3">Avvisami quando arrivate al {cap}</p>
       <div className="mt-2">
         <WaitlistForm key={cap} interest="domicilio" defaultCap={cap} compact />
       </div>
@@ -184,15 +189,15 @@ export function ZoneWaitlist({ cap }: { cap: string }) {
 
 export function Loading() {
   return (
-    <p role="status" className="flex items-center gap-2 py-10 text-lg text-muted">
-      <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> Preparazione della prova…
+    <p role="status" className="flex items-center gap-3 py-10 text-lg text-ink-soft">
+      <Loader2 aria-hidden className="h-6 w-6 animate-spin text-teal" /> Preparazione della prova…
     </p>
   );
 }
 
 export function ErrorBox({ children }: { children: React.ReactNode }) {
   return (
-    <p role="alert" className="rounded-xl border border-danger/40 bg-paper px-4 py-3 text-[1.0625rem] text-danger">
+    <p role="alert" className="field-error">
       {children}
     </p>
   );
@@ -202,5 +207,21 @@ export function KindTitle({ kind }: { kind: PrestazioneKind }) {
   return <>{PRESTAZIONI[kind].title}</>;
 }
 
-export const inputCls = "mt-2 min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-[1.0625rem] text-ink";
-export const areaCls = "mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-[1.0625rem] text-ink";
+/** Messaggio di esito positivo dentro una pagina della prova. */
+export function OkBox({ children }: { children: React.ReactNode }) {
+  return (
+    <p role="status" className="field-ok font-semibold text-ink">
+      {children}
+    </p>
+  );
+}
+
+/** Righe «voce / valore» dei riepiloghi (richiesta, proposta, ricevuta). */
+export function Row({ label, value, strong = false }: { label: string; value: React.ReactNode; strong?: boolean }) {
+  return (
+    <div>
+      <dt>{label}</dt>
+      <dd className={strong ? "kv-strong" : undefined}>{value}</dd>
+    </div>
+  );
+}

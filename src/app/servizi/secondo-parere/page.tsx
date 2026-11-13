@@ -4,7 +4,7 @@ import { ServiceLanding } from "@/components/offerta/service-landing";
 
 export const metadata: Metadata = {
   title: "Secondo parere specialistico",
-  description: "Un medico della specialità giusta valuta i tuoi documenti e risponde per iscritto a una domanda precisa. Parere firmato, mai scritto da un'intelligenza artificiale.",
+  description: "Uno specialista esamina i documenti che scegli, ne parla con te in video e ti consegna una sintesi scritta su un quesito preciso. Mai una risposta automatica.",
   alternates: { canonical: "/servizi/secondo-parere" },
 };
 

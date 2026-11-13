@@ -23,13 +23,13 @@ const NAV = [
 export function AdminNav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Amministrazione" className="mb-8">
-      <ul className="flex flex-wrap gap-1">
+    <nav aria-label="Amministrazione" className="mb-8 sm:mb-10">
+      <ul className="tab-pills">
         {NAV.map(([href, label]) => {
           const active = href === "/admin" ? pathname === href : pathname.startsWith(href);
           return (
             <li key={href}>
-              <Link href={href} aria-current={active ? "page" : undefined} className={clsx("inline-flex min-h-11 items-center rounded-full px-4 text-[0.9375rem] font-medium", active ? "bg-mist text-ink" : "text-ink-soft hover:bg-mist/70 hover:text-ink")}>
+              <Link href={href} aria-current={active ? "page" : undefined} className="tab-pill tab-pill-sm">
                 {label}
               </Link>
             </li>
@@ -54,26 +54,45 @@ function Frame({ title, lead, error, children }: { title: string; lead?: string;
   return (
     <div>
       <AdminNav />
-      <h1 className="display text-[2rem] sm:text-[2.5rem]">{title}</h1>
-      {lead ? <p className="mt-2 text-muted">{lead}</p> : null}
-      {error ? <p role="alert" className="mt-4 text-danger">{error}</p> : null}
-      <div className="mt-6">{children}</div>
+      <h1 className="area-title">{title}</h1>
+      {lead ? <p className="area-lead">{lead}</p> : null}
+      {error ? (
+        <p role="alert" className="field-error mt-5">
+          {error}
+        </p>
+      ) : null}
+      <div className="mt-7">{children}</div>
     </div>
   );
 }
 
+/** Celle fatte solo di cifre (conteggi, percentuali, importi): cifre allineate in colonna. */
+const NUMERIC = /^[\d.,\s/%€$]+$/;
+
 function Table({ head, rows, label }: { head: string[]; rows: React.ReactNode[][]; label: string }) {
-  if (rows.length === 0) return <p className="text-muted">Nessun elemento.</p>;
+  if (rows.length === 0) return <p className="empty-note">Nessun elemento, per ora.</p>;
   return (
-    <div className="overflow-x-auto rounded-2xl border border-line" tabIndex={0} role="region" aria-label={label}>
-      <table className="w-full min-w-[640px] text-sm">
+    <div className="data-table-wrap" tabIndex={0} role="region" aria-label={label}>
+      <table className="data-table">
         <caption className="sr-only">{label}</caption>
-        <thead className="bg-mist/60 text-left text-muted">
-          <tr>{head.map((h) => <th key={h} scope="col" className="px-4 py-3 font-semibold">{h}</th>)}</tr>
+        <thead>
+          <tr>
+            {head.map((h) => (
+              <th key={h} scope="col">
+                {h}
+              </th>
+            ))}
+          </tr>
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={i} className="border-t border-line">{r.map((c, j) => <td key={j} className="px-4 py-3 align-top text-ink">{c}</td>)}</tr>
+            <tr key={i}>
+              {r.map((c, j) => (
+                <td key={j} className={typeof c === "string" && NUMERIC.test(c) ? "tabular" : undefined}>
+                  {c}
+                </td>
+              ))}
+            </tr>
           ))}
         </tbody>
       </table>
@@ -109,26 +128,26 @@ const weekLabel = (iso: string) => {
 /** Ciclo 2, fase 2: la vetrina in tre tabelle. Le soglie di decisione sono ipotesi scritte in PRODUCT_ROADMAP.md. */
 function VetrinaSection({ v }: { v: VetrinaData }) {
   return (
-    <section aria-labelledby="vetrina-titolo" className="mt-10" data-testid="admin-vetrina">
-      <h2 id="vetrina-titolo" className="font-serif text-2xl text-ink">Vetrina: chi arriva e chi chiede di essere avvisato</h2>
-      <p className="mt-1 text-sm text-muted">
+    <section aria-labelledby="vetrina-titolo" className="mt-12" data-testid="admin-vetrina">
+      <h2 id="vetrina-titolo" className="area-h2">Vetrina: chi arriva e chi chiede di essere avvisato</h2>
+      <p className="meta mt-2 max-w-[60rem]">
         Contatori anonimi (nessun cookie, nessun IP) e iscrizioni alla lista d&apos;attesa dei servizi. «Iscrizioni su visite» è il numero da guardare ogni settimana; le soglie
         per decidere sono in PRODUCT_ROADMAP.md. Dal 12/11/2026 una visita conta una volta per scheda: ricariche, robot, anteprime dei link e browser
         automatici sono esclusi.
       </p>
-      <h3 className="mt-6 text-lg font-semibold text-ink">Per settimana</h3>
+      <h3 className="area-h3 mb-3 mt-8">Per settimana</h3>
       <Table
         label="Vetrina per settimana"
         head={["Settimana", "Visite", "Clic sui servizi", "Esempio completato", "Iscrizioni", "Iscrizioni su visite"]}
         rows={v.weeks.map((w) => [weekLabel(w.week), String(w.visits), String(w.ctas), String(w.examples), String(w.signups), pct(w.signups, w.visits)])}
       />
-      <h3 className="mt-6 text-lg font-semibold text-ink">Per sorgente, ultimi {v.days} giorni</h3>
+      <h3 className="area-h3 mb-3 mt-8">Per sorgente, ultimi {v.days} giorni</h3>
       <Table
         label="Vetrina per sorgente"
         head={["Da dove arrivano", "Visite", "Clic sui servizi", "Esempio completato", "Iscrizioni", "Iscrizioni su visite"]}
         rows={v.bySource.map((r) => [SOURCE_LABELS[toSource(r.source)], String(r.visits), String(r.ctas), String(r.examples), String(r.signups), pct(r.signups, r.visits)])}
       />
-      <h3 className="mt-6 text-lg font-semibold text-ink">Per servizio, ultimi {v.days} giorni</h3>
+      <h3 className="area-h3 mb-3 mt-8">Per servizio, ultimi {v.days} giorni</h3>
       <Table
         label="Vetrina per servizio"
         head={["Servizio", "Visite alla pagina", "Clic sull'azione", "Iscrizioni", "Iscrizioni su visite"]}
@@ -136,17 +155,19 @@ function VetrinaSection({ v }: { v: VetrinaData }) {
       />
       {v.byCap ? (
         <>
-          <h3 className="mt-6 text-lg font-semibold text-ink">Visita a domicilio: richieste per CAP, ultimi {v.days} giorni</h3>
+          <h3 className="area-h3 mb-3 mt-8">Visita a domicilio: richieste per CAP, ultimi {v.days} giorni</h3>
           {v.byCap.length ? (
             <Table label="Visita a domicilio per CAP" head={["CAP", "Iscrizioni", "Zona"]} rows={v.byCap.map((r) => [r.cap, String(r.signups), r.covered ? "già coperta (area pilota)" : "non coperta"])} />
           ) : (
-            <p className="mt-2 text-sm text-muted" data-testid="admin-cap-vuoto">Nessuna iscrizione con CAP per ora. Compaiono qui quando qualcuno chiede di essere avvisato per la sua zona.</p>
+            <p className="empty-note" data-testid="admin-cap-vuoto">
+              Nessuna iscrizione con CAP per ora. Compaiono qui quando qualcuno chiede di essere avvisato per la sua zona.
+            </p>
           )}
         </>
       ) : null}
       {v.afterTrial ? (
         <>
-          <h3 className="mt-6 text-lg font-semibold text-ink">Dopo la prova, ultimi {v.days} giorni</h3>
+          <h3 className="area-h3 mb-3 mt-8">Dopo la prova, ultimi {v.days} giorni</h3>
           <Table
             label="Vetrina dopo la prova"
             head={["Esempio completato", "«Utile»: sì", "«Utile»: non molto", "Iscrizioni subito dopo una prova", "Iscrizioni su esempi completati"]}
@@ -177,30 +198,33 @@ export function AdminOverview() {
     : [];
   return (
     <Frame title="Panoramica" lead="Numeri dell'istanza. In demo sono dati inventati e account dimostrativi." error={error}>
-      <p className="mb-6 rounded-xl bg-mist px-4 py-3 text-ink">
-        Apertura dei servizi, candidature dei medici, fasce e assegnazioni di domicilio, videoconsulto e secondo parere:{" "}
-        <Link href="/prova/amministrazione" className="link font-semibold">prestazioni con un medico (prova)</Link>.
-      </p>
-      <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <dl className="stat-grid">
         {items.map(([k, v]) => (
-          <div key={k} className="card p-5">
-            <dt className="text-sm text-muted">{k}</dt>
-            <dd className="tabular mt-1 text-2xl font-semibold text-ink">{v}</dd>
+          <div key={k} className="stat-card">
+            <dt>{k}</dt>
+            <dd className="tabular">{v}</dd>
           </div>
         ))}
       </dl>
+      <p className="empty-note mt-5">
+        Apertura dei servizi, candidature dei medici, fasce e assegnazioni di domicilio, videoconsulto e secondo parere si gestiscono nelle{" "}
+        <Link href="/prova/amministrazione" className="link font-bold">
+          prestazioni con un medico (prova)
+        </Link>
+        .
+      </p>
       {data?.funnel ? (
-        <section aria-labelledby="funnel-titolo" className="mt-10">
-          <h2 id="funnel-titolo" className="font-serif text-2xl text-ink">Funnel, ultimi {data.funnel.days} giorni</h2>
-          <p className="mt-1 text-sm text-muted">Visite e clic sono contatori anonimi per giorno; gli altri passi vengono dai dati del sito. Account demo esclusi.</p>
+        <section aria-labelledby="funnel-titolo" className="mt-12">
+          <h2 id="funnel-titolo" className="area-h2">Percorso delle persone, ultimi {data.funnel.days} giorni</h2>
+          <p className="meta mb-4 mt-2 max-w-[60rem]">Visite e clic sono contatori anonimi per giorno; gli altri passi vengono dai dati del sito. Account demo esclusi.</p>
           <Table label="Funnel" head={["Passo", "Numero"]} rows={Object.entries(data.funnel.steps).map(([k, v]) => [FUNNEL_LABELS[k] ?? k, String(v)])} />
         </section>
       ) : null}
       {data?.vetrina ? <VetrinaSection v={data.vetrina} /> : null}
       {data?.aiCosts ? (
-        <section aria-labelledby="costi-ai-titolo" className="mt-10" data-testid="admin-costi-ai">
-          <h2 id="costi-ai-titolo" className="font-serif text-2xl text-ink">Costo AI, ultimi {data.aiCosts.days} giorni</h2>
-          <p className="mt-1 text-sm text-muted">Calcolato dai token registrati per ogni passo e dalle tariffe pubblicate. Account demo esclusi.</p>
+        <section aria-labelledby="costi-ai-titolo" className="mt-12" data-testid="admin-costi-ai">
+          <h2 id="costi-ai-titolo" className="area-h2">Costo AI, ultimi {data.aiCosts.days} giorni</h2>
+          <p className="meta mb-4 mt-2 max-w-[60rem]">Calcolato dai token registrati per ogni passo e dalle tariffe pubblicate. Account demo esclusi.</p>
           <Table
             label="Costo AI"
             head={["Voce", "Valore"]}
@@ -222,7 +246,9 @@ export function AdminWaitlist() {
   const { data, error } = useLoad<{ waitlist: { id: string; email: string; interest: string; organization: string | null; note: string | null; created_at: string }[] }>("/api/v1/admin/lista-attesa");
   return (
     <Frame title="Lista d'attesa" lead="Manifestazioni di interesse non vincolanti. Nessuna email viene inviata automaticamente." error={error}>
-      <a href="/api/v1/admin/lista-attesa?formato=csv" className="btn btn-secondary mb-4 min-h-11 text-sm"><Download aria-hidden className="h-4 w-4" /> Scarica CSV</a>
+      <a href="/api/v1/admin/lista-attesa?formato=csv" className="btn btn-secondary btn-sm mb-5">
+        <Download aria-hidden className="h-4 w-4" /> Scarica l&apos;elenco (CSV)
+      </a>
       <Table label="Lista d'attesa" head={["Email", "Interesse", "Organizzazione", "Nota", "Data"]} rows={(data?.waitlist ?? []).map((w) => [w.email, w.interest, w.organization ?? "—", w.note ?? "—", formatDateTime(w.created_at)])} />
     </Frame>
   );
@@ -245,11 +271,21 @@ export function AdminPhysicians() {
           p.specialty,
           p.email,
           p.registrationRef ?? "—",
-          STATUS[p.status] ?? p.status,
+          <span key="s" className={clsx("chip", p.status === "verified" ? "bg-marker-soft text-teal-deep" : p.status === "suspended" ? "bg-mist text-muted" : "bg-cream text-warn")}>
+            {STATUS[p.status] ?? p.status}
+          </span>,
           String(p.openCases),
           <span key="a" className="flex flex-wrap gap-2">
-            {p.status !== "verified" ? <button type="button" className="btn btn-secondary min-h-9 px-3 text-xs" onClick={() => set(p.id, "verified")}>Verifica</button> : null}
-            {p.status !== "suspended" ? <button type="button" className="btn btn-secondary min-h-9 px-3 text-xs" onClick={() => set(p.id, "suspended")}>Sospendi</button> : null}
+            {p.status !== "verified" ? (
+              <button type="button" className="btn btn-secondary btn-sm" onClick={() => set(p.id, "verified")}>
+                Verifica
+              </button>
+            ) : null}
+            {p.status !== "suspended" ? (
+              <button type="button" className="danger-link" onClick={() => set(p.id, "suspended")}>
+                Sospendi
+              </button>
+            ) : null}
           </span>,
         ])}
       />
@@ -280,7 +316,7 @@ export function AdminCases() {
           c.status === "submitted" ? (
             <label key="a" className="block">
               <span className="sr-only">Assegna il caso a un medico</span>
-              <select defaultValue="" onChange={(e) => assign(c.id, e.target.value)} className="min-h-9 rounded-lg border border-line bg-paper px-2 text-sm">
+              <select defaultValue="" onChange={(e) => assign(c.id, e.target.value)} className="field-input mt-0 min-h-11 min-w-[11rem] text-base">
                 <option value="">Scegli…</option>
                 {verified.map((p) => <option key={p.id} value={p.id}>{p.fullName}</option>)}
               </select>
@@ -305,7 +341,7 @@ export function AdminAudit() {
   const { data, error } = useLoad<{ entries: { id: string; actor: string; action: string; target: string | null; userId: string | null; createdAt: string }[] }>("/api/v1/admin/registro");
   return (
     <Frame title="Registro" lead="Ultime 200 voci del registro append-only: azione, attore e riferimento. Mai dati sanitari." error={error}>
-      <Table label="Registro" head={["Data", "Attore", "Azione", "Riferimento", "Utente"]} rows={(data?.entries ?? []).map((e) => [formatDateTime(e.createdAt), e.actor, e.action, e.target ? <span key="t" className="tabular font-mono text-xs">{e.target.slice(0, 8)}…</span> : "—", e.userId ? <span key="u" className="tabular font-mono text-xs">{e.userId.slice(0, 8)}…</span> : "—"])} />
+      <Table label="Registro" head={["Data", "Attore", "Azione", "Riferimento", "Utente"]} rows={(data?.entries ?? []).map((e) => [formatDateTime(e.createdAt), e.actor, e.action, e.target ? <span key="t" className="tabular font-mono text-[0.9375rem]">{e.target.slice(0, 8)}…</span> : "—", e.userId ? <span key="u" className="tabular font-mono text-[0.9375rem]">{e.userId.slice(0, 8)}…</span> : "—"])} />
     </Frame>
   );
 }
@@ -315,14 +351,32 @@ export function AdminConfig() {
   return (
     <Frame title="Configurazione" lead="Solo lettura: i gate si cambiano con le variabili d'ambiente, mai da qui." error={error}>
       {data ? (
-        <dl className="grid gap-3 sm:grid-cols-2">
-          <div className="card p-5"><dt className="text-sm text-muted">Modalità</dt><dd className="mt-1 font-semibold text-ink">{data.public.mode}</dd></div>
-          <div className="card p-5"><dt className="text-sm text-muted">Pagamenti</dt><dd className="mt-1 font-semibold text-ink">{data.payments}</dd></div>
-          <div className="card p-5"><dt className="text-sm text-muted">Database</dt><dd className="mt-1 font-semibold text-ink">{data.database}</dd></div>
-          {Object.entries(data.flags).map(([k, v]) => (
-            <div key={k} className="card p-5"><dt className="text-sm text-muted">{k}</dt><dd className={clsx("mt-1 font-semibold", v ? "text-sage-deep" : "text-ink")}>{v ? "attivo" : "spento"}</dd></div>
-          ))}
-        </dl>
+        <>
+          <dl className="stat-grid stat-grid-3">
+            <div className="stat-card">
+              <dt>Modalità</dt>
+              <dd>{data.public.mode}</dd>
+            </div>
+            <div className="stat-card">
+              <dt>Pagamenti</dt>
+              <dd>{data.payments}</dd>
+            </div>
+            <div className="stat-card">
+              <dt>Database</dt>
+              <dd>{data.database}</dd>
+            </div>
+          </dl>
+          <h2 className="area-h2 mt-10">Interruttori dei servizi</h2>
+          <p className="meta mt-2">Lo stato di ogni interruttore, così come lo legge il sito in questo momento.</p>
+          <dl className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {Object.entries(data.flags).map(([k, v]) => (
+              <div key={k} className="flex items-center justify-between gap-3 rounded-[1.125rem] border border-line bg-paper px-4 py-3">
+                <dt className="min-w-0 font-mono text-[0.9375rem] text-ink-soft [overflow-wrap:anywhere]">{k}</dt>
+                <dd className={clsx("chip shrink-0", v ? "bg-marker-soft text-teal-deep" : "bg-mist text-muted")}>{v ? "attivo" : "spento"}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
       ) : null}
     </Frame>
   );

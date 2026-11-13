@@ -37,7 +37,7 @@ export const VIDEOS: Record<"principale" | "capisci" | "secondo-parere" | "parla
   "secondo-parere": {
     id: "secondo-parere",
     title: "Come funziona il secondo parere",
-    description: "La tua domanda, i documenti che scegli, il parere scritto e firmato da un medico.",
+    description: "La tua domanda, i documenti che scegli, il videoconsulto e la sintesi scritta dello specialista.",
     durationLabel: "circa 30 secondi",
     src: null,
     poster: null,

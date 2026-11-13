@@ -56,10 +56,13 @@ test("dalla home alla visita conclusa da paziente: nessun ruolo, un comando per 
   await page.getByRole("button", { name: /Invia la richiesta/ }).click();
   await expect(page).toHaveURL(/\/richieste\/[^/]+$/);
   await expect(page.getByRole("navigation", { name: "Prova come" })).toHaveCount(0);
-  await expect(page.locator("[data-percorso]")).toContainText("Il medico risponde");
+  // L'indicatore elenca sempre tutti i passi: si controlla quello segnato come attuale, non un nome qualunque.
+  const now = page.locator('[data-percorso] [aria-current="step"]');
+  await expect(now).toHaveCount(1);
+  await expect(now).toContainText("Il medico risponde");
   await page.getByRole("button", { name: /Fai rispondere il medico/ }).click();
   // Prima di pagare: prezzo, medico e regola di annullamento scritta.
-  await expect(page.locator("[data-percorso]")).toContainText("Confermi e paghi");
+  await expect(now).toContainText("Confermi e paghi");
   await expect(page.locator("[data-annullamento]")).toContainText("2 ore prima");
   await page.getByRole("button", { name: /Conferma e paga/ }).click();
   await expect(page.locator("[data-stato=\"confermata\"]").first()).toBeVisible();

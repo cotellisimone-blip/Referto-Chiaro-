@@ -15,7 +15,7 @@ const HOW = [
   { icon: Stethoscope, title: "Solo casi della tua specialità", text: "Ricevi una richiesta solo quando il paziente ha pagato e il caso è assegnato a te." },
   { icon: FileLock2, title: "Solo i documenti scelti", text: "Vedi soltanto i documenti che il paziente ha deciso di condividere, finché il caso è aperto. Ogni accesso è registrato." },
   { icon: KeyRound, title: "Accesso protetto", text: "Portale riservato con verifica in due passaggi e sessioni brevi." },
-  { icon: PenLine, title: "Parere firmato", text: "Il parere o il riepilogo porta il tuo nome e un'impronta digitale: dopo la firma non si modifica." },
+  { icon: PenLine, title: "Una firma che resta", text: "La sintesi o il riepilogo porta il tuo nome e un'impronta digitale: dopo la firma non si modifica." },
   { icon: ScrollText, title: "Testi informativi separati", text: "Le spiegazioni automatiche non diagnosticano e lo dicono. La valutazione clinica resta tua." },
   { icon: BadgeCheck, title: "Iscrizione verificata", text: "Prima di attivarti controlliamo l'iscrizione all'Albo. Il tuo profilo pubblico mostra solo dati verificati." },
 ];

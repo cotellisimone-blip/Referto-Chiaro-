@@ -42,7 +42,7 @@ export const ECOSYSTEM: EcosystemService[] = [
   {
     id: "secondo-parere",
     name: "Chiedi un secondo parere",
-    short: "Un medico abilitato e identificabile risponde per iscritto a un quesito specifico sui tuoi documenti. Mai un'intelligenza artificiale.",
+    short: "Uno specialista abilitato e identificabile esamina i tuoi documenti, ne parla con te in video e ti consegna una sintesi scritta su un quesito specifico. Mai una risposta automatica.",
     href: "/servizi/secondo-parere",
     status: "demo",
     icon: "stethoscope",

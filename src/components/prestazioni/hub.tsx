@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Stethoscope, UserRound } from "lucide-react";
+import { ArrowRight, FlaskConical, ShieldCheck, Stethoscope, UserRound } from "lucide-react";
 import { prestazionePrice } from "@/domain/prestazioni/listino";
 import { ConfirmButton, DemoNotice, RoleBar } from "./ui";
 import { PatientPathsProvider } from "./paths";
@@ -26,19 +26,25 @@ export function ProvaShell({ role, children }: { role: "paziente" | "medico" | "
 export function PatientShell({ children, vetrina = false }: { children: React.ReactNode; vetrina?: boolean }) {
   return (
     <PatientPathsProvider mode="public">
-      <div className="container-rc max-w-3xl py-6 pb-28 sm:py-10" data-percorso-paziente>
+      <div className="container-rc py-6 pb-28 sm:py-10" data-percorso-paziente>
         {children}
         {vetrina ? <ProvaAvvisami titolo="Ti interessa davvero? Avvisami quando parte." /> : null}
-        <div role="note" className="mt-10 rounded-2xl border border-dashed border-warn/60 bg-cream p-4 text-[0.9375rem] text-ink-soft print:hidden">
-          <p>
-            <strong className="text-ink">Prova dimostrativa.</strong> Medici, fasce, pagamenti e documenti sono simulati e restano in questo browser.
-          </p>
-          <p className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1">
-            <Link href="/prova" className="link inline-flex min-h-11 items-center font-semibold">Guarda anche il lato del medico e dell&apos;amministrazione</Link>
-            <ConfirmButton className="link inline-flex min-h-11 items-center font-semibold" question="Le richieste tornano allo stato iniziale." yes="Sì, ricomincia" onConfirm={resetDemo}>
-              Ricomincia la prova
-            </ConfirmButton>
-          </p>
+        <div role="note" className="callout callout-warn mt-12 print:hidden">
+          <span aria-hidden className="callout-ico">
+            <FlaskConical />
+          </span>
+          <div className="min-w-0">
+            <p className="callout-title">Prova dimostrativa</p>
+            <p className="callout-text">Medici, fasce, pagamenti e documenti sono simulati e restano in questo browser.</p>
+            <p className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-1">
+              <Link href="/prova" className="action-link">
+                Guarda anche il lato del medico e dell&apos;amministrazione
+              </Link>
+              <ConfirmButton className="action-link" question="Le richieste tornano allo stato iniziale." yes="Sì, ricomincia" onConfirm={resetDemo}>
+                Ricomincia la prova
+              </ConfirmButton>
+            </p>
+          </div>
         </div>
       </div>
     </PatientPathsProvider>
@@ -65,34 +71,47 @@ const CASI = [
 export function ProvaHub() {
   return (
     <ProvaShell role={null}>
-      <div className="space-y-10">
-        <div>
+      <div className="space-y-10 sm:space-y-12">
+        <header>
           <p className="eyebrow">Prova dimostrativa</p>
           <h1 className="display-lg mt-4 max-w-3xl">Una richiesta, tre punti di vista.</h1>
-          <p className="mt-4 max-w-2xl text-xl text-ink-soft">Paziente, medico e amministrazione lavorano sulla stessa richiesta: quello che fa uno lo vede subito l&apos;altro. Si prova bene anche da telefono.</p>
-        </div>
-        <DemoNotice>Lo stato resta al ricaricamento e tra un ruolo e l&apos;altro. «Ricomincia la prova», in alto, riporta tutto all&apos;inizio.</DemoNotice>
-        <ul className="grid gap-4 md:grid-cols-3">
+          <p className="lead mt-4 max-w-2xl">Paziente, medico e amministrazione lavorano sulla stessa richiesta: quello che fa uno lo vede subito l&apos;altro. Si prova bene anche da telefono.</p>
+        </header>
+        <ul className="grid gap-4 md:grid-cols-3 lg:gap-5">
           {ROLES.map(({ href, icon: Icon, title, text }) => (
             <li key={href}>
-              <Link href={href} className="card card-lift flex h-full flex-col p-6">
-                <Icon aria-hidden className="h-8 w-8 text-teal" />
-                <span className="mt-4 text-xl font-bold text-ink">{title}</span>
-                <span className="mt-2 text-[1.0625rem] text-ink-soft">{text}</span>
-                <span className="mt-auto inline-flex items-center gap-1 pt-4 font-semibold text-teal-deep">
-                  Entra <ArrowRight aria-hidden className="h-4 w-4" />
+              <Link href={href} className="card card-lift flex h-full flex-col p-6 sm:p-7">
+                <span aria-hidden className="tile-ico">
+                  <Icon />
+                </span>
+                <span className="mt-5 text-[1.375rem] font-extrabold leading-tight tracking-tight text-ink">{title}</span>
+                <span className="mt-2 text-[1.0625rem] leading-relaxed text-ink-soft">{text}</span>
+                <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[1.0625rem] font-bold text-teal-deep">
+                  Entra <ArrowRight aria-hidden className="h-5 w-5" />
                 </span>
               </Link>
             </li>
           ))}
         </ul>
+        <DemoNotice>Lo stato resta al ricaricamento e tra un ruolo e l&apos;altro. «Ricomincia la prova», in alto, riporta tutto all&apos;inizio.</DemoNotice>
         <section aria-labelledby="casi-titolo">
-          <h2 id="casi-titolo" className="text-2xl font-bold text-ink">Casi da provare</h2>
-          <ol className="mt-4 grid gap-3 md:grid-cols-2">
+          <h2 id="casi-titolo" className="area-h2">
+            Casi da provare
+          </h2>
+          <p className="area-lead">Otto percorsi brevi, dal più semplice al più delicato. Ognuno si prova in un paio di minuti.</p>
+          <ol className="mt-6 grid gap-4 md:grid-cols-2">
             {CASI.map((c, i) => (
-              <li key={c.t} className="card p-5">
-                <p className="font-semibold text-ink">{i + 1}. {c.t}</p>
-                <p className="mt-1 text-[1.0625rem] text-ink-soft">{c.s}</p>
+              <li key={c.t} className="card flex gap-4 p-5 sm:p-6">
+                <span aria-hidden className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-mist text-[1.0625rem] font-extrabold text-teal-deep">
+                  {i + 1}
+                </span>
+                <div className="min-w-0">
+                  <p className="area-h3">
+                    <span className="sr-only">{i + 1}. </span>
+                    {c.t}
+                  </p>
+                  <p className="mt-1.5 text-[1.0625rem] leading-relaxed text-ink-soft">{c.s}</p>
+                </div>
               </li>
             ))}
           </ol>
