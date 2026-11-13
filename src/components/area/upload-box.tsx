@@ -35,16 +35,16 @@ export function UploadBox() {
   }
 
   return (
-    <div className="rounded-[var(--radius-lg)] border-2 border-dashed border-teal/50 bg-paper p-6 sm:p-8">
+    <div className="rounded-[var(--radius-lg)] border-2 border-dashed border-teal/50 bg-paper p-6 sm:p-7">
       <div className="flex items-center gap-3">
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-mist">
-          <Upload aria-hidden className="h-5 w-5 text-teal" />
+        <span aria-hidden className="tile-ico tile-ico-sm">
+          <Upload />
         </span>
-        <h2 id="upload-titolo" className="font-serif text-xl">
+        <h2 id="upload-titolo" className="side-card-title text-xl">
           Carica un tuo referto
         </h2>
       </div>
-      <p className="mt-4 text-[0.9375rem] text-muted">Il PDF del laboratorio è la scelta migliore. Va bene anche una foto: dritta, nitida, con tutta la pagina visibile. Massimo 4 MB.</p>
+      <p className="mt-4 text-base text-ink-soft">Il PDF del laboratorio è la scelta migliore. Va bene anche una foto: dritta, nitida, con tutta la pagina visibile. Massimo 4 MB.</p>
       <input
         ref={input}
         type="file"
@@ -57,17 +57,17 @@ export function UploadBox() {
           e.target.value = "";
         }}
       />
-      <label htmlFor="file-upload" className={`btn btn-primary mt-5 w-full ${busy ? "pointer-events-none opacity-70" : ""}`} aria-disabled={busy}>
-        {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <Camera aria-hidden className="h-4 w-4" />}
+      <label htmlFor="file-upload" className={`btn btn-primary btn-lg mt-5 w-full max-sm:px-4 ${busy ? "pointer-events-none opacity-70" : ""}`} aria-disabled={busy}>
+        {busy ? <Loader2 aria-hidden className="h-5 w-5 shrink-0 animate-spin" /> : <Camera aria-hidden className="h-5 w-5 shrink-0" />}
         {busy ? `Caricamento di «${name}»…` : "Scegli il PDF o scatta una foto"}
       </label>
       {error ? (
-        <p role="alert" className="mt-4 rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">
+        <p role="alert" className="field-error mt-4">
           {error}
         </p>
       ) : null}
-      <p className="mt-4 flex gap-2 text-sm text-muted">
-        <ShieldCheck aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-sage-deep" />
+      <p className="mt-4 flex gap-2.5 text-base text-muted">
+        <ShieldCheck aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-sage-deep" />
         Il file viene cifrato e lo puoi cancellare quando vuoi. Prima di qualsiasi spiegazione ti chiediamo di controllare ogni valore letto.
       </p>
     </div>

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Download, FolderPlus, Loader2, RotateCcw, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Download, FolderPlus, Loader2, RotateCcw, Trash2 } from "lucide-react";
 import type { ExtractedDocument } from "@/domain/extraction/schema";
 import type { Explanation } from "@/domain/reporting/explanation-schema";
 import type { ReportEnrichment } from "@/domain/reporting/enrich";
@@ -57,13 +57,13 @@ interface Quote {
  */
 function NextStep({ documentId, prices }: { documentId: string; prices: Quote | null }) {
   return (
-    <div className="card p-5 sm:p-6" data-testid="prossimo-passo">
-      <h2 className="font-serif text-xl">Vuoi parlarne con un medico?</h2>
-      <p className="mt-2 text-[0.9375rem] text-muted">Un medico di medicina generale legge questo referto prima del videoconsulto e ti aiuta a capire il prossimo passo. Non devi ricaricare nulla.</p>
+    <div className="side-card" data-testid="prossimo-passo">
+      <h2 className="side-card-title">Vuoi parlarne con un medico?</h2>
+      <p className="mt-2 text-[1.0625rem] text-ink-soft">Un medico di medicina generale legge questo referto prima del videoconsulto e ti aiuta a capire il prossimo passo. Non devi ricaricare nulla.</p>
       <Link href={`/area-personale/appuntamenti?documento=${documentId}`} className="btn btn-secondary mt-4 w-full">
         Parla con un medico{prices?.medico ? ` · ${prices.medico}` : ""}
       </Link>
-      <p className="mt-4 text-[0.9375rem] text-muted">
+      <p className="mt-4 text-[1.0625rem] text-ink-soft">
         Hai già una diagnosi o una proposta di cura?{" "}
         <Link href={`/area-personale/secondo-parere?documento=${documentId}`} className="link font-semibold">
           Chiedi un secondo parere{prices?.parere ? ` (${prices.parere})` : ""}
@@ -234,13 +234,13 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <Link href="/area-personale" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-teal hover:underline">
-          <ArrowLeft aria-hidden className="h-4 w-4" /> Tutti i referti
+        <Link href="/area-personale" className="back-link">
+          <ArrowLeft aria-hidden /> Tutti i referti
         </Link>
         <div className="flex items-center gap-3">
           <StatusChip status={activeReport ? activeReport.status : doc.status} />
-          <button type="button" onClick={remove} className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-danger hover:bg-danger/10">
-            <Trash2 aria-hidden className="h-4 w-4" /> Elimina
+          <button type="button" onClick={remove} className="danger-link">
+            <Trash2 aria-hidden className="h-[1.125rem] w-[1.125rem]" /> Elimina
           </button>
         </div>
       </div>
@@ -248,15 +248,15 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
 
       {phase === "reading" ? (
         <section className="mt-10" aria-labelledby="step-titolo" aria-busy="true">
-          <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="display text-[1.75rem] outline-none sm:text-[2.25rem]">
+          <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title outline-none">
             Stiamo leggendo il documento.
           </h1>
-          <p className="mt-3 flex items-center gap-2 text-lg text-muted" role="status">
-            <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> Estraiamo ogni valore con unità, intervallo e riga di provenienza. Non indoviniamo mai un numero.
+          <p className="mt-3 flex items-start gap-2.5 text-lg text-ink-soft" role="status">
+            <Loader2 aria-hidden className="mt-1 h-5 w-5 shrink-0 animate-spin text-teal" /> Estraiamo ogni valore con unità, intervallo e riga di provenienza. Non indoviniamo mai un numero.
           </p>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-24 animate-pulse rounded-2xl bg-mist" />
+              <div key={i} className="h-24 animate-pulse rounded-[var(--radius-lg)] bg-mist" />
             ))}
           </div>
         </section>
@@ -264,16 +264,16 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
 
       {phase === "error" ? (
         <section className="mt-10" aria-labelledby="step-titolo">
-          <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="display text-[1.75rem] outline-none sm:text-[2.25rem]">
+          <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title outline-none">
             Qualcosa non è andato.
           </h1>
-          <div className="mt-6 rounded-2xl border border-danger/30 bg-paper p-6" role="alert">
-            <p className="font-semibold text-danger">{doc.status === "error" ? "Il documento non è stato letto." : "Il report non è stato generato."}</p>
-            <p className="mt-2 text-muted">{doc.errorMessage ?? latest?.errorMessage ?? "Errore sconosciuto."}</p>
-            <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mt-6 rounded-[var(--radius-lg)] border border-danger/30 bg-paper p-6 sm:p-7" role="alert">
+            <p className="text-xl font-extrabold text-danger">{doc.status === "error" ? "Il documento non è stato letto." : "Il report non è stato generato."}</p>
+            <p className="mt-2 text-[1.0625rem] text-ink-soft">{doc.errorMessage ?? latest?.errorMessage ?? "Errore sconosciuto."}</p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {doc.status !== "error" ? (
                 <button type="button" className="btn btn-primary" onClick={requestReport} disabled={busy}>
-                  <RotateCcw aria-hidden className="h-4 w-4" /> Riprova
+                  <RotateCcw aria-hidden className="h-5 w-5" /> Riprova
                 </button>
               ) : null}
               <Link href="/area-personale/nuovo" className="btn btn-secondary">
@@ -287,14 +287,14 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
       {phase === "verify" && extracted ? (
         <section className="mt-10" aria-labelledby="step-titolo">
           <div className="max-w-2xl">
-            <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="display text-[1.75rem] outline-none sm:text-[2.25rem]">
+            <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title outline-none">
               Controlla prima i valori.
             </h1>
-            <p className="mt-4 text-lg text-muted">
+            <p className="area-lead mt-4">
               {doc.title} · {extracted.laboratoryName} · {formatDate(extracted.reportDate)}. Conferma le righe corrette: spiegheremo solo quelle.
             </p>
           </div>
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start [&>*]:min-w-0">
+          <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10 [&>*]:min-w-0">
             <VerificationList
               observations={extracted.observations}
               confirmed={confirmed}
@@ -305,21 +305,21 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
             />
             <div className="lg:sticky lg:top-28">
               <Facsimile doc={extracted} highlightLine={highlight} compact />
-              <p className="mt-3 text-sm text-muted">Passa sopra o seleziona una voce per vedere la riga corrispondente.</p>
+              <p className="mt-3 hidden text-base text-muted lg:block">Passa sopra una voce, o selezionala, per vedere la riga corrispondente.</p>
             </div>
           </div>
           {error ? (
-            <p role="alert" className="mt-4 rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">
+            <p role="alert" className="field-error mt-4">
               {error}
             </p>
           ) : null}
           <div className="mt-10 flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-end">
             <div className="flex flex-col items-stretch gap-2 sm:items-end">
-              <button type="button" className="btn btn-primary" disabled={confirmed.length === 0 || busy} onClick={saveVerification} aria-describedby="hint-conferma">
-                {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null}
-                Salva e scegli il servizio <ArrowRight aria-hidden className="h-4 w-4" />
+              <button type="button" className="btn btn-primary btn-lg" disabled={confirmed.length === 0 || busy} onClick={saveVerification} aria-describedby="hint-conferma">
+                {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
+                Salva e scegli il servizio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </button>
-              <p id="hint-conferma" className="text-center text-sm text-muted sm:text-right">
+              <p id="hint-conferma" className="text-center text-base text-muted sm:text-right">
                 {confirmed.length === 0 ? "Conferma almeno un valore per continuare." : `${confirmed.length} di ${extracted.observations.filter(isReadableObs).length} valori leggibili confermati.`}
               </p>
             </div>
@@ -330,41 +330,58 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
       {phase === "service" ? (
         <section className="mt-10 tone-capisci" aria-labelledby="step-titolo">
           <div className="max-w-2xl">
-            <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="display text-[1.75rem] outline-none sm:text-[2.25rem]">
+            <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title outline-none">
               Rendi chiaro il tuo referto.
             </h1>
-            <p className="mt-4 text-lg text-muted">Valori confermati. Dopo il pagamento il report è pronto di norma in pochi minuti.</p>
+            <p className="area-lead mt-4">Valori confermati. Dopo il pagamento il report è pronto di norma in pochi minuti.</p>
           </div>
-          <div className="service-card mt-8 max-w-2xl p-6 sm:p-8" data-testid="capisci-offerta">
-            <p className="text-lg font-bold text-ink">{CAPISCI.name}</p>
-            <p className="mt-1 text-ink-soft">{CAPISCI.oneLiner}</p>
-            <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              {quote?.first ? <span className="tone-text text-base font-bold">Primo referto</span> : null}
-              <span className="stat-num text-[2.5rem] leading-none text-ink" data-testid="prezzo-capisci">{quote ? quote.amount : "…"}</span>
-              {quote?.first ? <span className="text-muted">poi {quote.standard} per referto</span> : quote ? <span className="text-muted">per referto</span> : null}
-            </p>
-            <ul className="mt-5 space-y-1.5 text-ink">
-              {CAPISCI.includes.map((x) => (
-                <li key={x}>· {x}</li>
-              ))}
-            </ul>
-            <p className="mt-5 text-sm text-muted">{INFORMATIVE_NOTE} Nessun medico rivede questo report: se vuoi parlarne con un medico, dopo puoi farlo senza ricaricare il documento.</p>
+          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,42rem)_minmax(0,1fr)] lg:items-start lg:gap-10">
+            <div className="form-card form-card-accent" data-testid="capisci-offerta">
+              <p className="form-card-title">{CAPISCI.name}</p>
+              <p className="form-card-text">{CAPISCI.oneLiner}</p>
+              <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                {quote?.first ? <span className="tone-text text-base font-bold">Primo referto</span> : null}
+                <span className="stat-num text-[2.5rem] leading-none text-ink" data-testid="prezzo-capisci">{quote ? quote.amount : "…"}</span>
+                {quote?.first ? <span className="text-muted">poi {quote.standard} per referto</span> : quote ? <span className="text-muted">per referto</span> : null}
+              </p>
+              <ul className="check-list mt-5">
+                {CAPISCI.includes.map((x) => (
+                  <li key={x}>
+                    <span aria-hidden className="check-dot">
+                      <Check />
+                    </span>
+                    <span>{x}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-5 border-t border-line pt-4 text-base text-muted">{INFORMATIVE_NOTE} Nessun medico rivede questo report: se vuoi parlarne con un medico, dopo puoi farlo senza ricaricare il documento.</p>
+            </div>
+            <aside aria-labelledby="dopo-titolo" className="side-card lg:mt-2">
+              <h2 id="dopo-titolo" className="side-card-title">
+                Dopo il pagamento
+              </h2>
+              <ol className="num-list num-list-mist mt-4 text-[1.0625rem] leading-snug text-ink-soft">
+                <li>Prepariamo il report: questa pagina si aggiorna da sola.</li>
+                <li>Lo leggi qui e scarichi il PDF da portare in visita.</li>
+                <li>Se vuoi parlarne con un medico, parti dal report: il documento è già caricato.</li>
+              </ol>
+            </aside>
           </div>
           {error ? (
-            <p role="alert" className="mt-4 rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">
+            <p role="alert" className="field-error mt-4">
               {error}
             </p>
           ) : null}
           <div className="mt-10 flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
             <button type="button" className="btn btn-ghost" onClick={reopenVerification}>
-              <ArrowLeft aria-hidden className="h-4 w-4" /> Torna al controllo valori
+              <ArrowLeft aria-hidden className="h-5 w-5" /> Torna al controllo valori
             </button>
             <div className="flex flex-col items-stretch gap-2 sm:items-end">
-              <button type="button" className="btn btn-primary" onClick={proceedToPayment} disabled={busy || !quote} aria-describedby="nota-pagamento">
-                {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null}
-                Paga {quote?.amount ?? ""} e ricevi il report <ArrowRight aria-hidden className="h-4 w-4" />
+              <button type="button" className="btn btn-primary btn-lg max-sm:px-4" onClick={proceedToPayment} disabled={busy || !quote} aria-describedby="nota-pagamento">
+                {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
+                Paga {quote?.amount ?? ""} e ricevi il report <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </button>
-              <p id="nota-pagamento" className="text-center text-sm text-muted sm:text-right">
+              <p id="nota-pagamento" className="text-center text-base text-muted sm:text-right">
                 Versione di prova: nessun addebito reale.
               </p>
             </div>
@@ -374,15 +391,15 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
 
       {phase === "processing" ? (
         <section className="mt-10" aria-labelledby="step-titolo" aria-busy="true">
-          <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="display text-[1.75rem] outline-none sm:text-[2.25rem]">
+          <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title outline-none">
             Prepariamo il report.
           </h1>
-          <p className="mt-3 flex items-center gap-2 text-lg text-muted" role="status">
-            <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> Stato: {activeReport?.status === "queued" ? "in coda" : "in elaborazione"}. Scriviamo la spiegazione e controlliamo che ogni numero coincida con il documento.
+          <p className="mt-3 flex items-start gap-2.5 text-lg text-ink-soft" role="status">
+            <Loader2 aria-hidden className="mt-1 h-5 w-5 shrink-0 animate-spin text-teal" /> Stato: {activeReport?.status === "queued" ? "in coda" : "in elaborazione"}. Scriviamo la spiegazione e controlliamo che ogni numero coincida con il documento.
           </p>
           <div className="mt-8 space-y-4">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="h-28 animate-pulse rounded-2xl bg-mist" />
+              <div key={i} className="h-28 animate-pulse rounded-[var(--radius-lg)] bg-mist" />
             ))}
           </div>
         </section>
@@ -390,37 +407,40 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
 
       {phase === "report" && readyReport?.explanation && extracted ? (
         <section className="mt-10" aria-labelledby="step-titolo">
-          <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="display max-w-2xl text-[1.75rem] outline-none sm:text-[2.25rem]">
+          <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title max-w-2xl outline-none">
             Il tuo referto, in parole semplici.
           </h1>
-          <p className="mt-2 text-sm text-muted">
+          <p className="meta mt-2">
             {doc.title} · Capisci il tuo referto · generato il {readyReport.generatedAt ? formatDate(readyReport.generatedAt) : ""}
           </p>
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start [&>*]:min-w-0">
+          {/* Su schermi larghi il documento resta in vista mentre si legge: è l'ultimo blocco della colonna e si ferma in alto. */}
+          <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] xl:gap-10 [&>*]:min-w-0">
             <ExplanationView explanation={readyReport.explanation} onReveal={reveal} enrichment={enrichment} />
-            <aside className="space-y-5 lg:sticky lg:top-28" aria-label="Documento e download">
-              <div className="card p-5 sm:p-6">
-                <h2 className="font-serif text-xl">Scarica il riepilogo</h2>
-                <p className="mt-2 text-[0.9375rem] text-muted">
-                  Un PDF A4 con valori, spiegazioni e domande{extracted.isSynthetic ? ", marcato DEMO – DATI SINTETICI" : ""}.
+            <aside className="flex flex-col gap-5" aria-label="Documento e download">
+              <div className="form-card form-card-accent">
+                <h2 className="form-card-title">Scarica il riepilogo</h2>
+                <p className="form-card-text">
+                  Un PDF in formato A4 con valori, spiegazioni e domande{extracted.isSynthetic ? ", marcato DEMO – DATI SINTETICI" : ""}.
                 </p>
-                <button type="button" className="btn btn-primary mt-5 w-full" onClick={() => downloadPdf(readyReport.id)} disabled={pdfState === "loading"}>
-                  {pdfState === "loading" ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <Download aria-hidden className="h-4 w-4" />}
+                <button type="button" className="btn btn-primary btn-lg mt-5 w-full max-sm:px-4" onClick={() => downloadPdf(readyReport.id)} disabled={pdfState === "loading"}>
+                  {pdfState === "loading" ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <Download aria-hidden className="h-5 w-5" />}
                   Scarica il PDF
                 </button>
-                <p className="mt-3 min-h-5 text-center text-sm" role="status">
+                <p className={pdfState === "done" || pdfState === "error" ? "mt-4 text-center text-base font-semibold" : undefined} role="status">
                   {pdfState === "done" ? <span className="text-sage-deep">Documento scaricato.</span> : null}
                   {pdfState === "error" ? <span className="text-danger">Download non riuscito. Riprova.</span> : null}
                 </p>
-                <Link href="/area-personale/dossier/nuovo" className="btn btn-secondary mt-2 w-full">
-                  <FolderPlus aria-hidden className="h-4 w-4" /> Metti in un dossier
+                <Link href="/area-personale/dossier/nuovo" className="btn btn-secondary mt-3 w-full">
+                  <FolderPlus aria-hidden className="h-5 w-5" /> Metti in un dossier
                 </Link>
               </div>
               <NextStep documentId={documentId} prices={quote} />
-              <Facsimile doc={extracted} highlightLine={highlight} compact />
-              <button type="button" className="btn btn-ghost w-full" onClick={reopenVerification}>
-                <RotateCcw aria-hidden className="h-4 w-4" /> Rivedi i valori confermati
-              </button>
+              <div className="space-y-3 xl:sticky xl:top-28">
+                <Facsimile doc={extracted} highlightLine={highlight} compact />
+                <button type="button" className="btn btn-ghost w-full" onClick={reopenVerification}>
+                  <RotateCcw aria-hidden className="h-5 w-5" /> Rivedi i valori confermati
+                </button>
+              </div>
             </aside>
           </div>
         </section>

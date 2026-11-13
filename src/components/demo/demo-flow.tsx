@@ -257,10 +257,11 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
           ) : null}
 
           {report.status === "ready" ? (
-            <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] lg:items-start lg:gap-10 [&>*]:min-w-0">
+            <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] xl:gap-10 [&>*]:min-w-0">
               <ExplanationView explanation={report.explanation} onReveal={reveal} />
 
-              <aside className="space-y-5 lg:sticky lg:top-28" aria-label="Documento e download">
+              {/* Su schermi larghi il documento resta in vista mentre si legge: è l'ultimo blocco della colonna e si ferma in alto. */}
+              <aside className="flex flex-col gap-5" aria-label="Documento e download">
                 <div className="form-card form-card-accent">
                   <h3 className="form-card-title">Scarica il riepilogo</h3>
                   <p className="form-card-text">
@@ -283,10 +284,12 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
                     {pdfState === "error" ? <span className="text-danger">Download non riuscito. Riprova.</span> : null}
                   </p>
                 </div>
-                <Facsimile highlightLine={highlight} compact />
-                <button type="button" className="btn btn-ghost w-full" onClick={restart}>
-                  <RotateCcw aria-hidden className="h-5 w-5" /> Ricomincia l&apos;esempio
-                </button>
+                <div className="space-y-3 xl:sticky xl:top-28">
+                  <Facsimile highlightLine={highlight} compact />
+                  <button type="button" className="btn btn-ghost w-full" onClick={restart}>
+                    <RotateCcw aria-hidden className="h-5 w-5" /> Ricomincia l&apos;esempio
+                  </button>
+                </div>
               </aside>
             </div>
           ) : null}

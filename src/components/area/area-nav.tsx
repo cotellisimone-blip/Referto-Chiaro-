@@ -6,6 +6,7 @@ import { clsx } from "clsx";
 import { CircleDashed, FilePlus2, Files, FolderOpen, LogOut, Receipt, Settings, Stethoscope, Video } from "lucide-react";
 import { LogoMark } from "@/components/brand/logo";
 import { api } from "./api";
+import { isFocusPath } from "./area-shell";
 
 /** Gerarchia ridotta (pacchetto «Memorabile»): documenti, pareri, appuntamenti. Il resto è di supporto. */
 const ITEMS = [
@@ -31,6 +32,8 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
   const pathname = usePathname();
   const router = useRouter();
   const isActive = (href: string, exact: boolean) => (exact ? pathname === href : pathname.startsWith(href));
+  // Nelle pagine di lettura (referto aperto, dossier) su computer la colonna non c'è: lo spazio va al contenuto.
+  const focus = isFocusPath(pathname);
   async function logout() {
     await api("/api/v1/auth/logout", { method: "POST", body: {} });
     router.push("/");
@@ -45,14 +48,14 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
   return (
     <>
       {/* Desktop: colonna laterale */}
-      <aside className="area-side hidden lg:block">
+      <aside className={clsx("area-side hidden", !focus && "lg:block")}>
         <div className="sticky top-28 space-y-5">
           <div className="card overflow-hidden">
             <div className="flex items-center gap-3 border-b border-line bg-[linear-gradient(135deg,var(--color-marker-soft),var(--color-mist))] px-5 py-4">
               <LogoMark className="h-8 w-8 shrink-0" />
-              <div className="min-w-0 text-sm">
-                <p className="font-bold text-ink">Il tuo spazio</p>
-                <p className="flex text-muted">{who}</p>
+              <div className="min-w-0 text-base leading-snug">
+                <p className="font-extrabold text-ink">Il tuo spazio</p>
+                <p className="flex items-center text-muted">{who}</p>
               </div>
             </div>
             <nav aria-label="Area personale" className="p-2">
@@ -65,32 +68,32 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
                         href={href}
                         aria-current={active ? "page" : undefined}
                         className={clsx(
-                          "flex min-h-11 items-center gap-3 rounded-xl px-3.5 text-[1rem] font-semibold transition-colors",
+                          "flex min-h-12 items-center gap-3 rounded-xl px-3.5 py-2 text-[1.0625rem] font-semibold leading-snug transition-colors",
                           active ? "bg-mist text-ink shadow-[inset_3px_0_0_var(--color-teal)]" : "text-ink-soft hover:bg-mist/70 hover:text-ink",
                         )}
                       >
-                        <Icon aria-hidden className={clsx("h-5 w-5", active ? "text-teal" : "text-muted")} /> {label}
+                        <Icon aria-hidden className={clsx("h-5 w-5 shrink-0", active ? "text-teal" : "text-muted")} /> {label}
                       </Link>
                     </li>
                   );
                 })}
               </ul>
               <Link href="/area-personale/nuovo" className="btn btn-primary mt-3 w-full">
-                <FilePlus2 aria-hidden className="h-4 w-4" /> Nuovo referto
+                <FilePlus2 aria-hidden className="h-5 w-5" /> Nuovo referto
               </Link>
-              <button type="button" onClick={logout} className="mt-1 flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl text-sm font-semibold text-teal hover:bg-mist">
-                <LogOut aria-hidden className="h-4 w-4" /> Esci
+              <button type="button" onClick={logout} className="mt-1 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl text-base font-bold text-teal-deep hover:bg-mist">
+                <LogOut aria-hidden className="h-[1.125rem] w-[1.125rem]" /> Esci
               </button>
             </nav>
           </div>
           <div className="rounded-[var(--radius-lg)] border border-dashed border-line p-5">
-            <p className="flex items-center gap-2 text-sm font-bold text-ink">
-              <CircleDashed aria-hidden className="h-4 w-4 text-teal" /> In preparazione
+            <p className="flex items-center gap-2 text-base font-extrabold text-ink">
+              <CircleDashed aria-hidden className="h-[1.125rem] w-[1.125rem] text-teal" /> In preparazione
             </p>
-            <ul className="mt-3 space-y-1">
+            <ul className="mt-2">
               {COMING.map((c) => (
                 <li key={c.href}>
-                  <Link href={c.href} className="inline-flex min-h-9 items-center text-[0.9375rem] text-muted hover:text-teal">
+                  <Link href={c.href} className="inline-flex min-h-11 items-center text-base text-ink-soft hover:text-teal-deep hover:underline">
                     {c.label}
                   </Link>
                 </li>
@@ -101,13 +104,13 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
       </aside>
 
       {/* Mobile: intestazione compatta + barra in basso */}
-      <div className="flex items-center justify-between gap-3 border-b border-line pb-4 text-sm text-muted lg:hidden">
+      <div className="flex items-center justify-between gap-3 border-b border-line pb-4 text-base text-muted lg:hidden">
         <span className="flex min-w-0 items-center gap-2">
           <LogoMark className="h-7 w-7 shrink-0" />
           {who}
         </span>
-        <button type="button" onClick={logout} className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 font-semibold text-teal hover:bg-mist">
-          <LogOut aria-hidden className="h-4 w-4" /> Esci
+        <button type="button" onClick={logout} className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 font-bold text-teal-deep hover:bg-mist">
+          <LogOut aria-hidden className="h-[1.125rem] w-[1.125rem]" /> Esci
         </button>
       </div>
       <nav aria-label="Area personale" className="no-print fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
@@ -119,7 +122,7 @@ export function AreaNav({ email, displayName, isDemo }: { email: string; display
                 <Link
                   href={href}
                   aria-current={active ? "page" : undefined}
-                  className={clsx("flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-[0.75rem] font-semibold leading-tight", active ? "text-teal" : "text-muted")}
+                  className={clsx("flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-[0.875rem] font-bold leading-tight", active ? "text-teal-deep" : "text-muted")}
                 >
                   <span className={clsx("flex h-8 w-12 items-center justify-center rounded-full", active && "bg-marker-soft")}>
                     <Icon aria-hidden className="h-5 w-5" />

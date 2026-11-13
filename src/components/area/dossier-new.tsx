@@ -49,18 +49,18 @@ export function DossierNew() {
 
   return (
     <form onSubmit={create} className="max-w-3xl">
-      <h1 className="display text-[2rem] sm:text-[2.5rem]">Nuovo dossier</h1>
-      <p className="mt-3 text-lg text-muted">Scegli almeno due referti con report pronto. Li ordiniamo per data e confrontiamo solo gli esami con lo stesso nome e la stessa unità.</p>
+      <h1 className="area-title">Nuovo dossier</h1>
+      <p className="area-lead">Scegli almeno due referti con report pronto. Li ordiniamo per data e confrontiamo solo gli esami con lo stesso nome e la stessa unità.</p>
       <div className="mt-6">
-        <label htmlFor="titolo" className="block text-sm font-semibold text-ink">
+        <label htmlFor="titolo" className="field-label">
           Titolo
         </label>
-        <input id="titolo" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} required className="mt-1.5 block min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-ink focus:border-teal" />
+        <input id="titolo" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} required className="field-input" />
       </div>
       <fieldset className="mt-6">
-        <legend className="text-sm font-semibold text-ink">Referti con report pronto</legend>
+        <legend className="field-label">Referti con report pronto</legend>
         {docs.length < 2 ? (
-          <p className="mt-3 rounded-2xl border border-dashed border-muted/40 p-5 text-muted">
+          <p className="mt-3 rounded-[var(--radius-lg)] border border-dashed border-muted/40 bg-paper p-5 text-[1.0625rem] text-ink-soft">
             Servono almeno due referti con report pronto.{" "}
             <Link href="/area-personale/nuovo" className="link">
               Aggiungi un referto
@@ -73,11 +73,11 @@ export function DossierNew() {
               const on = selected.includes(d.id);
               return (
                 <li key={d.id}>
-                  <label className={clsx("flex cursor-pointer items-start gap-3 rounded-2xl border bg-paper p-4", on ? "border-teal/60" : "border-line")}>
-                    <input type="checkbox" checked={on} onChange={() => setSelected((s) => (on ? s.filter((x) => x !== d.id) : [...s, d.id]))} className="mt-0.5 h-5 w-5 accent-[var(--color-teal)]" />
+                  <label className={clsx("flex cursor-pointer items-start gap-4 rounded-[1.25rem] border-[1.5px] bg-paper p-4 transition-colors sm:p-5", on ? "border-teal bg-[color-mix(in_srgb,var(--color-marker-soft)_45%,var(--color-paper))]" : "border-line hover:border-teal/50")}>
+                    <input type="checkbox" checked={on} onChange={() => setSelected((s) => (on ? s.filter((x) => x !== d.id) : [...s, d.id]))} className="mt-0.5 h-6 w-6 shrink-0 accent-[var(--color-teal)]" />
                     <span>
-                      <span className="block font-semibold text-ink">{d.title}</span>
-                      <span className="block text-sm text-muted">aggiunto il {formatDateTime(d.createdAt)}</span>
+                      <span className="block text-lg font-bold leading-snug text-ink">{d.title}</span>
+                      <span className="block text-base text-muted">aggiunto il {formatDateTime(d.createdAt)}</span>
                     </span>
                   </label>
                 </li>
@@ -87,13 +87,13 @@ export function DossierNew() {
         )}
       </fieldset>
       {error ? (
-        <p role="alert" className="mt-4 rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">
+        <p role="alert" className="field-error mt-4">
           {error}
         </p>
       ) : null}
-      <button type="submit" className="btn btn-primary mt-8" disabled={busy || selected.length < 2}>
-        {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null}
-        Crea il dossier <ArrowRight aria-hidden className="h-4 w-4" />
+      <button type="submit" className="btn btn-primary btn-lg mt-8 w-full sm:w-auto" disabled={busy || selected.length < 2}>
+        {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
+        Crea il dossier <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
       </button>
     </form>
   );

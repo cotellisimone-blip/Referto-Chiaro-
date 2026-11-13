@@ -37,27 +37,27 @@ export function DossierList() {
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="display text-[2rem] sm:text-[2.5rem]">I tuoi dossier</h1>
-          <p className="mt-2 max-w-2xl text-muted">Più referti di date diverse in un solo documento ordinato, con i confronti solo tra esami davvero confrontabili.</p>
+          <h1 className="area-title">I tuoi dossier</h1>
+          <p className="area-lead">Più referti di date diverse in un solo documento ordinato, con i confronti solo tra esami davvero confrontabili.</p>
         </div>
         <Link href="/area-personale/dossier/nuovo" className="btn btn-primary">
-          <FolderPlus aria-hidden className="h-4 w-4" /> Nuovo dossier
+          <FolderPlus aria-hidden className="h-5 w-5" /> Nuovo dossier
         </Link>
       </div>
       {list.length === 0 ? (
-        <p className="mt-8 rounded-2xl border border-dashed border-muted/40 p-6 text-muted">Nessun dossier. Servono almeno due referti con report pronto.</p>
+        <p className="mt-8 rounded-[var(--radius-lg)] border border-dashed border-muted/40 bg-paper p-6 text-[1.0625rem] text-ink-soft">Nessun dossier. Servono almeno due referti con report pronto.</p>
       ) : (
         <ul className="mt-8 grid gap-4 md:grid-cols-2" aria-label="Elenco dei dossier">
           {list.map((d) => (
             <li key={d.id} className="card flex flex-col p-5 sm:p-6">
               <div className="flex items-start justify-between gap-3">
-                <h2 className="font-serif text-xl leading-tight">{d.title}</h2>
+                <h2 className="area-h2 text-[1.375rem]">{d.title}</h2>
                 <StatusChip status={d.status} />
               </div>
-              <p className="mt-2 text-sm text-muted">
+              <p className="meta mt-2">
                 {d.documentIds.length} referti · creato il {formatDateTime(d.createdAt)}
               </p>
-              {d.errorMessage ? <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{d.errorMessage}</p> : null}
+              {d.errorMessage ? <p className="field-error mt-3">{d.errorMessage}</p> : null}
               <div className="mt-auto pt-5">
                 <Link href={`/area-personale/dossier/${d.id}`} className="btn btn-secondary w-full sm:w-auto">
                   Apri il dossier <ArrowRight aria-hidden className="h-4 w-4" />

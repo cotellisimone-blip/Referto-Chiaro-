@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2, MessageSquareText, Stethoscope } from "lucide-react";
+import { ArrowLeft, ArrowRight, CreditCard, Loader2, MessageSquareText, Stethoscope } from "lucide-react";
 import { api, formatDateTime } from "./api";
+import { SimulationCallout } from "./ui";
 import { Facsimile } from "@/components/report/facsimile";
 import type { ExtractedDocument } from "@/domain/extraction/schema";
 
@@ -42,28 +43,37 @@ export function PaymentPending({ payPath, label = "Completa il pagamento" }: { p
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   return (
-    <section role="status" className="rounded-2xl border border-warn/40 bg-cream p-5 sm:p-6">
-      <p className="font-semibold text-ink">Pagamento in sospeso</p>
-      <p className="mt-1 text-ink-soft">La richiesta è pronta ma non è ancora stata inviata al medico: lo sarà appena il pagamento risulta registrato.</p>
-      {error ? <p role="alert" className="mt-3 text-sm text-danger">{error}</p> : null}
-      <button
-        type="button"
-        className="btn btn-primary mt-4"
-        disabled={busy}
-        onClick={async () => {
-          setBusy(true);
-          setError(null);
-          try {
-            const r = await api<{ checkoutUrl: string }>(payPath, { method: "POST", body: {} });
-            goToCheckout(router, r.checkoutUrl);
-          } catch (e) {
-            setError(e instanceof Error ? e.message : "Errore");
-            setBusy(false);
-          }
-        }}
-      >
-        {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null} {label}
-      </button>
+    <section role="status" className="callout callout-warn">
+      <span aria-hidden className="callout-ico">
+        <CreditCard />
+      </span>
+      <div className="min-w-0">
+        <p className="callout-title">Pagamento in sospeso</p>
+        <p className="callout-text">La richiesta è pronta ma non è ancora stata inviata al medico: lo sarà appena il pagamento risulta registrato.</p>
+        {error ? (
+          <p role="alert" className="field-error mt-3">
+            {error}
+          </p>
+        ) : null}
+        <button
+          type="button"
+          className="btn btn-primary mt-4 max-sm:w-full"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            setError(null);
+            try {
+              const r = await api<{ checkoutUrl: string }>(payPath, { method: "POST", body: {} });
+              goToCheckout(router, r.checkoutUrl);
+            } catch (e) {
+              setError(e instanceof Error ? e.message : "Errore");
+              setBusy(false);
+            }
+          }}
+        >
+          {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null} {label}
+        </button>
+      </div>
     </section>
   );
 }
@@ -76,12 +86,9 @@ export function CaseChip({ status, awaitingPayment = false }: { status: string; 
 
 export function SimulationNotice() {
   return (
-    <div role="note" className="rounded-2xl border border-dashed border-warn/60 bg-cream p-5">
-      <p className="text-sm font-semibold text-ink">Simulazione, non un servizio medico</p>
-      <p className="mt-1 text-sm text-ink-soft">
-        In questa versione nessun medico reale risponde: il «medico dimostrativo» serve a mostrare il percorso su referti inventati. Il servizio vero partirà solo dopo i requisiti descritti in <Link href="/servizi/secondo-parere" className="link">Secondo parere</Link>.
-      </p>
-    </div>
+    <SimulationCallout>
+      In questa versione nessun medico reale risponde: il «medico dimostrativo» serve a mostrare il percorso su referti inventati. Il servizio vero partirà solo dopo i requisiti descritti in <Link href="/servizi/secondo-parere" className="link">Secondo parere</Link>.
+    </SimulationCallout>
   );
 }
 
@@ -133,75 +140,79 @@ export function CasesPage({ price }: { price?: string | null }) {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="display text-[2rem] sm:text-[2.5rem]">I miei pareri</h1>
-        <p className="mt-2 text-muted">Una domanda precisa sui tuoi documenti, a uno specialista della disciplina appropriata, che può chiederti altri documenti o dirti che serve una visita. Vedi il prezzo prima di confermare; in questa versione il pagamento è simulato e non c&apos;è alcun addebito.</p>
+        <h1 className="area-title">I miei pareri</h1>
+        <p className="area-lead">Una domanda precisa sui tuoi documenti, a uno specialista della disciplina appropriata, che può chiederti altri documenti o dirti che serve una visita. Vedi il prezzo prima di confermare; in questa versione il pagamento è simulato e non c&apos;è alcun addebito.</p>
       </div>
       <SimulationNotice />
       <section aria-labelledby="richieste-titolo">
-        <h2 id="richieste-titolo" className="font-serif text-2xl text-ink">Le tue richieste</h2>
-        {error ? <p role="alert" className="mt-3 text-danger">{error}</p> : null}
-        {cases && cases.length === 0 ? <p className="mt-3 text-muted">Nessuna richiesta finora.</p> : null}
-        <ul className="mt-4 grid gap-3 md:grid-cols-2" aria-label="Richieste di secondo parere">
+        <h2 id="richieste-titolo" className="area-h2">Le tue richieste</h2>
+        {error ? <p role="alert" className="field-error mt-3">{error}</p> : null}
+        {cases && cases.length === 0 ? <p className="mt-3 text-[1.0625rem] text-muted">Nessuna richiesta finora.</p> : null}
+        <ul className="mt-4 grid gap-4 md:grid-cols-2" aria-label="Richieste di secondo parere">
           {(cases ?? []).map((c) => (
-            <li key={c.id} className="card p-5">
-              <div className="flex items-start justify-between gap-3">
+            <li key={c.id} className="card flex flex-col p-5 sm:p-6">
+              <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
                 <div>
-                  <p className="font-semibold text-ink">{c.specialty}</p>
-                  <p className="mt-1 text-sm text-muted">{formatDateTime(c.createdAt)}</p>
+                  <p className="area-h3">{c.specialty}</p>
+                  <p className="meta mt-1">{formatDateTime(c.createdAt)}</p>
                 </div>
                 <CaseChip status={c.status} awaitingPayment={c.awaitingPayment} />
               </div>
-              <p className="mt-3 line-clamp-2 text-[0.9375rem] text-ink-soft">{c.question}</p>
-              <Link href={`/area-personale/secondo-parere/${c.id}`} className="btn btn-secondary mt-4 min-h-11 text-sm">
-                Apri <ArrowRight aria-hidden className="h-4 w-4" />
-              </Link>
+              <p className="mt-3 line-clamp-2 text-[1.0625rem] text-ink-soft">{c.question}</p>
+              <div className="mt-auto pt-4">
+                <Link href={`/area-personale/secondo-parere/${c.id}`} className="btn btn-secondary btn-sm">
+                  Apri <ArrowRight aria-hidden className="h-4 w-4" />
+                </Link>
+              </div>
             </li>
           ))}
         </ul>
       </section>
-      <section aria-labelledby="nuova-titolo" className="card p-6 sm:p-8">
-        <h2 id="nuova-titolo" className="font-serif text-2xl text-ink">Nuova richiesta</h2>
+      <section aria-labelledby="nuova-titolo" className="form-card scroll-mt-28">
+        <h2 id="nuova-titolo" className="form-card-title">Nuova richiesta</h2>
         {docs.length === 0 ? (
-          <p className="mt-3 text-muted">
+          <p className="form-card-text">
             Serve un referto con i valori confermati. <Link href="/area-personale/nuovo" className="link">Aggiungi un referto di esempio</Link>.
           </p>
         ) : (
-          <form onSubmit={submit} className="mt-5 space-y-5">
+          <form onSubmit={submit} className="mt-6 space-y-6">
             <div>
-              <label htmlFor="caso-doc" className="text-sm font-semibold text-ink">Referto</label>
-              <select id="caso-doc" value={documentId} onChange={(e) => setDocumentId(e.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-ink">
+              <label htmlFor="caso-doc" className="field-label">Referto</label>
+              <select id="caso-doc" value={documentId} onChange={(e) => setDocumentId(e.target.value)} className="field-input">
                 {docs.map((d) => (
                   <option key={d.id} value={d.id}>{d.title}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label htmlFor="caso-spec" className="text-sm font-semibold text-ink">Specialità</label>
-              <p id="caso-spec-aiuto" className="mt-1 text-sm text-muted">
+              <label htmlFor="caso-spec" className="field-label">Specialità</label>
+              <p id="caso-spec-aiuto" className="field-hint">
                 Non sai quale specialista ti serve? <Link href="/area-personale/appuntamenti" className="link">Parti da un medico di medicina generale</Link>.
               </p>
-              <select id="caso-spec" aria-describedby="caso-spec-aiuto" value={specialty} onChange={(e) => setSpecialty(e.target.value)} className="mt-2 min-h-12 w-full rounded-xl border border-line bg-paper px-4 text-ink">
+              <select id="caso-spec" aria-describedby="caso-spec-aiuto" value={specialty} onChange={(e) => setSpecialty(e.target.value)} className="field-input">
                 {specialties.map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label htmlFor="caso-q" className="text-sm font-semibold text-ink">La tua domanda (da 20 a 500 caratteri)</label>
-              <textarea id="caso-q" value={question} onChange={(e) => setQuestion(e.target.value)} required minLength={20} maxLength={500} rows={5} className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-ink" placeholder="Esempio: alcuni valori sono fuori dall'intervallo stampato; vorrei capire quali approfondimenti chiedere al mio medico." />
-              <p className="mt-1 text-xs text-muted">Non inserire dati di persone reali: questa è una simulazione. Con l&apos;account demo condiviso la domanda è visibile a chiunque usi il medico dimostrativo.</p>
+              <label htmlFor="caso-q" className="field-label">La tua domanda (da 20 a 500 caratteri)</label>
+              <textarea id="caso-q" value={question} onChange={(e) => setQuestion(e.target.value)} required minLength={20} maxLength={500} rows={5} className="field-input" placeholder="Esempio: alcuni valori sono fuori dall'intervallo stampato; vorrei capire quali approfondimenti chiedere al mio medico." />
+              <p className="field-hint">Non inserire dati di persone reali: questa è una simulazione. Con l&apos;account demo condiviso la domanda è visibile a chiunque usi il medico dimostrativo.</p>
             </div>
-            <label className="flex items-start gap-3 text-[0.9375rem] text-ink-soft">
-              <input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} required className="mt-1 h-5 w-5 rounded border-line" />
-              <span>Ho capito che questa è una simulazione: nessun medico reale leggerà la richiesta e la risposta non ha valore clinico.</span>
-            </label>
-            <label className="flex items-start gap-3 text-[0.9375rem] text-ink-soft">
-              <input type="checkbox" checked={share} onChange={(e) => setShare(e.target.checked)} required className="mt-1 h-5 w-5 rounded border-line" />
-              <span>Acconsento a condividere questo referto e la mia domanda con il medico assegnato, solo per rispondere alla richiesta.</span>
-            </label>
-            {error ? <p role="alert" className="rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">{error}</p> : null}
-            <button type="submit" disabled={busy} className="btn btn-primary">
-              {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : <Stethoscope aria-hidden className="h-4 w-4" />} Continua al pagamento{price ? ` (${price})` : ""}
+            <div>
+              <label className="field-check">
+                <input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} required />
+                <span>Ho capito che questa è una simulazione: nessun medico reale leggerà la richiesta e la risposta non ha valore clinico.</span>
+              </label>
+              <label className="field-check">
+                <input type="checkbox" checked={share} onChange={(e) => setShare(e.target.checked)} required />
+                <span>Acconsento a condividere questo referto e la mia domanda con il medico assegnato, solo per rispondere alla richiesta.</span>
+              </label>
+            </div>
+            {error ? <p role="alert" className="field-error">{error}</p> : null}
+            <button type="submit" disabled={busy} className="btn btn-primary btn-lg w-full sm:w-auto">
+              {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <Stethoscope aria-hidden className="h-5 w-5" />} Continua al pagamento{price ? ` (${price})` : ""}
             </button>
           </form>
         )}
@@ -241,42 +252,44 @@ export function CaseDetail({ caseId }: { caseId: string }) {
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href="/area-personale/secondo-parere" className="link text-sm">← Tutte le richieste</Link>
+        <Link href="/area-personale/secondo-parere" className="back-link">
+          <ArrowLeft aria-hidden /> Tutte le richieste
+        </Link>
         <CaseChip status={c.status} awaitingPayment={c.awaitingPayment} />
       </div>
       <div>
-        <h1 className="display text-[2rem] sm:text-[2.5rem]">Richiesta di secondo parere</h1>
-        <p className="mt-2 text-muted">{c.specialty} · inviata il {formatDateTime(c.createdAt)}{data.physician ? ` · ${data.physician.fullName}` : ""}</p>
+        <h1 className="area-title">Richiesta di secondo parere</h1>
+        <p className="area-lead">{c.specialty} · inviata il {formatDateTime(c.createdAt)}{data.physician ? ` · ${data.physician.fullName}` : ""}</p>
       </div>
       {c.isSimulated ? <SimulationNotice /> : null}
       {c.awaitingPayment && c.status === "submitted" ? <PaymentPending payPath={`/api/v1/area/casi/${caseId}/pagamento`} /> : null}
-      <section className="card p-6" aria-labelledby="domanda-titolo">
-        <h2 id="domanda-titolo" className="flex items-center gap-2 text-lg font-semibold text-ink"><MessageSquareText aria-hidden className="h-5 w-5 text-teal" /> La tua domanda</h2>
-        <p className="mt-3 whitespace-pre-wrap text-ink-soft">{c.question}</p>
-        {c.documentId ? <Link href={`/area-personale/documenti/${c.documentId}`} className="link mt-3 inline-block text-sm">Apri il referto allegato</Link> : null}
+      <section className="card p-6 sm:p-7" aria-labelledby="domanda-titolo">
+        <h2 id="domanda-titolo" className="area-h2 flex items-center gap-2.5"><MessageSquareText aria-hidden className="h-6 w-6 shrink-0 text-teal" /> La tua domanda</h2>
+        <p className="mt-3 whitespace-pre-wrap text-[1.0625rem] text-ink-soft">{c.question}</p>
+        {c.documentId ? <Link href={`/area-personale/documenti/${c.documentId}`} className="link mt-2 inline-flex min-h-11 items-center text-[1.0625rem] font-semibold">Apri il referto allegato</Link> : null}
       </section>
       {c.status === "answered" || c.status === "closed" ? (
         c.answer ? (
-          <section className="card border-sage/40 p-6" aria-labelledby="parere-titolo">
-            <h2 id="parere-titolo" className="text-lg font-semibold text-ink">Parere</h2>
-            <p className="mt-3 whitespace-pre-wrap text-ink">{c.answer}</p>
-            <p className="mt-4 text-sm text-muted">
+          <section className="card border-sage/40 p-6 sm:p-7" aria-labelledby="parere-titolo">
+            <h2 id="parere-titolo" className="area-h2">Parere</h2>
+            <p className="mt-3 whitespace-pre-wrap text-lg text-ink">{c.answer}</p>
+            <p className="meta mt-4 border-t border-line pt-4">
               Firmato da {data.physician?.fullName ?? "medico"} il {c.answeredAt ? formatDateTime(c.answeredAt) : "—"} · impronta <span className="tabular font-mono">{c.answerHash?.slice(0, 12)}</span>
             </p>
           </section>
         ) : null
       ) : null}
       {c.status === "declined" ? (
-        <section className="card border-warn/40 p-6" aria-labelledby="rifiuto-titolo">
-          <h2 id="rifiuto-titolo" className="text-lg font-semibold text-ink">Il medico non ha accettato la richiesta</h2>
-          <p className="mt-3 text-ink-soft">{c.declineReason}</p>
-          <p className="mt-3 text-sm text-muted">Il pagamento ti viene restituito. Puoi inviare una nuova richiesta, se ha senso, con una domanda diversa.</p>
+        <section className="card border-warn/40 p-6 sm:p-7" aria-labelledby="rifiuto-titolo">
+          <h2 id="rifiuto-titolo" className="area-h2">Il medico non ha accettato la richiesta</h2>
+          <p className="mt-3 text-[1.0625rem] text-ink-soft">{c.declineReason}</p>
+          <p className="mt-3 text-[1.0625rem] font-semibold text-ink">Il pagamento ti viene restituito. Puoi inviare una nuova richiesta, se ha senso, con una domanda diversa.</p>
         </section>
       ) : null}
-      {["submitted", "accepted"].includes(c.status) && !c.awaitingPayment ? <p className="text-muted" aria-live="polite">In attesa del medico. Questa pagina si aggiorna da sola.</p> : null}
+      {["submitted", "accepted"].includes(c.status) && !c.awaitingPayment ? <p className="text-[1.0625rem] text-ink-soft" aria-live="polite">In attesa del medico. Questa pagina si aggiorna da sola.</p> : null}
       <section aria-labelledby="storico-titolo">
-        <h2 id="storico-titolo" className="text-lg font-semibold text-ink">Storico</h2>
-        <ol className="mt-3 space-y-2 text-sm text-muted">
+        <h2 id="storico-titolo" className="area-h2">Storico</h2>
+        <ol className="mt-3 space-y-2 text-base text-muted">
           {data.events.map((e) => (
             <li key={e.id}>
               <span className="tabular">{formatDateTime(e.createdAt)}</span> · <span className="text-ink">{EVENT[e.kind] ?? e.kind}</span>{e.detail ? ` — ${e.detail}` : ""}

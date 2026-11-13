@@ -107,8 +107,8 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
   if (notFound) {
     return (
       <div role="alert" className="max-w-xl">
-        <h1 className="display text-[1.75rem]">Ordine non trovato.</h1>
-        <p className="mt-3 text-muted">Questo ordine non esiste o non è tuo.</p>
+        <h1 className="area-title">Ordine non trovato.</h1>
+        <p className="area-lead">Questo ordine non esiste o non è tuo.</p>
         <Link href="/area-personale/ordini" className="btn btn-secondary mt-5">
           Vai ai tuoi ordini
         </Link>
@@ -129,53 +129,53 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
 
   return (
     <div className="max-w-2xl">
-      <Link href="/area-personale/ordini" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-teal hover:underline">
-        <ArrowLeft aria-hidden className="h-4 w-4" /> Tutti gli ordini
+      <Link href="/area-personale/ordini" className="back-link">
+        <ArrowLeft aria-hidden /> Tutti gli ordini
       </Link>
-      <h1 className="display mt-3 text-[1.75rem] sm:text-[2.25rem]">Il tuo ordine.</h1>
+      <h1 className="area-title mt-3">Il tuo ordine.</h1>
 
-      <dl className="card mt-6 grid gap-4 p-5 sm:grid-cols-2 sm:p-6">
+      <dl className="kv card mt-6 p-5 sm:grid-cols-2 sm:p-7">
         <div>
-          <dt className="text-sm text-muted">Servizio</dt>
-          <dd className="font-serif text-2xl">{SERVICE_NAME[order.service]}</dd>
+          <dt>Servizio</dt>
+          <dd className="text-[1.375rem] font-extrabold leading-tight tracking-tight">{SERVICE_NAME[order.service]}</dd>
         </div>
         <div>
-          <dt className="text-sm text-muted">Importo</dt>
-          <dd className="tabular font-serif text-2xl">{formatEuro(order.amountCents)}</dd>
+          <dt>Importo</dt>
+          <dd className="tabular text-[1.375rem] font-extrabold leading-tight tracking-tight">{formatEuro(order.amountCents)}</dd>
         </div>
         <div>
-          <dt className="text-sm text-muted">Stato</dt>
-          <dd className="mt-1">
+          <dt>Stato</dt>
+          <dd className="mt-1.5">
             <StatusChip status={order.status} kind="order" />
           </dd>
         </div>
         <div>
-          <dt className="text-sm text-muted">Creato il</dt>
+          <dt>Creato il</dt>
           <dd>{formatDateTime(order.createdAt)}</dd>
         </div>
       </dl>
 
       {error ? (
-        <p role="alert" className="mt-4 rounded-xl border border-danger/30 bg-paper px-4 py-3 text-sm text-danger">
+        <p role="alert" className="field-error mt-4">
           {error}
         </p>
       ) : null}
 
       {order.status === "pending" && order.provider === "simulated" ? (
-        <section aria-labelledby="sim-titolo" className="mt-6 rounded-2xl border border-warn/40 bg-cream p-5 sm:p-6">
-          <h2 id="sim-titolo" className="font-serif text-xl">
+        <section aria-labelledby="sim-titolo" className="mt-6 rounded-[var(--radius-lg)] border border-warn/40 bg-cream p-5 sm:p-7">
+          <h2 id="sim-titolo" className="area-h2">
             Pagamento simulato — nessun addebito
           </h2>
-          <p className="mt-2 text-[0.9375rem] text-ink">Questa è una dimostrazione: non serve nessuna carta e nessun importo verrà addebitato. Scegli l&apos;esito da provare.</p>
+          <p className="mt-2 text-[1.0625rem] text-ink">Questa è una dimostrazione: non serve nessuna carta e nessun importo verrà addebitato. Scegli l&apos;esito da provare.</p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-            <button type="button" className="btn btn-primary" disabled={busy} onClick={() => simulate("pagato")}>
-              {busy ? <Loader2 aria-hidden className="h-4 w-4 animate-spin" /> : null}
+            <button type="button" className="btn btn-primary btn-lg max-sm:px-4" disabled={busy} onClick={() => simulate("pagato")}>
+              {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
               Conferma il pagamento di prova
             </button>
             <button type="button" className="btn btn-secondary" disabled={busy} onClick={() => simulate("fallito")}>
               Simula un pagamento fallito
             </button>
-            <button type="button" className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-teal hover:bg-mist disabled:opacity-60" disabled={busy} onClick={() => simulate("annullato")}>
+            <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => simulate("annullato")}>
               Annulla
             </button>
           </div>
@@ -183,17 +183,17 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
       ) : null}
 
       {order.status === "pending" && order.provider !== "simulated" ? (
-        <section className="mt-6 rounded-2xl border border-line bg-paper p-5 sm:p-6" role="status">
+        <section className="mt-6 rounded-[var(--radius-lg)] border border-line bg-paper p-5 text-[1.0625rem] text-ink-soft sm:p-7" role="status">
           {waiting ? (
-            <p className="flex items-center gap-2">
-              <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> Stiamo confermando il pagamento…
+            <p className="flex items-center gap-2.5 font-semibold text-ink">
+              <Loader2 aria-hidden className="h-5 w-5 shrink-0 animate-spin text-teal" /> Stiamo confermando il pagamento…
             </p>
           ) : esito === "annullato" ? (
             <p>Hai annullato il pagamento: nessun addebito. Puoi tornare al referto e riprovare quando vuoi.</p>
           ) : (
             <p>Il pagamento non risulta ancora confermato. Se hai completato il pagamento, ricarica questa pagina tra qualche istante.</p>
           )}
-          {order.provider === "stripe-test" ? <p className="mt-2 text-sm text-muted">Modalità di prova del fornitore: nessun addebito reale.</p> : null}
+          {order.provider === "stripe-test" ? <p className="meta mt-2">Modalità di prova del fornitore: nessun addebito reale.</p> : null}
           {!waiting ? (
             <Link href={back} className="btn btn-secondary mt-4">
               {backLabel}
@@ -203,12 +203,12 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
       ) : null}
 
       {order.status === "paid" ? (
-        <section className="mt-6 rounded-2xl border border-sage/40 bg-paper p-5 sm:p-6" role="status">
-          <p className="flex items-center gap-2 font-semibold text-sage-deep">
-            <CheckCircle2 aria-hidden className="h-5 w-5" /> Pagamento registrato
+        <section className="form-card form-card-accent mt-6" role="status">
+          <p className="form-card-title flex items-center gap-2.5">
+            <CheckCircle2 aria-hidden className="h-7 w-7 shrink-0 text-sage-deep" /> Pagamento registrato
           </p>
-          <p className="mt-2 text-muted">{paidText}{order.provider === "simulated" ? " (Pagamento simulato: nessun addebito.)" : ""}</p>
-          <Link href={back} className="btn btn-primary mt-4">
+          <p className="form-card-text">{paidText}{order.provider === "simulated" ? " (Pagamento simulato: nessun addebito.)" : ""}</p>
+          <Link href={back} className="btn btn-primary btn-lg mt-5 w-full sm:w-auto">
             {backLabel}
           </Link>
         </section>
@@ -216,13 +216,13 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
       {order.status === "paid" ? <OrdineProvaAvvisami orderService={order.service} /> : null}
 
       {order.status === "failed" ? (
-        <section className="mt-6 rounded-2xl border border-danger/30 bg-paper p-5 sm:p-6" role="alert">
-          <p className="font-semibold text-danger">Il pagamento non è andato a buon fine.</p>
-          <p className="mt-2 text-muted">Non è stato addebitato nulla. Puoi riprovare con un nuovo ordine.</p>
-          <div className="mt-4 flex flex-wrap gap-3">
+        <section className="mt-6 rounded-[var(--radius-lg)] border border-danger/30 bg-paper p-5 sm:p-7" role="alert">
+          <p className="text-xl font-extrabold text-danger">Il pagamento non è andato a buon fine.</p>
+          <p className="mt-2 text-[1.0625rem] text-ink-soft">Non è stato addebitato nulla. Puoi riprovare con un nuovo ordine.</p>
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             {order.documentId || order.refId ? (
               <button type="button" className="btn btn-primary" onClick={retry} disabled={busy}>
-                <RotateCcw aria-hidden className="h-4 w-4" /> Riprova
+                <RotateCcw aria-hidden className="h-5 w-5" /> Riprova
               </button>
             ) : null}
             <Link href={back} className="btn btn-secondary">
@@ -233,7 +233,7 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
       ) : null}
 
       {order.status === "cancelled" || order.status === "refunded" ? (
-        <section className="mt-6 rounded-2xl border border-line bg-paper p-5 sm:p-6" role="status">
+        <section className="mt-6 rounded-[var(--radius-lg)] border border-line bg-paper p-5 text-[1.0625rem] text-ink-soft sm:p-7" role="status">
           <p>{order.status === "cancelled" ? "Ordine annullato: nessun addebito." : "Ordine rimborsato."}</p>
           <Link href={back} className="btn btn-secondary mt-4">
             {backLabel}
