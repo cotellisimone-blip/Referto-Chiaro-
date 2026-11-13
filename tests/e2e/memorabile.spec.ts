@@ -185,7 +185,6 @@ test.describe("percorsi A, C, D", () => {
     expect(o.checkoutUrl).toBeTruthy();
     await page.goto(o.checkoutUrl);
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
-    await page.getByRole("link", { name: "Torna al referto" }).click();
     await expect(page).toHaveURL(new RegExp(`/area-personale/documenti/${doc}`));
     await ctx.close();
   });

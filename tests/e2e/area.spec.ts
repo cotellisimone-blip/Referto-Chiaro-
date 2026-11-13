@@ -58,9 +58,9 @@ test.describe("area personale", () => {
     await page.getByRole("button", { name: /e ricevi il report/ }).click();
     await expect(page.getByText("Pagamento simulato — nessun addebito")).toBeVisible();
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
-    await expect(page.getByText("Pagamento registrato")).toBeVisible();
-    await page.getByRole("link", { name: "Torna al referto" }).click();
+    // Ciclo 5: dopo il pagamento si arriva direttamente al report, con la conferma scritta in pagina.
     await expect(page.getByRole("heading", { name: "Il tuo referto, in parole semplici." })).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("pagamento-registrato")).toContainText("Pagamento di prova registrato");
     await expect(page.getByRole("list", { name: "Spiegazione dei valori" })).toBeVisible();
     await expect(page.getByText("Anticorpi anti-TPO", { exact: false }).first()).toBeVisible();
     const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
@@ -72,10 +72,12 @@ test.describe("area personale", () => {
     await expect(page.getByRole("heading", { name: "Il tuo referto, in parole semplici." })).toBeVisible({ timeout: 15_000 });
     // Report strutturato: valori a colpo d'occhio e, dove c'è una guida, i fattori generali.
     await expect(page.getByTestId("valori-colpo-occhio")).toBeVisible();
+    await expect(page.getByTestId("colpo-occhio")).toBeVisible();
+    await page.getByRole("button", { name: "Apri tutte" }).click();
     await expect(page.getByText("Che cosa può influenzarlo, in generale").first()).toBeVisible();
     // Continuità: dal report al medico senza ricaricare il documento.
     const docUrl = page.url();
-    const docId = docUrl.split("/").pop()!;
+    const docId = docUrl.split("?")[0].split("/").pop()!;
     await page.getByTestId("prossimo-passo").getByRole("link", { name: /Parla con un medico/ }).click();
     await expect(page).toHaveURL(new RegExp(`/area-personale/appuntamenti\\?documento=${docId}`));
     await expect(page.getByText("medico di medicina generale o internista").first()).toBeVisible();

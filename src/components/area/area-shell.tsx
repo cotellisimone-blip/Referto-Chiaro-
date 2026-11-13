@@ -18,7 +18,7 @@ export function isFocusPath(pathname: string) {
 export function AreaShell({ nav, children }: { nav: ReactNode; children: ReactNode }) {
   const focus = isFocusPath(usePathname());
   return (
-    <div data-bottom-nav className={clsx("container-rc grid grid-cols-[minmax(0,1fr)] gap-6 pb-28 pt-6 sm:pt-10 lg:gap-10 lg:pb-16", !focus && "lg:grid-cols-[300px_minmax(0,1fr)]")}>
+    <div data-bottom-nav className={clsx("container-rc grid grid-cols-[minmax(0,1fr)] gap-6 pb-12 pt-6 sm:pt-10 lg:gap-10 lg:pb-16", !focus && "lg:grid-cols-[300px_minmax(0,1fr)]")}>
       {nav}
       {children}
     </div>

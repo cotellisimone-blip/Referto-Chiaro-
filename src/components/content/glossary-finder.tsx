@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { SearchField } from "@/components/ui/search-field";
-import { normalizeQuery } from "@/lib/search-index";
+import { normalizeQuery } from "@/lib/search-core";
 
 export interface TermCard {
   slug: string;

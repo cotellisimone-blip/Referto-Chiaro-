@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, Download, FolderPlus, Loader2, RotateCcw, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, Download, FileText, FolderPlus, Loader2, RotateCcw, Trash2 } from "lucide-react";
 import type { ExtractedDocument } from "@/domain/extraction/schema";
 import type { Explanation } from "@/domain/reporting/explanation-schema";
 import type { ReportEnrichment } from "@/domain/reporting/enrich";
@@ -60,7 +60,7 @@ function NextStep({ documentId, prices }: { documentId: string; prices: Quote | 
   return (
     <div className="side-card" data-testid="prossimo-passo">
       <h2 className="side-card-title">Vuoi parlarne con un medico?</h2>
-      <p className="mt-2 text-[1.0625rem] text-ink-soft">Un medico di medicina generale legge questo referto prima del videoconsulto e ti aiuta a capire il prossimo passo. Non devi ricaricare nulla.</p>
+      <p className="mt-2 text-[1.0625rem] text-ink-soft">Un medico di medicina generale legge questo referto prima del videoconsulto. Non devi ricaricare nulla.</p>
       <Link href={`/area-personale/appuntamenti?documento=${documentId}`} className="btn btn-secondary mt-4 w-full">
         Parla con un medico{prices?.medico ? ` · ${prices.medico}` : ""}
       </Link>
@@ -74,7 +74,8 @@ function NextStep({ documentId, prices }: { documentId: string; prices: Quote | 
   );
 }
 
-export function DocumentWorkflow({ documentId }: { documentId: string }) {
+/** `paidNote`: ciclo 5, fase 2. Dopo il pagamento si arriva qui direttamente; una riga conferma che è stato registrato. */
+export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId: string; paidNote?: "none" | "reale" | "prova" }) {
   const router = useRouter();
   const [doc, setDoc] = useState<Doc | null>(null);
   const [reports, setReports] = useState<Rep[]>([]);
@@ -89,6 +90,7 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [view, setView] = useState<"auto" | "verify">("auto");
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const topRef = useRef<HTMLDivElement>(null);
   const seeded = useRef(false);
 
   const load = useCallback(async () => {
@@ -131,8 +133,19 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
     api<Quote>("/api/v1/area/orders/preventivo").then(setQuote).catch(() => setQuote(null));
   }, [docStatus, quote]);
 
-  const reveal = (line: number) => revealFacsimileLine(setHighlight, line);
-  const focusHeading = () => requestAnimationFrame(() => headingRef.current?.focus({ preventScroll: true }));
+  const [docOpen, setDocOpen] = useState(false);
+  // «Pag., riga» apre il documento originale (se era chiuso) e porta alla riga.
+  const reveal = (line: number) => {
+    setDocOpen(true);
+    requestAnimationFrame(() => revealFacsimileLine(setHighlight, line));
+  };
+  // Ogni passo si apre dal suo inizio: si riporta in vista la cima del percorso e si sposta il fuoco sul titolo.
+  // (Prima il fuoco si spostava senza scorrere: su telefono, dopo «Salva», restava in vista il piè di pagina.)
+  const focusHeading = () =>
+    requestAnimationFrame(() => {
+      topRef.current?.scrollIntoView({ block: "start" });
+      headingRef.current?.focus({ preventScroll: true });
+    });
 
   async function saveVerification() {
     setBusy(true);
@@ -256,7 +269,10 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
           Non siamo riusciti a eliminare il referto. Riprova tra poco.
         </p>
       ) : null}
-      <Stepper steps={WORKFLOW_STEPS} step={step} label="Avanzamento del referto" />
+      {/* A report pronto il percorso è finito: l'indicatore lascia il posto al colpo d'occhio, che così sta nella prima schermata. */}
+      {/* Punto di arrivo dello scorrimento a ogni passo: indicatore e titolo, senza la riga «Tutti i referti». */}
+      <div ref={topRef} className="scroll-mt-24" />
+      {phase !== "report" ? <Stepper steps={WORKFLOW_STEPS} step={step} label="Avanzamento del referto" /> : null}
 
       {phase === "reading" ? (
         <section className="mt-10" aria-labelledby="step-titolo" aria-busy="true">
@@ -297,16 +313,17 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
       ) : null}
 
       {phase === "verify" && extracted ? (
-        <section className="mt-10" aria-labelledby="step-titolo">
+        <section className="mt-7 sm:mt-10" aria-labelledby="step-titolo">
           <div className="max-w-2xl">
             <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title outline-none">
               Controlla prima i valori.
             </h1>
-            <p className="area-lead mt-4">
-              {doc.title} · {extracted.laboratoryName} · {formatDate(extracted.reportDate)}. Conferma le righe corrette: spiegheremo solo quelle.
+            <p className="area-lead mt-3 sm:mt-4">Conferma le righe corrette: spiegheremo solo quelle.</p>
+            <p className="meta mt-1.5">
+              {doc.title} · {extracted.laboratoryName} · {formatDate(extracted.reportDate)}
             </p>
           </div>
-          <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10 [&>*]:min-w-0">
+          <div className="mt-6 grid sm:mt-8 gap-8 lg:grid-cols-2 lg:items-start lg:gap-10 [&>*]:min-w-0">
             <VerificationList
               observations={extracted.observations}
               confirmed={confirmed}
@@ -325,38 +342,49 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
               {error}
             </p>
           ) : null}
-          <div className="mt-10 flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-end">
-            <div className="flex flex-col items-stretch gap-2 sm:items-end">
-              <button type="button" className="btn btn-primary btn-lg" disabled={confirmed.length === 0 || busy} onClick={saveVerification} aria-describedby="hint-conferma">
-                {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
-                Salva e scegli il servizio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-              </button>
-              <p id="hint-conferma" className="text-center text-base text-muted sm:text-right">
-                {confirmed.length === 0 ? "Conferma almeno un valore per continuare." : `${confirmed.length} di ${extracted.observations.filter(isReadableObs).length} valori leggibili confermati.`}
-              </p>
-            </div>
+          {/* Su telefono e tablet il comando resta attaccato al fondo dello schermo, sopra la barra dell'area: non serve scorrere tutta la lista per trovarlo. */}
+          <div className="step-bar mt-8 lg:mt-10 lg:flex lg:flex-col lg:items-end lg:gap-2 lg:border-t lg:border-line lg:pt-6">
+            <button type="button" className="btn btn-primary btn-lg max-lg:w-full max-sm:px-4" disabled={confirmed.length === 0 || busy} onClick={saveVerification} aria-describedby="hint-conferma">
+              {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
+              Salva e scegli il servizio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+            </button>
+            <p id="hint-conferma" className="text-center text-base text-muted max-lg:mt-1.5 lg:text-right">
+              {confirmed.length === 0 ? "Conferma almeno un valore per continuare." : `${confirmed.length} di ${extracted.observations.filter(isReadableObs).length} valori leggibili confermati.`}
+            </p>
           </div>
         </section>
       ) : null}
 
       {phase === "service" ? (
-        <section className="mt-10 tone-capisci" aria-labelledby="step-titolo">
-          <div className="max-w-2xl">
-            <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title outline-none">
-              Rendi chiaro il tuo referto.
-            </h1>
-            <p className="area-lead mt-4">Valori confermati. Dopo il pagamento il report è pronto di norma in pochi minuti.</p>
-          </div>
-          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,42rem)_minmax(0,1fr)] lg:items-start lg:gap-10">
+        <section className="mt-7 tone-capisci sm:mt-10" aria-labelledby="step-titolo">
+          <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title max-w-2xl outline-none">
+            Rendi chiaro il tuo referto.
+          </h1>
+          <div className="mt-5 grid gap-6 sm:mt-8 lg:grid-cols-[minmax(0,42rem)_minmax(0,1fr)] lg:items-start lg:gap-10">
+            {/* Prezzo e comando per primi: su telefono stanno nella prima schermata. Il dettaglio di che cosa si riceve viene dopo. */}
             <div className="form-card form-card-accent" data-testid="capisci-offerta">
-              <p className="form-card-title">{CAPISCI.name}</p>
-              <p className="form-card-text">{CAPISCI.oneLiner}</p>
-              <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                {quote?.first ? <span className="tone-text text-base font-bold">Primo referto</span> : null}
-                <span className="stat-num text-[2.5rem] leading-none text-ink" data-testid="prezzo-capisci">{quote ? quote.amount : "…"}</span>
-                {quote?.first ? <span className="text-muted">poi {quote.standard} per referto</span> : quote ? <span className="text-muted">per referto</span> : null}
+              <p className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <span className="form-card-title">{CAPISCI.name}</span>
+                <span className="flex items-baseline gap-2">
+                  {quote?.first ? <span className="tone-text text-base font-bold">Primo referto</span> : null}
+                  <span className="stat-num text-[2.25rem] leading-none text-ink" data-testid="prezzo-capisci">{quote ? quote.amount : "…"}</span>
+                </span>
               </p>
-              <ul className="check-list mt-5">
+              <button type="button" className="btn btn-primary btn-lg mt-4 w-full max-sm:px-4" onClick={proceedToPayment} disabled={busy || !quote} aria-describedby="nota-pagamento">
+                {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
+                Paga {quote?.amount ?? ""} e ricevi il report <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              </button>
+              <p id="nota-pagamento" className="mt-3 text-center text-base text-muted">
+                Versione di prova: nessun addebito reale.{quote?.first ? ` Dal secondo referto ${quote.standard}.` : ""}
+              </p>
+              {error ? (
+                <p role="alert" className="field-error mt-4">
+                  {error}
+                </p>
+              ) : null}
+              <p className="mt-5 border-t border-line pt-4 text-[1.0625rem] text-ink-soft">Valori confermati. Dopo il pagamento il report è pronto di norma in pochi minuti.</p>
+              <p className="mt-4 font-bold text-ink">Che cosa ricevi</p>
+              <ul className="check-list mt-3">
                 {CAPISCI.includes.map((x) => (
                   <li key={x}>
                     <span aria-hidden className="check-dot">
@@ -373,30 +401,16 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
                 Dopo il pagamento
               </h2>
               <ol className="num-list num-list-mist mt-4 text-[1.0625rem] leading-snug text-ink-soft">
-                <li>Prepariamo il report: questa pagina si aggiorna da sola.</li>
+                <li>Arrivi subito al report: la pagina si aggiorna da sola.</li>
                 <li>Lo leggi qui e scarichi il PDF da portare in visita.</li>
                 <li>Se vuoi parlarne con un medico, parti dal report: il documento è già caricato.</li>
               </ol>
             </aside>
           </div>
-          {error ? (
-            <p role="alert" className="field-error mt-4">
-              {error}
-            </p>
-          ) : null}
-          <div className="mt-10 flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <button type="button" className="btn btn-ghost" onClick={reopenVerification}>
+          <div className="mt-8 border-t border-line pt-5">
+            <button type="button" className="btn btn-ghost max-sm:w-full" onClick={reopenVerification}>
               <ArrowLeft aria-hidden className="h-5 w-5" /> Torna al controllo valori
             </button>
-            <div className="flex flex-col items-stretch gap-2 sm:items-end">
-              <button type="button" className="btn btn-primary btn-lg max-sm:px-4" onClick={proceedToPayment} disabled={busy || !quote} aria-describedby="nota-pagamento">
-                {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
-                Paga {quote?.amount ?? ""} e ricevi il report <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-              </button>
-              <p id="nota-pagamento" className="text-center text-base text-muted sm:text-right">
-                Versione di prova: nessun addebito reale.
-              </p>
-            </div>
           </div>
         </section>
       ) : null}
@@ -406,6 +420,11 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
           <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title outline-none">
             Prepariamo il report.
           </h1>
+          {paidNote !== "none" ? (
+            <p className="paid-note" role="status" data-testid="pagamento-registrato">
+              <CheckCircle2 aria-hidden className="h-5 w-5 shrink-0" /> {paidNote === "prova" ? "Pagamento di prova registrato." : "Pagamento registrato."}
+            </p>
+          ) : null}
           <p className="mt-3 flex items-start gap-2.5 text-lg text-ink-soft" role="status">
             <Loader2 aria-hidden className="mt-1 h-5 w-5 shrink-0 animate-spin text-teal" /> Stato: {activeReport?.status === "queued" ? "in coda" : "in elaborazione"}. Scriviamo la spiegazione e controlliamo che ogni numero coincida con il documento.
           </p>
@@ -418,21 +437,27 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
       ) : null}
 
       {phase === "report" && readyReport?.explanation && extracted ? (
-        <section className="mt-10" aria-labelledby="step-titolo">
+        <section className="flex flex-col" aria-labelledby="step-titolo">
           <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title max-w-2xl outline-none">
             Il tuo referto, in parole semplici.
           </h1>
-          <p className="meta mt-2">
+          {paidNote !== "none" ? (
+            <p className="paid-note" role="status" data-testid="pagamento-registrato">
+              <CheckCircle2 aria-hidden className="h-5 w-5 shrink-0" /> {paidNote === "prova" ? "Pagamento di prova registrato." : "Pagamento registrato."}
+            </p>
+          ) : null}
+          {/* Su telefono la riga dei dati del documento va in fondo: prima il colpo d'occhio. */}
+          <p className="meta mt-2 max-sm:order-last max-sm:mt-6">
             {doc.title} · Capisci il tuo referto · generato il {readyReport.generatedAt ? formatDate(readyReport.generatedAt) : ""}
           </p>
           {/* Su schermi larghi il documento resta in vista mentre si legge: è l'ultimo blocco della colonna e si ferma in alto. */}
-          <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] xl:gap-10 [&>*]:min-w-0">
+          <div className="mt-5 grid gap-8 sm:mt-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] xl:gap-10 [&>*]:min-w-0">
             <ExplanationView explanation={readyReport.explanation} onReveal={reveal} enrichment={enrichment} />
             <aside className="flex flex-col gap-5" aria-label="Documento e download">
-              <div className="form-card form-card-accent">
-                <h2 className="form-card-title">Scarica il riepilogo</h2>
+              <div id="scarica-riepilogo" className="form-card form-card-accent scroll-mt-28">
+                <h2 className="form-card-title">Il foglio per il medico</h2>
                 <p className="form-card-text">
-                  Un PDF in formato A4 con valori, spiegazioni e domande{extracted.isSynthetic ? ", marcato DEMO – DATI SINTETICI" : ""}.
+                  Da stampare: valori, posizione e domande in prima pagina{extracted.isSynthetic ? ". Marcato DEMO" : ""}.
                 </p>
                 <button type="button" className="btn btn-primary btn-lg mt-5 w-full max-sm:px-4" onClick={() => downloadPdf(readyReport.id)} disabled={pdfState === "loading"}>
                   {pdfState === "loading" ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <Download aria-hidden className="h-5 w-5" />}
@@ -448,7 +473,13 @@ export function DocumentWorkflow({ documentId }: { documentId: string }) {
               </div>
               <NextStep documentId={documentId} prices={quote} />
               <div className="space-y-3 xl:sticky xl:top-28">
-                <Facsimile doc={extracted} highlightLine={highlight} compact />
+                {/* Sotto i 1280 px il documento originale si apre a richiesta (o toccando «Pag., riga» in una voce): la pagina resta corta. */}
+                <button type="button" className="btn btn-secondary w-full xl:hidden" aria-expanded={docOpen} aria-controls="documento-originale" onClick={() => setDocOpen((v) => !v)}>
+                  <FileText aria-hidden className="h-5 w-5" /> {docOpen ? "Nascondi il documento originale" : "Mostra il documento originale"}
+                </button>
+                <div id="documento-originale" className={docOpen ? undefined : "max-xl:hidden"}>
+                  <Facsimile doc={extracted} highlightLine={highlight} compact />
+                </div>
                 <button type="button" className="btn btn-ghost w-full" onClick={reopenVerification}>
                   <RotateCcw aria-hidden className="h-5 w-5" /> Rivedi i valori confermati
                 </button>

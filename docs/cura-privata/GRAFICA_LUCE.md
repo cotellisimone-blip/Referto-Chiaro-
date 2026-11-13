@@ -51,6 +51,9 @@ Tema scuro: si ridefiniscono i token, non i componenti. Attenzione: nel tema scu
 | `timeline`, `kv`, `kv-rows`, `side-card`, `link-list`, `dot-list`, `num-list`, `check-list` | storici, coppie etichetta/valore, colonne laterali, elenchi |
 | `stat-grid` / `stat-card` / `stat-sub`, `data-table-wrap` / `data-table` | numeri e tabelle dell'amministrazione (le tabelle scorrono dentro il loro riquadro) |
 | `cmp-card` / `cmp-table` | confronto tra referti nel dossier: tabella a tre colonne da tablet, due righe per rilevazione quando la scheda è stretta (segue la scheda e il testo grande, non lo schermo) |
+| `glance…`, `val-card` (`is-out`), `RangeBar` / `range-bar-lg` / `range-ticks`, `PositionLabel` / `pos-label` (ciclo 5) | il report «a colpo d'occhio»: riepilogo in cima, una scheda per valore con barra dell'intervallo e posizione in parole con icona (mai solo colore). La geometria viene da `src/domain/reporting/glance.ts` |
+| `step-bar` (ciclo 5) | il comando del passo: sotto i 1024 px resta attaccato al fondo dello schermo, sopra la barra dell'area. È `sticky`, non `fixed` |
+| `paid-note` | conferma breve in cima al report dopo il pagamento |
 | `video-room…`, `announce…`, `how-card`, `svc-card…`, `pdp-…` | blocchi propri di una pagina |
 
 ## Regole di scrittura applicate ai testi

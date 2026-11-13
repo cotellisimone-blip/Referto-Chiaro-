@@ -68,10 +68,12 @@ export function NewDocument({ samples, uploadsEnabled }: { samples: SyntheticSam
               {error}
             </p>
           ) : null}
-          <button type="button" className="btn btn-primary btn-lg mt-6 w-full max-sm:px-4 sm:w-auto" onClick={create} disabled={busy || !selected}>
-            {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <FileText aria-hidden className="h-5 w-5" />}
-            Aggiungi e leggi il documento <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-          </button>
+          <div className="step-bar mt-6">
+            <button type="button" className="btn btn-primary btn-lg w-full max-sm:px-4 lg:w-auto" onClick={create} disabled={busy || !selected}>
+              {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <FileText aria-hidden className="h-5 w-5" />}
+              Aggiungi e leggi il documento <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+            </button>
+          </div>
         </section>
 
         <aside aria-labelledby="upload-titolo">

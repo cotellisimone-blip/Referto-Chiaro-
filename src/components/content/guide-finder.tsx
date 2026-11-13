@@ -23,7 +23,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { SearchField } from "@/components/ui/search-field";
-import { normalizeQuery } from "@/lib/search-index";
+import { normalizeQuery } from "@/lib/search-core";
 
 export interface GuideCard {
   slug: string;
