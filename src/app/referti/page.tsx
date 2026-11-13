@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { FaqList } from "@/components/ui/faq-list";
 import { FAQ } from "@/content/faq";
 import { ServiceLanding } from "@/components/offerta/service-landing";
@@ -17,22 +18,32 @@ export default function RefertiPage() {
       id="capisci"
       secondaryCta={{ href: "/referti/esempio", label: "Guarda un report di esempio" }}
     >
-      <section aria-labelledby="differenza-titolo" className="bg-mist py-10 sm:py-20">
+      <section aria-labelledby="differenza-titolo" className="panel-section grain section bg-mist">
         <div className="container-rc">
-          <h2 id="differenza-titolo" className="display-lg text-center text-[2rem] sm:text-[2.5rem]">
-            Lo stesso referto, prima e dopo.
-          </h2>
-          <p className="mt-3 text-center text-xl text-ink-soft">Sposta il cursore.</p>
-          <div className="mt-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">Prima e dopo</p>
+            <h2 id="differenza-titolo" className="display-lg mt-4">
+              Lo stesso referto, prima e dopo.
+            </h2>
+            <p className="lead mt-3">Sposta il cursore e guarda che cosa cambia.</p>
+          </div>
+          <div className="mt-8 sm:mt-12">
             <BeforeAfter />
           </div>
         </div>
       </section>
-      <section id="domande" aria-labelledby="domande-titolo" className="py-12 sm:py-20">
-        <div className="container-rc grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <h2 id="domande-titolo" className="display-lg text-[2rem] sm:text-[2.5rem]">
-            Prima di cominciare
-          </h2>
+      <section id="domande" aria-labelledby="domande-titolo" className="section">
+        <div className="container-rc grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <div>
+            <h2 id="domande-titolo" className="display-lg">
+              Prima di cominciare
+            </h2>
+            <p className="mt-4 hidden lg:block">
+              <Link href="/domande-frequenti" className="link text-lg font-semibold">
+                Tutte le domande frequenti
+              </Link>
+            </p>
+          </div>
           <FaqList items={FAQ.filter((f) => f.topic === "servizio" || f.topic === "dati").slice(0, 3)} />
         </div>
       </section>

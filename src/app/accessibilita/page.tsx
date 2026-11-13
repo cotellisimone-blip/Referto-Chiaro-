@@ -9,9 +9,9 @@ export default function Page() {
   return (
     <>
       <PageHeader art="faq" eyebrow="Accessibilità" title="Accessibilità" lead="Vogliamo che il sito sia utilizzabile da tutti." />
-      <div className="container-rc py-12 sm:py-16">
+      <div className="container-rc page-body">
         <DraftNotice />
-        <div className="mt-10">
+        <div className="mt-8 sm:mt-10">
           <Prose>
             <p>Il sito è progettato con l&apos;obiettivo di rispettare le linee guida WCAG 2.2 livello AA: navigazione da tastiera, contrasti adeguati, testi alternativi, rispetto della preferenza per animazioni ridotte.</p>
             <p>Effettuiamo controlli automatici di accessibilità ad ogni modifica. Una valutazione completa, anche manuale, sarà pubblicata prima dell&apos;apertura del servizio.</p>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowDown, Ban, ClipboardList, Clock3, FileCheck2, Layers, LayoutGrid, Lock, ScanSearch, ShieldCheck } from "lucide-react";
 import { AreaIcon, CategoryChip, PuntoDiPartenzaGuide, type PdpPrices } from "@/components/punto-di-partenza/guide";
+import { Photo } from "@/components/ui/photo";
 import { Reveal } from "@/components/ui/reveal";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { AREAS, CATEGORY_HINT, NOT_ROUTINE, NOT_ROUTINE_SOURCE, type AreaCategory } from "@/content/punto-di-partenza";
@@ -52,7 +53,7 @@ export default function PuntoDiPartenzaPage() {
   const medico = coreService("parla-con-un-medico");
   const cp = priceDisplay("capisci");
   // Fase 3: non la stessa paziente di «Parla con un medico» e delle sezioni della home.
-  const photo = ILLUSTRATIVE_PHOTOS.heroSquare;
+  const photo = ILLUSTRATIVE_PHOTOS.hero;
   const prices: PdpPrices = {
     capisci: showPrices ? { lead: cp.lead, amount: cp.amount } : null,
     medico: showPrices ? priceDisplay("parla-con-un-medico").amount : null,
@@ -91,7 +92,7 @@ export default function PuntoDiPartenzaPage() {
           <div className="pdp-hero-visual">
             {SHOW_ILLUSTRATIVE_PHOTOS ? (
               <figure className="pdp-hero-photo">
-                <img src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} decoding="async" style={{ objectPosition: "38% 0%" }} />
+                <Photo photo={photo} sizes="(min-width: 1024px) 30rem, 92vw" priority style={{ objectPosition: "38% 0%" }} />
                 <figcaption className="caption-illus right-4 top-4">Immagine illustrativa</figcaption>
               </figure>
             ) : null}

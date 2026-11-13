@@ -45,3 +45,6 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /.data/
+
+# cartella di sviluppo usata per gli screenshot
+/.next-dev/

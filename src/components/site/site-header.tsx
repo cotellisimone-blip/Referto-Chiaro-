@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Menu, X } from "lucide-react";
-import { clsx } from "clsx";
+import { ArrowRight, BookOpen, ChevronRight, Euro, FileText, Home, Menu, Stethoscope, Video, X, type LucideIcon } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
-import { MAIN_NAV } from "./nav";
+import { MAIN_NAV, type NavIcon } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
 import { TextSizeToggle } from "./text-size-toggle";
 import { SearchTrigger } from "@/components/search/site-search";
+
+const NAV_ICON: Record<NavIcon, LucideIcon> = { file: FileText, home: Home, video: Video, stethoscope: Stethoscope, euro: Euro, book: BookOpen };
 
 /**
  * Il percorso corrente serve solo a evidenziare la voce attiva. Sulle pagine dinamiche
@@ -21,9 +22,14 @@ export function SiteHeader() {
   return <SiteHeaderView pathname={pathname} />;
 }
 
+/**
+ * Testata «Luce» (12/11/2026): vetro leggero, voci a pillola, comandi senza bordo. Su telefono restano tre comandi
+ * (cerca, testo grande, menu); il tema sta nel menu. Il menu è un pannello che scende dalla testata e oscura la pagina.
+ */
 export function SiteHeaderView({ pathname }: { pathname: string | null }) {
   const [open, setOpen] = useState(false);
   const [lastPath, setLastPath] = useState(pathname);
+  const [scrolled, setScrolled] = useState(false);
   // Con una sessione attiva il link "Accedi" diventa "Area personale" (controllo leggero, lato client).
   const [signedIn, setSignedIn] = useState(false);
   useEffect(() => {
@@ -44,6 +50,14 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
     setLastPath(pathname);
     setOpen(false);
   }
+
+  // Un filo d'ombra sotto la testata appena la pagina scorre.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 6);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Menu mobile: Esc chiude, lo scroll della pagina resta bloccato, il fuoco resta nel pannello.
   useEffect(() => {
@@ -74,27 +88,19 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
   }, [open]);
 
   return (
-    <header ref={headerRef} className="no-print relative sticky top-0 z-40 border-b border-line/70 bg-canvas/90 shadow-[0_1px_0_rgb(255_255_255/0.5)_inset] backdrop-blur-md supports-[backdrop-filter]:bg-canvas/75">
-      <div className="container-rc relative z-10 flex h-16 items-center justify-between gap-3 lg:h-20">
+    <header ref={headerRef} className="site-header no-print" data-scrolled={scrolled ? "1" : undefined} data-open={open ? "1" : undefined}>
+      <div className="container-rc site-header-row">
         <Link href="/" className="rounded-md">
           <Logo />
         </Link>
 
         <nav aria-label="Principale" className="hdr-desktop">
-          <ul className="flex items-center gap-0.5 xl:gap-1">
+          <ul className="flex items-center gap-0.5">
             {MAIN_NAV.map((item) => {
               const active = pathname === item.href || !!pathname?.startsWith(item.href + "/");
               return (
                 <li key={item.href} className={item.wideOnly ? "hidden xl:list-item" : undefined}>
-                  <Link
-                    href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    className={clsx(
-                      "relative whitespace-nowrap rounded-full px-1.5 py-2.5 text-[0.9375rem] font-medium transition-colors duration-150 xl:px-3.5 xl:text-[1rem]",
-                      active ? "bg-mist text-ink" : "text-ink-soft hover:bg-mist/70 hover:text-ink",
-                      item.tone && `tone-${item.tone} nav-tone`,
-                    )}
-                  >
+                  <Link href={item.href} aria-current={active ? "page" : undefined} className="nav-link">
                     {item.label}
                   </Link>
                 </li>
@@ -103,12 +109,13 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
           </ul>
         </nav>
 
-        <div className="hdr-desktop items-center gap-1.5 xl:gap-2">
-          <SearchTrigger variant="compact" className="hidden xl:inline-flex" />
-          <TextSizeToggle />
-          <ThemeToggle />
+        <div className="hdr-desktop items-center gap-0.5">
+          <SearchTrigger variant="compact" className="hdr-roomy" />
+          <TextSizeToggle className="icon-btn px-2 font-serif" />
+          <ThemeToggle className="hdr-roomy icon-btn" />
+          <span aria-hidden className="hdr-sep hdr-roomy" />
           {signedIn ? (
-            <Link href="/area-personale" className="btn btn-primary btn-sm whitespace-nowrap">
+            <Link href="/area-personale" className="btn btn-primary btn-sm ml-1 whitespace-nowrap">
               Area personale
             </Link>
           ) : (
@@ -123,17 +130,10 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
           )}
         </div>
 
-        <div className="hdr-mobile items-center gap-1.5">
-          <SearchTrigger className="h-11 w-11" />
-          <TextSizeToggle className="hdr-wide-only inline-flex h-11 min-w-11 items-center justify-center rounded-full border border-line bg-paper px-1.5 font-serif text-ink transition-colors hover:bg-mist" />
-          <ThemeToggle className="hdr-wide-only inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:bg-mist" />
-          <button
-            type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-ink"
-            aria-expanded={open}
-            aria-controls="menu-mobile"
-            onClick={() => setOpen((v) => !v)}
-          >
+        <div className="hdr-mobile items-center gap-1">
+          <SearchTrigger className="icon-btn" />
+          <TextSizeToggle className="hdr-wide-only icon-btn px-2 font-serif" />
+          <button type="button" className="icon-btn icon-btn-solid ml-1" aria-expanded={open} aria-controls="menu-mobile" onClick={() => setOpen((v) => !v)}>
             {open ? <X aria-hidden className="h-5 w-5" /> : <Menu aria-hidden className="h-5 w-5" />}
             <span className="sr-only">{open ? "Chiudi il menu" : "Apri il menu"}</span>
           </button>
@@ -141,47 +141,42 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
       </div>
 
       {open ? (
-        <div className="hdr-panel absolute inset-x-0 top-full">
-          <button type="button" aria-label="Chiudi il menu" className="modal-backdrop fixed inset-0" onClick={() => setOpen(false)} />
-          <div id="menu-mobile" ref={panelRef} className="fade-in relative max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-line bg-canvas shadow-[var(--shadow-lift)]">
-            <nav aria-label="Menu mobile" className="container-rc py-4">
-              <ul className="flex flex-col">
-                {MAIN_NAV.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      aria-current={pathname === item.href ? "page" : undefined}
-                      className={clsx(
-                        "flex min-h-13 items-center justify-between border-b border-line/70 text-lg font-medium",
-                        pathname === item.href ? "text-teal" : "text-ink",
-                      )}
-                    >
-                      <span className={clsx("flex items-center gap-3", item.tone && `tone-${item.tone}`)}>
-                        {item.tone ? <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[var(--tone-accent)]" /> : null}
+        <>
+          <button type="button" aria-label="Chiudi il menu" tabIndex={-1} className="menu-backdrop" onClick={() => setOpen(false)} />
+          <div id="menu-mobile" ref={panelRef} className="menu-panel fade-in">
+            <nav aria-label="Menu mobile" className="container-rc pb-6 pt-2">
+              <ul className="grid gap-0.5">
+                {MAIN_NAV.map((item) => {
+                  const Icon = NAV_ICON[item.icon];
+                  return (
+                    <li key={item.href}>
+                      <Link href={item.href} aria-current={pathname === item.href ? "page" : undefined} className="menu-link">
+                        <span aria-hidden className="tile-ico tile-ico-sm">
+                          <Icon />
+                        </span>
                         {item.label}
-                      </span>
-                      <ArrowRight aria-hidden className="h-4 w-4 text-muted" />
-                    </Link>
-                  </li>
-                ))}
+                        <ChevronRight aria-hidden className="h-5 w-5" />
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
-              {/* Su schermi molto stretti (sotto 360 px) testo grande e tema stanno qui, non nella testata. */}
-              <div className="hdr-narrow-only mt-5 items-center gap-3">
-                <TextSizeToggle className="inline-flex h-11 min-w-11 items-center justify-center rounded-full border border-line bg-paper px-2 font-serif text-ink" />
-                <ThemeToggle className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-ink" />
-                <span className="text-[0.9375rem] text-muted">Testo grande e tema</span>
-              </div>
-              <div className="mt-5 grid gap-3 pb-2">
-                <Link href="/inizia" className="btn btn-primary w-full">
-                  Scegli il servizio per te
+              <div className="mt-4 grid gap-3 border-t border-line pt-5">
+                <Link href="/inizia" className="btn btn-primary btn-lg w-full">
+                  Scegli il servizio per te <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                 </Link>
-                <Link href={signedIn ? "/area-personale" : "/accedi"} className="btn btn-ghost w-full">
+                <Link href={signedIn ? "/area-personale" : "/accedi"} className="btn btn-secondary w-full">
                   {signedIn ? "Vai all'area personale" : "Accedi all'area personale"}
                 </Link>
               </div>
+              <div className="mt-5 flex items-center gap-2 text-[1rem] text-muted">
+                <TextSizeToggle className="hdr-narrow-only icon-btn icon-btn-solid px-2 font-serif" />
+                <ThemeToggle className="icon-btn icon-btn-solid" />
+                <span className="ml-1">Tema chiaro o scuro</span>
+              </div>
             </nav>
           </div>
-        </div>
+        </>
       ) : null}
     </header>
   );

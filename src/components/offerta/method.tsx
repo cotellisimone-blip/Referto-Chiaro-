@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, BookOpenCheck, FileSearch, PenLine, UserCog } from "lucide-react";
+import { BookOpenCheck, FileSearch, PenLine, UserCog } from "lucide-react";
 
 const POINTS = [
   { icon: FileSearch, title: "Ogni numero ha la sua riga", text: "Ogni spiegazione rimanda alla riga del referto da cui viene." },
@@ -8,26 +8,33 @@ const POINTS = [
   { icon: UserCog, title: "Un responsabile medico", text: "Con nome e iscrizione all'Albo, indicati qui. Oggi è in nomina." },
 ];
 
-/** «Il nostro metodo»: l'autorevolezza detta con fatti verificabili, senza nomi o numeri inventati. */
+/**
+ * «Il nostro metodo», detto a un medico: l'autorevolezza con fatti verificabili, senza nomi o numeri inventati.
+ * Quattro riquadri di vetro su fondo petrolio. Va dentro una sezione `.scope-strong`.
+ */
 export function Method() {
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-9 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-16">
       <div>
-        <p className="eyebrow text-[#7be0d2]">Il nostro metodo</p>
-        <h2 id="metodo-titolo" className="display-lg mt-4 text-on-strong">
-          Chiaro per te. Rigoroso per il tuo medico.
+        <p className="eyebrow">Il nostro metodo</p>
+        <h2 id="metodo-titolo" className="display-lg mt-4 text-ink">
+          Chiaro per il paziente. Rigoroso per te.
         </h2>
-        <p className="mt-5 text-xl text-on-strong-soft">Spiegare non è diagnosticare. Il metodo è scritto e verificabile.</p>
-        <Link href="/per-i-medici" className="btn btn-lg mt-8 bg-paper text-ink hover:bg-mist">
-          Sei un medico? Scopri come lavoriamo <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-        </Link>
+        <p className="lead mt-4">Spiegare non è diagnosticare. Il metodo è scritto e si può verificare.</p>
+        <p className="mt-6">
+          <Link href="/come-funziona#limiti" className="link inline-flex min-h-11 items-center text-lg font-semibold">
+            Che cosa fa, e non fa, la spiegazione automatica
+          </Link>
+        </p>
       </div>
-      <ul className="grid gap-4 sm:grid-cols-2">
+      <ul className="fact-grid">
         {POINTS.map(({ icon: Icon, title, text }) => (
-          <li key={title} className="rounded-3xl border border-white/12 bg-white/[0.06] p-6">
-            <Icon aria-hidden className="h-8 w-8 text-[#7be0d2]" strokeWidth={1.7} />
-            <h3 className="mt-4 text-xl font-bold text-on-strong">{title}</h3>
-            <p className="mt-2 text-lg text-on-strong-soft">{text}</p>
+          <li key={title} className="fact">
+            <h3 className="fact-title">
+              <Icon aria-hidden strokeWidth={1.8} />
+              {title}
+            </h3>
+            <p className="fact-text">{text}</p>
           </li>
         ))}
       </ul>

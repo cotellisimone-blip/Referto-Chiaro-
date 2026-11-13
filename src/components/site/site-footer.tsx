@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
+import { Wave } from "@/components/ui/wave";
 import { FOOTER_NAV, LEGAL_NAV } from "./nav";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { readTitolare } from "@/domain/titolare";
@@ -18,41 +19,49 @@ function OwnerLine() {
   );
 }
 
+/**
+ * Piè di pagina «Luce»: fondo petrolio con l'onda in cima, il payoff in grande, il 112 sempre visibile.
+ * Sta in uno «scope» forte: i colori dei testi si adattano da soli, in entrambi i temi.
+ */
 export function SiteFooter() {
   const pdp = puntoDiPartenzaEnabled();
   return (
-    <footer className="no-print mt-auto border-t border-line bg-paper">
-      <div className="container-rc grid grid-cols-2 gap-x-6 gap-y-10 py-12 sm:py-16 md:grid-cols-3 lg:grid-cols-[1.6fr_repeat(3,1fr)] lg:gap-12">
-        <div className="col-span-2 max-w-sm md:col-span-3 lg:col-span-1">
-          {/* Ciclo 2, fase 3: «.it» solo quando il sito gira davvero su un dominio .it (PUBLIC_BASE_URL). */}
-          <Logo withTld={SITE_URL.endsWith(".it")} />
-          <p className="mt-5 font-serif text-2xl leading-snug text-ink">{PAYOFF}</p>
-          <OwnerLine />
-          <p className="mt-5 inline-flex items-center gap-3 rounded-xl border border-line bg-canvas px-4 py-3 text-[0.9375rem] text-ink">
-            <span className="stat-num text-2xl text-danger">112</span>
-            <span>In caso di emergenza non usare questo sito: chiama il 112.</span>
-          </p>
+    <footer className="site-footer no-print">
+      {/* L'onda prende il colore della pagina: per questo sta fuori dallo «scope» scuro. */}
+      <Wave position="top" className="text-canvas" />
+      <div className="scope-strong container-rc relative pb-8 pt-[clamp(5rem,10vw,8.5rem)]">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-3 lg:grid-cols-[1.4fr_1.2fr_1fr_1fr] lg:gap-x-10">
+          <div className="col-span-2 max-w-md md:col-span-3 lg:col-span-1">
+            {/* «.it» solo quando il sito gira davvero su un dominio .it (PUBLIC_BASE_URL). */}
+            <Logo inverse withTld={SITE_URL.endsWith(".it")} />
+            <p className="mt-6 text-[1.625rem] font-extrabold leading-[1.18] tracking-[-0.025em] text-ink">{PAYOFF}</p>
+            <OwnerLine />
+            <p className="footer-emergency mt-7 text-ink">
+              <span className="stat-num text-[1.75rem] text-danger">112</span>
+              <span>Per le emergenze non usare questo sito: chiama il 112.</span>
+            </p>
+          </div>
+          {Object.entries(FOOTER_NAV).map(([title, links]) => (
+            <nav key={title} aria-label={title}>
+              <h2 className="eyebrow eyebrow-plain">{title}</h2>
+              <ul className="mt-3">
+                {links
+                  .filter((l) => pdp || l.href !== "/punto-di-partenza")
+                  .map((l) => (
+                    <li key={l.href}>
+                      <Link href={l.href} className="footer-link">
+                        {l.label}
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            </nav>
+          ))}
         </div>
-        {Object.entries(FOOTER_NAV).map(([title, links]) => (
-          <nav key={title} aria-label={title}>
-            <h2 className="eyebrow eyebrow-plain">{title}</h2>
-            <ul className="mt-4 space-y-1">
-              {links.filter((l) => pdp || l.href !== "/punto-di-partenza").map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="underline-grow inline-flex min-h-11 items-center text-[1.0625rem] text-ink-soft hover:text-teal">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))}
-      </div>
-      <div className="border-t border-line">
-        <div className="container-rc flex flex-col gap-2 py-6 text-[0.9375rem] text-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-2 border-t border-line pt-5 text-[0.9375rem] text-muted lg:flex-row lg:items-center lg:justify-between">
           <p>© 2026 Cura Privata · Le spiegazioni informative non sostituiscono una valutazione medica.</p>
           <nav aria-label="Note legali">
-            <ul className="flex flex-wrap gap-x-5 gap-y-1">
+            <ul className="flex flex-wrap gap-x-5">
               {LEGAL_NAV.map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="inline-flex min-h-11 items-center hover:text-teal hover:underline">

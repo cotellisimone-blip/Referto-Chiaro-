@@ -293,7 +293,7 @@ export function SearchTrigger({ variant = "icon", className, placeholder = "Cerc
   if (variant === "compact") {
     return (
       <button type="button" onClick={() => openSiteSearch()} className={clsx("search-compact", className)}>
-        <Search aria-hidden className="h-4 w-4 shrink-0 text-teal" />
+        <Search aria-hidden className="h-5 w-5 shrink-0" />
         <span className="hidden truncate 2xl:inline">Cerca</span>
         <kbd aria-hidden className="kbd ml-1 hidden 2xl:inline">⌘K</kbd>
         <span className="sr-only">Apri la ricerca</span>
@@ -301,7 +301,7 @@ export function SearchTrigger({ variant = "icon", className, placeholder = "Cerc
     );
   }
   return (
-    <button type="button" onClick={() => openSiteSearch()} className={clsx("inline-flex items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors hover:bg-mist", className ?? "h-11 w-11")}>
+    <button type="button" onClick={() => openSiteSearch()} className={className ?? "icon-btn icon-btn-solid"}>
       <Search aria-hidden className="h-5 w-5" />
       <span className="sr-only">Cerca nel sito</span>
     </button>

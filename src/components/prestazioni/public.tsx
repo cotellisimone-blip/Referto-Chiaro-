@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Home, MapPin } from "lucide-react";
+import { ArrowRight, CheckCircle2, Home, MapPin, Stethoscope, Video } from "lucide-react";
 import { availability, checkCoverage, featuredKind, type PrestazioniState } from "@/domain/prestazioni/engine";
 import { PRESTAZIONI, PRESTAZIONI_ORDER, type PrestazioneKind } from "@/domain/prestazioni/listino";
 import { usePrestazioni } from "./store";
@@ -68,15 +68,16 @@ export function PrestazioneAction({ kind }: { kind: PrestazioneKind }) {
   );
 }
 
-const FEATURE_COPY: Record<PrestazioneKind, { eyebrow: (s: PrestazioniState) => string; title: string; cta: string }> = {
-  domicilio: { eyebrow: (s) => `Novità · ${s.coverage.comune} città`, title: "Il medico a casa tua.", cta: "Richiedi la visita" },
-  video: { eyebrow: () => "Disponibile ora", title: "Parla con un medico, in video.", cta: "Prenota il videoconsulto" },
-  parere: { eyebrow: () => "Disponibile ora", title: "Un secondo parere specialistico.", cta: "Richiedi il secondo parere" },
+const FEATURE_COPY: Record<PrestazioneKind, { eyebrow: (s: PrestazioniState) => string; title: string; cta: string; icon: typeof Home }> = {
+  domicilio: { eyebrow: (s) => `Novità · ${s.coverage.comune} città`, title: "Il medico a casa tua", cta: "Richiedi la visita", icon: Home },
+  video: { eyebrow: () => "Disponibile ora", title: "Un medico, in video", cta: "Prenota il videoconsulto", icon: Video },
+  parere: { eyebrow: () => "Disponibile ora", title: "Un secondo parere specialistico", cta: "Richiedi il secondo parere", icon: Stethoscope },
 };
 
 /**
  * In home: il domicilio quando ha copertura; se no, un'altra prestazione davvero disponibile; se nessuna è aperta,
  * niente (la home dà già la precedenza agli strumenti gratuiti e a «Capisci»).
+ * Grafica «Luce»: un annuncio di vetro sopra il titolo, con il punto vivo, il prezzo e le due azioni.
  */
 export function FeaturedPrestazione({ vetrina = false }: { vetrina?: boolean }) {
   const s = usePrestazioni();
@@ -85,21 +86,27 @@ export function FeaturedPrestazione({ vetrina = false }: { vetrina?: boolean }) 
   if (!kind) return null;
   const info = PRESTAZIONI[kind];
   const copy = FEATURE_COPY[kind];
-  const av = s && now ? availability(s, kind, now) : null;
+  const Icon = copy.icon;
   return (
-    <div className="featured-prestazione" data-in-evidenza={kind}>
-      <p className="eyebrow">{s ? copy.eyebrow(s) : "Novità · Brescia città"}</p>
-      <p className="mt-2 text-[1.625rem] font-bold leading-tight text-ink sm:text-[1.875rem]">{copy.title}</p>
-      <p className="mt-1.5 text-[1.0625rem] text-ink-soft">
-        {info.title} · <strong className="text-ink"><Price kind={kind} /></strong>
-        {av?.next && now ? <> · prima fascia {formatSlot(av.next, now)}</> : null}
+    <div className="announce" data-in-evidenza={kind}>
+      <span aria-hidden className="tile-ico tile-ico-sm">
+        <Icon />
+      </span>
+      <p className="announce-kicker">
+        <span aria-hidden className="live-dot" />
+        {s ? copy.eyebrow(s) : "Novità · Brescia città"}
       </p>
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 sm:mt-4">
-        <Link href={info.startHref} data-track={`cta-${kind}`} className="btn btn-primary">
-          {kind === "domicilio" ? <Home aria-hidden className="h-4 w-4" /> : null} {vetrina ? "Provala nella demo" : copy.cta} <ArrowRight aria-hidden className="btn-arrow h-4 w-4" />
+      <p className="announce-title">
+        {copy.title} · <Price kind={kind} />
+      </p>
+      <p className="announce-actions">
+        <Link href={info.startHref} data-track={`cta-${kind}`} className="announce-cta">
+          {vetrina ? "Provala nella demo" : copy.cta} <ArrowRight aria-hidden className="h-4 w-4" />
         </Link>
-        <Link href={info.href} className="link inline-flex min-h-11 items-center font-semibold">Come funziona</Link>
-      </div>
+        <Link href={info.href} className="announce-more">
+          Come funziona
+        </Link>
+      </p>
     </div>
   );
 }

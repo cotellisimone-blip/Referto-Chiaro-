@@ -23,9 +23,9 @@ export default function Page() {
   return (
     <>
       <PageHeader art="shield" eyebrow="Note legali" title="Informativa privacy" lead="Che cosa raccogliamo, perché, per quanto tempo e che cosa puoi chiedere." />
-      <div className="container-rc py-12 sm:py-16">
+      <div className="container-rc page-body">
         <DraftNotice />
-        <div className="mt-10">
+        <div className="mt-8 sm:mt-10">
           <Prose>
             <h2>Chi tratta i dati</h2>
             <p>Titolare del trattamento: [nome e indirizzo del titolare, da compilare]. Contatto per la privacy: [email dedicata]. Responsabile della protezione dei dati, se nominato: [nome e contatto].</p>

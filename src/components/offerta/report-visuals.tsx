@@ -36,21 +36,23 @@ function ValueRow({ v, compact = false }: { v: (typeof VALUES)[number]; compact?
   );
 }
 
-/** Il report in miniatura che esce dalla fotografia della hero. */
+/** Il report in miniatura, su vetro, sospeso sopra la fotografia dell'apertura. */
 export function MiniReport({ className }: { className?: string }) {
   return (
-    <div aria-hidden className={clsx("rounded-[1.75rem] border border-line bg-paper p-4 shadow-[var(--shadow-float)]", className)}>
+    <div aria-hidden className={clsx("glass rounded-[1.75rem] p-3.5", className)}>
       <p className="flex items-center justify-between gap-2 px-1 pb-3">
-        <span className="inline-flex items-center gap-2 text-[1.0625rem] font-extrabold text-ink">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-marker-soft text-teal-deep">
-            <FileText className="h-4 w-4" />
+        <span className="inline-flex items-center gap-2.5 text-[1.0625rem] font-extrabold text-ink">
+          <span className="tile-ico tile-ico-sm h-9 w-9 rounded-xl">
+            <FileText />
           </span>
           Il tuo report
         </span>
-        <span className="rounded-full bg-mist px-2.5 py-0.5 text-sm font-semibold text-ink-soft">Esempio</span>
+        <span className="rounded-full bg-mist px-2.5 py-0.5 text-sm font-bold text-ink-soft">Esempio</span>
       </p>
-      <div className="space-y-2.5">
-        <ValueRow v={VALUES[0]} compact />
+      <div className="grid gap-2">
+        <div className="hero-card-more">
+          <ValueRow v={VALUES[0]} compact />
+        </div>
         <ValueRow v={VALUES[1]} compact />
       </div>
     </div>
@@ -58,13 +60,13 @@ export function MiniReport({ className }: { className?: string }) {
 }
 
 /**
- * «Dal referto al report»: il foglio del laboratorio com'è (dietro, inclinato) e lo stesso contenuto reso chiaro
- * (davanti). Su telefono si impilano, con il report che copre il fondo del foglio; da tablet in su stanno affiancati.
+ * «Dal referto al report»: il foglio del laboratorio com'è (dietro, inclinato, in alto a sinistra) e lo stesso
+ * contenuto reso chiaro (davanti, in basso a destra). Si usa da tablet in su: su telefono c'è il cursore «prima e dopo».
  */
 export function ReportTransform({ className }: { className?: string }) {
   return (
     <div aria-hidden className={clsx("transform-stage scope-light", className)}>
-      <div className="transform-doc p-4 pb-16 sm:p-5 sm:pb-6">
+      <div className="transform-doc p-5 pb-20">
         <p className="text-xs font-bold uppercase tracking-widest text-[#5b6b70]">Laboratorio analisi · referto</p>
         <div className="mt-3 border-y border-[#d9dfe0] py-1 text-sm">
           <p className="grid grid-cols-[1fr_0.7fr_1.2fr] gap-2 border-b border-dashed border-[#d9dfe0] py-1.5 font-bold">
@@ -84,10 +86,10 @@ export function ReportTransform({ className }: { className?: string }) {
           ))}
         </div>
       </div>
-      <span className="transform-arrow">
-        <ArrowRight className="h-6 w-6" strokeWidth={2.6} />
-      </span>
       <div className="transform-report p-4 sm:p-5">
+        <span className="transform-arrow">
+          <ArrowRight className="h-6 w-6" strokeWidth={2.6} />
+        </span>
         <p className="flex items-center justify-between gap-2 px-1 pb-3">
           <span className="inline-flex items-center gap-2 text-lg font-extrabold text-ink">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-marker-soft text-teal-deep">
@@ -98,9 +100,7 @@ export function ReportTransform({ className }: { className?: string }) {
           <span className="rounded-full bg-mist px-2.5 py-0.5 text-sm font-semibold text-ink-soft">Dati inventati</span>
         </p>
         <div className="space-y-2.5">
-          <div className="hidden sm:block">
-            <ValueRow v={VALUES[0]} />
-          </div>
+          <ValueRow v={VALUES[0]} />
           <ValueRow v={VALUES[1]} />
         </div>
         <p className="mt-3 flex items-center gap-2.5 rounded-2xl bg-mist px-4 py-3 text-[1.0625rem] font-bold text-ink">

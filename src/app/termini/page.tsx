@@ -8,9 +8,9 @@ export default function Page() {
   return (
     <>
       <PageHeader compact eyebrow="Note legali" title="Termini del servizio" lead="Le condizioni che regoleranno l'uso di Cura Privata." />
-      <div className="container-rc py-12 sm:py-16">
+      <div className="container-rc page-body">
         <DraftNotice />
-        <div className="mt-10">
+        <div className="mt-8 sm:mt-10">
           <Prose>
             <h2>Natura del servizio</h2>
             <p>Cura Privata offre spiegazioni informative di documenti medici. Non fornisce diagnosi, terapie, triage o pareri medici, e non sostituisce il medico curante né il pronto soccorso. Il servizio di secondo parere, quando sarà attivo, sarà erogato da medici abilitati e identificati, con condizioni proprie.</p>

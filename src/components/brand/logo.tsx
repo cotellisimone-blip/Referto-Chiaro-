@@ -44,7 +44,7 @@ export function Logo({ className, withTld = false, inverse = false }: { classNam
           inverse ? "text-white" : "text-brand",
         )}
       >
-        Cura <span className={inverse ? "text-marker" : "text-teal"}>Privata</span>
+        Cura <span className={inverse ? "text-[#7be0d2]" : "text-teal"}>Privata</span>
         {withTld ? <span className={clsx("text-base font-semibold", inverse ? "text-white/70" : "text-muted")}>.it</span> : null}
       </span>
     </span>
