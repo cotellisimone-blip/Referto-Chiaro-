@@ -1,38 +1,130 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ALargeSmall, ArrowRight, BookOpenCheck, CircleHelp, Footprints, SearchCheck, TextAlignStart, X } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
-import { Prose } from "@/components/ui/draft-notice";
+import { Photo } from "@/components/ui/photo";
+import { Section } from "@/components/ui/section";
+import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 
-export const metadata: Metadata = { title: "Il progetto", description: "Chi siamo e perché Cura Privata esiste: rendere chiari i referti e portarti da un medico vero quando serve. Che cosa facciamo e che cosa non facciamo." };
+export const metadata: Metadata = {
+  title: "Chi siamo",
+  description: "Perché esiste Cura Privata: spiegare i referti in parole semplici e portarti da un medico quando serve. In che cosa crediamo e che cosa qui non troverai.",
+  alternates: { canonical: "/chi-siamo" },
+};
+
+const BELIEFS = [
+  { icon: BookOpenCheck, title: "Capire è un tuo diritto", text: "Sapere che cosa c'è scritto nel tuo referto ti spetta. Non sostituisce il medico: ti prepara a parlargli." },
+  { icon: SearchCheck, title: "La fiducia si verifica", text: "Ogni numero rimanda alla riga del referto da cui viene, e ogni spiegazione alla sua fonte." },
+  { icon: CircleHelp, title: "Meglio «non lo so»", text: "Se un dato non si legge, ci fermiamo e te lo diciamo. Non tiriamo a indovinare." },
+];
+
+const CARE = [
+  { icon: ALargeSmall, title: "Testo grande", text: "Caratteri grandi già in partenza, e un tasto per ingrandirli ancora." },
+  { icon: TextAlignStart, title: "Poche parole", text: "Frasi brevi, e nessuna sigla lasciata senza spiegazione." },
+  { icon: Footprints, title: "Un passo per volta", text: "Ogni schermata ti chiede una cosa sola e ti dice che cosa succede dopo." },
+];
+
+const NOT_HERE = ["Testimonianze inventate", "Numeri di utenti gonfiati", "Medici o collaborazioni che non esistono"];
 
 export default function Page() {
+  const photo = ILLUSTRATIVE_PHOTOS.mani;
   return (
     <>
-      <PageHeader compact eyebrow="Chi siamo" title="Il progetto" lead="Uno spazio semplice e riservato per capire i propri esami, chiedere un secondo parere e parlare con un medico." />
-      <div className="container-rc py-12 sm:py-16">
-        <blockquote className="card grain relative overflow-hidden p-8 sm:p-12">
-          <p className="display-lg max-w-3xl">
-            Un referto non dovrebbe fare paura solo perché è scritto in un&apos;altra lingua.
-          </p>
-          <p className="mt-6 max-w-2xl text-xl text-ink-soft">
-            Prima ti aiutiamo a capire. Se serve, un medico abilitato legge i tuoi documenti e ti risponde per iscritto o in video. Le decisioni restano tue e del tuo medico.
-          </p>
-        </blockquote>
-        <div className="mt-12">
-          <Prose>
-            <p>Cura Privata è un progetto italiano in fase di sviluppo, nato come «Referto Chiaro». Oggi è una versione dimostrativa dei suoi servizi: «Capisci il tuo referto» e, con un medico, la visita a domicilio, il videoconsulto e il secondo parere specialistico. Usa solo documenti inventati e un medico dimostrativo. È pensato prima di tutto per chi ha più di sessant&apos;anni e per chi aiuta un genitore: testo grande, poche parole, un passo per volta.</p>
-            <h2>Che cosa crediamo</h2>
-            <ul>
-              <li>Capire un referto è un diritto, ma non sostituisce il medico.</li>
-              <li>La fiducia nasce da ciò che si può verificare: per questo ogni numero mostra la sua fonte.</li>
-              <li>Meglio dire «non lo so» che indovinare.</li>
-            </ul>
-            <h2>Che cosa non troverai qui</h2>
-            <p>Testimonianze, numeri di utenti, medici o partnership che non esistono. Quando ci saranno, saranno verificabili.</p>
-            <p>Ogni servizio parte davvero solo dopo le verifiche che un servizio sanitario richiede. Le trovi tutte nello <Link href="/stato-del-progetto" className="link">stato del progetto</Link>.</p>
-          </Prose>
+      <PageHeader
+        eyebrow="Chi siamo"
+        title="Un referto non dovrebbe fare paura."
+        lead="Spesso spaventa solo perché è scritto in un'altra lingua. Cura Privata nasce per tradurlo in parole semplici e, quando serve una persona, portarti da un medico."
+      />
+
+      <section aria-labelledby="storia-titolo" className="section">
+        <div className="container-rc story">
+          {SHOW_ILLUSTRATIVE_PHOTOS ? (
+            <figure className="story-photo">
+              <Photo photo={photo} sizes="(min-width: 900px) 44vw, 92vw" />
+              <figcaption className="caption-illus bottom-4 left-4">Immagine illustrativa</figcaption>
+            </figure>
+          ) : null}
+          <div>
+            <h2 id="storia-titolo" className="display-lg">
+              Prima capisci. Poi decidi, con il tuo medico.
+            </h2>
+            <p className="lead mt-5">
+              Con un referto in mano ci si sente soli: sigle, asterischi, numeri fuori colonna. Noi partiamo da lì. Ti diciamo che cosa misura ogni esame e dove cade il tuo valore rispetto all&apos;intervallo del laboratorio, senza giudicarlo.
+            </p>
+            <p className="lead mt-4">Se vuoi andare avanti c&apos;è un medico abilitato: a casa, in video o per un secondo parere. Le decisioni restano tue e del tuo medico.</p>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <Section id="valori" title="In che cosa crediamo.">
+        <ul className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:gap-5 lg:grid-cols-3">
+          {BELIEFS.map(({ icon: Icon, title, text }) => (
+            <li key={title} className="tile-card">
+              <span aria-hidden className="tile-ico">
+                <Icon />
+              </span>
+              <div>
+                <h3 className="tile-card-title">{title}</h3>
+                <p className="tile-card-text">{text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section id="per-chi" tone="mist" eyebrow="Per chi è pensato" title="Per chi ha più di sessant'anni, e per chi aiuta un genitore.">
+        <ul className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:gap-5 lg:grid-cols-3">
+          {CARE.map(({ icon: Icon, title, text }) => (
+            <li key={title} className="tile-card">
+              <span aria-hidden className="tile-ico">
+                <Icon />
+              </span>
+              <div>
+                <h3 className="tile-card-title">{title}</h3>
+                <p className="tile-card-text">{text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section id="non-troverai" eyebrow="Per chiarezza" title="Che cosa qui non troverai." size="md">
+        <ul className="excl-grid">
+          {NOT_HERE.map((x) => (
+            <li key={x}>
+              <span aria-hidden className="cross-dot">
+                <X />
+              </span>
+              {x}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-6 text-lg text-ink-soft">Quando ci saranno persone e numeri da mostrare, li potrai verificare.</p>
+      </Section>
+
+      <section aria-labelledby="punto-titolo" className="section">
+        <div className="container-rc">
+          <div className="cta-card">
+            <div>
+              <h2 id="punto-titolo" className="display-md">
+                A che punto siamo.
+              </h2>
+              <p className="lead mt-3 max-w-[40rem]">
+                Cura Privata è un progetto italiano in fase di sviluppo, nato come «Referto Chiaro». Oggi è una versione dimostrativa: provi tutti i servizi su documenti inventati, con medici di prova. Ogni servizio apre davvero solo dopo le verifiche che un
+                servizio sanitario richiede.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <Link href="/referti/esempio" className="btn btn-primary btn-lg">
+                Prova con un referto di esempio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              </Link>
+              <Link href="/stato-del-progetto" className="btn btn-secondary btn-lg">
+                Guarda lo stato del progetto
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

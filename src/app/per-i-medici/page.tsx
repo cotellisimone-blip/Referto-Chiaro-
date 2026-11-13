@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, BadgeCheck, FileLock2, Home, KeyRound, PenLine, ScrollText, Stethoscope, Video } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Method } from "@/components/offerta/method";
+import { DoctorCaseVisual } from "@/components/offerta/service-visuals";
 
 export const metadata: Metadata = {
   title: "Per i medici",
@@ -29,9 +30,14 @@ const WORK = [
 export default function Page() {
   return (
     <>
-      <PageHeader eyebrow="Per i medici" title="Una piattaforma seria, pensata anche per chi visita." lead="Il paziente arriva con i documenti in ordine e una domanda chiara. Tu visiti, parli o scrivi il parere: al resto pensiamo noi.">
+      <PageHeader
+        eyebrow="Per i medici"
+        title="Una piattaforma seria, pensata anche per chi visita."
+        lead="Il paziente arriva con i documenti in ordine e una domanda chiara. Tu visiti, parli o scrivi il parere: al resto pensiamo noi."
+        visual={<DoctorCaseVisual />}
+      >
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-          <Link href="/prova/medico" className="btn btn-primary btn-lg">
+          <Link href="/prova/medico" className="btn btn-primary btn-lg sm:shrink-0">
             Guarda il portale del medico <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
           <span className="text-[1.0625rem] text-muted">Versione dimostrativa, con un medico di prova.</span>
@@ -41,7 +47,7 @@ export default function Page() {
       <section aria-labelledby="come-titolo" className="section">
         <div className="container-rc">
           <h2 id="come-titolo" className="display-lg max-w-3xl">
-            Come lavori con Cura Privata
+            Come lavori con Cura Privata.
           </h2>
           <ul className="mt-7 grid grid-cols-[minmax(0,1fr)] gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {HOW.map(({ icon: Icon, title, text }) => (

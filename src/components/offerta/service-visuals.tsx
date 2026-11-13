@@ -46,6 +46,45 @@ export function OpinionSheet({ className = "" }: { className?: string }) {
   );
 }
 
+/** La richiesta come la vede il medico nel portale: il quesito, i documenti scelti dal paziente, la scelta. */
+export function DoctorCaseVisual({ className = "" }: { className?: string }) {
+  return (
+    <div aria-hidden className={`case-visual tone-parere ${className}`}>
+      <div className="glow-teal absolute -inset-8 rounded-full" />
+      <div className="glass relative rounded-[1.75rem] p-5">
+        <p className="flex items-center justify-between gap-3">
+          <span className="inline-flex items-center gap-3 text-[1.0625rem] font-extrabold text-ink">
+            <span className="tile-ico tile-ico-sm tile-ico-tone h-10 w-10 rounded-xl">
+              <Stethoscope />
+            </span>
+            Nuova richiesta
+          </span>
+          <span className="rounded-full bg-mist px-2.5 py-0.5 text-sm font-bold text-ink-soft">Esempio</span>
+        </p>
+        <p className="mt-5 text-sm font-bold uppercase tracking-[0.12em] text-[var(--tone-accent)]">Secondo parere · il quesito</p>
+        <p className="mt-1.5 text-lg font-bold leading-snug text-ink">«Ci sono alternative a quello che mi è stato proposto?»</p>
+        <ul className="mt-4 grid gap-2 text-[0.9375rem] font-semibold leading-tight text-ink">
+          <li className="flex items-center gap-2.5 rounded-xl bg-canvas px-3 py-2.5">
+            <FileText className="h-5 w-5 shrink-0 text-[var(--tone-accent)]" />3 documenti scelti dal paziente
+          </li>
+          <li className="flex items-center gap-2.5 rounded-xl bg-canvas px-3 py-2.5">
+            <Clock3 className="h-5 w-5 shrink-0 text-[var(--tone-accent)]" />
+            Visibili finché il caso è aperto
+          </li>
+        </ul>
+        <p className="mt-4 grid grid-cols-[1fr_auto] gap-2 text-[0.9375rem] font-bold">
+          <span className="rounded-full bg-[linear-gradient(180deg,#00827b,#006c66)] px-4 py-2.5 text-center text-on-strong">Accetta il caso</span>
+          <span className="rounded-full border border-[var(--line-strong)] bg-paper px-4 py-2.5 text-center text-ink">Rifiuta</span>
+        </p>
+      </div>
+      <p className="glass case-chip">
+        <PenLine className="h-5 w-5 shrink-0 text-teal" />
+        Parere firmato, non modificabile
+      </p>
+    </div>
+  );
+}
+
 const STEP_TILES = [
   { icon: FileText, tone: "capisci", left: "0.9%", top: "68%" },
   { icon: Home, tone: "medico", left: "28.2%", top: "45.2%" },

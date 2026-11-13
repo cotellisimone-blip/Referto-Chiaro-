@@ -30,54 +30,66 @@ export default async function VocePage({ params }: { params: Promise<{ slug: str
     breadcrumbLd([{ name: "Glossario", path: "/glossario" }, { name: e.term, path: `/glossario/${e.slug}` }]),
   ];
   return (
-    <article className="container-rc py-10 sm:py-14">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
-      <Breadcrumbs items={[{ name: "Glossario", path: "/glossario" }, { name: e.term, path: `/glossario/${e.slug}` }]} />
-      <div className="mt-6 max-w-3xl">
-        <p className="eyebrow">Glossario</p>
-        <h1 className="display mt-3 text-[2.25rem] sm:text-[3rem]">{e.term}</h1>
-        {e.aliases.length ? <p className="mt-2 text-sm text-muted">Altri nomi: {e.aliases.join(", ")}.</p> : null}
-        <p className="mt-5 text-lg text-ink">{e.definition}</p>
-        <div className="mt-6 space-y-4 text-[1.0625rem] leading-relaxed text-ink-soft">
-          {e.inDetail.map((p) => (
-            <p key={p.slice(0, 40)}>{p}</p>
-          ))}
-        </div>
-        <div className="mt-8">
-          <ReviewNotice lastUpdated="2026-11-07" />
-        </div>
-        <div className="mt-10">
-          <ContextualCta category={guides[0]?.category} />
-        </div>
-        {guides.length ? (
-          <section className="mt-10" aria-labelledby="guide-coll">
-            <h2 id="guide-coll" className="text-lg font-semibold text-ink">Guide collegate</h2>
-            <ul className="mt-2 space-y-1">
-              {guides.map((g) => (
-                <li key={g.slug}>
-                  <Link href={`/guide/${g.slug}`} className="link inline-flex min-h-11 items-center">
-                    {g.title}
-                  </Link>
-                </li>
+    <div className="article-shell">
+      <article className="container-rc article-body">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
+        <Breadcrumbs items={[{ name: "Glossario", path: "/glossario" }, { name: e.term, path: `/glossario/${e.slug}` }]} />
+        <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
+          <div className="max-w-3xl">
+            <p className="eyebrow">Glossario</p>
+            <h1 className="page-title page-title-sm mt-4">{e.term}</h1>
+            {e.aliases.length ? <p className="mt-3 text-base text-muted">Altri nomi: {e.aliases.join(", ")}.</p> : null}
+            <p className="lead mt-5 text-ink">{e.definition}</p>
+            <div className="mt-6 space-y-4 text-[1.0625rem] leading-relaxed text-ink-soft">
+              {e.inDetail.map((p) => (
+                <p key={p.slice(0, 40)}>{p}</p>
               ))}
-            </ul>
-          </section>
-        ) : null}
-        {terms.length ? (
-          <section className="mt-8" aria-labelledby="termini-coll">
-            <h2 id="termini-coll" className="text-lg font-semibold text-ink">Termini collegati</h2>
-            <ul className="mt-2 flex flex-wrap gap-2">
-              {terms.map((t) => (
-                <li key={t.slug}>
-                  <Link href={`/glossario/${t.slug}`} className="chip min-h-11 bg-mist text-ink">
-                    {t.term}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
-      </div>
-    </article>
+            </div>
+            <div className="mt-8">
+              <ReviewNotice lastUpdated="2026-11-07" subject="il termine" />
+            </div>
+            <div className="mt-10">
+              <ContextualCta category={guides[0]?.category} />
+            </div>
+          </div>
+          {guides.length || terms.length ? (
+            <aside className="space-y-6 lg:mt-12" aria-label="Collegamenti">
+              {guides.length ? (
+                <section className="side-card" aria-labelledby="guide-coll">
+                  <h2 id="guide-coll" className="side-card-title">
+                    Guide collegate
+                  </h2>
+                  <ul className="link-list mt-1">
+                    {guides.map((g) => (
+                      <li key={g.slug}>
+                        <Link href={`/guide/${g.slug}`} className="link">
+                          {g.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+              {terms.length ? (
+                <section className="side-card" aria-labelledby="termini-coll">
+                  <h2 id="termini-coll" className="side-card-title">
+                    Termini collegati
+                  </h2>
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {terms.map((t) => (
+                      <li key={t.slug}>
+                        <Link href={`/glossario/${t.slug}`} className="chip min-h-11 bg-mist text-ink">
+                          {t.term}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+            </aside>
+          ) : null}
+        </div>
+      </article>
+    </div>
   );
 }

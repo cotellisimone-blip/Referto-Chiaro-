@@ -34,7 +34,7 @@ export default function ComeFunzionaPage() {
     <>
       <PageHeader eyebrow="Come funziona" title="Scegli tu fin dove arrivare." lead="Puoi fermarti al referto spiegato, o andare avanti con un medico. I documenti che carichi restano nella tua area: non li ricarichi.">
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-          <Link href="/referti/esempio" className="btn btn-primary btn-lg">
+          <Link href="/referti/esempio" className="btn btn-primary btn-lg sm:shrink-0">
             Prova con un referto di esempio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
           <span className="text-[1.0625rem] text-muted">Senza registrazione, con dati inventati.</span>
