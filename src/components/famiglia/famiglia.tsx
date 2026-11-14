@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { api } from "@/components/area/api";
 import { ConfirmButton } from "@/components/ui/confirm-button";
+import { mediciEnabled } from "@/lib/medici";
 import {
   BASI,
   DICHIARAZIONE,
@@ -200,10 +201,12 @@ export function Famiglia() {
             nel tuo account
           </h2>
           <p className="mt-2 text-[1.0625rem] text-ink-soft">
-            Il familiare non riceve email e non ha un accesso suo. Nessun medico
-            vede i suoi documenti se non li condividi tu, per una richiesta
-            precisa. Puoi eliminare la scheda quando vuoi: con lei spariscono
-            referti, numeri e promemoria.
+            Il familiare non riceve email e non ha un accesso suo.{" "}
+            {mediciEnabled()
+              ? "Nessun medico vede i suoi documenti se non li condividi tu, per una richiesta precisa."
+              : "I suoi documenti li vedi solo tu."}{" "}
+            Puoi eliminare la scheda quando vuoi: con lei spariscono referti,
+            numeri e promemoria.
           </p>
         </div>
         <div className="rounded-[var(--radius-lg)] border border-line bg-canvas p-5 sm:p-6">

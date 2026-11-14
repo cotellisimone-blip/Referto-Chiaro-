@@ -21,9 +21,13 @@ import {
 import { LogoMark } from "@/components/brand/logo";
 import { api } from "./api";
 import { isFocusPath } from "./area-shell";
+import { isDoctorPath, mediciEnabled } from "@/lib/medici";
+
+/** 14/11/2026: senza medici (src/lib/medici.ts) spariscono «Visite e videoconsulti» e «I miei pareri». */
+const MEDICI = mediciEnabled();
 
 /** Gerarchia ridotta (pacchetto «Memorabile»): documenti, pareri, appuntamenti. Il resto è di supporto. */
-const ITEMS = [
+const ITEMS_ALL = [
   {
     href: "/area-personale",
     label: "I miei documenti e report",
@@ -90,6 +94,10 @@ const ITEMS = [
   },
 ];
 
+const ITEMS = MEDICI ? ITEMS_ALL : ITEMS_ALL.filter((i) => !isDoctorPath(i.href));
+/** Quinta voce della barra in basso su telefono: le richieste al medico oppure, senza medici, i promemoria. */
+const LAST_TAB = MEDICI ? ITEMS_ALL[4] : ITEMS_ALL[3];
+
 const COMING = [{ href: "/servizi/prevenzione", label: "Prevenzione" }];
 
 /**
@@ -97,12 +105,12 @@ const COMING = [{ href: "/servizi/prevenzione", label: "Prevenzione" }];
  * Desktop: colonna laterale con orientamento (chi sei, che cosa puoi fare, che cosa arriverà).
  * Mobile: barra in basso con 5 voci etichettate (target ≥ 44px), come chiede il kit.
  */
-/** Voci della barra in basso su telefono: referti, nel tempo, nuovo, famiglia, medico. */
+/** Voci della barra in basso su telefono: referti, nel tempo, nuovo, famiglia, medico (o promemoria). */
 const TAB_HREFS = [
   "/area-personale",
   "/area-personale/nel-tempo",
   "/area-personale/famiglia",
-  "/richieste",
+  LAST_TAB.href,
 ];
 
 export function AreaNav({
@@ -284,7 +292,7 @@ export function AreaNav({
               exact: true,
             },
             ITEMS[2],
-            ITEMS[4],
+            LAST_TAB,
           ].map(({ href, label, short, icon: Icon, exact }) => {
             const active = isActive(href, exact);
             return (

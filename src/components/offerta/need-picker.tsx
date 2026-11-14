@@ -39,7 +39,7 @@ type Choice = (typeof ORDER)[number] | "tool";
 export function NeedPicker({ services, headingId }: { services: PickerService[]; headingId?: string }) {
   const [need, setNeed] = useState<Choice | null>(null);
   const name = useId();
-  const options: { id: Choice; label: string }[] = [...ORDER.map((id) => ({ id, label: services.find((s) => s.id === id)?.need ?? "" })), { id: "tool", label: TOOL.label }];
+  const options: { id: Choice; label: string }[] = [...ORDER.filter((id) => services.some((s) => s.id === id)).map((id) => ({ id, label: services.find((s) => s.id === id)?.need ?? "" })), { id: "tool", label: TOOL.label }];
   const service = need && need !== "tool" ? services.find((s) => s.id === need) ?? null : null;
   const Icon = need ? ICON[need] : null;
 

@@ -49,7 +49,7 @@ export default async function VocePage({ params }: { params: Promise<{ slug: str
               <ReviewNotice lastUpdated="2026-11-07" subject="il termine" />
             </div>
             <div className="mt-10">
-              <ContextualCta category={guides[0]?.category} />
+              <ContextualCta category={guides[0]?.category} slug={guides[0]?.slug} />
             </div>
           </div>
           {guides.length || terms.length ? (

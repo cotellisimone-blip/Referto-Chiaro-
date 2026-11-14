@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { DraftNotice, Prose } from "@/components/ui/draft-notice";
+import { mediciEnabled } from "@/lib/medici";
 
 export const metadata: Metadata = { title: "Cookie", description: "Quali cookie usa Cura Privata: solo quelli tecnici necessari al funzionamento, nessun cookie di profilazione o pubblicità." };
 
@@ -15,7 +16,7 @@ export default function Page() {
             <h2>Cookie tecnici</h2>
             <ul>
               <li>
-                <strong>rc_session</strong>: identifica la tua sessione dopo l&apos;accesso all&apos;area personale. È necessario, non leggibile da script, inviato solo su connessione cifrata. Dura 14 giorni (12 ore per medici e amministratori) e sparisce quando esci.
+                <strong>rc_session</strong>: identifica la tua sessione dopo l&apos;accesso all&apos;area personale. È necessario, non leggibile da script, inviato solo su connessione cifrata. Dura 14 giorni ({mediciEnabled() ? "12 ore per medici e amministratori" : "12 ore per gli amministratori"}) e sparisce quando esci.
               </li>
             </ul>
             <h2>Memoria del browser, senza cookie</h2>

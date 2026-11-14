@@ -1,10 +1,13 @@
+import { CON_UN_MEDICO_HREF, isDoctorPath, mediciEnabled } from "@/lib/medici";
+
 /**
  * Navigazione Cura Privata: i servizi per primi (ciclo 1), poi prezzi e guide. 12/11/2026: entra la visita a domicilio;
  * «Parla con un medico» diventa «Videoconsulto». «Guide» si vede dai 1280 px in su (sotto resta nel menu, nel fondo
  * pagina e nella ricerca), così la testata non va a capo a 1024 px.
  */
 export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users";
-export const MAIN_NAV: readonly { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; icon: NavIcon; wideOnly?: "xl" | "2xl" }[] = [
+type NavItem = { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; icon: NavIcon; wideOnly?: "xl" | "2xl" };
+const MAIN_NAV_ALL: readonly NavItem[] = [
   { href: "/referti", label: "Capisci il referto", tone: "capisci", icon: "file" },
   { href: "/servizi/visita-a-domicilio", label: "A domicilio", tone: "medico", icon: "home" },
   { href: "/servizi/parla-con-un-medico", label: "Videoconsulto", tone: "medico", icon: "video" },
@@ -14,9 +17,11 @@ export const MAIN_NAV: readonly { href: string; label: string; tone: "capisci" |
   { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro", wideOnly: "xl" },
   { href: "/guide", label: "Guide", tone: null, icon: "book", wideOnly: "2xl" },
 ];
+/** 13/11/2026: con i medici spenti (src/lib/medici.ts) restano Capisci, Famiglia, Prezzi e Guide, tutte visibili. */
+export const MAIN_NAV: readonly NavItem[] = mediciEnabled() ? MAIN_NAV_ALL : MAIN_NAV_ALL.filter((i) => !isDoctorPath(i.href)).map((i) => ({ ...i, wideOnly: undefined }));
 
 /** Fondo pagina snello: tre colonne, una dozzina di voci. Le note legali stanno nella riga in basso. */
-export const FOOTER_NAV = {
+const FOOTER_NAV_ALL = {
   Servizi: [
     { href: "/referti", label: "Capisci il tuo referto" },
     { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio" },
@@ -41,6 +46,18 @@ export const FOOTER_NAV = {
   ],
 } as const;
 
+type FooterLink = { href: string; label: string };
+/** Con i medici spenti: via le loro pagine, e una sola voce «Presto anche con un medico». */
+export const FOOTER_NAV: Record<string, readonly FooterLink[]> = mediciEnabled()
+  ? FOOTER_NAV_ALL
+  : Object.fromEntries(
+      Object.entries(FOOTER_NAV_ALL).map(([k, links]) => {
+        const kept: FooterLink[] = links.filter((l) => !isDoctorPath(l.href));
+        if (k === "Servizi") kept.splice(2, 0, { href: CON_UN_MEDICO_HREF, label: "Presto anche con un medico" });
+        return [k, kept];
+      }),
+    );
+
 export const LEGAL_NAV = [
   { href: "/privacy-policy", label: "Privacy" },
   { href: "/cookie-policy", label: "Cookie" },
@@ -57,4 +74,5 @@ export const EXTRA_PAGES = [
   { href: "/per-le-strutture", label: "Per le strutture" },
   { href: "/accedi", label: "Area personale" },
   { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio con medico generalista" },
+  { href: CON_UN_MEDICO_HREF, label: "Presto anche con un medico" },
 ] as const;

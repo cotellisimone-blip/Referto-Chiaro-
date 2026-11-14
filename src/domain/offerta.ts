@@ -1,3 +1,4 @@
+import { mediciEnabled } from "@/lib/medici";
 /**
  * L'offerta di Cura Privata: i tre servizi protagonisti («Capisci. Parla con un medico. Chiedi un secondo parere.»).
  * È l'UNICA fonte per nomi, frasi, tempi e prezzi: home, pagine servizio, /prezzi, selettore, area personale e
@@ -168,21 +169,24 @@ export const CORE_SERVICES: CoreService[] = [
 ];
 
 /** Ciclo 2, fase 3 (approvata da Simone l'11/11): il payoff segue l'ordine dei servizi e dei prezzi, come menu e livelli. */
-export const PAYOFF = "Capisci. Parla con un medico. Chiedi un secondo parere.";
-export const PAYOFF_LINES = ["Capisci.", "Parla con un medico.", "Chiedi un secondo parere."] as const;
+// 13/11/2026: senza medici (src/lib/medici.ts) il payoff dice quello che c'è davvero: capire, seguire nel tempo, prepararsi.
+export const PAYOFF_LINES: readonly [string, string, string] = mediciEnabled()
+  ? ["Capisci.", "Parla con un medico.", "Chiedi un secondo parere."]
+  : ["Capisci.", "Segui nel tempo.", "Arriva preparato dal medico."];
+export const PAYOFF = PAYOFF_LINES.join(" ");
 /** I tre livelli del percorso, nell'ordine in cui si sale. */
-export const LEVELS = ["capisci", "parla-con-un-medico", "secondo-parere"] as const satisfies readonly CoreServiceId[];
+export const LEVELS: readonly CoreServiceId[] = mediciEnabled() ? ["capisci", "parla-con-un-medico", "secondo-parere"] : ["capisci"];
 export const INFORMATIVE_NOTE = "Informativo: non sostituisce la valutazione del medico e non fornisce diagnosi o terapia.";
-export const DESCRIPTOR = "Referti, secondo parere e videoconsulti con medici abilitati e identificabili.";
+export const DESCRIPTOR = mediciEnabled() ? "Referti, secondo parere e videoconsulti con medici abilitati e identificabili." : "Referti spiegati in parole semplici e la salute di tutta la famiglia, nel tempo.";
 
 /**
  * Sottotitolo della home (ciclo 1): dice in una riga che cosa ricevi e chi c'è se serve.
  * «medici abilitati e identificabili» resta per scelta del titolare (11/11/2026).
  */
-export const HERO_SUBTITLE = "Il tuo referto spiegato in parole semplici, valore per valore. E quando serve una persona, medici abilitati e identificabili: in video o a casa tua.";
+export const HERO_SUBTITLE = mediciEnabled() ? "Il tuo referto spiegato in parole semplici, valore per valore. E quando serve una persona, medici abilitati e identificabili: in video o a casa tua." : "Il tuo referto spiegato in parole semplici, valore per valore, con le domande da portare al tuo medico.";
 
 /** 13/11/2026: sottotitolo della home con la promessa «famiglia e nel tempo»; «medici abilitati e identificabili» resta. */
-export const HERO_PROMISE_SUBTITLE = "I referti di tutti in un posto solo, spiegati in parole semplici e messi in fila negli anni. E quando serve una persona, medici abilitati e identificabili: in video o a casa.";
+export const HERO_PROMISE_SUBTITLE = mediciEnabled() ? "I referti di tutti in un posto solo, spiegati in parole semplici e messi in fila negli anni. E quando serve una persona, medici abilitati e identificabili: in video o a casa." : "I referti di tutti in un posto solo, spiegati in parole semplici e messi in fila negli anni. E prima di ogni visita, le domande giuste per il tuo medico.";
 
 type Env = Record<string, string | undefined>;
 

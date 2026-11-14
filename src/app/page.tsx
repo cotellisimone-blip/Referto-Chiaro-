@@ -14,6 +14,8 @@ import { TrackView } from "@/components/site/track";
 import { DualEntry } from "@/components/punto-di-partenza/dual-entry";
 import { FeaturedPrestazione } from "@/components/prestazioni/public";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
+import { mediciEnabled } from "@/lib/medici";
+import { PrestoMedico } from "@/components/site/presto-medico";
 import {
   ExampleTrend,
 } from "@/components/famiglia/showcase";
@@ -42,6 +44,7 @@ export default function Home() {
   const capisci = coreService("capisci");
   const pdp = puntoDiPartenzaEnabled();
   const capisciPrice = priceDisplay("capisci");
+  const medici = mediciEnabled();
   return (
     <>
       <TrackView event="visita-home" />
@@ -51,7 +54,7 @@ export default function Home() {
         <div className="container-rc hero-inner">
           <div className="hero-copy">
             {/* 12/11/2026: in evidenza la prestazione con un medico davvero disponibile (il domicilio quando ha copertura). */}
-            <FeaturedPrestazione vetrina={isVetrina()} />
+            {medici ? <FeaturedPrestazione vetrina={isVetrina()} /> : null}
             {/* 13/11/2026: la promessa che fa restare diventa il titolo; i tre servizi restano la porta d'ingresso, subito sotto. */}
             <h1 id="hero-titolo" className="promise">
               Tutta la salute della tua famiglia,{" "}
@@ -252,6 +255,8 @@ export default function Home() {
               {PRICE_NOTE}
             </p>
           ) : null}
+          {/* 13/11/2026: senza medici, l'unico accenno ai servizi con un medico. */}
+          {medici ? null : <PrestoMedico className="mt-10 lg:mt-14" />}
         </div>
       </section>
 

@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { LinkCards } from "@/components/ui/link-cards";
 import { readTitolare } from "@/domain/titolare";
+import { withoutDoctors } from "@/lib/medici";
 
 export const metadata: Metadata = {
   title: "Contatti",
@@ -11,11 +12,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contatti" },
 };
 
-const ELSEWHERE = [
+/** Senza medici (src/lib/medici.ts) la scheda «Sei un medico?» non compare: la pagina a cui porta è spenta. */
+const ELSEWHERE = withoutDoctors([
   { icon: MessageCircleQuestionMark, title: "Hai una domanda sul servizio?", href: "/domande-frequenti", text: "Prezzi, tempi, dati: le risposte dirette.", go: "Leggi" },
   { icon: Stethoscope, title: "Sei un medico?", href: "/per-i-medici", text: "Come si lavora con Cura Privata.", go: "Scopri" },
   { icon: Building2, title: "Rappresenti una struttura?", href: "/per-le-strutture", text: "Laboratori, poliambulatori, farmacie.", go: "Scopri" },
-];
+]);
 
 export default function Page() {
   const t = readTitolare();

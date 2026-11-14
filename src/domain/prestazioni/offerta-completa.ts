@@ -1,3 +1,4 @@
+import { mediciEnabled } from "@/lib/medici";
 import { CORE_SERVICES, type CoreServiceId } from "@/domain/offerta";
 import { PRESTAZIONI, type PrestazioneKind } from "./listino";
 
@@ -35,6 +36,11 @@ const DOMICILIO: Omit<OfferItem, "key" | "kind" | "href" | "name" | "includes" |
 };
 
 const core = (id: CoreServiceId) => CORE_SERVICES.find((s) => s.id === id)!;
+
+/** 13/11/2026: l'offerta che si vende davvero adesso. Con i medici spenti (src/lib/medici.ts) resta solo il referto. */
+export function publicOfferItems(): OfferItem[] {
+  return mediciEnabled() ? offerItems() : offerItems().filter((i) => !i.kind);
+}
 
 export function offerItems(): OfferItem[] {
   const c = core("capisci");

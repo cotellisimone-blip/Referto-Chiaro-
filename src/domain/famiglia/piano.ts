@@ -1,3 +1,4 @@
+import { mediciEnabled } from "@/lib/medici";
 import { formatEuro, priceCents } from "@/domain/offerta";
 
 /**
@@ -54,6 +55,7 @@ export function famigliaIncludes(env: Env = process.env): string[] {
     "Numeri nel tempo e promemoria per tutta la famiglia",
     `«Capisci il tuo referto» incluso, fino a ${FAMIGLIA_CAPISCI_INCLUSI} referti l'anno`,
     "Il foglio per ogni visita, con domande e ultimi numeri",
-    `${p.discount} in meno su ogni visita a domicilio e videoconsulto`,
+    // Lo sconto sulle visite ha senso solo con i medici accesi (src/lib/medici.ts).
+    ...(mediciEnabled() ? [`${p.discount} in meno su ogni visita a domicilio e videoconsulto`] : []),
   ];
 }

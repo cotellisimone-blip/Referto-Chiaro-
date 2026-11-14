@@ -12,7 +12,9 @@ import {
 import { OFFER_ICON, OfferPrice } from "@/components/offerta/service-triad";
 import { FaqList } from "@/components/ui/faq-list";
 import { Wave } from "@/components/ui/wave";
-import { offerItems } from "@/domain/prestazioni/offerta-completa";
+import { publicOfferItems } from "@/domain/prestazioni/offerta-completa";
+import { mediciEnabled } from "@/lib/medici";
+import { PrestoMedico } from "@/components/site/presto-medico";
 import {
   PRESTAZIONI,
   type PrestazioneKind,
@@ -31,8 +33,9 @@ import {
 
 export const metadata: Metadata = {
   title: "Prezzi",
-  description:
-    "I servizi di Cura Privata a confronto: referto spiegato, visita a domicilio, videoconsulto e secondo parere. Che cosa includono, tempi e prezzo, prima di pagare.",
+  description: mediciEnabled()
+    ? "I servizi di Cura Privata a confronto: referto spiegato, visita a domicilio, videoconsulto e secondo parere. Che cosa includono, tempi e prezzo, prima di pagare."
+    : "Quanto costa Cura Privata: il primo referto spiegato, i successivi e che cosa è gratis. Che cosa include, tempi e prezzo, prima di pagare.",
   alternates: { canonical: "/prezzi" },
 };
 
@@ -75,7 +78,8 @@ const PAY_FAQ = [
  */
 export default function PrezziPage() {
   const prices = publicPricesEnabled();
-  const upgrade = upgradeEnabled();
+  const medici = mediciEnabled();
+  const upgrade = upgradeEnabled() && medici;
   return (
     <>
       <section
@@ -88,9 +92,11 @@ export default function PrezziPage() {
             Un prezzo chiaro, prima di pagare.
           </h1>
           <p className="lead mt-5 max-w-[40rem]">
-            Il referto spiegato, oppure un medico: a casa, in video o per un
-            secondo parere. Nessun abbonamento. In questa versione dimostrativa
-            nessun pagamento è reale.
+            {medici
+              ? "Il referto spiegato, oppure un medico: a casa, in video o per un secondo parere. "
+              : "Il referto spiegato, valore per valore. Il tuo spazio, con i numeri nel tempo e i promemoria, è gratis. "}
+            Nessun abbonamento. In questa versione dimostrativa nessun
+            pagamento è reale.
           </p>
         </div>
         <Wave className="text-canvas" />
@@ -99,7 +105,7 @@ export default function PrezziPage() {
       <section aria-label="Confronto dei servizi" className="price-section">
         <div className="container-rc">
           <ul className="price-grid">
-            {offerItems().map((s) => {
+            {publicOfferItems().map((s) => {
               const Icon = OFFER_ICON[s.icon];
               const start = s.kind
                 ? {
@@ -169,6 +175,7 @@ export default function PrezziPage() {
             })}
           </ul>
           <p className="mt-5 px-1 text-[1rem] text-muted">{PRICE_NOTE}</p>
+          {medici ? null : <PrestoMedico className="mt-8" />}
           {upgrade && prices ? (
             <p className="mt-4 rounded-2xl bg-mist px-5 py-4 text-lg text-ink">
               Hai già usato «Capisci il tuo referto»? Per parlarne con un medico
@@ -242,11 +249,11 @@ export default function PrezziPage() {
               Senza sorprese.
             </h2>
             <p className="lead mt-4">
-              Vedi sempre prezzo e tempi prima di pagare. Con un medico, paghi
-              solo dopo la sua conferma.
+              Vedi sempre prezzo e tempi prima di pagare.
+              {medici ? " Con un medico, paghi solo dopo la sua conferma." : ""}
             </p>
           </div>
-          <FaqList items={PAY_FAQ.map(([q, a]) => ({ q, a }))} />
+          <FaqList items={(medici ? PAY_FAQ : PAY_FAQ.map(([q, a]) => [q, a.replace(" Con un medico paghi solo dopo che ha confermato.", "")]).filter(([q, a]) => !/medic|visita/i.test(q + a))).map(([q, a]) => ({ q, a }))} />
         </div>
       </section>
     </>

@@ -9,6 +9,7 @@ import { StatusNotify } from "@/components/site/status-notify";
 import { PREREQUISITES, PREREQUISITES_DOMICILIO } from "@/content/stato-progetto";
 import { ECOSYSTEM } from "@/domain/ecosystem";
 import { offerItems, type OfferKey } from "@/domain/prestazioni/offerta-completa";
+import { CON_UN_MEDICO_HREF, mediciEnabled } from "@/lib/medici";
 
 export const metadata: Metadata = {
   title: "Stato del progetto",
@@ -42,6 +43,9 @@ export default function StatoDelProgettoPage() {
     text: s.short,
     go: "Come sarà",
   }));
+  // 14/11/2026: senza medici (src/lib/medici.ts) i loro servizi restano in elenco, perché qui si dice che cosa manca,
+  // ma come «In preparazione» e con il collegamento alla lista d'attesa, non alle pagine di vendita.
+  const medici = mediciEnabled();
   return (
     <>
       <PageHeader eyebrow="Stato del progetto" title="Che cosa manca, detto chiaramente." lead="Oggi Cura Privata è una versione dimostrativa. Ecco che cosa deve succedere prima che ogni servizio diventi reale.">
@@ -69,11 +73,11 @@ export default function StatoDelProgettoPage() {
                       </span>
                       <div className="min-w-0">
                         <h3 id={`stato-${s.key}`} className="svc-card-title">
-                          <Link href={s.href} className="hover:underline">
+                          <Link href={s.kind && !medici ? CON_UN_MEDICO_HREF : s.href} className="hover:underline">
                             {s.name}
                           </Link>
                         </h3>
-                        <p className="tone-text mt-0.5 text-[1.0625rem] font-bold">Versione dimostrativa</p>
+                        <p className="tone-text mt-0.5 text-[1.0625rem] font-bold">{s.kind && !medici ? "In preparazione" : "Versione dimostrativa"}</p>
                       </div>
                     </div>
                     <ul className="status-list">
