@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ArrowRight, FileSearch, Home, Stethoscope, Video, type LucideIcon } from "lucide-react";
 import { coreService, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
+import { mediciEnabled } from "@/lib/medici";
+import { PrestoMedico } from "@/components/site/presto-medico";
 
 export type ServiceKey = "capisci" | "domicilio" | "parla-con-un-medico" | "secondo-parere";
 
@@ -25,6 +27,16 @@ function item(key: ServiceKey): { href: string; name: string; line: string; lead
  */
 export function OtherServices({ exclude, titleId = "altri-titolo", title = "Se ti serve altro" }: { exclude: ServiceKey; titleId?: string; title?: string }) {
   const prices = publicPricesEnabled();
+  // 14/11/2026: senza medici (src/lib/medici.ts) non ci sono altri servizi da proporre: resta il blocco discreto.
+  if (!mediciEnabled()) {
+    return (
+      <section aria-label="Presto anche con un medico" className="section">
+        <div className="container-rc">
+          <PrestoMedico />
+        </div>
+      </section>
+    );
+  }
   const keys = ORDER.filter((k) => k !== exclude);
   return (
     <section aria-labelledby={titleId} className="section">

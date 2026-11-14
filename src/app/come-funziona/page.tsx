@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Ban, Check, FlaskConical, LockKeyhole, X } from "lucide-react";
+import { ArrowRight, Ban, Check, ClipboardList, FlaskConical, LineChart, LockKeyhole, X, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { OFFER_ICON } from "@/components/offerta/service-triad";
 import { offerItems, type OfferKey } from "@/domain/prestazioni/offerta-completa";
+import { mediciEnabled } from "@/lib/medici";
+
+/** 14/11/2026: senza medici (src/lib/medici.ts) la pagina racconta il referto, il tempo e la visita dal proprio medico. */
+const MEDICI = mediciEnabled();
 
 export const metadata: Metadata = {
   title: "Come funziona",
-  description: "Come funziona Cura Privata: il referto spiegato in automatico e, quando serve, un medico a casa, in video o per un secondo parere. Scegli tu fin dove arrivare.",
+  description: MEDICI
+    ? "Come funziona Cura Privata: il referto spiegato in automatico e, quando serve, un medico a casa, in video o per un secondo parere. Scegli tu fin dove arrivare."
+    : "Come funziona Cura Privata: carichi il referto, controlli i valori letti e leggi la spiegazione in parole semplici, con le domande per il tuo medico.",
   alternates: { canonical: "/come-funziona" },
 };
 
@@ -20,19 +26,34 @@ const HOW: Record<OfferKey, { you: string; get: string }> = {
   parere: { you: "Scegli i documenti e scrivi la domanda che hai.", get: "Un videoconsulto con lo specialista e una sintesi scritta sul tuo quesito." },
 };
 
+type HowCard = { key: string; tone: string; href: string; name: string; Icon: LucideIcon; you: string; get: string; go: string };
+
+/** Le schede della pagina: i servizi del listino, oppure (senza medici) il referto, il tempo e la visita. */
+function howCards(): HowCard[] {
+  const services: HowCard[] = offerItems()
+    .filter((s) => MEDICI || !s.kind)
+    .map((s) => ({ key: s.key, tone: s.tone, href: s.href, name: s.name, Icon: OFFER_ICON[s.icon], ...HOW[s.key], go: "Scopri il servizio" }));
+  if (MEDICI) return services;
+  return [
+    ...services,
+    { key: "tempo", tone: "capisci", href: "/famiglia", name: "Nel tempo, per tutta la famiglia", Icon: LineChart, you: "Aggiungi i referti man mano, tuoi e dei tuoi familiari.", get: "I numeri in fila negli anni e un promemoria quando serve.", go: "Scopri" },
+    { key: "visita", tone: "partenza", href: "/strumenti/preparati-alla-visita", name: "Preparati alla visita", Icon: ClipboardList, you: "Rispondi a tre domande pratiche, senza registrarti.", get: "La lista di cosa portare e che cosa chiedere al tuo medico.", go: "Apri lo strumento" },
+  ];
+}
+
 const CAN = ["Riportare valori, unità e intervalli come stampati", "Spiegare che cosa misura un esame", "Suggerire domande per il medico", "Fermarsi se un dato non si legge"];
 const CANNOT = ["Fare diagnosi o dire se un valore è un problema per te", "Valutare l'urgenza o sostituire il pronto soccorso", "Consigliare farmaci o terapie", "Firmarsi come parere medico"];
 
 const DATA = [
   { icon: FlaskConical, title: "Oggi, nella demo", text: "Nessun documento reale: solo file inventati, niente viene salvato." },
-  { icon: LockKeyhole, title: "Con il servizio attivo", text: "Uno spazio privato e cifrato, visibile solo a te e al medico che scegli." },
+  { icon: LockKeyhole, title: "Con il servizio attivo", text: MEDICI ? "Uno spazio privato e cifrato, visibile solo a te e al medico che scegli." : "Uno spazio privato e cifrato, visibile solo a te." },
   { icon: Ban, title: "Mai", text: "I referti non finiscono in email, statistiche o pubblicità." },
 ];
 
 export default function ComeFunzionaPage() {
   return (
     <>
-      <PageHeader eyebrow="Come funziona" title="Scegli tu fin dove arrivare." lead="Puoi fermarti al referto spiegato, o andare avanti con un medico. I documenti che carichi restano nella tua area: non li ricarichi.">
+      <PageHeader eyebrow="Come funziona" title="Scegli tu fin dove arrivare." lead={MEDICI ? "Puoi fermarti al referto spiegato, o andare avanti con un medico. I documenti che carichi restano nella tua area: non li ricarichi." : "Puoi fermarti al referto spiegato, o tenerlo nel tuo spazio: lo ritrovi in fila con gli altri, negli anni, e arrivi alla visita con le domande pronte."}>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
           <Link href="/referti/esempio" className="btn btn-primary btn-lg sm:shrink-0">
             Prova con un referto di esempio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
@@ -47,9 +68,9 @@ export default function ComeFunzionaPage() {
             Che cosa fai tu, che cosa ricevi.
           </h2>
           <ol className="how-grid mt-7 sm:mt-10">
-            {offerItems().map((s) => {
-              const Icon = OFFER_ICON[s.icon];
-              const h = HOW[s.key];
+            {howCards().map((s) => {
+              const Icon = s.Icon;
+              const h = s;
               return (
                 <li key={s.key} className={`tone-${s.tone}`}>
                   <article className="how-card">
@@ -75,7 +96,7 @@ export default function ComeFunzionaPage() {
                       </div>
                     </dl>
                     <p className="how-go">
-                      Scopri il servizio <ArrowRight aria-hidden className="h-5 w-5" />
+                      {s.go} <ArrowRight aria-hidden className="h-5 w-5" />
                     </p>
                   </article>
                 </li>
@@ -114,7 +135,7 @@ export default function ComeFunzionaPage() {
             </ul>
           </div>
         </div>
-        <p className="mt-6 text-lg text-ink-soft">Ogni valutazione medica la fa un medico abilitato, con nome e firma.</p>
+        <p className="mt-6 text-lg text-ink-soft">{MEDICI ? "Ogni valutazione medica la fa un medico abilitato, con nome e firma." : "Ogni valutazione medica spetta al tuo medico: la spiegazione serve a parlargli meglio."}</p>
       </Section>
 
       <Section id="dati" eyebrow="I tuoi dati" title="Che cosa succede ai documenti.">

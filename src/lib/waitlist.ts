@@ -6,7 +6,7 @@ import { SOURCES } from "@/domain/metrics/funnel";
 /** Versione dell'informativa privacy (bozza) a cui si riferisce il consenso alla lista d'attesa. */
 export const WAITLIST_CONSENT_VERSION = "bozza-2026-11";
 
-export const WAITLIST_INTERESTS = ["completo", "secondo-parere", "strutture", "archivio", "visite", "prevenzione", "domicilio"] as const;
+export const WAITLIST_INTERESTS = ["completo", "secondo-parere", "strutture", "archivio", "visite", "prevenzione", "domicilio", "famiglia"] as const;
 export type WaitlistInterest = (typeof WAITLIST_INTERESTS)[number];
 
 const optionalText = (max: number) =>

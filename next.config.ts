@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { CON_UN_MEDICO_HREF, DOCTOR_PATHS } from "./src/lib/medici";
 
 /**
  * Intestazioni di sicurezza su tutte le rotte.
@@ -43,6 +44,8 @@ const nextConfig: NextConfig = {
   // Lo schema SQL viene letto a runtime (migrazione idempotente): va incluso nelle funzioni serverless.
   outputFileTracingIncludes: { "/**": ["./src/db/schema.sql", "./src/domain/reporting/fonts/**"] },
   partialPrefetching: true,
+  // 13/11/2026: l'interruttore dei servizi con un medico arriva anche al browser (vedi src/lib/medici.ts).
+  env: { NEXT_PUBLIC_ENABLE_MEDICI: process.env.ENABLE_MEDICI === "true" ? "true" : "false" },
   /** Vecchi indirizzi di Referto Chiaro → nuova mappa del sito Cura Privata (redirect permanenti interni). */
   async redirects() {
     const moved: [string, string][] = [
@@ -56,11 +59,24 @@ const nextConfig: NextConfig = {
       ["/privacy", "/privacy-policy"],
       ["/cookie", "/cookie-policy"],
       ["/referti/come-funziona", "/come-funziona"],
+      // 13/11/2026: l'archivio «in preparazione» è diventato Famiglia e salute nel tempo.
+      ["/servizi/archivio", "/famiglia"],
     ];
     return [
       ...moved.map(([source, destination]) => ({ source, destination, permanent: true })),
+      // 14/11/2026: i tre modelli di home del 13/11 erano bozze da scegliere; scelta fatta, portano alla home.
+      { source: "/modelli-home", destination: "/", permanent: false },
+      { source: "/modelli-home/:path*", destination: "/", permanent: false },
       { source: "/area", destination: "/area-personale", permanent: true },
       { source: "/area/:path*", destination: "/area-personale/:path*", permanent: true },
+      // 13/11/2026: con i medici spenti (ENABLE_MEDICI diverso da "true") le loro pagine portano al blocco «Presto anche
+      // con un medico». Redirect temporanei: riaccendendo l'interruttore tornano le pagine di prima.
+      ...(process.env.ENABLE_MEDICI === "true"
+        ? [{ source: CON_UN_MEDICO_HREF, destination: "/servizi", permanent: false }]
+        : DOCTOR_PATHS.flatMap((p) => [
+            { source: p, destination: CON_UN_MEDICO_HREF, permanent: false },
+            { source: `${p}/:path*`, destination: CON_UN_MEDICO_HREF, permanent: false },
+          ])),
     ];
   },
   async headers() {

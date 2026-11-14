@@ -1,3 +1,4 @@
+import { mediciEnabled } from "@/lib/medici";
 import Link from "next/link";
 import { ArrowRight, Ban, Building2, Eye, LockKeyhole, Sparkles } from "lucide-react";
 import { readTitolare } from "@/domain/titolare";
@@ -29,9 +30,11 @@ export function Trust() {
           <Link href="/sicurezza-e-privacy" className="btn btn-mint btn-lg">
             Sicurezza e privacy <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
+          {mediciEnabled() ? (
           <Link href="/per-i-medici" className="link min-h-11 py-2 text-lg font-semibold">
             Sei un medico? Scopri come lavoriamo
           </Link>
+          ) : null}
         </div>
       </div>
       <dl className="fact-grid">

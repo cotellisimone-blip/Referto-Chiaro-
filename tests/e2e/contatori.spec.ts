@@ -8,16 +8,16 @@ test("ricarica e ritorno sulla stessa pagina non contano una seconda visita", as
   page.on("request", (r) => {
     if (r.url().endsWith("/api/v1/public/evento")) beacons++;
   });
-  await page.goto("/servizi/secondo-parere");
+  await page.goto("/referti");
   await expect.poll(() => beacons).toBe(1);
   await page.reload();
   await page.waitForLoadState("networkidle");
   // Navigazione interna verso un'altra pagina e ritorno: solo la nuova pagina conta.
-  await page.getByRole("link", { name: /Videoconsulto/ }).first().click();
-  await expect(page).toHaveURL(/parla-con-un-medico/);
+  await page.locator('header a[href="/famiglia"]').first().click();
+  await expect(page).toHaveURL(/\/famiglia$/);
   await expect.poll(() => beacons).toBe(2);
   await page.goBack();
-  await expect(page).toHaveURL(/secondo-parere/);
+  await expect(page).toHaveURL(/\/referti$/);
   await page.waitForLoadState("networkidle");
   expect(beacons).toBe(2);
 });

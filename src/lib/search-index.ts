@@ -3,6 +3,7 @@ import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { GLOSSARY } from "@/content/glossario";
 import { MAIN_NAV, FOOTER_NAV, LEGAL_NAV, EXTRA_PAGES } from "@/components/site/nav";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
+import { isDoctorPath, mediciEnabled } from "@/lib/medici";
 
 /**
  * Indice compatto per la ricerca del sito: guide, voci di glossario e pagine.
@@ -20,18 +21,21 @@ const PAGE_CONTEXT: Record<string, string> = {
   "/servizi/secondo-parere": "Uno specialista esamina i documenti, ne parlate in video, ricevi una sintesi scritta",
   "/servizi/parla-con-un-medico": "Videoconsulto con un medico, con i documenti già letti",
   "/servizi/visita-a-domicilio": "Un medico di medicina generale a casa tua, a Brescia città",
+  "/con-un-medico": "Visita a domicilio, videoconsulto e secondo parere: in preparazione, lista d'attesa",
   "/prezzi": "I servizi a confronto, con prezzi e tempi",
   "/inizia": "Ti aiutiamo a scegliere il servizio adatto",
   "/punto-di-partenza": "Gratis: 10 aree da conoscere e una scheda da portare al medico",
   "/strumenti/preparati-alla-visita": "Gratis: cosa portare e cosa chiedere, in 2 minuti",
-  "/servizi/archivio": "In preparazione",
+  "/famiglia": "I referti di tutta la famiglia, i numeri nel tempo, i promemoria",
   "/servizi/prevenzione": "In preparazione",
   "/strumenti/domande-per-il-medico": "Prepara la lista delle domande per la visita",
 };
 
 /** Parole con cui si cerca una pagina senza conoscerne il nome. */
 const PAGE_ALIASES: Record<string, string[]> = {
+  "/famiglia": ["famiglia", "genitore", "mamma", "papà", "andamento", "nel tempo", "storico", "promemoria", "archivio"],
   "/punto-di-partenza": ["check-up", "checkup", "prevenzione", "controlli", "da dove partire", "esami da fare", "scheda per il medico"],
+  "/con-un-medico": ["medico", "visita a domicilio", "videoconsulto", "secondo parere", "dottore", "visita"],
 };
 
 export function buildSearchIndex(): SearchItem[] {
@@ -54,6 +58,8 @@ export function buildSearchIndex(): SearchItem[] {
   const add = (href: string, label: string, section: string) => {
     if (seen.has(href)) return;
     if (href === "/punto-di-partenza" && !puntoDiPartenzaEnabled()) return;
+    if (!mediciEnabled() && isDoctorPath(href)) return;
+    if (mediciEnabled() && href === "/con-un-medico") return;
     seen.add(href);
     pages.push({ kind: "pagina", title: label, href, context: PAGE_CONTEXT[href] ?? section, aliases: PAGE_ALIASES[href] ?? [] });
   };

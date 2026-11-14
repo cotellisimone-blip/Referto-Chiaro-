@@ -11,6 +11,8 @@ export type ReportStatus = "queued" | "processing" | "ready" | "error";
 export interface DocumentRow {
   id: string;
   title: string;
+  /** Familiare a cui appartiene il referto; null = titolare dell'account. */
+  profileId: string | null;
   sourceKind: "synthetic" | "upload";
   sourceRef: string;
   status: DocumentStatus;
@@ -50,6 +52,7 @@ export function toDocument(r: Record<string, unknown>): DocumentRow {
   return {
     id: String(r.id),
     title: String(r.title),
+    profileId: (r.profile_id as string | null) ?? null,
     sourceKind: r.source_kind as DocumentRow["sourceKind"],
     sourceRef: String(r.source_ref),
     status: r.status as DocumentStatus,
@@ -127,10 +130,12 @@ export async function getDossier(userId: string, id: string): Promise<DossierRow
 }
 
 /** Crea un documento da un referto sintetico e mette in coda l'estrazione. */
-export async function createSyntheticDocument(userId: string, sampleId: string, title: string): Promise<string> {
+export async function createSyntheticDocument(userId: string, sampleId: string, title: string, profileId: string | null = null): Promise<string> {
   return withUser(userId, async (tx) => {
     const id = randomUUID();
-    await tx.query("INSERT INTO documents(id, user_id, title, source_kind, source_ref, status) VALUES ($1, $2, $3, 'synthetic', $4, 'queued')", [id, userId, title, sampleId]);
+    // Il familiare deve essere dell'utente: la chiave esterna da sola non guarda la RLS.
+    if (profileId && (await tx.query("SELECT 1 FROM family_profiles WHERE id = $1", [profileId])).rows.length === 0) throw new Error("profile-not-found");
+    await tx.query("INSERT INTO documents(id, user_id, profile_id, title, source_kind, source_ref, status) VALUES ($1, $2, $3, $4, 'synthetic', $5, 'queued')", [id, userId, profileId, title, sampleId]);
     await enqueue(tx, userId, "extract-document", id);
     await audit(tx, { userId, actor: "user", action: "document-created", target: id });
     return id;
@@ -165,8 +170,10 @@ export async function createReportIn(tx: Queryable, userId: string, documentId: 
 
 export async function createDossier(userId: string, title: string, documentIds: string[]): Promise<string | null> {
   return withUser(userId, async (tx) => {
-    const d = await tx.query("SELECT id FROM documents WHERE id = ANY($1::uuid[]) AND status = 'ready'", [documentIds]);
+    const d = await tx.query("SELECT id, profile_id FROM documents WHERE id = ANY($1::uuid[]) AND status = 'ready'", [documentIds]);
     if (d.rows.length !== documentIds.length || documentIds.length < 2) return null;
+    // Famiglia: un dossier mette insieme i referti di una persona sola.
+    if (new Set(d.rows.map((r) => String(r.profile_id ?? ""))).size > 1) return null;
     const id = randomUUID();
     await tx.query("INSERT INTO dossiers(id, user_id, title, document_ids, status) VALUES ($1, $2, $3, $4::uuid[], 'queued')", [id, userId, title, documentIds]);
     await enqueue(tx, userId, "generate-dossier", id);

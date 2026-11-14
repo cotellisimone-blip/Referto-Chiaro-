@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { DraftNotice, Prose } from "@/components/ui/draft-notice";
+import { mediciEnabled } from "@/lib/medici";
+
+/** 14/11/2026: senza medici (src/lib/medici.ts) restano solo le condizioni di ciò che si offre davvero. */
+const MEDICI = mediciEnabled();
 
 export const metadata: Metadata = { title: "Termini del servizio", description: "Termini del servizio di Cura Privata: che cosa offre, che cosa non è, prezzi, pagamenti, rimborsi e limiti delle spiegazioni informative." };
 
@@ -23,8 +27,10 @@ export default function Page() {
             </ul>
 
             <h2>Versione dimostrativa</h2>
-            <p>Oggi il sito mostra solo esempi con dati inventati. L&apos;area personale accetta soltanto referti di esempio, i pagamenti sono simulati o in modalità di prova senza addebiti, le prestazioni con un medico sono simulazioni dichiarate: nessun medico reale risponde. Nessun servizio è acquistabile. L&apos;account demo è condiviso: tutto ciò che vi si inserisce è visibile ad altre persone.</p>
+            <p>Oggi il sito mostra solo esempi con dati inventati. L&apos;area personale accetta soltanto referti di esempio, i pagamenti sono simulati o in modalità di prova senza addebiti{MEDICI ? ", le prestazioni con un medico sono simulazioni dichiarate: nessun medico reale risponde" : ""}. Nessun servizio è acquistabile. L&apos;account demo è condiviso: tutto ciò che vi si inserisce è visibile ad altre persone.</p>
 
+            {MEDICI ? (
+            <>
             <h2>Prestazioni con un medico (condizioni previste)</h2>
             <ul>
               <li>Videoconsulto: circa 20–25 minuti in video con un medico di medicina generale, che legge prima i documenti scelti da te. Dopo il colloquio ricevi un breve riepilogo scritto.</li>
@@ -35,6 +41,8 @@ export default function Page() {
               <li>Nessuna prestazione è adatta alle emergenze e nessuna sostituisce il medico curante.</li>
               <li>Prezzo, tempi e regole di annullamento e rimborso sono indicati prima del pagamento.</li>
             </ul>
+            </>
+            ) : null}
 
             <h2>Da definire prima dell&apos;apertura</h2>
             <ul>

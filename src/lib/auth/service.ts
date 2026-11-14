@@ -231,7 +231,9 @@ export async function exportUserData(userId: string) {
     const q = (sql: string) => tx.query(sql);
     const user = await q("SELECT id, email, display_name, is_demo, role, created_at, last_login_at FROM users");
     const consents = await q("SELECT kind, version, granted, recorded_at FROM consents ORDER BY recorded_at");
-    const documents = await q("SELECT id, title, source_kind, source_ref, status, extracted, verification, created_at, updated_at FROM documents ORDER BY created_at");
+    const documents = await q("SELECT id, profile_id, title, source_kind, source_ref, status, extracted, verification, created_at, updated_at FROM documents ORDER BY created_at");
+    const familyProfiles = await q("SELECT id, name, relation, birth_year, basis, basis_version, basis_declared_at, created_at FROM family_profiles ORDER BY created_at");
+    const reminders = await q("SELECT id, profile_id, kind, title, due_date, note, questions, done_at, email_sent_at, created_at FROM reminders ORDER BY due_date");
     const reports = await q("SELECT id, document_id, service, status, explanation, policy_version, created_at, generated_at FROM reports ORDER BY created_at");
     const dossiers = await q("SELECT id, title, document_ids, status, content, created_at, generated_at FROM dossiers ORDER BY created_at");
     const orders = await q("SELECT id, service, amount_cents, currency, status, provider, created_at, paid_at FROM orders ORDER BY created_at");
@@ -245,7 +247,9 @@ export async function exportUserData(userId: string) {
       exportedAt: new Date().toISOString(),
       user: user.rows[0],
       consents: consents.rows,
+      familyProfiles: familyProfiles.rows,
       documents: documents.rows,
+      reminders: reminders.rows,
       reports: reports.rows,
       uploadedFiles: files.rows,
       aiProcessing: aiRuns.rows,
@@ -269,6 +273,9 @@ async function purgeHealthData(tx: Parameters<Parameters<typeof withSystem>[0]>[
   await tx.query("DELETE FROM document_files WHERE user_id = $1", [userId]);
   await tx.query("DELETE FROM ai_runs WHERE user_id = $1", [userId]);
   await tx.query("DELETE FROM documents WHERE user_id = $1", [userId]);
+  // Salute nel tempo e famiglia: promemoria e schede dei familiari sono dati sanitari dell'account.
+  await tx.query("DELETE FROM reminders WHERE user_id = $1", [userId]);
+  await tx.query("DELETE FROM family_profiles WHERE user_id = $1", [userId]);
 }
 
 /**

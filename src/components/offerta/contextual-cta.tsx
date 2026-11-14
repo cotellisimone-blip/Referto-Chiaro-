@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, FileText, Stethoscope } from "lucide-react";
+import { ArrowRight, FileText, ListChecks, Stethoscope } from "lucide-react";
 import { coreService, formatEuro, priceCents, priceLabel, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
+import { mediciEnabled } from "@/lib/medici";
 
 /**
  * CTA contestuale nelle guide e nel glossario: prima la risposta utile, poi UNA proposta pertinente, senza fretta.
@@ -27,8 +28,34 @@ function copy(id: "capisci" | "secondo-parere", prices: boolean): { title: strin
   };
 }
 
-export function ContextualCta({ category }: { category?: string | null }) {
+/**
+ * Senza medici (src/lib/medici.ts): per gli esami di laboratorio resta «Capisci il tuo referto», senza l'alternativa
+ * del videoconsulto; per esami per immagini ed endoscopie (che «Capisci» non legge) la proposta è lo strumento gratuito
+ * con le domande da portare al proprio medico, già aperto sull'esame della guida.
+ */
+function QuestionsCta({ slug }: { slug?: string | null }) {
+  return (
+    <aside aria-label="Se ti serve un passo in più" className="tone-partenza next-card no-print">
+      <span aria-hidden className="tile-ico tile-ico-tone">
+        <ListChecks />
+      </span>
+      <div className="min-w-0">
+        <p className="next-card-title">Hai fatto questo esame? Prepara le domande per il tuo medico.</p>
+        <p className="next-card-text">Una lista di domande da portare in visita, da stampare o tenere sul telefono. Gratis, senza registrarti.</p>
+        <div className="next-card-actions">
+          <Link href={slug ? `/strumenti/domande-per-il-medico?esami=${slug}` : "/strumenti/domande-per-il-medico"} className="btn btn-primary w-full sm:w-auto">
+            Domande per il medico <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+          </Link>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+export function ContextualCta({ category, slug }: { category?: string | null; slug?: string | null }) {
+  const medici = mediciEnabled();
   const id = ctaForCategory(category) as "capisci" | "secondo-parere";
+  if (!medici && id !== "capisci") return <QuestionsCta slug={slug} />;
   const s = coreService(id);
   const prices = publicPricesEnabled();
   const c = copy(id, prices);
@@ -46,10 +73,12 @@ export function ContextualCta({ category }: { category?: string | null }) {
           <Link href={s.href} className="btn btn-primary w-full sm:w-auto">
             {s.name} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
-          <Link href={video.href} className="next-card-alt">
-            <span>Preferisci parlarne? Un medico di medicina generale{prices ? `, ${priceLabel("parla-con-un-medico")}` : ""}</span>
-            <ArrowRight aria-hidden className="h-4 w-4 shrink-0" />
-          </Link>
+          {medici ? (
+            <Link href={video.href} className="next-card-alt">
+              <span>Preferisci parlarne? Un medico di medicina generale{prices ? `, ${priceLabel("parla-con-un-medico")}` : ""}</span>
+              <ArrowRight aria-hidden className="h-4 w-4 shrink-0" />
+            </Link>
+          ) : null}
         </div>
       </div>
     </aside>

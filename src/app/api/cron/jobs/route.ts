@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { json } from "@/lib/api";
 import { runPendingJobs, usersWithPendingJobs } from "@/domain/pipeline/worker";
+import { sendDueReminderEmails } from "@/domain/famiglia/reminder-emails";
 
 /**
  * Cron (Vercel Cron, ogni 5 minuti — vedi vercel.json): riprende i lavori rimasti in coda o interrotti
@@ -19,5 +20,7 @@ export async function GET(req: Request) {
     if (Date.now() - started > 45_000) break;
     jobs += await runPendingJobs(userId, 3);
   }
-  return json({ ok: true, jobs });
+  // Promemoria: un'email tre giorni prima, senza dettagli sanitari.
+  const reminders = Date.now() - started < 45_000 ? await sendDueReminderEmails().catch(() => 0) : 0;
+  return json({ ok: true, jobs, reminders });
 }

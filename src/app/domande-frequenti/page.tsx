@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { FaqFinder } from "@/components/ui/faq-finder";
 import { FAQ } from "@/content/faq";
+import { mediciEnabled } from "@/lib/medici";
 
 export const metadata: Metadata = {
   title: "Domande frequenti",
-  description: "Domande frequenti su Cura Privata: come funziona la spiegazione dei referti, i medici, i prezzi, i tuoi dati e che cosa non facciamo.",
+  description: `Domande frequenti su Cura Privata: come funziona la spiegazione dei referti, ${mediciEnabled() ? "i medici, " : ""}i prezzi, i tuoi dati e che cosa non facciamo.`,
   alternates: { canonical: "/domande-frequenti" },
 };
 

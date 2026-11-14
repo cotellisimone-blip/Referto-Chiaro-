@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Download, Loader2, ShieldOff, Trash2 } from "lucide-react";
 import { api, formatDateTime } from "./api";
+import { mediciEnabled } from "@/lib/medici";
 
 interface Consent {
   kind: string;
@@ -112,7 +113,7 @@ export function Settings({ email, isDemoAccount }: { email: string; isDemoAccoun
           <h2 id="revoca-titolo" className="form-card-title">
             Revoca il consenso ai dati sanitari
           </h2>
-          <p className="form-card-text">Puoi ritirare il consenso in ogni momento. Referti, report, dossier e richieste di secondo parere vengono cancellati subito; l&apos;account resta e potrai dare un nuovo consenso in futuro.</p>
+          <p className="form-card-text">Puoi ritirare il consenso in ogni momento. {mediciEnabled() ? "Referti, report, dossier e richieste di secondo parere" : "Referti, report e dossier"} vengono cancellati subito; l&apos;account resta e potrai dare un nuovo consenso in futuro.</p>
           {healthConfirm ? (
             <div className="mt-4 flex flex-col gap-3 sm:flex-row">
               <button type="button" className="btn border border-danger/40 text-danger hover:bg-danger/10" onClick={withdrawHealth} disabled={busy === "health"}>

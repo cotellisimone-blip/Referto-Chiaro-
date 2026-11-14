@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, ClipboardList, FileSearch, Stethoscope, Video, type LucideIcon } from "lucide-react";
+import { ArrowRight, ClipboardList, FileSearch, LineChart, Stethoscope, Video, type LucideIcon } from "lucide-react";
+import { mediciEnabled } from "@/lib/medici";
 import { LEVELS, coreService, priceDisplay, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
 
 /** Una riga per tappa: che cosa succede, detto dal punto di vista di chi lo usa. */
@@ -18,7 +19,9 @@ const ICON: Record<CoreServiceId, LucideIcon> = { capisci: FileSearch, "parla-co
  */
 export function Journey({ withStart = false }: { withStart?: boolean }) {
   const prices = publicPricesEnabled();
-  const count = LEVELS.length + (withStart ? 1 : 0);
+  // 13/11/2026: senza medici il percorso finisce con «Segui nel tempo» (numeri, famiglia, promemoria).
+  const tempo = !mediciEnabled();
+  const count = LEVELS.length + (withStart ? 1 : 0) + (tempo ? 1 : 0);
   return (
     <div className="levels-wrap">
       <JourneyThread className="levels-thread" steps={count} />
@@ -78,6 +81,30 @@ export function Journey({ withStart = false }: { withStart?: boolean }) {
           </li>
         );
       })}
+      {tempo ? (
+        <li>
+          <Link href="/famiglia" data-track="cta-famiglia" className="level-step group">
+            <span aria-hidden className="tile-ico">
+              <LineChart />
+            </span>
+            <span className="min-w-0">
+              <span className="level-verb">Segui</span>
+              <span className="level-name">Nel tempo, per tutta la famiglia</span>
+              <span className="level-line">Ogni referto si aggiunge ai precedenti. Prima della visita, le domande sono pronte.</span>
+              <span className="level-foot">
+                {prices ? (
+                  <span className="level-price">
+                    <span className="text-[1rem] font-semibold text-ink-soft">Nel tuo spazio</span>
+                  </span>
+                ) : null}
+                <span className="level-go">
+                  Scopri <ArrowRight aria-hidden className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
+                </span>
+              </span>
+            </span>
+          </Link>
+        </li>
+      ) : null}
       </ol>
     </div>
   );
