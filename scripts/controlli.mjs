@@ -23,6 +23,7 @@ const PASSI = [
   { nome: "e2e profilo vetrina", cmd: "npm run test:e2e:vetrina -- --reporter=line", browser: true },
   // 14/11/2026: il sito parte senza medici (le prove sopra). Qui gli stessi servizi con i medici accesi, in una build a parte.
   { nome: "e2e con i medici accesi", cmd: "npm run test:e2e:medici -- --reporter=line", browser: true },
+  { nome: "e2e vetrina con i medici accesi", cmd: "npm run test:e2e:vetrina:medici -- --reporter=line", browser: true },
 ];
 
 const esiti = [];

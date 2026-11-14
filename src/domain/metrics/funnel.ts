@@ -34,6 +34,8 @@ export const VETRINA_EVENTS = [
   "visita-famiglia",
   "cta-famiglia",
   "avvisami-famiglia",
+  // 14/11/2026: con i medici spenti, quante persone toccano «Avvisami» nel blocco «Presto anche con un medico».
+  "cta-presto-medico",
 ] as const;
 
 export const PUBLIC_EVENTS = ["visita-home", "cta-capisci", "cta-medico", "cta-parere", "cta-domicilio", ...PDP_EVENTS, ...VETRINA_EVENTS] as const;
@@ -130,6 +132,7 @@ export const FUNNEL_LABELS: Record<string, string> = {
   "visita-famiglia": "Visite a «Famiglia»",
   "cta-famiglia": "Clic su «Prova Famiglia»",
   "avvisami-famiglia": "Lista d'attesa «Famiglia»",
+  "cta-presto-medico": "Clic su «Avvisami» in «Presto anche con un medico»",
   uploads: "Referti caricati",
   checkoutCapisci: "Pagamenti «Capisci» avviati",
   paidCapisci: "Pagamenti «Capisci» completati",

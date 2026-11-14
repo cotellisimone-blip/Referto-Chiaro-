@@ -45,7 +45,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: { "/**": ["./src/db/schema.sql", "./src/domain/reporting/fonts/**"] },
   partialPrefetching: true,
   // 13/11/2026: l'interruttore dei servizi con un medico arriva anche al browser (vedi src/lib/medici.ts).
-  env: { NEXT_PUBLIC_ENABLE_MEDICI: process.env.ENABLE_MEDICI === "true" && process.env.SITE_PROFILE?.trim().toLowerCase() !== "vetrina" ? "true" : "false" },
+  env: { NEXT_PUBLIC_ENABLE_MEDICI: process.env.ENABLE_MEDICI === "true" ? "true" : "false" },
   /** Vecchi indirizzi di Referto Chiaro → nuova mappa del sito Cura Privata (redirect permanenti interni). */
   async redirects() {
     const moved: [string, string][] = [
@@ -71,8 +71,8 @@ const nextConfig: NextConfig = {
       { source: "/area/:path*", destination: "/area-personale/:path*", permanent: true },
       // 13/11/2026: con i medici spenti (ENABLE_MEDICI diverso da "true") le loro pagine portano al blocco «Presto anche
       // con un medico». Redirect temporanei: riaccendendo l'interruttore tornano le pagine di prima.
-      ...(process.env.ENABLE_MEDICI === "true" && process.env.SITE_PROFILE?.trim().toLowerCase() !== "vetrina"
-        ? []
+      ...(process.env.ENABLE_MEDICI === "true"
+        ? [{ source: CON_UN_MEDICO_HREF, destination: "/servizi", permanent: false }]
         : DOCTOR_PATHS.flatMap((p) => [
             { source: p, destination: CON_UN_MEDICO_HREF, permanent: false },
             { source: `${p}/:path*`, destination: CON_UN_MEDICO_HREF, permanent: false },

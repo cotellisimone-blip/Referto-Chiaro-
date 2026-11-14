@@ -75,14 +75,9 @@ test.describe("area personale", () => {
     await expect(page.getByTestId("colpo-occhio")).toBeVisible();
     await page.getByRole("button", { name: "Apri tutte" }).click();
     await expect(page.getByText("Che cosa può influenzarlo, in generale").first()).toBeVisible();
-    // Continuità: dal report al medico senza ricaricare il documento.
-    const docUrl = page.url();
-    const docId = docUrl.split("?")[0].split("/").pop()!;
-    await page.getByTestId("prossimo-passo").getByRole("link", { name: /Parla con un medico/ }).click();
-    await expect(page).toHaveURL(new RegExp(`/area-personale/appuntamenti\\?documento=${docId}`));
-    await expect(page.getByText("medico di medicina generale o internista").first()).toBeVisible();
-    await expect(page.getByLabel("Specialità")).toHaveCount(0);
-    await expect(page.getByRole("group", { name: "Documenti da far leggere al medico" }).getByRole("checkbox", { checked: true })).toHaveCount(1);
+    // Senza medici (src/lib/medici.ts) il report non propone visite né consulti: quella continuità è provata in tests/e2e-medici.
+    await expect(page.getByTestId("prossimo-passo")).toHaveCount(0);
+    await expect(page.locator("main").getByRole("link", { name: /Parla con un medico|secondo parere/i })).toHaveCount(0);
   });
 
   test("nessuno vede i documenti di un altro (API e pagine)", async ({ browser }) => {

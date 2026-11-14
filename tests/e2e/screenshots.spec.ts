@@ -1,6 +1,10 @@
 import { test } from "@playwright/test";
 
-/** Screenshot reali per revisione visiva (docs/screenshots). Eseguire con: npm run screenshots */
+/**
+ * Screenshot reali per revisione visiva (docs/screenshots). Eseguire con: npm run screenshots
+ * 14/11/2026: le pagine e il percorso con il medico esistono solo con ENABLE_MEDICI=true (src/lib/medici.ts); con i medici
+ * spenti quegli indirizzi portano a «Presto anche con un medico» e il percorso «fase 3» si ferma al portale del medico.
+ */
 const SHOTS = [
   ["cp-01-home", "/"],
   ["cp-02-referti", "/referti"],

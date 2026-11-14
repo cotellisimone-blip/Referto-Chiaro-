@@ -53,7 +53,8 @@ const ITEMS_ALL = [
   {
     href: "/area-personale/promemoria",
     label: "Promemoria",
-    short: "Promemoria",
+    // Nella barra in basso del telefono serve una parola corta: «Promemoria» a 320 px non ci sta intera.
+    short: "Agenda",
     icon: BellRing,
     exact: false,
   },

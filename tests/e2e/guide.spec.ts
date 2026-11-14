@@ -83,7 +83,7 @@ test.describe("guide e glossario", () => {
     expect(await sitemap.text()).not.toContain("<loc>");
   });
 
-  test("navigazione: i tre servizi nel menu, header senza a capo né overflow a 1024/1280/1440, anche con testo grande", async ({ page, isMobile }) => {
+  test("navigazione: il servizio nel menu, header senza a capo né overflow a 1024/1280/1440, anche con testo grande", async ({ page, isMobile }) => {
     test.skip(isMobile, "solo desktop");
     for (const width of [1024, 1280, 1440]) {
       await page.setViewportSize({ width, height: 800 });
@@ -100,7 +100,7 @@ test.describe("guide e glossario", () => {
     }
   });
 
-  test("telefono con testo grande: testata e annuncio dentro lo schermo a 320/360/375/390, «aA» nel menu con la sua etichetta", async ({ page, isMobile }) => {
+  test("telefono con testo grande: testata dentro lo schermo a 320/360/375/390, «aA» nel menu con la sua etichetta", async ({ page, isMobile }) => {
     test.skip(!isMobile, "solo telefono");
     await page.addInitScript(() => {
       try {
@@ -113,10 +113,8 @@ test.describe("guide e glossario", () => {
       await expect(page.locator("html")).toHaveAttribute("data-size", "large");
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, `${width}px: niente scorre di lato`).toBeLessThanOrEqual(0);
-      // L'annuncio in testa alla home: titolo intero, su una o due righe, dentro il margine.
-      const title = await page.locator("[data-in-evidenza] .announce-title").boundingBox();
-      expect((title?.x ?? 0) + (title?.width ?? width), `${width}px: titolo dell'annuncio dentro lo schermo`).toBeLessThanOrEqual(width - 16);
-      expect(title?.height ?? 999, `${width}px: titolo dell'annuncio su una o due righe`).toBeLessThan(70);
+      // Senza medici la home non ha l'annuncio della prestazione in evidenza (provato in tests/e2e-medici).
+      await expect(page.locator("[data-in-evidenza]")).toHaveCount(0);
       // Il pulsante del menu resta dentro il margine, e nel menu «Testo più grande» è acceso e si legge.
       const menu = page.getByRole("button", { name: "Apri il menu" });
       const box = await menu.boundingBox();

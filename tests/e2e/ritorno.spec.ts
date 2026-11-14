@@ -2,11 +2,11 @@ import { test, expect } from "@playwright/test";
 
 /** Ciclo 3, fase 2: dopo l'accesso si arriva dove si voleva andare, non alla pagina iniziale dell'area. */
 
-// 12/11/2026: i pulsanti delle pagine servizio portano alla prova a fasce (senza accesso); il ritorno dopo l'accesso
-// resta per chi apre una pagina dell'area personale senza sessione.
+// Il ritorno dopo l'accesso vale per chi apre una pagina dell'area personale senza sessione.
+// 14/11/2026: le mete sono pagine che esistono anche senza medici (src/lib/medici.ts).
 for (const s of [
-  { cta: "Videoconsulti", to: "/area-personale/appuntamenti", h1: "I miei appuntamenti" },
-  { cta: "Pareri", to: "/area-personale/secondo-parere", h1: "I miei pareri" },
+  { cta: "Promemoria", to: "/area-personale/promemoria", h1: /Le prossime cose da fare/ },
+  { cta: "Pagamenti", to: "/area-personale/ordini", h1: "Pagamenti" },
 ]) {
   test(`${s.cta}: login con l'account demo e ritorno a ${s.to}`, async ({ page }) => {
     await page.goto(s.to);
@@ -18,10 +18,10 @@ for (const s of [
 }
 
 test("il link di accesso via email riporta alla pagina richiesta", async ({ request, page }) => {
-  const r = await (await request.post("/api/v1/auth/magic-link", { data: { email: `ritorno-${Date.now()}@esempio.test`, consents: ["terms", "privacy", "health-data", "subject-declaration"], next: "/area-personale/appuntamenti" } })).json();
-  expect(r.link).toContain("next=%2Farea-personale%2Fappuntamenti");
+  const r = await (await request.post("/api/v1/auth/magic-link", { data: { email: `ritorno-${Date.now()}@esempio.test`, consents: ["terms", "privacy", "health-data", "subject-declaration"], next: "/area-personale/promemoria" } })).json();
+  expect(r.link).toContain("next=%2Farea-personale%2Fpromemoria");
   await page.goto(r.link);
-  await expect(page).toHaveURL(/\/area-personale\/appuntamenti$/);
+  await expect(page).toHaveURL(/\/area-personale\/promemoria$/);
 });
 
 test("un next esterno non porta fuori dal sito", async ({ request, page }) => {

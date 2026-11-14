@@ -17,7 +17,8 @@ permissions:
 jobs:
   controlli:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # 14/11/2026: quattro giri nel browser (lancio, vetrina, e gli stessi due con i medici accesi), ognuno con la sua build.
+    timeout-minutes: 50
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
@@ -29,7 +30,7 @@ jobs:
       - run: npm ci
       - name: Browser per i test
         run: npx playwright install --with-deps chromium
-      # Ciclo 3, fase 5: gli stessi passi di `npm run controlli` in locale (lint, tipi, unit, build, e2e, e2e vetrina).
+      # Ciclo 3, fase 5: gli stessi passi di `npm run controlli` in locale (lint, tipi, unit, build, e2e, e2e vetrina e gli stessi due giri con i medici accesi).
       - name: Controlli
         run: npm run controlli
       - name: Report in caso di errore

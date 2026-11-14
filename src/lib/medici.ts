@@ -8,14 +8,14 @@
  *
  * Il valore viene letto alla build (le pagine sono statiche) e fissato lì da next.config.ts, che lo copia in
  * NEXT_PUBLIC_ENABLE_MEDICI per pagine, server e browser: così pagine e server non possono trovarsi in due stati diversi.
- * Fuori da Next (prove unitarie, script) vale ENABLE_MEDICI. Il profilo «vetrina» lo tiene sempre spento.
+ * Fuori da Next (prove unitarie, script) vale ENABLE_MEDICI. Vale per tutti i profili, vetrina compresa: riacceso, la
+ * vetrina torna a presentare i servizi con un medico come prima (pagine con la lista d'attesa, prova nell'account demo).
  *
  * Spento non è solo nascosto: src/proxy.ts risponde 404 agli endpoint dei servizi con un medico (DOCTOR_API) e
  * l'account dimostrativo del medico non si apre. Accesi, gli endpoint restano protetti anche dai loro interruttori
  * (medicalSecondOpinion, medicalVideoConsult).
  */
 export function mediciEnabled(): boolean {
-  if (process.env.SITE_PROFILE?.trim().toLowerCase() === "vetrina") return false;
   const built = process.env.NEXT_PUBLIC_ENABLE_MEDICI;
   if (built === "true" || built === "false") return built === "true";
   return process.env.ENABLE_MEDICI === "true";

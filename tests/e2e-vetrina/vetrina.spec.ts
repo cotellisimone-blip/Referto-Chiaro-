@@ -1,9 +1,12 @@
 import { test, expect, type BrowserContext } from "@playwright/test";
 import { totpCode } from "../../src/lib/auth/totp";
+import { DOCTOR_PATHS, isDoctorPath } from "../../src/lib/medici";
 
 /**
  * Ciclo 2, fase 1: la vetrina va online prima della conformità.
  * Nessun account personale, nessun consenso sanitario raccolto, le azioni principali portano alla lista d'attesa.
+ * 14/11/2026: anche la vetrina parte senza medici (src/lib/medici.ts). Le pagine dei servizi con un medico, con la loro
+ * lista d'attesa e la prova nell'account demo, si provano in tests/e2e-vetrina-medici sulla build con i medici accesi.
  */
 
 test("nessuno crea un account con un'email vera, nemmeno quella di un altro", async ({ request }) => {
@@ -30,11 +33,7 @@ test("l'account demo ha davvero un referto inventato già caricato", async ({ pa
   await expect(page.getByText(/Referto di laboratorio/).first()).toBeVisible({ timeout: 15_000 });
 });
 
-for (const s of [
-  { path: "/referti", interest: "Capisci", tryHref: "/referti/esempio" },
-  { path: "/servizi/parla-con-un-medico", interest: "Parla", tryHref: "/richiedi/videoconsulto" },
-  { path: "/servizi/secondo-parere", interest: "Secondo parere", tryHref: "/richiedi/secondo-parere" },
-]) {
+for (const s of [{ path: "/referti", interest: "Capisci", tryHref: "/referti/esempio" }]) {
   test(`${s.path}: l'azione principale porta alla lista d'attesa, non a una registrazione`, async ({ page }) => {
     await page.goto(s.path);
     const hero = page.locator("#servizio-titolo").locator("xpath=ancestor::section[1]");
@@ -60,13 +59,37 @@ test("prezzi e «Ti aiutiamo a scegliere» non portano all'area personale", asyn
   }
 });
 
+test("senza medici: nessuna pagina li propone, i loro indirizzi portano alla lista d'attesa unica, senza prezzi", async ({ page, request }) => {
+  for (const path of ["/", "/referti", "/servizi", "/prezzi", "/inizia", "/accedi", "/famiglia", "/con-un-medico", "/guide/tsh", "/guide/risonanza-magnetica"]) {
+    await page.goto(path);
+    const hrefs = await page.locator("a[href]").evaluateAll((as) => as.map((a) => a.getAttribute("href") ?? ""));
+    expect(hrefs.filter((h) => h.startsWith("/") && isDoctorPath(h)), `${path}: link ai servizi con un medico`).toEqual([]);
+    const text = await page.locator("body").innerText();
+    expect(text, `${path}: prezzi dei servizi con un medico`).not.toMatch(/\b(149|69)\s?€/);
+  }
+  for (const path of DOCTOR_PATHS) {
+    const r = await request.get(path, { maxRedirects: 0 });
+    expect(r.status(), path).toBe(307);
+    expect(r.headers().location, path).toBe("/con-un-medico");
+  }
+  await page.goto("/servizi/visita-a-domicilio");
+  await expect(page).toHaveURL(/\/con-un-medico$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Presto anche con un medico.");
+  await expect(page.locator("main")).not.toContainText("€");
+  const form = page.locator("#avvisami");
+  await form.getByLabel(/email/i).first().fill(`presto-${Date.now()}-${Math.random().toString(36).slice(2, 6)}@esempio.test`);
+  await form.getByRole("checkbox").first().check();
+  await form.getByRole("button", { name: /Iscrivimi/ }).click();
+  await expect(form.getByText("Interesse registrato.")).toBeVisible();
+});
+
 test("nessun caricamento reale né pagamento reale", async ({ request }) => {
   const cfg = await (await request.get("/api/v1/public/config")).json();
   expect(cfg.profile).toBe("vetrina");
   expect(Object.values(cfg.capabilities).every((v) => v === false)).toBe(true);
 });
 
-/** Admin dimostrativo con 2FA (come in tests/e2e/secondo-parere.spec.ts). */
+/** Admin dimostrativo con 2FA (come in tests/e2e/admin.spec.ts). */
 async function loginAdmin(ctx: BrowserContext) {
   const r = await (await ctx.request.post("/api/v1/auth/demo-ruolo", { data: { role: "admin" } })).json();
   expect(r.ok).toBe(true);
@@ -87,7 +110,7 @@ test("fase 2: una visita da Facebook che chiede «Avvisami» compare in Admin, s
   page.on("request", (r) => {
     if (r.url().endsWith("/api/v1/public/evento")) beacons.push(r.response());
   });
-  await page.goto("/servizi/parla-con-un-medico?utm_source=facebook");
+  await page.goto("/referti?utm_source=facebook");
   await page.getByRole("link", { name: /Avvisami quando parte/ }).first().click();
   const form = page.locator("#avvisami");
   await form.getByLabel(/email/i).first().fill(`fb-${Date.now()}@esempio.test`);
@@ -106,10 +129,10 @@ test("fase 2: una visita da Facebook che chiede «Avvisami» compare in Admin, s
   const fb = data.vetrina.bySource.find((r: { source: string }) => r.source === "facebook");
   expect(fb?.visits).toBeGreaterThanOrEqual(1);
   expect(fb?.signups).toBeGreaterThanOrEqual(1);
-  expect(data.vetrina.byService.find((r: { service: string }) => r.service === "parla-con-un-medico").signups).toBeGreaterThanOrEqual(1);
+  expect(data.vetrina.byService.find((r: { service: string }) => r.service === "capisci").signups).toBeGreaterThanOrEqual(1);
   expect(data.vetrina.weeks).toHaveLength(8);
-  expect(data.funnel.steps["visita-medico"]).toBeGreaterThanOrEqual(1);
-  expect(data.funnel.steps["avvisami-medico"]).toBeGreaterThanOrEqual(1);
+  expect(data.funnel.steps["visita-capisci"]).toBeGreaterThanOrEqual(1);
+  expect(data.funnel.steps["avvisami-capisci"]).toBeGreaterThanOrEqual(1);
   const ap = await admin.newPage();
   await ap.goto("/admin");
   await expect(ap.getByTestId("admin-vetrina")).toBeVisible({ timeout: 15_000 });

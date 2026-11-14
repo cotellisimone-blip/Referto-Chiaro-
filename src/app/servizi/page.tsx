@@ -9,6 +9,7 @@ import { StepsVisual } from "@/components/offerta/service-visuals";
 import { FaqList } from "@/components/ui/faq-list";
 import { FAQ } from "@/content/faq";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
+import { PRICE_NOTE, publicPricesEnabled } from "@/domain/offerta";
 import { mediciEnabled } from "@/lib/medici";
 import { PrestoMedico } from "@/components/site/presto-medico";
 
@@ -73,6 +74,8 @@ export default function ServiziPage() {
       {/* IL REFERTO: da qui si parte */}
       <div className="container-rc">
         <CapisciFeature className="svc-feature-overlap" />
+        {/* Il prezzo non resta mai senza la sua nota. */}
+        {publicPricesEnabled() ? <p className="mt-4 text-[1rem] text-muted">{PRICE_NOTE}</p> : null}
       </div>
 
       {/* CON UN MEDICO: solo con l'interruttore acceso; spento resta il blocco discreto «Presto anche con un medico». */}

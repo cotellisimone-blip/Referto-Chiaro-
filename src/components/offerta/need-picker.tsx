@@ -107,7 +107,7 @@ export function NeedPicker({ services, headingId }: { services: PickerService[];
         ) : (
           <div className="need-empty">
             <span aria-hidden className="flex -space-x-2">
-              {ORDER.map((id) => {
+              {options.map(({ id }) => {
                 const EIcon = ICON[id];
                 return (
                   <span key={id} className={clsx("tile-ico tile-ico-sm tile-ico-tone", `tone-${TONE[id]}`)}>

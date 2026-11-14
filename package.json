@@ -18,6 +18,7 @@
     "eval:ai": "EVAL_WRITE_REPORT=1 vitest run tests/ai-eval",
     "test:e2e:vetrina": "playwright test -c playwright.vetrina.config.ts --trace off",
     "test:e2e:medici": "playwright test -c playwright.medici.config.ts --trace off",
+    "test:e2e:vetrina:medici": "playwright test -c playwright.vetrina-medici.config.ts --trace off",
     "controlli": "node scripts/controlli.mjs"
   },
   "dependencies": {
