@@ -12,11 +12,11 @@ async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 }
 
-test("home: il punto di partenza gratis sta nel secondo momento, il primo referto nell'apertura", async ({ page }) => {
+test("home: il punto di partenza gratis sta nella sezione Online, il primo referto nell'apertura", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("h1")).toHaveCount(1);
-  await expect(page.locator("main").getByRole("link", { name: /Punto di partenza/ })).toHaveAttribute("href", "/punto-di-partenza");
-  await expect(page.locator("main .tm-hero").getByRole("link", { name: /Carica un referto/ })).toContainText("2,90");
+  await expect(page.locator("main #online").getByRole("link", { name: /Primo controllo/ })).toHaveAttribute("href", "/punto-di-partenza");
+  await expect(page.locator("main .ds-hero").getByRole("link", { name: /Capire referti ed esami/ })).toContainText("2,90");
   await expect(page.locator("footer").getByRole("link", { name: "Punto di Partenza" })).toBeVisible();
   await noOverflow(page);
 });

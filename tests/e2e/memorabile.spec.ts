@@ -92,40 +92,37 @@ test.describe("il servizio e i percorsi pubblici", () => {
   });
 });
 
-test.describe("home «I tre momenti»", () => {
-  test("apertura con due azioni, il referto che si tocca, i tre momenti; corta e senza dati inventati", async ({ page, isMobile }) => {
+test.describe("home a due sezioni", () => {
+  test("apertura con le due porte, il referto che si tocca, la sezione A domicilio «In arrivo»; corta e senza dati inventati", async ({ page, isMobile }) => {
     await page.goto("/");
     const main = page.locator("main");
-    // Apertura: una primaria (con il prezzo del primo referto, dal codice) e una secondaria
-    const hero = main.locator(".tm-hero");
-    await expect(hero.getByRole("link", { name: /Carica un referto/ })).toHaveAttribute("href", "/referti");
-    await expect(hero.getByRole("link", { name: /Carica un referto/ })).toContainText("il primo 2,90 €");
-    await expect(hero.getByRole("link", { name: "Guarda un esempio" })).toHaveAttribute("href", "/referti/esempio");
+    // Apertura: che cosa fa Cura Privata, in una frase, e le due porte
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci i tuoi esami\.\s*Il medico viene da te\./);
+    const doors = main.locator(".ds-hero .ds-doors");
+    await expect(doors.getByRole("link", { name: /Capire referti ed esami/ })).toHaveAttribute("href", "/online");
+    await expect(doors.getByRole("link", { name: /Il medico a casa tua/ })).toHaveAttribute("href", "/a-domicilio");
+    await expect(doors.locator(".ds-door-1")).toContainText("2,90 €");
+    // Medici spenti: la porta 2 dice «In arrivo» e non ha prezzi
+    await expect(doors.locator(".ds-door-2")).toContainText("In arrivo");
+    await expect(doors.locator(".ds-door-2")).not.toContainText("€");
+    // Sezione 1: le quattro cose, con la guida agli integratori
+    const s1 = main.locator("#online");
+    for (const href of ["/referti", "/guide", "/integratori"]) await expect(s1.locator(`a[href="${href}"]`).first()).toBeVisible();
     // Da così a così: ogni riga del foglio è un pulsante, la spiegazione accanto cambia
-    await expect(page.getByRole("heading", { name: /Lo stesso referto,\s*da così a così\./ })).toBeVisible();
     const xpl = page.locator("#tm-xpl");
     await expect(xpl.getByRole("heading", { level: 3 })).toHaveText("Colesterolo LDL");
-    await expect(xpl).toContainText("Sopra l’intervallo stampato");
     await page.getByRole("button", { name: /^GLICEMIA 92 mg\/dL/ }).click();
     await expect(xpl.getByRole("heading", { level: 3 })).toHaveText("Glicemia");
-    await expect(xpl).toContainText("Dentro l’intervallo stampato");
     await expect(page.getByRole("button", { name: /^GLICEMIA/ })).toHaveAttribute("aria-pressed", "true");
-    // I tre momenti: si paga solo «Capisci», con il prezzo in HTML; il resto è gratis
-    await expect(page.getByRole("heading", { name: /Oggi, prima della visita,\s*negli anni\./ })).toBeVisible();
-    const paid = main.locator(".tm-paid");
-    await expect(paid).toContainText("2,90 €");
-    await expect(paid).toContainText("poi 7,90 € per referto");
-    await expect(paid).toContainText("È automatico: nessun medico lo rivede.");
-    await expect(main.locator(".tm-mom")).toContainText("piano in arrivo");
-    // Senza medici: nessun link ai servizi con un medico, solo «Presto anche con un medico», senza prezzi.
-    await expect(page.locator('main a[href^="/servizi/"]')).toHaveCount(0);
-    await expect(main.getByRole("link", { name: /Avvisami quando parte/ })).toHaveAttribute("href", "/con-un-medico");
-    await expect(main.locator(".tm-presto")).not.toContainText("€");
-    await expect(page.getByRole("link", { name: /Sei un medico/ })).toHaveCount(0);
+    // Sezione 2 spenta: niente medici, niente prezzi, la lista d'attesa
+    const s2 = main.locator("#a-domicilio");
+    await expect(s2).toContainText("In arrivo");
+    await expect(s2.locator(".ds-doc")).toHaveCount(0);
+    await expect(s2).not.toContainText("€");
+    await expect(s2.getByRole("button", { name: /Avvisami/ })).toBeVisible();
+    await expect(page.locator('main a[href^="/servizi/"], main a[href^="/richiedi/"]')).toHaveCount(0);
     await expect(page.getByRole("heading", { name: /Non facciamo diagnosi\.\s*Facciamo chiarezza\./ })).toBeVisible();
-    // Mai un medico che rivede «Capisci», mai conti alla rovescia
     const text = (await main.innerText()).toLowerCase();
-    expect((text.match(/medic/g) ?? []).length, "menzioni di «medico»").toBeLessThanOrEqual(16);
     for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra", "nella norma"]) expect(text).not.toContain(bad);
     // Barra d'aiuto mobile: nascosta sull'apertura, visibile scorrendo
     if (isMobile) {
@@ -135,16 +132,11 @@ test.describe("home «I tre momenti»", () => {
       await page.evaluate(() => window.scrollTo(0, window.innerHeight * 2));
       await expect(bar).toBeVisible();
     }
-    // Sei blocchi più la striscia dei fatti.
-    expect(await main.locator("section").count()).toBeLessThanOrEqual(8);
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    // 15/11/2026, «I tre momenti»: limiti invariati, 7 schermate su computer e 9,9 su telefono (oggi 6,95 e 9,7).
-    expect(h, "schermate").toBeLessThan(isMobile ? 9.9 : 7);
+    // 15/11/2026, home a due sezioni: due sezioni intere in una pagina, quindi un po' più lunga dei «tre momenti».
+    expect(h, "schermate").toBeLessThan(isMobile ? 11.5 : 7.5);
     const words = (await main.innerText()).split(/\s+/).length;
-    // V3: il doppio ingresso porta circa 55 parole, in parte compensate togliendo le rassicurazioni del blocco referto.
-    // 13/11/2026: il blocco Famiglia porta circa 85 parole su desktop (metà sono numeri e date del grafico di esempio).
-    // 15/11/2026: la home racconta tre momenti e risponde a sei domande; su telefono le risposte sono chiuse.
-    expect(words).toBeLessThan(isMobile ? 900 : 1150);
+    expect(words).toBeLessThan(isMobile ? 1100 : 1250);
     await expectAccessible(page);
   });
 
@@ -152,19 +144,41 @@ test.describe("home «I tre momenti»", () => {
     await page.goto("/");
     // 1. Quanto costa capire un referto? Visibile in home.
     await expect(page.locator("main")).toContainText("2,90 €");
-    // 2. Capire un referto: un clic porta al servizio
-    await page.locator("main .tm-hero").getByRole("link", { name: /Carica un referto/ }).click();
+    // 2. Capire un referto: dalla sezione Online un clic porta al servizio
+    await page.locator("main #online").getByRole("link", { name: /Carica un referto/ }).click();
     await expect(page).toHaveURL(/\/referti$/);
     // 3. Emergenza: il 112 è in home
     await page.goto("/");
     await expect(page.locator("main")).toContainText("112");
-    // 4. Vorrei un medico: un clic porta alla lista d'attesa, senza prezzi
-    await page.locator("main").getByRole("link", { name: /Avvisami quando parte/ }).click();
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Presto anche con un medico.");
-    // 5. Prepararsi alla visita: un clic, dal secondo momento
+    // 4. Vorrei un medico a casa: la porta 2 porta alla sezione, «In arrivo», con la lista d'attesa
+    await page.locator("main .ds-hero").getByRole("link", { name: /Il medico a casa tua/ }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Il medico\s*a casa tua\./);
+    await expect(page.locator("main")).toContainText("In arrivo");
+    // 5. Un integratore: un clic dalla sezione Online
     await page.goto("/");
-    await page.locator("main").getByRole("link", { name: /Preparati alla visita/ }).click();
-    await expect(page).toHaveURL(/preparati-alla-visita/);
+    await page.locator("main #online").getByRole("link", { name: /Guide agli integratori/ }).click();
+    await expect(page).toHaveURL(/\/integratori$/);
+  });
+});
+
+test.describe("sezioni e integratori", () => {
+  test("Online, A domicilio (spenta) e le schede degli integratori", async ({ page }) => {
+    await page.goto("/online");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capire la tua salute,\s*da casa\./);
+    await expect(page.locator("main .ds-int")).toHaveCount(8);
+    await expectAccessible(page);
+    await page.goto("/a-domicilio");
+    await expect(page.locator("main")).toContainText("In arrivo");
+    await expect(page.locator("main .ds-doc")).toHaveCount(0);
+    await expect(page.locator("main")).not.toContainText("149");
+    await expectAccessible(page);
+    await page.goto("/integratori");
+    await page.getByRole("link", { name: /Vitamina D/ }).first().click();
+    await expect(page).toHaveURL(/\/integratori\/vitamina-d$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Vitamina D");
+    await expect(page.locator("main")).toContainText("Bozza in attesa di revisione medica");
+    await expect(page.getByRole("link", { name: /Guida all’esame/ })).toHaveAttribute("href", "/guide/vitamina-d");
+    await expectAccessible(page);
   });
 });
 

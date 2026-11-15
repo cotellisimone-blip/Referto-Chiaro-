@@ -78,7 +78,7 @@ export default function ADomicilioPage() {
                 <figcaption className="tm-illus">Immagine illustrativa</figcaption>
               </figure>
             ) : null}
-            <MiniVisita />
+            <MiniVisita attivo={attivo} />
           </div>
         </div>
       </section>
@@ -175,10 +175,10 @@ export default function ADomicilioPage() {
                 <p className="ds-f-k">Il medico ha confermato</p>
                 <div className="ds-f-doc">
                   <span className="ds-av ds-av-teal">
-                    LB
+                    {attivo ? "LB" : "MG"}
                     <i className="ds-av-on" />
                   </span>
-                  <b>Dott.ssa Laura Bianchi</b>
+                  <b>{attivo ? "Dott.ssa Laura Bianchi" : "Il tuo medico"}</b>
                 </div>
                 <p className="ds-f-row">
                   Quando <b>Domani, 10:00</b>
@@ -187,7 +187,7 @@ export default function ADomicilioPage() {
                   Dove <b>Via di Prova 1</b>
                 </p>
                 <p className="ds-f-row">
-                  Totale <b>{prices ? prestazionePrice("domicilio") : "prezzo fisso"}</b>
+                  Totale <b>{attivo && prices ? prestazionePrice("domicilio") : "prezzo fisso"}</b>
                 </p>
                 <span className="ds-f-btn">Conferma e paga</span>
               </div>
@@ -226,7 +226,7 @@ export default function ADomicilioPage() {
             </div>
             <p>Se non serve che il medico venga di persona, c’è il videoconsulto. Per un dubbio su esami già fatti, il secondo parere di uno specialista.</p>
           </div>
-          <ServiziMedico prices={prices} attivo={attivo} />
+          <ServiziMedico prices={prices} attivo={attivo} onSection />
           {attivo && prices ? <p className="tm-note">{PRICE_NOTE}</p> : null}
         </div>
       </section>

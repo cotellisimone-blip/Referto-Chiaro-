@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ShieldAlert } from "lucide-react";
 import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS, INTEGRATORI_PRIMA_DI_TUTTO, type IntegratoreGroup } from "@/content/integratori";
+import { NOINDEX_DRAFT, indexingEnabled } from "@/lib/seo";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 
@@ -9,6 +10,8 @@ export const metadata: Metadata = {
   title: "Guide agli integratori",
   description: "Vitamina D, ferro, B12, acido folico, magnesio, omega-3, probiotici e multivitaminici: che cosa sono, quale esame li riguarda e che cosa chiedere al medico.",
   alternates: { canonical: "/integratori" },
+  // Schede in bozza: fuori dai motori finché un medico non le ha riviste (come le guide in bozza).
+  ...(indexingEnabled() ? { robots: NOINDEX_DRAFT } : {}),
 };
 
 /** Guide agli integratori (sezione Online, 15/11/2026). Bozze da revisione medica: spiegano, non consigliano. */

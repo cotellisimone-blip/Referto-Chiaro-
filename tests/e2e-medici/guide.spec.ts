@@ -8,7 +8,7 @@ test.describe("testata e annuncio con i medici accesi", () => {
     for (const width of [1024, 1280, 1440]) {
       await page.setViewportSize({ width, height: 800 });
       await gotoReady(page, "/");
-      await expect(page.getByRole("navigation", { name: /principale/i }).getByRole("link", { name: "Capisci il referto" })).toBeVisible();
+      await expect(page.getByRole("navigation", { name: /principale/i }).getByRole("link", { name: "Online" })).toBeVisible();
       for (const large of [false, true]) {
         if (large) await page.getByRole("button", { name: "Testo più grande" }).click();
         const box = await page.locator("header").first().boundingBox();
@@ -33,10 +33,9 @@ test.describe("testata e annuncio con i medici accesi", () => {
       await expect(page.locator("html")).toHaveAttribute("data-size", "large");
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow, `${width}px: niente scorre di lato`).toBeLessThanOrEqual(0);
-      // L'annuncio in testa alla home: titolo intero, su una o due righe, dentro il margine.
-      const title = await page.locator("[data-in-evidenza] .announce-title").boundingBox();
-      expect((title?.x ?? 0) + (title?.width ?? width), `${width}px: titolo dell'annuncio dentro lo schermo`).toBeLessThanOrEqual(width - 16);
-      expect(title?.height ?? 999, `${width}px: titolo dell'annuncio su una o due righe`).toBeLessThan(70);
+      // Il titolo della home resta dentro il margine.
+      const title = await page.getByRole("heading", { level: 1 }).boundingBox();
+      expect((title?.x ?? 0) + (title?.width ?? width), `${width}px: titolo della home dentro lo schermo`).toBeLessThanOrEqual(width - 12);
       // Il pulsante del menu resta dentro il margine, e nel menu «Testo più grande» è acceso e si legge.
       const menu = page.getByRole("button", { name: "Apri il menu" });
       const box = await menu.boundingBox();

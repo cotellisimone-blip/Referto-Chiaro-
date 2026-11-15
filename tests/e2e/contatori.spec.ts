@@ -13,7 +13,7 @@ test("ricarica e ritorno sulla stessa pagina non contano una seconda visita", as
   await page.reload();
   await page.waitForLoadState("networkidle");
   // Navigazione interna verso un'altra pagina e ritorno: solo la nuova pagina conta.
-  await page.locator('header a[href="/famiglia"]').first().click();
+  await page.locator('footer a[href="/famiglia"]').first().click();
   await expect(page).toHaveURL(/\/famiglia$/);
   await expect.poll(() => beacons).toBe(2);
   await page.goBack();

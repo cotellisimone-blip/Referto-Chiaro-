@@ -85,7 +85,7 @@ export function HomeDueSezioni() {
                 <div className="ds-hero-photo ds-hero-photo-empty" />
               )}
               <MiniReferto />
-              <MiniVisita />
+              <MiniVisita attivo={attivo} />
             </div>
           </div>
         </section>
@@ -102,7 +102,7 @@ export function HomeDueSezioni() {
               <li>
                 <FileText aria-hidden className="tm-ic" />
                 <b>Referto spiegato</b>
-                <span>{prices ? `${promo ? `il primo ${first}` : `${std} a referto`}, senza abbonamento` : "senza abbonamento"}</span>
+                <span>{prices ? (promo ? `il primo ${first}, poi ${std}` : `${std} a referto`) : "senza abbonamento"}</span>
               </li>
               <li>
                 <Stethoscope aria-hidden className="tm-ic" />

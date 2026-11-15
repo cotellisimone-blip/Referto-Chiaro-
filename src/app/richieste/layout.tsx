@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import "@/components/sezioni/carta.css";
 
 /** Percorso del paziente per le prestazioni con un medico: pagine personali, mai indicizzate. */
 export const metadata: Metadata = {
@@ -8,5 +9,9 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={null}>{children}</Suspense>;
+  return (
+    <div className="carta">
+      <Suspense fallback={null}>{children}</Suspense>
+    </div>
+  );
 }

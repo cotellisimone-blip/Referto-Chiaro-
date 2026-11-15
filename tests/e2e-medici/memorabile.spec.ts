@@ -82,59 +82,35 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
   });
 });
 
-test.describe("home «Evoluzione v2»", () => {
-  test("due azioni nella hero, il referto come ingresso, due livelli umani distinti, tre livelli; corta e senza dati inventati", async ({ page, isMobile }) => {
+test.describe("home a due sezioni, con i medici accesi (versione di prova)", () => {
+  test("le due porte, la sezione A domicilio con tre medici di prova e i prezzi; corta e onesta", async ({ page, isMobile }) => {
     await page.goto("/");
     const main = page.locator("main");
-    // Hero: una primaria e una secondaria, non tre azioni equivalenti
-    await expect(main.getByRole("link", { name: "Ho un referto" })).toHaveAttribute("href", "/referti");
-    await expect(main.getByRole("link", { name: "Scopri tutti i servizi" })).toHaveAttribute("href", "/servizi");
-    // Il prodotto d'ingresso domina la seconda sezione, con il prezzo in HTML
-    // V3: il titolo diventa «Come diventa chiaro un referto.» (il doppio ingresso sopra dice già «Hai già un referto?»)
-    await expect(page.getByRole("heading", { name: "Come diventa chiaro un referto." })).toBeVisible();
-    await expect(page.locator("#referto")).toContainText("Primo referto");
-    await expect(page.locator("#referto")).toContainText("2,90 €");
-    await expect(page.locator("#referto")).toContainText("poi 7,90 € per referto");
-    await expect(page.locator("#referto").getByRole("link", { name: "Rendi chiaro il mio referto" })).toHaveAttribute("href", "/referti");
-    // «Home più calma» (11/11/2026): il referto prima e dopo, con il cursore, anche su telefono
-    await expect(page.locator("#referto").getByRole("slider", { name: /Sposta per confrontare/ })).toBeVisible();
-    // Niente più blocco «Se una spiegazione non basta.»: i servizi con un medico si presentano una volta, nei livelli
-    await expect(page.getByRole("heading", { name: "Se una spiegazione non basta." })).toHaveCount(0);
-    await expect(page.locator(".levels").getByRole("link", { name: /Secondo parere|Approfondisci/ }).first()).toHaveAttribute("href", "/servizi/secondo-parere");
-    // I tre livelli e la fiducia
-    await expect(page.getByRole("heading", { name: "Parti gratis. Poi scegli tu fin dove arrivare." })).toBeVisible();
-    for (const verb of ["Parti", "Capisci", "Orientati", "Approfondisci"]) await expect(page.locator(".levels")).toContainText(verb);
-    await expect(page.getByRole("heading", { name: "Pochi fatti, detti chiari." })).toBeVisible();
-    await expect(page.getByRole("link", { name: /Sei un medico/ })).toHaveAttribute("href", "/per-i-medici");
-    await expect(page.getByRole("heading", { name: /Prima capisci da dove parti\./ })).toBeVisible();
-    // Mai un medico che rivede «Capisci», mai conti alla rovescia
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci i tuoi esami\.\s*Il medico viene da te\./);
+    const doors = main.locator(".ds-hero .ds-doors");
+    await expect(doors.getByRole("link", { name: /Capire referti ed esami/ })).toHaveAttribute("href", "/online");
+    await expect(doors.getByRole("link", { name: /Il medico a casa tua/ })).toHaveAttribute("href", "/a-domicilio");
+    await expect(doors.locator(".ds-door-2")).toContainText("Versione di prova");
+    await expect(doors.locator(".ds-door-2")).toContainText("149 €");
+    // Sezione 2: i tre medici di prova, ognuno marcato come persona inventata, solo iniziali
+    const s2 = main.locator("#a-domicilio");
+    await expect(s2.locator(".ds-doc")).toHaveCount(3);
+    for (const card of await s2.locator(".ds-doc").all()) await expect(card).toContainText("Profilo di prova");
+    await expect(s2.locator(".ds-doc img")).toHaveCount(0);
+    await expect(s2).toContainText("69 €");
+    await expect(s2.getByRole("link", { name: "Prova il percorso completo" })).toHaveAttribute("href", "/prova");
     const text = (await main.innerText()).toLowerCase();
-    // «Troppi chiedi a un dottore»: la parola «medic…» compare poche volte (prima erano 20 su desktop e 15 su telefono)
-    // 12/11/2026: +2 per la visita a domicilio in evidenza («Il medico a casa tua», «medico generalista»).
-    expect((text.match(/medic/g) ?? []).length, "menzioni di «medico»").toBeLessThanOrEqual(10);
-    for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra"]) expect(text).not.toContain(bad);
-    // Barra d'aiuto mobile: nascosta sulla hero (non compete con le due azioni), visibile scorrendo
+    for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra", "nella norma"]) expect(text).not.toContain(bad);
     if (isMobile) {
       const bar = page.getByRole("navigation", { name: "Azioni rapide" });
+      await page.evaluate(() => window.scrollTo(0, 0));
       await expect(bar).toBeHidden();
       await page.evaluate(() => window.scrollTo(0, window.innerHeight * 2));
       await expect(bar).toBeVisible();
-      await page.evaluate(() => window.scrollTo(0, 0));
-      await expect(bar).toBeHidden();
     }
-    // V3: sette blocchi + il doppio ingresso dopo la hero.
-    expect(await main.locator("section").count()).toBeLessThanOrEqual(8);
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    // V3: il doppio ingresso aggiunge circa mezza schermata (una su telefono), in parte recuperata accorciando il blocco del referto.
-    // Fase 3: obiettivo 11 schermate su telefono e 6 su desktop (mezzo schermo di margine per i font).
-    // Ciclo 2, fase 3: su telefono sotto gli 8.000 px circa (era 9.272), cioè meno di 9,6 schermate da 844 px.
-    // 13/11/2026 (Famiglia e salute nel tempo): un blocco nuovo, il motivo per restare. Compatto (su telefono senza grafico),
-    // aggiunge circa 0,8 schermate su desktop e 0,6 su telefono: limiti a 7 e 9,9.
-    expect(h, "schermate").toBeLessThan(isMobile ? 9.9 : 7);
-    const words = (await main.innerText()).split(/\s+/).length;
-    // V3: il doppio ingresso porta circa 55 parole, in parte compensate togliendo le rassicurazioni del blocco referto.
-    // 13/11/2026: il blocco Famiglia porta circa 85 parole su desktop (metà sono numeri e date del grafico di esempio).
-    expect(words).toBeLessThan(isMobile ? 630 : 720);
+    // 15/11/2026: con i medici le schede dei tre medici aggiungono circa due schermate su telefono.
+    expect(h, "schermate").toBeLessThan(isMobile ? 12.5 : 7.8);
     await expectAccessible(page);
   });
 
@@ -142,16 +118,18 @@ test.describe("home «Evoluzione v2»", () => {
     await page.goto("/");
     // 1. Quanto costa il videoconsulto? Visibile in home.
     await expect(page.locator("main")).toContainText("69 €");
-    // 2. Capire un referto: un clic porta al servizio
-    await page.locator("main").getByRole("link", { name: "Ho un referto" }).click();
-    await expect(page).toHaveURL(/\/referti$/);
+    // 2. Capire un referto: la porta 1 porta alla sezione Online
+    await page.locator("main .ds-hero").getByRole("link", { name: /Capire referti ed esami/ }).click();
+    await expect(page).toHaveURL(/\/online$/);
     // 3. Emergenza: il 112 è in home
     await page.goto("/");
     await expect(page.locator("main")).toContainText("112");
-    // 4. Sono un medico: un clic
-    await page.getByRole("link", { name: /Sei un medico/ }).click();
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Una piattaforma seria");
-    // 5. Prepararsi alla visita: un clic, dal piè di pagina (la home più calma non ha più il suo blocco)
+    // 4. Un medico a casa: dalla porta 2 alla richiesta
+    await page.locator("main .ds-hero").getByRole("link", { name: /Il medico a casa tua/ }).click();
+    await expect(page.locator("main .ds-doc")).toHaveCount(3);
+    await page.locator("main .ds-ph").getByRole("link", { name: /Richiedi la visita/ }).click();
+    await expect(page).toHaveURL(/\/richiedi\/domicilio$/);
+    // 5. Prepararsi alla visita: un clic, dal piè di pagina
     await page.goto("/");
     await page.locator("footer").getByRole("link", { name: "Preparati alla visita" }).click();
     await expect(page).toHaveURL(/preparati-alla-visita/);

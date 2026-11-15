@@ -36,13 +36,14 @@ async function pickFirstSlot(page: Page) {
   await page.locator(".slot-pill").first().click();
 }
 
-test("listino e accessi dalla home: domicilio in evidenza, prezzi coerenti su schede, pagine e riepilogo", async ({ page }) => {
+test("listino e accessi dalla home: sezione A domicilio, prezzi coerenti su schede, pagine e riepilogo", async ({ page }) => {
   await fresh(page, "/");
-  const featured = page.locator("[data-in-evidenza]");
-  await expect(featured).toHaveAttribute("data-in-evidenza", "domicilio");
-  await expect(featured).toContainText(eur(149));
-  await featured.getByRole("link", { name: "Come funziona" }).click();
-  await expect(page).toHaveURL(/\/servizi\/visita-a-domicilio$/);
+  const sec2 = page.locator("#a-domicilio");
+  await expect(sec2).toContainText(eur(149));
+  await sec2.getByRole("link", { name: /Verifica se arriviamo da te/ }).click();
+  await expect(page).toHaveURL(/\/a-domicilio$/);
+  await expect(page.locator(".ds-ph")).toContainText(eur(149));
+  await gotoReady(page, "/servizi/visita-a-domicilio");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Il medico a casa tua");
   await gotoReady(page, "/servizi");
   const cards = page.locator("#con-un-medico [data-prestazione]");
@@ -74,9 +75,6 @@ test("avvio con un solo servizio: una specialità aperta, domicilio e video sosp
   await expect(page.locator('[data-prestazione="parere"]')).toHaveAttribute("data-disponibilita", "aperto");
   await gotoReady(page, "/prova/paziente/domicilio");
   await expect(page.locator("main")).toContainText("Nuove richieste sospese");
-  // In home la prestazione in evidenza diventa quella davvero disponibile.
-  await gotoReady(page, "/");
-  await expect(page.locator("[data-in-evidenza]")).toHaveAttribute("data-in-evidenza", "parere");
 });
 
 test("candidatura: il medico è assegnabile solo dopo verifica e abilitazione", async ({ page }) => {

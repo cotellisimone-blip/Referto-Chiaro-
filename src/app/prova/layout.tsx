@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import "@/components/sezioni/carta.css";
 
 /**
  * Prova delle prestazioni con un medico (domicilio, videoconsulto, secondo parere) con tre ruoli.
@@ -11,5 +12,9 @@ export const metadata: Metadata = {
 };
 
 export default function ProvaLayout({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={null}>{children}</Suspense>;
+  return (
+    <div className="carta">
+      <Suspense fallback={null}>{children}</Suspense>
+    </div>
+  );
 }

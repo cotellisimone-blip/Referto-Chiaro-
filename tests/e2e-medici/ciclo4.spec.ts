@@ -38,7 +38,9 @@ test("un'offerta sola: ogni servizio compare una volta in Servizi e in Prezzi, n
 
 test("dalla home alla visita conclusa da paziente: nessun ruolo, un comando per volta, riepilogo e prossimo passo", async ({ page, isMobile }) => {
   await fresh(page, "/");
-  await page.locator("[data-in-evidenza]").getByRole("link", { name: /Richiedi la visita/ }).click();
+  await page.locator("#a-domicilio").getByRole("link", { name: /Verifica se arriviamo da te/ }).click();
+  await expect(page).toHaveURL(/\/a-domicilio$/);
+  await page.locator(".ds-ph").getByRole("link", { name: /Richiedi la visita/ }).click();
   await expect(page).toHaveURL(/\/richiedi\/domicilio$/);
   await expect(page.locator("[data-percorso-paziente]")).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Prova come" })).toHaveCount(0);

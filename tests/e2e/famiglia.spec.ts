@@ -45,12 +45,10 @@ test("pagina pubblica: la promessa, pezzi veri di prodotto, il piano come propos
   await expect(page.getByTestId("piano-famiglia")).toContainText("In proposta");
 });
 
-test("la home porta a Famiglia", async ({ page }) => {
-  await page.goto("/");
-  await page
-    .locator("#famiglia")
-    .getByRole("link", { name: "Scopri Nel tempo e Famiglia" })
-    .click();
+test("la sezione Online porta a Famiglia", async ({ page }) => {
+  // 15/11/2026, home a due sezioni: «Nel tempo» e «Per la famiglia» stanno nella pagina della sezione Online.
+  await page.goto("/online");
+  await page.locator("main").getByRole("link", { name: /Per la famiglia/ }).click();
   await expect(page).toHaveURL(/\/famiglia$/);
 });
 

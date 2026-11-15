@@ -94,8 +94,32 @@ export function MiniReferto() {
   );
 }
 
-/** La conferma della visita in miniatura (sezione 2), per l'apertura. */
-export function MiniVisita() {
+/**
+ * La conferma della visita in miniatura (sezione 2), per l'apertura. Con i medici spenti niente nomi di medici: solo
+ * che cosa arriverà.
+ */
+export function MiniVisita({ attivo = true }: { attivo?: boolean }) {
+  if (!attivo)
+    return (
+      <div className="ds-mini ds-mini-2" aria-hidden>
+        <p className="ds-mini-k">
+          <span className="ds-mini-n">2</span> A domicilio · in arrivo
+        </p>
+        <div className="ds-mini-doc">
+          <span className="ds-av ds-av-teal">
+            <Home className="tm-ic" />
+          </span>
+          <span>
+            <b>Il medico a casa tua</b>
+            <small>Medico di medicina generale</small>
+          </span>
+        </div>
+        <p className="ds-mini-when">
+          <b>Brescia città</b>
+          <span>per cominciare</span>
+        </p>
+      </div>
+    );
   return (
     <div className="ds-mini ds-mini-2" aria-hidden>
       <p className="ds-mini-k">
@@ -128,14 +152,14 @@ const SVC_TEXT: Record<PrestazioneKind, { t: string; d: string }> = {
 };
 
 /** I tre servizi con un medico, con prezzo (se i prezzi sono pubblici) e collegamento. */
-export function ServiziMedico({ prices, attivo, dark = false }: { prices: boolean; attivo: boolean; dark?: boolean }) {
+export function ServiziMedico({ prices, attivo, dark = false, onSection = false }: { prices: boolean; attivo: boolean; dark?: boolean; onSection?: boolean }) {
   return (
     <ul className={`ds-svcs${dark ? " ds-svcs-dark" : ""}`}>
       {(["domicilio", "video", "parere"] as const).map((k) => {
         const I = SVC_ICON[k];
         return (
           <li key={k} className={k === "domicilio" ? "ds-svc ds-svc-main" : "ds-svc"}>
-            <Link href={attivo ? PRESTAZIONI[k].href : DOMICILIO_HREF} className="ds-svc-a">
+            <Link href={!attivo ? DOMICILIO_HREF : k === "domicilio" ? (onSection ? PRESTAZIONI.domicilio.startHref : DOMICILIO_HREF) : PRESTAZIONI[k].href} className="ds-svc-a">
               <span className="ds-svc-ic" aria-hidden>
                 <I className="tm-ic" />
               </span>
