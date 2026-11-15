@@ -104,7 +104,6 @@ export function DemoReferto() {
               type="button"
               aria-pressed={i === sel}
               aria-controls="tm-xpl"
-              aria-label={`${row.name}: ${row.value} ${row.unit}, riferimento ${row.rangeText}`}
               onClick={() => setSel(i)}
               className={`tm-tr${i === sel ? " tm-on" : ""}${row.wideOnly ? " tm-x" : ""}`}
               data-track="home-riga-referto"

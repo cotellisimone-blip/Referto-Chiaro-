@@ -92,63 +92,59 @@ test.describe("il servizio e i percorsi pubblici", () => {
   });
 });
 
-test.describe("home «Evoluzione v2»", () => {
-  test("due azioni nella hero, il referto come ingresso, il percorso in tre tappe; corta e senza dati inventati", async ({ page, isMobile }) => {
+test.describe("home «I tre momenti»", () => {
+  test("apertura con due azioni, il referto che si tocca, i tre momenti; corta e senza dati inventati", async ({ page, isMobile }) => {
     await page.goto("/");
     const main = page.locator("main");
-    // Hero: una primaria e una secondaria, non tre azioni equivalenti
-    await expect(main.getByRole("link", { name: "Ho un referto" })).toHaveAttribute("href", "/referti");
-    await expect(main.getByRole("link", { name: "Scopri tutti i servizi" })).toHaveAttribute("href", "/servizi");
-    // Il prodotto d'ingresso domina la seconda sezione, con il prezzo in HTML
-    // V3: il titolo diventa «Come diventa chiaro un referto.» (il doppio ingresso sopra dice già «Hai già un referto?»)
-    await expect(page.getByRole("heading", { name: "Come diventa chiaro un referto." })).toBeVisible();
-    await expect(page.locator("#referto")).toContainText("Primo referto");
-    await expect(page.locator("#referto")).toContainText("2,90 €");
-    await expect(page.locator("#referto")).toContainText("poi 7,90 € per referto");
-    await expect(page.locator("#referto").getByRole("link", { name: "Rendi chiaro il mio referto" })).toHaveAttribute("href", "/referti");
-    // «Home più calma» (11/11/2026): il referto prima e dopo, con il cursore, anche su telefono
-    await expect(page.locator("#referto").getByRole("slider", { name: /Sposta per confrontare/ })).toBeVisible();
-    // Niente più blocco «Se una spiegazione non basta.»: i servizi con un medico si presentano una volta, nei livelli
-    await expect(page.getByRole("heading", { name: "Se una spiegazione non basta." })).toHaveCount(0);
-    // Senza medici il percorso ha tre tappe (Parti, Capisci, Segui) e nessun link ai servizi con un medico.
-    await expect(page.locator(".levels").getByRole("link")).toHaveCount(3);
+    // Apertura: una primaria (con il prezzo del primo referto, dal codice) e una secondaria
+    const hero = main.locator(".tm-hero");
+    await expect(hero.getByRole("link", { name: /Carica un referto/ })).toHaveAttribute("href", "/referti");
+    await expect(hero.getByRole("link", { name: /Carica un referto/ })).toContainText("il primo 2,90 €");
+    await expect(hero.getByRole("link", { name: "Guarda un esempio" })).toHaveAttribute("href", "/referti/esempio");
+    // Da così a così: ogni riga del foglio è un pulsante, la spiegazione accanto cambia
+    await expect(page.getByRole("heading", { name: /Lo stesso referto,\s*da così a così\./ })).toBeVisible();
+    const xpl = page.locator("#tm-xpl");
+    await expect(xpl.getByRole("heading", { level: 3 })).toHaveText("Colesterolo LDL");
+    await expect(xpl).toContainText("Sopra l’intervallo stampato");
+    await page.getByRole("button", { name: /^GLICEMIA 92 mg\/dL/ }).click();
+    await expect(xpl.getByRole("heading", { level: 3 })).toHaveText("Glicemia");
+    await expect(xpl).toContainText("Dentro l’intervallo stampato");
+    await expect(page.getByRole("button", { name: /^GLICEMIA/ })).toHaveAttribute("aria-pressed", "true");
+    // I tre momenti: si paga solo «Capisci», con il prezzo in HTML; il resto è gratis
+    await expect(page.getByRole("heading", { name: /Oggi, prima della visita,\s*negli anni\./ })).toBeVisible();
+    const paid = main.locator(".tm-paid");
+    await expect(paid).toContainText("2,90 €");
+    await expect(paid).toContainText("poi 7,90 € per referto");
+    await expect(paid).toContainText("È automatico: nessun medico lo rivede.");
+    await expect(main.locator(".tm-mom")).toContainText("piano in arrivo");
+    // Senza medici: nessun link ai servizi con un medico, solo «Presto anche con un medico», senza prezzi.
     await expect(page.locator('main a[href^="/servizi/"]')).toHaveCount(0);
-    // I tre livelli e la fiducia
-    await expect(page.getByRole("heading", { name: "Parti gratis. Poi scegli tu fin dove arrivare." })).toBeVisible();
-    for (const verb of ["Parti", "Capisci", "Segui"]) await expect(page.locator(".levels")).toContainText(verb);
-    await expect(page.getByRole("heading", { name: "Pochi fatti, detti chiari." })).toBeVisible();
-    await expect(page.getByRole("link", { name: /Sei un medico/ })).toHaveCount(0);
-    // L'unico accenno ai servizi con un medico: «Presto anche con un medico», senza prezzi, con la lista d'attesa.
     await expect(main.getByRole("link", { name: /Avvisami quando parte/ })).toHaveAttribute("href", "/con-un-medico");
-    await expect(page.getByRole("heading", { name: /Prima capisci da dove parti\./ })).toBeVisible();
+    await expect(main.locator(".tm-presto")).not.toContainText("€");
+    await expect(page.getByRole("link", { name: /Sei un medico/ })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /Non facciamo diagnosi\.\s*Facciamo chiarezza\./ })).toBeVisible();
     // Mai un medico che rivede «Capisci», mai conti alla rovescia
     const text = (await main.innerText()).toLowerCase();
-    // «Troppi chiedi a un dottore»: la parola «medic…» compare poche volte (prima erano 20 su desktop e 15 su telefono)
-    // 12/11/2026: +2 per la visita a domicilio in evidenza («Il medico a casa tua», «medico generalista»).
-    expect((text.match(/medic/g) ?? []).length, "menzioni di «medico»").toBeLessThanOrEqual(10);
-    for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra"]) expect(text).not.toContain(bad);
-    // Barra d'aiuto mobile: nascosta sulla hero (non compete con le due azioni), visibile scorrendo
+    expect((text.match(/medic/g) ?? []).length, "menzioni di «medico»").toBeLessThanOrEqual(16);
+    for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra", "nella norma"]) expect(text).not.toContain(bad);
+    // Barra d'aiuto mobile: nascosta sull'apertura, visibile scorrendo
     if (isMobile) {
       const bar = page.getByRole("navigation", { name: "Azioni rapide" });
+      await page.evaluate(() => window.scrollTo(0, 0));
       await expect(bar).toBeHidden();
       await page.evaluate(() => window.scrollTo(0, window.innerHeight * 2));
       await expect(bar).toBeVisible();
-      await page.evaluate(() => window.scrollTo(0, 0));
-      await expect(bar).toBeHidden();
     }
-    // V3: sette blocchi + il doppio ingresso dopo la hero.
+    // Sei blocchi più la striscia dei fatti.
     expect(await main.locator("section").count()).toBeLessThanOrEqual(8);
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    // V3: il doppio ingresso aggiunge circa mezza schermata (una su telefono), in parte recuperata accorciando il blocco del referto.
-    // Fase 3: obiettivo 11 schermate su telefono e 6 su desktop (mezzo schermo di margine per i font).
-    // Ciclo 2, fase 3: su telefono sotto gli 8.000 px circa (era 9.272), cioè meno di 9,6 schermate da 844 px.
-    // 13/11/2026 (Famiglia e salute nel tempo): un blocco nuovo, il motivo per restare. Compatto (su telefono senza grafico),
-    // aggiunge circa 0,8 schermate su desktop e 0,6 su telefono: limiti a 7 e 9,9.
+    // 15/11/2026, «I tre momenti»: limiti invariati, 7 schermate su computer e 9,9 su telefono (oggi 6,95 e 9,7).
     expect(h, "schermate").toBeLessThan(isMobile ? 9.9 : 7);
     const words = (await main.innerText()).split(/\s+/).length;
     // V3: il doppio ingresso porta circa 55 parole, in parte compensate togliendo le rassicurazioni del blocco referto.
     // 13/11/2026: il blocco Famiglia porta circa 85 parole su desktop (metà sono numeri e date del grafico di esempio).
-    expect(words).toBeLessThan(isMobile ? 630 : 720);
+    // 15/11/2026: la home racconta tre momenti e risponde a sei domande; su telefono le risposte sono chiuse.
+    expect(words).toBeLessThan(isMobile ? 900 : 1150);
     await expectAccessible(page);
   });
 
@@ -157,7 +153,7 @@ test.describe("home «Evoluzione v2»", () => {
     // 1. Quanto costa capire un referto? Visibile in home.
     await expect(page.locator("main")).toContainText("2,90 €");
     // 2. Capire un referto: un clic porta al servizio
-    await page.locator("main").getByRole("link", { name: "Ho un referto" }).click();
+    await page.locator("main .tm-hero").getByRole("link", { name: /Carica un referto/ }).click();
     await expect(page).toHaveURL(/\/referti$/);
     // 3. Emergenza: il 112 è in home
     await page.goto("/");
@@ -165,9 +161,9 @@ test.describe("home «Evoluzione v2»", () => {
     // 4. Vorrei un medico: un clic porta alla lista d'attesa, senza prezzi
     await page.locator("main").getByRole("link", { name: /Avvisami quando parte/ }).click();
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Presto anche con un medico.");
-    // 5. Prepararsi alla visita: un clic, dal piè di pagina (la home più calma non ha più il suo blocco)
+    // 5. Prepararsi alla visita: un clic, dal secondo momento
     await page.goto("/");
-    await page.locator("footer").getByRole("link", { name: "Preparati alla visita" }).click();
+    await page.locator("main").getByRole("link", { name: /Preparati alla visita/ }).click();
     await expect(page).toHaveURL(/preparati-alla-visita/);
   });
 });

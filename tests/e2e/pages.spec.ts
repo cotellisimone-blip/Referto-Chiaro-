@@ -44,7 +44,7 @@ test("menu mobile: si apre, intrappola il fuoco e si chiude con Esc", async ({ p
   await page.getByRole("button", { name: "Apri il menu" }).click();
   const menu = page.locator("#menu-mobile");
   await expect(menu).toBeVisible();
-  await expect(menu.getByRole("link", { name: "Scegli il servizio per te" })).toBeVisible();
+  await expect(menu.getByRole("link", { name: "Carica un referto" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(menu).toBeHidden();
 });
@@ -84,18 +84,18 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     await page.goto("/");
     // 13/11/2026: la promessa «famiglia e nel tempo» è il titolo. Senza medici il payoff dice quello che c'è davvero.
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Tutta la salute della tua famiglia,\s*finalmente chiara\./);
-    await expect(page.locator("main .payoff").first()).toHaveText(/Capisci\.\s*Segui nel tempo\.\s*Arriva preparato dal medico\./);
     await expect(page.locator("footer").getByText("Capisci. Segui nel tempo. Arriva preparato dal medico.")).toBeVisible();
     // Nessun «.it» accanto al logo finché il sito non gira su un dominio vero (PUBLIC_BASE_URL).
     await expect(page.locator("footer").getByText(".it", { exact: true })).toHaveCount(0);
     const menu = (await page.locator("header").getByRole("link").allInnerTexts()).map((t) => t.trim());
     if (!isMobile) {
-      for (const n of ["Capisci il referto", "Famiglia", "Prezzi", "Guide"]) expect(menu, n).toContain(n);
+      // 15/11/2026, «I tre momenti»: cinque voci e l'azione «Carica un referto».
+      for (const n of ["Referti", "Strumenti gratuiti", "Guide", "Nel tempo", "Prezzi", "Carica un referto"]) expect(menu, n).toContain(n);
       for (const n of ["A domicilio", "Videoconsulto", "Secondo parere"]) expect(menu, n).not.toContain(n);
     }
     await expect(page.getByRole("link", { name: "Capisci il tuo referto" }).first()).toBeAttached();
     // Above the fold: la porta d'ingresso al servizio è visibile senza scorrere.
-    const first = page.locator("main").getByRole("link", { name: "Ho un referto" });
+    const first = page.locator("main .tm-hero").getByRole("link", { name: /Carica un referto/ });
     const box = await first.boundingBox();
     expect((box?.y ?? 9999) + (box?.height ?? 0)).toBeLessThan(isMobile ? 844 : 900);
     await expect(page.getByText("Versione dimostrativa", { exact: false }).first()).toBeVisible();

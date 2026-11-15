@@ -49,7 +49,7 @@ test("la home porta a Famiglia", async ({ page }) => {
   await page.goto("/");
   await page
     .locator("#famiglia")
-    .getByRole("link", { name: "Scopri Famiglia" })
+    .getByRole("link", { name: "Scopri Nel tempo e Famiglia" })
     .click();
   await expect(page).toHaveURL(/\/famiglia$/);
 });

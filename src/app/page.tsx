@@ -30,17 +30,17 @@ import { TrackView } from "@/components/site/track";
 import { DemoReferto } from "@/components/home/demo-referto";
 import { CercaParola, Domande } from "@/components/home/home-client";
 import { TrendEsempio } from "@/components/home/trend";
-import { FeaturedPrestazione } from "@/components/prestazioni/public";
+import { HomeConMedici } from "@/components/home/home-con-medici";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { CON_UN_MEDICO_HREF, mediciEnabled } from "@/lib/medici";
 import { GUIDES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import {
+  PRICE_NOTE,
   coreService,
   firstPromoEnabled,
   firstRefertoCents,
   formatEuro,
-  isVetrina,
   priceCents,
   publicPricesEnabled,
 } from "@/domain/offerta";
@@ -55,6 +55,8 @@ import "@/components/home/tre-momenti.css";
  * I servizi con un medico restano spenti (src/lib/medici.ts): qui solo il riquadro «Presto anche con un medico», senza prezzi.
  */
 export default function Home() {
+  // Con i medici accesi resta la home di prima, con la prestazione in evidenza: la nuova è pensata per il lancio senza medici.
+  if (mediciEnabled()) return <HomeConMedici />;
   const prices = publicPricesEnabled();
   const promo =
     firstPromoEnabled() && firstRefertoCents() < priceCents("capisci");
@@ -94,7 +96,6 @@ export default function Home() {
           ) : null}
           <div className="tm-wrap">
             <div className="tm-hero-copy">
-              {medici ? <FeaturedPrestazione vetrina={isVetrina()} /> : null}
               <p className="tm-kicker">Referti spiegati in parole semplici</p>
               <h1 id="hero-titolo">
                 Tutta la salute <br className="tm-d-only" />
@@ -522,6 +523,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            {prices ? <p className="tm-note">{PRICE_NOTE}</p> : null}
             {medici ? null : (
               <aside className="tm-presto" aria-labelledby="presto-titolo">
                 <div>

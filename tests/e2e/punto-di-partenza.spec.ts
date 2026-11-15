@@ -12,13 +12,11 @@ async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 }
 
-test("home: doppio ingresso, gratis e primo referto, senza rompere la V2", async ({ page }) => {
+test("home: il punto di partenza gratis sta nel secondo momento, il primo referto nell'apertura", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("h1")).toHaveCount(1);
-  const entries = page.getByRole("region", { name: "Da dove vuoi iniziare" });
-  await expect(entries.getByRole("link", { name: /Parti dalla tua salute/ })).toHaveAttribute("href", "/punto-di-partenza");
-  await expect(entries.getByRole("link", { name: /Rendilo chiaro/ })).toContainText("2,90");
-  await expect(page.getByRole("heading", { name: "Parti gratis. Poi scegli tu fin dove arrivare." })).toBeVisible();
+  await expect(page.locator("main").getByRole("link", { name: /Punto di partenza/ })).toHaveAttribute("href", "/punto-di-partenza");
+  await expect(page.locator("main .tm-hero").getByRole("link", { name: /Carica un referto/ })).toContainText("2,90");
   await expect(page.locator("footer").getByRole("link", { name: "Punto di Partenza" })).toBeVisible();
   await noOverflow(page);
 });
