@@ -29,8 +29,8 @@ export function SiteFooter() {
     <footer className="site-footer no-print">
       {/* L'onda prende il colore della pagina: per questo sta fuori dallo «scope» scuro. */}
       <Wave position="top" className="text-canvas" />
-      <div className="scope-strong container-rc relative pb-8 pt-[clamp(5rem,10vw,8.5rem)]">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-3 lg:grid-cols-[1.4fr_1.2fr_1fr_1fr] lg:gap-x-10">
+      <div className="scope-strong container-rc relative pb-8 pt-[clamp(4rem,10vw,8.5rem)]">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-9 md:gap-y-11 md:grid-cols-3 lg:grid-cols-[1.4fr_1.2fr_1fr_1fr] lg:gap-x-10">
           <div className="col-span-2 max-w-md md:col-span-3 lg:col-span-1">
             {/* «.it» solo quando il sito gira davvero su un dominio .it (PUBLIC_BASE_URL). */}
             <Logo inverse withTld={SITE_URL.endsWith(".it")} />
@@ -42,9 +42,10 @@ export function SiteFooter() {
             </p>
           </div>
           {Object.entries(FOOTER_NAV).map(([title, links]) => (
-            <nav key={title} aria-label={title}>
+            // Su telefono l'ultima colonna va su due colonne: il piè di pagina resta corto (15/11/2026).
+            <nav key={title} aria-label={title} className={title === "Cura Privata" ? "max-md:col-span-2" : undefined}>
               <h2 className="eyebrow eyebrow-plain">{title}</h2>
-              <ul className="mt-3">
+              <ul className={title === "Cura Privata" ? "mt-3 max-md:grid max-md:grid-cols-2 max-md:gap-x-6" : "mt-3"}>
                 {links
                   .filter((l) => pdp || l.href !== "/punto-di-partenza")
                   .map((l) => (
@@ -58,7 +59,7 @@ export function SiteFooter() {
             </nav>
           ))}
         </div>
-        <div className="mt-12 flex flex-col gap-2 border-t border-line pt-5 text-[0.9375rem] text-muted lg:flex-row lg:items-center lg:justify-between">
+        <div className="mt-10 flex flex-col gap-2 border-t md:mt-12 border-line pt-5 text-[0.9375rem] text-muted lg:flex-row lg:items-center lg:justify-between">
           <p>© 2026 Cura Privata · Le spiegazioni informative non sostituiscono una valutazione medica.</p>
           <nav aria-label="Note legali">
             <ul className="flex flex-wrap gap-x-5">

@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, BookOpen, ChevronRight, Euro, FileText, Home, Menu, Stethoscope, Video, X, type LucideIcon, Users } from "lucide-react";
+import { ArrowRight, BookOpen, ChartLine, ChevronRight, ClipboardList, Euro, FileText, Home, Menu, Stethoscope, Video, X, type LucideIcon, Users } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
-import { MAIN_NAV, type NavIcon } from "./nav";
+import { HEADER_CTA, MAIN_NAV, type NavIcon } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
 import { TextSizeToggle } from "./text-size-toggle";
 import { SearchTrigger } from "@/components/search/site-search";
 
-const NAV_ICON: Record<NavIcon, LucideIcon> = { file: FileText, home: Home, video: Video, stethoscope: Stethoscope, euro: Euro, book: BookOpen, users: Users };
+const NAV_ICON: Record<NavIcon, LucideIcon> = { file: FileText, home: Home, video: Video, stethoscope: Stethoscope, euro: Euro, book: BookOpen, users: Users, tools: ClipboardList, chart: ChartLine };
 
 /**
  * Il percorso corrente serve solo a evidenziare la voce attiva. Sulle pagine dinamiche
@@ -123,8 +123,8 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
               <Link href="/accedi" className="btn btn-ghost btn-sm whitespace-nowrap">
                 Accedi
               </Link>
-              <Link href="/inizia" className="btn btn-primary btn-sm whitespace-nowrap">
-                Inizia
+              <Link href={HEADER_CTA.href} className="btn btn-primary btn-sm whitespace-nowrap">
+                {HEADER_CTA.label}
               </Link>
             </>
           )}
@@ -162,8 +162,8 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                 })}
               </ul>
               <div className="mt-4 grid gap-3 border-t border-line pt-5">
-                <Link href="/inizia" className="btn btn-primary btn-lg w-full">
-                  Scegli il servizio per te <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                <Link href={HEADER_CTA.href} className="btn btn-primary btn-lg w-full">
+                  {HEADER_CTA.menu} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                 </Link>
                 <Link href={signedIn ? "/area-personale" : "/accedi"} className="btn btn-secondary w-full">
                   {signedIn ? "Vai all'area personale" : "Accedi all'area personale"}

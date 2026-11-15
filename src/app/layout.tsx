@@ -20,6 +20,17 @@ const manrope = localFont({
   display: "swap",
 });
 
+// Fraunces (OFL), solo per i titoli della home «I tre momenti».
+const fraunces = localFont({
+  src: [
+    { path: "./fonts/fraunces.woff2", style: "normal", weight: "300 700" },
+    { path: "./fonts/fraunces-italic.woff2", style: "italic", weight: "300 700" },
+  ],
+  variable: "--font-fraunces",
+  display: "swap",
+  preload: false,
+});
+
 export const metadata: Metadata = {
   title: { default: "Cura Privata — i tuoi referti, finalmente comprensibili", template: "%s · Cura Privata" },
   // 14/11/2026: senza medici (src/lib/medici.ts) la descrizione dice quello che c'è davvero.
@@ -40,7 +51,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   const org = organizationLd(readTitolare());
   return (
-    <html lang="it" className={`${manrope.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="it" className={`${manrope.variable} ${fraunces.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: PREFS_INIT_SCRIPT }} />
         {org ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(org) }} /> : null}

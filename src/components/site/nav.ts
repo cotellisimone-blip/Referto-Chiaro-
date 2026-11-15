@@ -5,7 +5,7 @@ import { CON_UN_MEDICO_HREF, isDoctorPath, mediciEnabled } from "@/lib/medici";
  * «Parla con un medico» diventa «Videoconsulto». «Guide» si vede dai 1280 px in su (sotto resta nel menu, nel fondo
  * pagina e nella ricerca), così la testata non va a capo a 1024 px.
  */
-export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users";
+export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users" | "tools" | "chart";
 type NavItem = { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; icon: NavIcon; wideOnly?: "xl" | "2xl" };
 const MAIN_NAV_ALL: readonly NavItem[] = [
   { href: "/referti", label: "Capisci il referto", tone: "capisci", icon: "file" },
@@ -17,8 +17,20 @@ const MAIN_NAV_ALL: readonly NavItem[] = [
   { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro", wideOnly: "xl" },
   { href: "/guide", label: "Guide", tone: null, icon: "book", wideOnly: "2xl" },
 ];
-/** 13/11/2026: con i medici spenti (src/lib/medici.ts) restano Capisci, Famiglia, Prezzi e Guide, tutte visibili. */
-export const MAIN_NAV: readonly NavItem[] = mediciEnabled() ? MAIN_NAV_ALL : MAIN_NAV_ALL.filter((i) => !isDoctorPath(i.href)).map((i) => ({ ...i, wideOnly: undefined }));
+/**
+ * 15/11/2026, home «I tre momenti»: con i medici spenti (src/lib/medici.ts) il menu segue i tre momenti, in cinque voci:
+ * il referto di oggi, gli strumenti gratuiti per prima della visita, le guide, la salute nel tempo, i prezzi.
+ */
+const MAIN_NAV_SENZA_MEDICI: readonly NavItem[] = [
+  { href: "/referti", label: "Referti", tone: "capisci", icon: "file" },
+  { href: "/strumenti", label: "Strumenti gratuiti", tone: null, icon: "tools" },
+  { href: "/guide", label: "Guide", tone: null, icon: "book" },
+  { href: "/famiglia", label: "Nel tempo", tone: null, icon: "chart" },
+  { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro" },
+];
+export const MAIN_NAV: readonly NavItem[] = mediciEnabled() ? MAIN_NAV_ALL : MAIN_NAV_SENZA_MEDICI;
+/** Azione principale della testata: senza medici si va dritti al referto. */
+export const HEADER_CTA = mediciEnabled() ? { href: "/inizia", label: "Inizia", menu: "Scegli il servizio per te" } : { href: "/referti", label: "Carica un referto", menu: "Carica un referto" };
 
 /** Fondo pagina snello: tre colonne, una dozzina di voci. Le note legali stanno nella riga in basso. */
 const FOOTER_NAV_ALL = {
