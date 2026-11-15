@@ -5,36 +5,29 @@ import { CON_UN_MEDICO_HREF, isDoctorPath, mediciEnabled } from "@/lib/medici";
  * «Parla con un medico» diventa «Videoconsulto». «Guide» si vede dai 1280 px in su (sotto resta nel menu, nel fondo
  * pagina e nella ricerca), così la testata non va a capo a 1024 px.
  */
-export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users" | "tools" | "chart";
+export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users" | "tools" | "chart" | "laptop" | "pill";
 type NavItem = { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; icon: NavIcon; wideOnly?: "xl" | "2xl" };
-const MAIN_NAV_ALL: readonly NavItem[] = [
-  { href: "/referti", label: "Capisci il referto", tone: "capisci", icon: "file" },
-  { href: "/servizi/visita-a-domicilio", label: "A domicilio", tone: "medico", icon: "home" },
-  { href: "/servizi/parla-con-un-medico", label: "Videoconsulto", tone: "medico", icon: "video" },
-  { href: "/servizi/secondo-parere", label: "Secondo parere", tone: "parere", icon: "stethoscope" },
-  // 13/11/2026: la famiglia e la salute nel tempo, la ragione per restare.
-  { href: "/famiglia", label: "Famiglia", tone: null, icon: "users" },
-  { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro", wideOnly: "xl" },
-  { href: "/guide", label: "Guide", tone: null, icon: "book", wideOnly: "2xl" },
-];
 /**
- * 15/11/2026, home «I tre momenti»: con i medici spenti (src/lib/medici.ts) il menu segue i tre momenti, in cinque voci:
- * il referto di oggi, gli strumenti gratuiti per prima della visita, le guide, la salute nel tempo, i prezzi.
+ * 15/11/2026, home «a due sezioni»: il menu è lo stesso con i medici accesi o spenti. Le due sezioni per prime
+ * (Online, A domicilio), poi le guide agli esami, le guide agli integratori, i prezzi. Spenti, «A domicilio» porta a una
+ * pagina «In arrivo» con la lista d'attesa; accesi, alla stessa pagina con medici e percorso di prova.
  */
-const MAIN_NAV_SENZA_MEDICI: readonly NavItem[] = [
-  { href: "/referti", label: "Referti", tone: "capisci", icon: "file" },
-  { href: "/strumenti", label: "Strumenti gratuiti", tone: null, icon: "tools" },
+const MAIN_NAV_DUE_SEZIONI: readonly NavItem[] = [
+  { href: "/online", label: "Online", tone: "capisci", icon: "laptop" },
+  { href: "/a-domicilio", label: "A domicilio", tone: "medico", icon: "home" },
   { href: "/guide", label: "Guide", tone: null, icon: "book" },
-  { href: "/famiglia", label: "Nel tempo", tone: null, icon: "chart" },
+  { href: "/integratori", label: "Integratori", tone: null, icon: "pill" },
   { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro" },
 ];
-export const MAIN_NAV: readonly NavItem[] = mediciEnabled() ? MAIN_NAV_ALL : MAIN_NAV_SENZA_MEDICI;
-/** Azione principale della testata: senza medici si va dritti al referto. */
-export const HEADER_CTA = mediciEnabled() ? { href: "/inizia", label: "Inizia", menu: "Scegli il servizio per te" } : { href: "/referti", label: "Carica un referto", menu: "Carica un referto" };
+export const MAIN_NAV: readonly NavItem[] = MAIN_NAV_DUE_SEZIONI;
+/** Azione principale della testata: il referto, che è la cosa che si fa subito. */
+export const HEADER_CTA = { href: "/referti", label: "Carica un referto", menu: "Carica un referto" };
 
 /** Fondo pagina snello: tre colonne, una dozzina di voci. Le note legali stanno nella riga in basso. */
 const FOOTER_NAV_ALL = {
   Servizi: [
+    { href: "/online", label: "Sezione Online" },
+    { href: "/a-domicilio", label: "Sezione A domicilio" },
     { href: "/referti", label: "Capisci il tuo referto" },
     { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio" },
     { href: "/servizi/parla-con-un-medico", label: "Videoconsulto con un medico" },
@@ -47,6 +40,7 @@ const FOOTER_NAV_ALL = {
     { href: "/punto-di-partenza", label: "Punto di Partenza" },
     { href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita" },
     { href: "/guide", label: "Guide agli esami" },
+    { href: "/integratori", label: "Guide agli integratori" },
     { href: "/glossario", label: "Glossario" },
   ],
   "Cura Privata": [
@@ -59,13 +53,12 @@ const FOOTER_NAV_ALL = {
 } as const;
 
 type FooterLink = { href: string; label: string };
-/** Con i medici spenti: via le loro pagine, e una sola voce «Presto anche con un medico». */
+/** Con i medici spenti: via le loro pagine (la sezione «A domicilio» resta, con l'etichetta «In arrivo»). */
 export const FOOTER_NAV: Record<string, readonly FooterLink[]> = mediciEnabled()
   ? FOOTER_NAV_ALL
   : Object.fromEntries(
       Object.entries(FOOTER_NAV_ALL).map(([k, links]) => {
         const kept: FooterLink[] = links.filter((l) => !isDoctorPath(l.href));
-        if (k === "Servizi") kept.splice(2, 0, { href: CON_UN_MEDICO_HREF, label: "Presto anche con un medico" });
         return [k, kept];
       }),
     );

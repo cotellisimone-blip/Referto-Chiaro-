@@ -12,7 +12,8 @@
   --t-mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,"DejaVu Sans Mono",monospace;
   --t-hl:rgba(123,224,210,.62);
 }
-.tm *{box-sizing:border-box;margin:0;padding:0}
+/* Nel livello base: così le utilità di Tailwind dei componenti del sito (moduli, numeri utili) dentro .tm restano valide. */
+@layer base{.tm *{box-sizing:border-box;margin:0;padding:0}}
 .tm{-webkit-text-size-adjust:100%}
 .tm{background:var(--t-paper);color:var(--t-ink);font:500 1.1875rem/1.55 var(--font-manrope),system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 .tm img{display:block;max-width:100%}

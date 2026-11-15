@@ -943,13 +943,14 @@ export function seedState(now: Date): PrestazioniState {
   slotSeq = 0;
   const doctors: Doctor[] = [
     { id: "md-bianchi", name: "Dott.ssa Laura Bianchi (profilo dimostrativo)", role: "generalista", specialtyId: null, ordine: "OMCeO Brescia n. DEMO-0001", email: "l.bianchi@esempio.invalid", phone: "+39 000 000 0001", status: "verificato", enabled: ["domicilio", "video"], offered: ["domicilio", "video"], zones: BRESCIA_CAPS, acceptsNewOpinions: false, demo: true },
-    { id: "md-ferri", name: "Dott. Paolo Ferri (profilo dimostrativo)", role: "generalista", specialtyId: null, ordine: "OMCeO Brescia n. DEMO-0002", email: "p.ferri@esempio.invalid", phone: "+39 000 000 0002", status: "verificato", enabled: ["video"], offered: ["video"], zones: [], acceptsNewOpinions: false, demo: true },
+    { id: "md-ferri", name: "Dott. Paolo Ferri (profilo dimostrativo)", role: "generalista", specialtyId: null, ordine: "OMCeO Brescia n. DEMO-0002", email: "p.ferri@esempio.invalid", phone: "+39 000 000 0002", status: "verificato", enabled: ["domicilio", "video"], offered: ["domicilio", "video"], zones: BRESCIA_CAPS, acceptsNewOpinions: false, demo: true },
     { id: "md-conti", name: "Dott.ssa Giulia Conti (profilo dimostrativo)", role: "specialista", specialtyId: "cardiologia", ordine: "OMCeO Milano n. DEMO-0003", email: "g.conti@esempio.invalid", phone: "+39 000 000 0003", status: "verificato", enabled: ["parere"], offered: ["parere"], zones: [], acceptsNewOpinions: true, demo: true },
     { id: "md-rinaldi", name: "Dott. Marco Rinaldi (candidatura dimostrativa)", role: "generalista", specialtyId: null, ordine: "OMCeO Brescia n. DEMO-0004", email: "m.rinaldi@esempio.invalid", phone: "+39 000 000 0004", status: "candidato", enabled: [], offered: ["domicilio", "video"], zones: BRESCIA_CAPS, acceptsNewOpinions: false, demo: true },
   ];
   const slots = [
     ...makeSlots("md-bianchi", now, [9, 10, 11, 14, 15, 16, 17, 18], [0, 1, 2, 3], ["domicilio", "video"]),
     ...makeSlots("md-ferri", now, [12, 13, 19], [0, 1, 2], ["video"]),
+    ...makeSlots("md-ferri", now, [9, 11], [1, 2, 3], ["domicilio"]),
     ...makeSlots("md-conti", now, [15, 16, 17], [2, 3, 4, 5], ["parere"]),
     ...makeSlots("md-rinaldi", now, [9, 10, 11], [1, 2, 3], ["domicilio", "video"]),
   ];

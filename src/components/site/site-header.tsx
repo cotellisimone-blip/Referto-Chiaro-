@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, BookOpen, ChartLine, ChevronRight, ClipboardList, Euro, FileText, Home, Menu, Stethoscope, Video, X, type LucideIcon, Users } from "lucide-react";
+import { ArrowRight, BookOpen, ChartLine, ChevronRight, ClipboardList, Euro, FileText, Home, Laptop, Menu, Pill, Stethoscope, Video, X, type LucideIcon, Users } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { HEADER_CTA, MAIN_NAV, type NavIcon } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
 import { TextSizeToggle } from "./text-size-toggle";
 import { SearchTrigger } from "@/components/search/site-search";
 
-const NAV_ICON: Record<NavIcon, LucideIcon> = { file: FileText, home: Home, video: Video, stethoscope: Stethoscope, euro: Euro, book: BookOpen, users: Users, tools: ClipboardList, chart: ChartLine };
+const NAV_ICON: Record<NavIcon, LucideIcon> = { file: FileText, home: Home, video: Video, stethoscope: Stethoscope, euro: Euro, book: BookOpen, users: Users, tools: ClipboardList, chart: ChartLine, laptop: Laptop, pill: Pill };
 
 /**
  * Il percorso corrente serve solo a evidenziare la voce attiva. Sulle pagine dinamiche
