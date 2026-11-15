@@ -1,67 +1,86 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUp, Check, Home, Laptop, Stethoscope, Video } from "lucide-react";
+import { ArrowRight, ArrowUp, Check, FileText, HeartPulse, Home, Stethoscope, Video } from "lucide-react";
 import { PRESTAZIONI, prestazionePrice, type PrestazioneKind } from "@/domain/prestazioni/listino";
 
 /**
- * Pezzi comuni della home a due sezioni e delle pagine /online e /a-domicilio (15/11/2026).
- * Sezione 1 «Online» = carta chiara e menta; sezione 2 «A domicilio» = petrolio e argilla. Lo stesso colore segue la
- * sezione ovunque (porte, fasce, pagine), così si riconosce a colpo d'occhio dove si è.
+ * Pezzi comuni della home e delle pagine delle tre sezioni (15/11/2026 sera, divisione voluta da Simone):
+ * 1 «Prevenzione» (esami da fare, guide, integratori) = carta e inchiostro; 2 «Lettura referti» = menta;
+ * 3 «Medici» (video, casa, secondo parere) = petrolio e pesca. Lo stesso colore segue la sezione ovunque (porte,
+ * fasce, pagine), così si riconosce a colpo d'occhio dove si è.
  */
 
-export const ONLINE_HREF = "/online";
-export const DOMICILIO_HREF = "/a-domicilio";
+export const PREVENZIONE_HREF = "/prevenzione";
+export const REFERTI_HREF = "/lettura-referti";
+export const MEDICI_HREF = "/medici";
 
-/** Etichetta della sezione 2: «Versione di prova» con i medici accesi, «In arrivo» spenti. */
-export function StatoDomicilio({ attivo, dark = false }: { attivo: boolean; dark?: boolean }) {
+/** Etichetta dei medici: «Versione di prova» con i medici accesi, «In arrivo» (o «Medici in arrivo») spenti. */
+export function StatoDomicilio({ attivo, dark = false, medici = false }: { attivo: boolean; dark?: boolean; medici?: boolean }) {
   return attivo ? (
     <span className={`ds-state ds-state-prova${dark ? " ds-on-dark" : ""}`}>
       <i aria-hidden />
-      Versione di prova
+      {medici ? "Medici: versione di prova" : "Versione di prova"}
     </span>
   ) : (
     <span className={`ds-state ds-state-arrivo${dark ? " ds-on-dark" : ""}`}>
       <i aria-hidden />
-      In arrivo
+      {medici ? "Medici in arrivo" : "In arrivo"}
     </span>
   );
 }
 
-/** Le due porte: la prima cosa che si vede. Ognuna dice che cosa c'è dietro, in una riga, e porta alla sua sezione. */
+/** Le tre porte: la prima cosa che si vede. Ognuna dice che cosa c'è dietro, in una riga, e porta alla sua sezione. */
 export function Porte({ attivo, entry, prices }: { attivo: boolean; entry: string | null; prices: boolean }) {
   return (
-    <ul className="ds-doors" aria-label="Le due sezioni di Cura Privata">
+    <ul className="ds-doors ds-doors-3" aria-label="Le tre sezioni di Cura Privata">
       <li>
-        <Link href={ONLINE_HREF} className="ds-door ds-door-1" data-track="porta-online">
+        <Link href={PREVENZIONE_HREF} className="ds-door ds-door-1" data-track="porta-prevenzione">
           <span className="ds-door-n" aria-hidden>
             1
           </span>
           <span className="ds-door-ic" aria-hidden>
-            <Laptop className="tm-ic" />
+            <HeartPulse className="tm-ic" />
           </span>
-          <span className="ds-door-k">Online, da casa</span>
-          <span className="ds-door-t">Capire referti ed esami</span>
-          <span className="ds-door-d">Primo controllo, referto spiegato, guide alla salute e agli integratori.</span>
+          <span className="ds-door-k">Prevenzione</span>
+          <span className="ds-door-t">Gli esami giusti, al momento giusto</span>
+          <span className="ds-door-d">Quali controlli conoscere, guide agli esami e agli integratori.</span>
           <span className="ds-door-f">
-            <span>{prices && entry ? `Molto è gratis · da ${entry}` : "Molto è gratis"}</span>
+            <span>Gratis</span>
             <ArrowRight aria-hidden className="tm-ic" />
           </span>
         </Link>
       </li>
       <li>
-        <Link href={DOMICILIO_HREF} className="ds-door ds-door-2" data-track="porta-domicilio">
+        <Link href={REFERTI_HREF} className="ds-door ds-door-2" data-track="porta-referti">
           <span className="ds-door-n" aria-hidden>
             2
           </span>
           <span className="ds-door-ic" aria-hidden>
-            <Home className="tm-ic" />
+            <FileText className="tm-ic" />
+          </span>
+          <span className="ds-door-k">Lettura referti</span>
+          <span className="ds-door-t">Il tuo referto, in parole semplici</span>
+          <span className="ds-door-d">Carichi il referto, controlli i valori e lo leggi spiegato riga per riga.</span>
+          <span className="ds-door-f">
+            <span>{prices && entry ? `Da ${entry}` : "Senza abbonamento"}</span>
+            <ArrowRight aria-hidden className="tm-ic" />
+          </span>
+        </Link>
+      </li>
+      <li>
+        <Link href={MEDICI_HREF} className="ds-door ds-door-3" data-track="porta-medici">
+          <span className="ds-door-n" aria-hidden>
+            3
+          </span>
+          <span className="ds-door-ic" aria-hidden>
+            <Stethoscope className="tm-ic" />
           </span>
           <span className="ds-door-k">
-            A domicilio <StatoDomicilio attivo={attivo} dark />
+            Medici <StatoDomicilio attivo={attivo} dark />
           </span>
-          <span className="ds-door-t">Il medico a casa tua</span>
-          <span className="ds-door-d">Un medico di medicina generale viene da te, per esigenze non urgenti.</span>
+          <span className="ds-door-t">Un medico, quando serve</span>
+          <span className="ds-door-d">In video, a casa tua o per un secondo parere di uno specialista.</span>
           <span className="ds-door-f">
-            <span>{attivo && prices ? `${prestazionePrice("domicilio")} prezzo fisso · Brescia` : "Brescia città, per cominciare"}</span>
+            <span>{attivo && prices ? `Video ${prestazionePrice("video")} · casa ${prestazionePrice("domicilio")}` : "Lista d’attesa aperta"}</span>
             <ArrowRight aria-hidden className="tm-ic" />
           </span>
         </Link>
@@ -70,12 +89,38 @@ export function Porte({ attivo, entry, prices }: { attivo: boolean; entry: strin
   );
 }
 
+/** Il primo controllo in miniatura (sezione 1), per l'apertura: tre aree da conoscere, nessuna indicazione. */
+export function MiniPrevenzione() {
+  return (
+    <div className="ds-mini ds-mini-1 ds-mini-pv" aria-hidden>
+      <p className="ds-mini-k">
+        <span className="ds-mini-n">1</span> Primo controllo
+      </p>
+      <ul className="ds-mini-list">
+        <li>
+          <Check className="tm-ic" />
+          Cuore e pressione
+        </li>
+        <li>
+          <Check className="tm-ic" />
+          Zuccheri nel sangue
+        </li>
+        <li className="ds-mini-todo">
+          <i />
+          Vista
+        </li>
+      </ul>
+      <p className="ds-mini-st ds-mini-st-ok">Una scheda da portare al medico</p>
+    </div>
+  );
+}
+
 /** La scheda del referto in miniatura (sezione 1), per l'apertura. */
 export function MiniReferto() {
   return (
     <div className="ds-mini ds-mini-1" aria-hidden>
       <p className="ds-mini-k">
-        <span className="ds-mini-n">1</span> Online · il tuo referto
+        <span className="ds-mini-n">2</span> Il tuo referto, spiegato
       </p>
       <p className="ds-mini-r">
         <b>Colesterolo LDL</b>
@@ -101,9 +146,9 @@ export function MiniReferto() {
 export function MiniVisita({ attivo = true }: { attivo?: boolean }) {
   if (!attivo)
     return (
-      <div className="ds-mini ds-mini-2" aria-hidden>
+      <div className="ds-mini ds-mini-3" aria-hidden>
         <p className="ds-mini-k">
-          <span className="ds-mini-n">2</span> A domicilio · in arrivo
+          <span className="ds-mini-n">3</span> Un medico · in arrivo
         </p>
         <div className="ds-mini-doc">
           <span className="ds-av ds-av-teal">
@@ -121,9 +166,9 @@ export function MiniVisita({ attivo = true }: { attivo?: boolean }) {
       </div>
     );
   return (
-    <div className="ds-mini ds-mini-2" aria-hidden>
+    <div className="ds-mini ds-mini-3" aria-hidden>
       <p className="ds-mini-k">
-        <span className="ds-mini-n">2</span> A domicilio · esempio
+        <span className="ds-mini-n">3</span> Visita a casa · esempio
       </p>
       <div className="ds-mini-doc">
         <span className="ds-av ds-av-teal">LB</span>
@@ -159,7 +204,7 @@ export function ServiziMedico({ prices, attivo, dark = false, onSection = false 
         const I = SVC_ICON[k];
         return (
           <li key={k} className={k === "domicilio" ? "ds-svc ds-svc-main" : "ds-svc"}>
-            <Link href={!attivo ? DOMICILIO_HREF : k === "domicilio" ? (onSection ? PRESTAZIONI.domicilio.startHref : DOMICILIO_HREF) : PRESTAZIONI[k].href} className="ds-svc-a">
+            <Link href={!attivo ? `${MEDICI_HREF}#avvisami` : k === "domicilio" ? (onSection ? PRESTAZIONI.domicilio.startHref : MEDICI_HREF) : PRESTAZIONI[k].href} className="ds-svc-a">
               <span className="ds-svc-ic" aria-hidden>
                 <I className="tm-ic" />
               </span>

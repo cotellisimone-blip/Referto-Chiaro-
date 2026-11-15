@@ -5,18 +5,21 @@ import { CON_UN_MEDICO_HREF, isDoctorPath, mediciEnabled } from "@/lib/medici";
  * «Parla con un medico» diventa «Videoconsulto». «Guide» si vede dai 1280 px in su (sotto resta nel menu, nel fondo
  * pagina e nella ricerca), così la testata non va a capo a 1024 px.
  */
-export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users" | "tools" | "chart" | "laptop" | "pill";
+export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users" | "tools" | "chart" | "laptop" | "pill" | "heart";
 type NavItem = { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; icon: NavIcon; wideOnly?: "xl" | "2xl" };
 /**
+ * 15/11/2026 sera: tre sezioni (Prevenzione, Lettura referti, Medici), poi guide, integratori e prezzi; guide e
+ * integratori si vedono dai 1280 px (sotto stanno nel menu e nel fondo pagina).
  * 15/11/2026, home «a due sezioni»: il menu è lo stesso con i medici accesi o spenti. Le due sezioni per prime
  * (Online, A domicilio), poi le guide agli esami, le guide agli integratori, i prezzi. Spenti, «A domicilio» porta a una
  * pagina «In arrivo» con la lista d'attesa; accesi, alla stessa pagina con medici e percorso di prova.
  */
 const MAIN_NAV_DUE_SEZIONI: readonly NavItem[] = [
-  { href: "/online", label: "Online", tone: "capisci", icon: "laptop" },
-  { href: "/a-domicilio", label: "A domicilio", tone: "medico", icon: "home" },
-  { href: "/guide", label: "Guide", tone: null, icon: "book" },
-  { href: "/integratori", label: "Integratori", tone: null, icon: "pill" },
+  { href: "/prevenzione", label: "Prevenzione", tone: null, icon: "heart" },
+  { href: "/lettura-referti", label: "Lettura referti", tone: "capisci", icon: "file" },
+  { href: "/medici", label: "Medici", tone: "medico", icon: "stethoscope" },
+  { href: "/guide", label: "Guide", tone: null, icon: "book", wideOnly: "xl" },
+  { href: "/integratori", label: "Integratori", tone: null, icon: "pill", wideOnly: "xl" },
   { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro" },
 ];
 export const MAIN_NAV: readonly NavItem[] = MAIN_NAV_DUE_SEZIONI;
@@ -26,8 +29,9 @@ export const HEADER_CTA = { href: "/referti", label: "Carica un referto", menu: 
 /** Fondo pagina snello: tre colonne, una dozzina di voci. Le note legali stanno nella riga in basso. */
 const FOOTER_NAV_ALL = {
   Servizi: [
-    { href: "/online", label: "Sezione Online" },
-    { href: "/a-domicilio", label: "Sezione A domicilio" },
+    { href: "/prevenzione", label: "Prevenzione" },
+    { href: "/lettura-referti", label: "Lettura referti" },
+    { href: "/medici", label: "Medici" },
     { href: "/referti", label: "Capisci il tuo referto" },
     { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio" },
     { href: "/servizi/parla-con-un-medico", label: "Videoconsulto con un medico" },

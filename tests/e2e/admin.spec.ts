@@ -57,7 +57,7 @@ test.describe("amministrazione e protezioni", () => {
     await expect(page.getByRole("heading", { name: "Panoramica" })).toBeVisible({ timeout: 15_000 });
     const axe = await new AxeBuilder({ page }).withTags(AXE).analyze();
     expect(axe.violations.map((v) => v.id)).toEqual([]);
-    await page.getByRole("link", { name: "Medici", exact: true }).click();
+    await page.locator("main").getByRole("link", { name: "Medici", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Medici", level: 1 })).toBeVisible({ timeout: 15_000 });
     // Senza medici dimostrativi l'elenco è vuoto e lo dice; se ce ne sono, c'è la tabella.
     await expect(page.getByRole("table", { name: "Medici" }).or(page.getByText("Nessun elemento, per ora.")).first()).toBeVisible({ timeout: 15_000 });

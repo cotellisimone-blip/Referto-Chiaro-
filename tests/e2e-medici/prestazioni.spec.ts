@@ -36,12 +36,12 @@ async function pickFirstSlot(page: Page) {
   await page.locator(".slot-pill").first().click();
 }
 
-test("listino e accessi dalla home: sezione A domicilio, prezzi coerenti su schede, pagine e riepilogo", async ({ page }) => {
+test("listino e accessi dalla home: sezione Medici, prezzi coerenti su schede, pagine e riepilogo", async ({ page }) => {
   await fresh(page, "/");
-  const sec2 = page.locator("#a-domicilio");
+  const sec2 = page.locator("#medici");
   await expect(sec2).toContainText(eur(149));
-  await sec2.getByRole("link", { name: /Verifica se arriviamo da te/ }).click();
-  await expect(page).toHaveURL(/\/a-domicilio$/);
+  await sec2.getByRole("link", { name: /Tutta la sezione Medici/ }).click();
+  await expect(page).toHaveURL(/\/medici$/);
   await expect(page.locator(".ds-ph")).toContainText(eur(149));
   await gotoReady(page, "/servizi/visita-a-domicilio");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Il medico a casa tua");
@@ -119,13 +119,13 @@ test("domicilio: fuori zona, richiesta, accettazione del medico, conferma a 149 
   const id = await patientRequestId(page);
   await expect(page.locator("[data-stato]").first()).toHaveAttribute("data-stato", "ricevuta");
 
-  await asDoctor(page, id, /Bianchi/);
+  await asDoctor(page, id, /Bianchi|Ferri/);
   await expect(page.locator("main")).toContainText("via visibile dopo la conferma");
   await page.getByRole("button", { name: /^Accetta/ }).click();
 
   await gotoReady(page, `/prova/paziente/richieste/${id}`);
   const panel = page.getByRole("region", { name: "Il medico ha risposto" });
-  await expect(panel).toContainText("Bianchi");
+  await expect(panel).toContainText(/Bianchi|Ferri/);
   await expect(panel).toContainText("Via di Prova");
   await expect(panel).toContainText(eur(149));
   await page.getByRole("button", { name: /Conferma e paga/ }).click();

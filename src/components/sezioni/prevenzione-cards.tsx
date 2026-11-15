@@ -1,30 +1,18 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, Compass, FileText, Pill } from "lucide-react";
+import { ArrowRight, BellRing, BookOpen, Compass, Pill } from "lucide-react";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { GUIDES } from "@/content/guides";
 import { INTEGRATORI } from "@/content/integratori";
-import { coreService, firstPromoEnabled, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled } from "@/domain/offerta";
 
-/** Le quattro cose della sezione «Online», con un piccolo disegno ciascuna. Usate in home e in /online. */
-export function OnlineCards() {
-  const prices = publicPricesEnabled();
-  const promo = firstPromoEnabled() && firstRefertoCents() < priceCents("capisci");
-  const std = formatEuro(priceCents("capisci"));
-  const first = formatEuro(firstRefertoCents());
+/** Le quattro cose della sezione 1 «Prevenzione», con un piccolo disegno ciascuna. Usate in home e in /prevenzione. */
+export function PrevenzioneCards() {
   const items = [
     ...(puntoDiPartenzaEnabled()
-      ? [{ href: "/punto-di-partenza", icon: Compass, k: "Gratis", t: "Primo controllo", d: "Non hai esami recenti? 10 aree da conoscere e una scheda da portare al medico.", v: "pdp" }]
+      ? [{ href: "/punto-di-partenza", icon: Compass, k: "Gratis · 2 minuti", t: "Quali esami conoscere", d: "Il primo controllo: 10 aree della salute da conoscere e una scheda da portare al medico.", v: "pdp" }]
       : []),
-    {
-      href: coreService("capisci").href,
-      icon: FileText,
-      k: prices ? (promo ? `Il primo ${first}` : `${std} a referto`) : "Il servizio principale",
-      t: "Il tuo referto, spiegato",
-      d: "Carichi il referto, controlli i valori, lo leggi in parole semplici. Di norma in pochi minuti.",
-      v: "ref",
-    },
-    { href: "/guide", icon: BookOpen, k: "Gratis", t: "Guide agli esami", d: `${GUIDES.length} esami spiegati: che cosa misurano e come si leggono, con le fonti.`, v: "gui" },
+    { href: "/guide", icon: BookOpen, k: "Gratis", t: "Guide agli esami", d: `${GUIDES.length} esami spiegati: a che cosa servono, come si fanno, come si leggono. Con le fonti.`, v: "gui" },
     { href: "/integratori", icon: Pill, k: "Gratis · nuovo", t: "Guide agli integratori", d: `${INTEGRATORI.length} schede: vitamina D, ferro, omega-3 e altri. Che cosa sono e che cosa chiedere.`, v: "int" },
+    { href: "/famiglia", icon: BellRing, k: "Gratis", t: "Promemoria dei controlli", d: "Segna quando rifare un esame, per te e per i tuoi cari: te lo ricordiamo noi.", v: "pro" },
   ];
   return (
     <ul className={`ds-cards${items.length === 3 ? " ds-cards-3" : ""}`}>
@@ -58,6 +46,14 @@ function CardArt({ v }: { v: string }) {
         <i>Cuore e pressione</i>
         <i>Zuccheri</i>
         <i>Vista</i>
+      </span>
+    );
+  if (v === "pro")
+    return (
+      <span className="ds-art ds-art-pdp ds-art-pro">
+        <i>Esami del sangue · marzo</i>
+        <i>Vista · giugno</i>
+        <i>Pressione · ottobre</i>
       </span>
     );
   if (v === "ref")

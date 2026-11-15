@@ -14,15 +14,15 @@ export const metadata: Metadata = {
   ...(indexingEnabled() ? { robots: NOINDEX_DRAFT } : {}),
 };
 
-/** Guide agli integratori (sezione Online, 15/11/2026). Bozze da revisione medica: spiegano, non consigliano. */
+/** Guide agli integratori (sezione Prevenzione, 15/11/2026). Bozze da revisione medica: spiegano, non consigliano. */
 export default function IntegratoriPage() {
   const groups = Object.keys(INTEGRATORI_GROUPS) as IntegratoreGroup[];
   return (
     <div className="tm ds">
       <section className="ds-ph ds-ph-1 ds-ph-short" aria-labelledby="int-titolo">
         <div className="tm-wrap">
-          <Link href="/online" className="ds-crumb">
-            <ArrowLeft aria-hidden className="tm-ic" /> Sezione Online
+          <Link href="/prevenzione" className="ds-crumb">
+            <ArrowLeft aria-hidden className="tm-ic" /> Sezione Prevenzione
           </Link>
           <p className="ds-sec-tag ds-sec-tag-1">
             <span>1</span> Guide agli integratori

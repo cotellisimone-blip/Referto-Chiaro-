@@ -92,30 +92,31 @@ test.describe("il servizio e i percorsi pubblici", () => {
   });
 });
 
-test.describe("home a due sezioni", () => {
-  test("apertura con le due porte, il referto che si tocca, la sezione A domicilio «In arrivo»; corta e senza dati inventati", async ({ page, isMobile }) => {
+test.describe("home a tre sezioni", () => {
+  test("apertura con le tre porte, il referto che si tocca, la sezione Medici «In arrivo»; corta e senza dati inventati", async ({ page, isMobile }) => {
     await page.goto("/");
     const main = page.locator("main");
-    // Apertura: che cosa fa Cura Privata, in una frase, e le due porte
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci i tuoi esami\.\s*Il medico viene da te\./);
+    // Apertura: che cosa fa Cura Privata, in una frase, e le tre porte
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Previeni\. Capisci\.\s*Un medico, se serve\./);
     const doors = main.locator(".ds-hero .ds-doors");
-    await expect(doors.getByRole("link", { name: /Capire referti ed esami/ })).toHaveAttribute("href", "/online");
-    await expect(doors.getByRole("link", { name: /Il medico a casa tua/ })).toHaveAttribute("href", "/a-domicilio");
-    await expect(doors.locator(".ds-door-1")).toContainText("2,90 €");
-    // Medici spenti: la porta 2 dice «In arrivo» e non ha prezzi
-    await expect(doors.locator(".ds-door-2")).toContainText("In arrivo");
-    await expect(doors.locator(".ds-door-2")).not.toContainText("€");
-    // Sezione 1: le quattro cose, con la guida agli integratori
-    const s1 = main.locator("#online");
-    for (const href of ["/referti", "/guide", "/integratori"]) await expect(s1.locator(`a[href="${href}"]`).first()).toBeVisible();
+    await expect(doors.getByRole("link", { name: /Gli esami giusti/ })).toHaveAttribute("href", "/prevenzione");
+    await expect(doors.getByRole("link", { name: /Il tuo referto, in parole semplici/ })).toHaveAttribute("href", "/lettura-referti");
+    await expect(doors.getByRole("link", { name: /Un medico, quando serve/ })).toHaveAttribute("href", "/medici");
+    await expect(doors.locator(".ds-door-2")).toContainText("2,90 €");
+    // Medici spenti: la porta 3 dice «In arrivo» e non ha prezzi
+    await expect(doors.locator(".ds-door-3")).toContainText("In arrivo");
+    await expect(doors.locator(".ds-door-3")).not.toContainText("€");
+    // Sezione 1: prevenzione, con la guida agli integratori
+    const s1 = main.locator("#prevenzione");
+    for (const href of ["/punto-di-partenza", "/guide", "/integratori"]) await expect(s1.locator(`a[href="${href}"]`).first()).toBeVisible();
     // Da così a così: ogni riga del foglio è un pulsante, la spiegazione accanto cambia
     const xpl = page.locator("#tm-xpl");
     await expect(xpl.getByRole("heading", { level: 3 })).toHaveText("Colesterolo LDL");
     await page.getByRole("button", { name: /^GLICEMIA 92 mg\/dL/ }).click();
     await expect(xpl.getByRole("heading", { level: 3 })).toHaveText("Glicemia");
     await expect(page.getByRole("button", { name: /^GLICEMIA/ })).toHaveAttribute("aria-pressed", "true");
-    // Sezione 2 spenta: niente medici, niente prezzi, la lista d'attesa
-    const s2 = main.locator("#a-domicilio");
+    // Sezione 3 spenta: niente medici, niente prezzi, la lista d'attesa
+    const s2 = main.locator("#medici");
     await expect(s2).toContainText("In arrivo");
     await expect(s2.locator(".ds-doc")).toHaveCount(0);
     await expect(s2).not.toContainText("€");
@@ -144,30 +145,38 @@ test.describe("home a due sezioni", () => {
     await page.goto("/");
     // 1. Quanto costa capire un referto? Visibile in home.
     await expect(page.locator("main")).toContainText("2,90 €");
-    // 2. Capire un referto: dalla sezione Online un clic porta al servizio
-    await page.locator("main #online").getByRole("link", { name: /Carica un referto/ }).click();
+    // 2. Capire un referto: dalla sezione Lettura referti un clic porta al servizio
+    await page.locator("main #lettura-referti").getByRole("link", { name: /Carica un referto/ }).click();
     await expect(page).toHaveURL(/\/referti$/);
     // 3. Emergenza: il 112 è in home
     await page.goto("/");
     await expect(page.locator("main")).toContainText("112");
-    // 4. Vorrei un medico a casa: la porta 2 porta alla sezione, «In arrivo», con la lista d'attesa
-    await page.locator("main .ds-hero").getByRole("link", { name: /Il medico a casa tua/ }).click();
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Il medico\s*a casa tua\./);
+    // 4. Vorrei un medico: la porta 3 porta alla sezione, «In arrivo», con la lista d'attesa
+    await page.locator("main .ds-hero").getByRole("link", { name: /Un medico, quando serve/ }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Un medico,\s*quando serve\./);
     await expect(page.locator("main")).toContainText("In arrivo");
-    // 5. Un integratore: un clic dalla sezione Online
+    // 5. Un integratore: un clic dalla sezione Prevenzione
     await page.goto("/");
-    await page.locator("main #online").getByRole("link", { name: /Guide agli integratori/ }).click();
+    await page.locator("main #prevenzione").getByRole("link", { name: /Guide agli integratori/ }).click();
     await expect(page).toHaveURL(/\/integratori$/);
   });
 });
 
 test.describe("sezioni e integratori", () => {
-  test("Online, A domicilio (spenta) e le schede degli integratori", async ({ page }) => {
-    await page.goto("/online");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capire la tua salute,\s*da casa\./);
+  test("Prevenzione, Lettura referti, Medici (spenta) e le schede degli integratori", async ({ page }) => {
+    await page.goto("/prevenzione");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La prevenzione,\s*spiegata semplice\./);
     await expect(page.locator("main .ds-int")).toHaveCount(8);
     await expectAccessible(page);
+    await page.goto("/lettura-referti");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Il tuo referto,\s*in parole semplici\./);
+    await expect(page.locator("#tm-xpl")).toBeVisible();
+    await expectAccessible(page);
+    // I vecchi indirizzi delle due sezioni portano alle nuove.
+    await page.goto("/online");
+    await expect(page).toHaveURL(/\/prevenzione$/);
     await page.goto("/a-domicilio");
+    await expect(page).toHaveURL(/\/medici$/);
     await expect(page.locator("main")).toContainText("In arrivo");
     await expect(page.locator("main .ds-doc")).toHaveCount(0);
     await expect(page.locator("main")).not.toContainText("149");

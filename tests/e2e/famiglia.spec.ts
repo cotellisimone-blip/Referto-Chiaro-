@@ -45,9 +45,9 @@ test("pagina pubblica: la promessa, pezzi veri di prodotto, il piano come propos
   await expect(page.getByTestId("piano-famiglia")).toContainText("In proposta");
 });
 
-test("la sezione Online porta a Famiglia", async ({ page }) => {
-  // 15/11/2026, home a due sezioni: «Nel tempo» e «Per la famiglia» stanno nella pagina della sezione Online.
-  await page.goto("/online");
+test("la sezione Prevenzione porta a Famiglia", async ({ page }) => {
+  // 15/11/2026, home a due sezioni: «Nel tempo» e «Per la famiglia» stanno nella pagina della sezione Prevenzione.
+  await page.goto("/prevenzione");
   await page.locator("main").getByRole("link", { name: /Per la famiglia/ }).click();
   await expect(page).toHaveURL(/\/famiglia$/);
 });

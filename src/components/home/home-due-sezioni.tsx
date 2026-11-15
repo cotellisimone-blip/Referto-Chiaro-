@@ -2,12 +2,9 @@ import Link from "next/link";
 import {
   ArrowRight,
   Ban,
-  CalendarCheck,
-  ClipboardCheck,
   Eye,
   FileText,
   LockKeyhole,
-  MapPin,
   Phone,
   ShieldCheck,
   Sparkles,
@@ -22,8 +19,8 @@ import { WaitlistForm } from "@/components/site/waitlist-form";
 import { DemoReferto } from "@/components/home/demo-referto";
 import { CercaParola, Domande } from "@/components/home/home-client";
 import { MediciProva } from "@/components/sezioni/medici";
-import { OnlineCards } from "@/components/sezioni/online-cards";
-import { DOMICILIO_HREF, MiniReferto, MiniVisita, ONLINE_HREF, Porte, ServiziMedico, StatoDomicilio } from "@/components/sezioni/parts";
+import { PrevenzioneCards } from "@/components/sezioni/prevenzione-cards";
+import { MEDICI_HREF, MiniReferto, MiniVisita, PREVENZIONE_HREF, Porte, REFERTI_HREF, ServiziMedico, StatoDomicilio } from "@/components/sezioni/parts";
 import { mediciEnabled } from "@/lib/medici";
 import { GUIDES } from "@/content/guides";
 import { INTEGRATORI } from "@/content/integratori";
@@ -33,6 +30,10 @@ import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 
 /*
+ * 15/11/2026 sera, Simone: tre sezioni separate. 1 «Prevenzione» (esami da conoscere, guide agli esami e agli
+ * integratori, promemoria) · 2 «Lettura referti» (il referto spiegato, con la prova da toccare) · 3 «Medici» (video,
+ * casa, secondo parere, medici di prova). L'apertura ha tre porte, una per sezione, e il resto della home le segue
+ * nello stesso ordine. Sotto, la versione precedente a due sezioni, per memoria:
  * Home «a due sezioni» (15/11/2026, richiesta di Simone): chi arriva capisce subito che Cura Privata fa due cose.
  * 1 apertura con le due porte · 2 striscia dei fatti · 3 sezione 1 «Online» (primo controllo, referto spiegato con la
  * prova da toccare, guide agli esami e agli integratori) · 4 sezione 2 «A domicilio» (fascia scura: come funziona,
@@ -60,20 +61,22 @@ export function HomeDueSezioni() {
         <section className="ds-hero" aria-labelledby="hero-titolo">
           <div className="tm-wrap ds-hero-g">
             <div className="ds-hero-copy">
-              <p className="tm-kicker">Cura Privata · online e a domicilio</p>
+              <p className="tm-kicker">Cura Privata · la tua salute, in tre passi</p>
               <h1 id="hero-titolo">
-                Capisci i tuoi esami. <br />
-                <em>Il medico viene da te.</em>
+                Previeni. Capisci. <br />
+                <em>Un medico, se serve.</em>
               </h1>
               <p className="tm-lead ds-lead">
-                Cura Privata fa due cose. <b>Online</b> ti spiega referti, esami e integratori in parole semplici. <b>A domicilio</b> ti manda un medico a casa,
-                quando serve.
+                <b>Prevenzione</b>: quali esami conoscere, con guide agli esami e agli integratori. <b>Lettura referti</b>: il tuo referto spiegato in parole
+                semplici. <b>Medici</b>: in video, a casa o per un secondo parere.
               </p>
-              <Porte attivo={attivo} entry={entry} prices={prices} />
               <p className="tm-fine ds-fine">
                 <ShieldCheck aria-hidden className="tm-ic" />
                 Non è un servizio di urgenza: per un’emergenza chiama il 112.
               </p>
+            </div>
+            <div className="ds-hero-doors">
+              <Porte attivo={attivo} entry={entry} prices={prices} />
             </div>
             <div className="ds-hero-art">
               {SHOW_ILLUSTRATIVE_PHOTOS ? (
@@ -96,7 +99,7 @@ export function HomeDueSezioni() {
             <ul>
               <li>
                 <Sparkles aria-hidden className="tm-ic" />
-                <b>Gratis per cominciare</b>
+                <b>Prevenzione gratis</b>
                 <span>primo controllo e {nGuide + nInt} guide</span>
               </li>
               <li>
@@ -106,8 +109,8 @@ export function HomeDueSezioni() {
               </li>
               <li>
                 <Stethoscope aria-hidden className="tm-ic" />
-                <b>Medico a casa</b>
-                <span>{attivo ? (prices ? `${prestazionePrice("domicilio")} prezzo fisso, a Brescia` : "prezzo fisso, a Brescia") : "in arrivo, a Brescia"}</span>
+                <b>Un medico</b>
+                <span>{attivo ? (prices ? `video ${prestazionePrice("video")}, a casa ${prestazionePrice("domicilio")}` : "in video o a casa") : "in arrivo"}</span>
               </li>
               <li>
                 <Timer aria-hidden className="tm-ic" />
@@ -118,24 +121,51 @@ export function HomeDueSezioni() {
           </div>
         </section>
 
-        {/* 3 · SEZIONE 1: ONLINE */}
-        <section id="online" className="tm-sec ds-s1" aria-labelledby="s1-titolo">
+        {/* 3 · SEZIONE 1: PREVENZIONE */}
+        <section id="prevenzione" className="tm-sec ds-s1" aria-labelledby="s1-titolo">
           <div className="tm-wrap">
             <div className="tm-sec-h">
               <div>
                 <p className="ds-sec-tag ds-sec-tag-1">
-                  <span>1</span> Sezione Online
+                  <span>1</span> Prevenzione
                 </p>
                 <h2 id="s1-titolo">
-                  Da casa, quando vuoi: <br className="tm-d-only" />
-                  <em>capire.</em>
+                  Prima del referto: <br className="tm-d-only" />
+                  <em>sapere che cosa controllare.</em>
                 </h2>
               </div>
-              <p>Tutto quello che si fa da uno schermo: dal primo controllo alla lettura del referto, fino alle guide su esami e integratori.</p>
+              <p>Quali aree della salute conoscere alla tua età, che cosa misurano gli esami, che cosa sapere sugli integratori. Tutto gratis, senza registrarti.</p>
             </div>
-            <OnlineCards />
-            {prices ? <p className="tm-note">{PRICE_NOTE}</p> : null}
+            <PrevenzioneCards />
+            <div className="ds-sec-end">
+              <Link href="/punto-di-partenza" className="tm-btn tm-btn-ink" data-track="cta-prevenzione">
+                Fai il primo controllo, gratis
+              </Link>
+              <Link href={PREVENZIONE_HREF} className="tm-btn tm-btn-line">
+                Tutta la sezione Prevenzione <ArrowRight aria-hidden className="tm-ic" />
+              </Link>
+            </div>
+          </div>
+        </section>
 
+        {/* 4 · SEZIONE 2: LETTURA REFERTI */}
+        <section id="lettura-referti" className="ds-s2" aria-labelledby="s2-titolo">
+          <div className="tm-wrap">
+            <div className="tm-sec-h">
+              <div>
+                <p className="ds-sec-tag ds-sec-tag-2">
+                  <span>2</span> Lettura referti
+                </p>
+                <h2 id="s2-titolo">
+                  Il tuo referto, <br className="tm-d-only" />
+                  <em>in parole semplici.</em>
+                </h2>
+              </div>
+              <p>
+                Carichi il referto, controlli i valori letti e leggi accanto a ogni riga che cosa misura e dove sta il tuo numero.
+                {prices ? (promo ? ` Il primo ${first}, poi ${std}.` : ` ${std} a referto.`) : " Senza abbonamento."}
+              </p>
+            </div>
             <div className="ds-try">
               <div className="ds-try-h">
                 <p className="tm-kicker">Prova adesso, con un esempio</p>
@@ -154,62 +184,38 @@ export function HomeDueSezioni() {
                   </>
                 ) : null}
               </Link>
-              <Link href={ONLINE_HREF} className="tm-btn tm-btn-line">
-                Tutta la sezione Online <ArrowRight aria-hidden className="tm-ic" />
+              <Link href={REFERTI_HREF} className="tm-btn tm-btn-line">
+                Tutta la sezione Lettura referti <ArrowRight aria-hidden className="tm-ic" />
               </Link>
             </div>
+            {prices ? <p className="tm-note">{PRICE_NOTE}</p> : null}
           </div>
         </section>
 
-        {/* 4 · SEZIONE 2: A DOMICILIO */}
-        <section id="a-domicilio" className="ds-s2" aria-labelledby="s2-titolo">
+        {/* 5 · SEZIONE 3: MEDICI */}
+        <section id="medici" className="ds-s3" aria-labelledby="s3-titolo">
           <div className="tm-wrap">
-            <div className="ds-s2-h">
+            <div className="ds-s3-h">
               <div>
-                <p className="ds-sec-tag ds-sec-tag-2">
-                  <span>2</span> Sezione A domicilio <StatoDomicilio attivo={attivo} dark />
+                <p className="ds-sec-tag ds-sec-tag-3">
+                  <span>3</span> Medici <StatoDomicilio attivo={attivo} dark />
                 </p>
-                <h2 id="s2-titolo">
+                <h2 id="s3-titolo">
                   Quando serve una persona, <br className="tm-d-only" />
-                  <em>il medico viene da te.</em>
+                  <em>un medico.</em>
                 </h2>
               </div>
               <p>
-                Un medico di medicina generale, a casa tua o di un tuo familiare, per esigenze non urgenti. Per cominciare a Brescia città.
-                {attivo ? " Qui sotto i medici e le fasce sono di prova: nessuno verrà davvero." : " Lo stiamo preparando: lascia la tua email e ti avvisiamo."}
+                In video, a casa tua o di un familiare (per cominciare a Brescia città), oppure un secondo parere di uno specialista. Per esigenze non urgenti.
+                {attivo ? " Qui sotto medici e fasce sono di prova: nessuno verrà davvero." : " Lo stiamo preparando: lascia la tua email e ti avvisiamo."}
               </p>
             </div>
 
-            <ol className="ds-steps">
-              <li>
-                <span className="ds-step-n">1</span>
-                <MapPin aria-hidden className="tm-ic" />
-                <b>Scrivi il CAP</b>
-                <span>Sai subito se arriviamo da te.</span>
-              </li>
-              <li>
-                <span className="ds-step-n">2</span>
-                <CalendarCheck aria-hidden className="tm-ic" />
-                <b>Scegli una fascia</b>
-                <span>Solo orari davvero liberi.</span>
-              </li>
-              <li>
-                <span className="ds-step-n">3</span>
-                <ClipboardCheck aria-hidden className="tm-ic" />
-                <b>Il medico conferma</b>
-                <span>Vedi nome, orario e prezzo. Solo allora paghi.</span>
-              </li>
-              <li>
-                <span className="ds-step-n">4</span>
-                <FileText aria-hidden className="tm-ic" />
-                <b>Visita e riepilogo</b>
-                <span>Circa 45 minuti, poi un riepilogo scritto.</span>
-              </li>
-            </ol>
+            <ServiziMedico prices={prices} attivo={attivo} dark />
 
             {attivo ? (
               <>
-                <div className="ds-s2-sub">
+                <div className="ds-s3-sub">
                   <h3>I medici della tua zona</h3>
                   <p>Profili di prova, con persone inventate. Mai foto: solo nome, iscrizione all’Ordine e che cosa fanno.</p>
                 </div>
@@ -225,14 +231,9 @@ export function HomeDueSezioni() {
               </div>
             )}
 
-            <div className="ds-s2-sub">
-              <h3>Con un medico, in tre modi</h3>
-            </div>
-            <ServiziMedico prices={prices} attivo={attivo} dark />
-
             <div className="ds-sec-end">
-              <Link href={DOMICILIO_HREF} className="tm-btn tm-btn-mint" data-track="cta-domicilio">
-                {attivo ? "Verifica se arriviamo da te" : "Scopri come funzionerà"} <ArrowRight aria-hidden className="tm-ic" />
+              <Link href={MEDICI_HREF} className="tm-btn tm-btn-mint" data-track="cta-medici">
+                {attivo ? "Tutta la sezione Medici" : "Scopri come funzionerà"} <ArrowRight aria-hidden className="tm-ic" />
               </Link>
               {attivo ? (
                 <Link href="/prova" className="tm-btn ds-btn-ghost">
@@ -240,14 +241,14 @@ export function HomeDueSezioni() {
                 </Link>
               ) : null}
             </div>
-            <p className="ds-s2-fine">
+            <p className="ds-s3-fine">
               <Phone aria-hidden className="tm-ic" />
               Non è un servizio di urgenza. Per le emergenze chiama il 112; per la continuità assistenziale (ex guardia medica) il 116117.
             </p>
           </div>
         </section>
 
-        {/* 5 · LE DOMANDE GIUSTE */}
+        {/* 6 · LE DOMANDE GIUSTE */}
         <section className="tm-sec" aria-labelledby="domande-titolo">
           <div className="tm-wrap">
             <div className="tm-sec-h">
@@ -301,7 +302,7 @@ export function HomeDueSezioni() {
           </div>
         </section>
 
-        {/* 6 · CHIUSURA */}
+        {/* 7 · CHIUSURA */}
         <section className="tm-end ds-end" aria-labelledby="chiusura-titolo">
           <div className="tm-wrap">
             <div className="ds-end-g">

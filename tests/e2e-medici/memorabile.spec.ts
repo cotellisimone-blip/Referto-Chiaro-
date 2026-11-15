@@ -82,18 +82,18 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
   });
 });
 
-test.describe("home a due sezioni, con i medici accesi (versione di prova)", () => {
-  test("le due porte, la sezione A domicilio con tre medici di prova e i prezzi; corta e onesta", async ({ page, isMobile }) => {
+test.describe("home a tre sezioni, con i medici accesi (versione di prova)", () => {
+  test("le tre porte, la sezione Medici con tre medici di prova e i prezzi; corta e onesta", async ({ page, isMobile }) => {
     await page.goto("/");
     const main = page.locator("main");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci i tuoi esami\.\s*Il medico viene da te\./);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Previeni\. Capisci\.\s*Un medico, se serve\./);
     const doors = main.locator(".ds-hero .ds-doors");
-    await expect(doors.getByRole("link", { name: /Capire referti ed esami/ })).toHaveAttribute("href", "/online");
-    await expect(doors.getByRole("link", { name: /Il medico a casa tua/ })).toHaveAttribute("href", "/a-domicilio");
-    await expect(doors.locator(".ds-door-2")).toContainText("Versione di prova");
-    await expect(doors.locator(".ds-door-2")).toContainText("149 €");
-    // Sezione 2: i tre medici di prova, ognuno marcato come persona inventata, solo iniziali
-    const s2 = main.locator("#a-domicilio");
+    await expect(doors.getByRole("link", { name: /Il tuo referto, in parole semplici/ })).toHaveAttribute("href", "/lettura-referti");
+    await expect(doors.getByRole("link", { name: /Un medico, quando serve/ })).toHaveAttribute("href", "/medici");
+    await expect(doors.locator(".ds-door-3")).toContainText("Versione di prova");
+    await expect(doors.locator(".ds-door-3")).toContainText("149 €");
+    // Sezione 3: i tre medici di prova, ognuno marcato come persona inventata, solo iniziali
+    const s2 = main.locator("#medici");
     await expect(s2.locator(".ds-doc")).toHaveCount(3);
     for (const card of await s2.locator(".ds-doc").all()) await expect(card).toContainText("Profilo di prova");
     await expect(s2.locator(".ds-doc img")).toHaveCount(0);
@@ -118,15 +118,15 @@ test.describe("home a due sezioni, con i medici accesi (versione di prova)", () 
     await page.goto("/");
     // 1. Quanto costa il videoconsulto? Visibile in home.
     await expect(page.locator("main")).toContainText("69 €");
-    // 2. Capire un referto: la porta 1 porta alla sezione Online
-    await page.locator("main .ds-hero").getByRole("link", { name: /Capire referti ed esami/ }).click();
-    await expect(page).toHaveURL(/\/online$/);
+    // 2. Capire un referto: la porta 2 porta alla sezione Lettura referti
+    await page.locator("main .ds-hero").getByRole("link", { name: /Il tuo referto, in parole semplici/ }).click();
+    await expect(page).toHaveURL(/\/lettura-referti$/);
     // 3. Emergenza: il 112 è in home
     await page.goto("/");
     await expect(page.locator("main")).toContainText("112");
-    // 4. Un medico a casa: dalla porta 2 alla richiesta
-    await page.locator("main .ds-hero").getByRole("link", { name: /Il medico a casa tua/ }).click();
-    await expect(page.locator("main .ds-doc")).toHaveCount(3);
+    // 4. Un medico a casa: dalla porta 3 alla richiesta
+    await page.locator("main .ds-hero").getByRole("link", { name: /Un medico, quando serve/ }).click();
+    await expect(page.locator("main .ds-doc:visible")).toHaveCount(3);
     await page.locator("main .ds-ph").getByRole("link", { name: /Richiedi la visita/ }).click();
     await expect(page).toHaveURL(/\/richiedi\/domicilio$/);
     // 5. Prepararsi alla visita: un clic, dal piè di pagina

@@ -21,13 +21,13 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
   test("la home dice in 5 secondi che cosa offre: la promessa è il titolo, i tre servizi subito sotto", async ({ page, isMobile }) => {
     await page.goto("/");
     // 13/11/2026: la promessa «famiglia e nel tempo» è il titolo; il payoff dei tre servizi resta subito sotto, nello stesso ordine.
-    // 15/11/2026, home a due sezioni: il titolo dice le due cose; le due porte subito sotto.
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Capisci i tuoi esami\.\s*Il medico viene da te\./);
+    // 15/11/2026 sera: tre sezioni; il titolo le dice, le tre porte subito sotto.
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Previeni\. Capisci\.\s*Un medico, se serve\./);
     await expect(page.locator("footer").getByText("Capisci. Parla con un medico. Chiedi un secondo parere.")).toBeVisible();
     // Nessun «.it» accanto al logo finché il sito non gira su un dominio vero (PUBLIC_BASE_URL).
     await expect(page.locator("footer").getByText(".it", { exact: true })).toHaveCount(0);
     const menu = (await page.locator("header").getByRole("link").allInnerTexts()).map((t) => t.trim());
-    const order = ["Online", "A domicilio", "Guide", "Integratori", "Prezzi"].map((n) => menu.indexOf(n));
+    const order = ["Prevenzione", "Lettura referti", "Medici", "Guide", "Integratori", "Prezzi"].map((n) => menu.indexOf(n));
     if (!isMobile) {
       expect(order.every((i) => i >= 0)).toBe(true);
       expect(order).toEqual([...order].sort((a, b) => a - b));
@@ -35,7 +35,7 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     for (const name of ["Capisci il tuo referto", "Secondo parere specialistico", "Videoconsulto con un medico"]) await expect(page.getByRole("link", { name }).first()).toBeAttached();
     // Above the fold: almeno una porta d'ingresso ai servizi è visibile senza scorrere. 12/11/2026: su telefono la
     // prima è la prestazione in evidenza (la visita a domicilio), poi «Ho un referto».
-    const first = page.locator("main .ds-hero").getByRole("link", { name: /Il medico a casa tua/ });
+    const first = page.locator("main .ds-hero").getByRole("link", { name: /Il tuo referto, in parole semplici/ });
     const box = await first.boundingBox();
     expect((box?.y ?? 9999) + (box?.height ?? 0)).toBeLessThan(isMobile ? 844 : 900);
     await expect(page.getByText("Versione dimostrativa", { exact: false }).first()).toBeVisible();

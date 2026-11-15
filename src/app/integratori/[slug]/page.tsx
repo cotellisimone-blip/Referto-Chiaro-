@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps<"/integratori/[slug
   return { title: `${i.name}: che cos'è e che cosa chiedere`, description: i.summary.slice(0, 158), alternates: { canonical: `/integratori/${i.slug}` }, ...(indexingEnabled() ? { robots: NOINDEX_DRAFT } : {}) };
 }
 
-/** Scheda di un integratore (sezione Online). Il contenuto è in components/sezioni/integratore-article.tsx. */
+/** Scheda di un integratore (sezione Prevenzione). Il contenuto è in components/sezioni/integratore-article.tsx. */
 export default async function IntegratorePage({ params }: PageProps<"/integratori/[slug]">) {
   const { slug } = await params;
   if (!getIntegratore(slug)) notFound();

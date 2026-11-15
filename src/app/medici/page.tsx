@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, CircleAlert, FlaskConical, Laptop, MapPin } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CircleAlert, FileText, FlaskConical, MapPin } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { WaitlistForm } from "@/components/site/waitlist-form";
 import { CoverageCheck } from "@/components/prestazioni/public";
 import { EmergencyNumbers } from "@/components/prestazioni/ui";
 import { MediciProva } from "@/components/sezioni/medici";
-import { MiniVisita, ONLINE_HREF, ServiziMedico, StatoDomicilio } from "@/components/sezioni/parts";
+import { MiniVisita, REFERTI_HREF, ServiziMedico, StatoDomicilio } from "@/components/sezioni/parts";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
 import { PRICE_NOTE, publicPricesEnabled } from "@/domain/offerta";
 import { mediciEnabled } from "@/lib/medici";
@@ -15,9 +15,9 @@ import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 
 export const metadata: Metadata = {
-  title: "A domicilio: il medico a casa tua",
-  description: "La sezione A domicilio di Cura Privata: un medico di medicina generale a casa tua o di un familiare, per esigenze non urgenti. Brescia città come area pilota.",
-  alternates: { canonical: "/a-domicilio" },
+  title: "Medici: in video, a casa o per un secondo parere",
+  description: "La sezione Medici di Cura Privata: videoconsulto, visita a casa con un medico di medicina generale (Brescia città come area pilota) e secondo parere di uno specialista. Per esigenze non urgenti.",
+  alternates: { canonical: "/medici" },
 };
 
 const NOT_FOR = [
@@ -27,36 +27,37 @@ const NOT_FOR = [
 ];
 
 /**
- * Sezione 2 «A domicilio» (15/11/2026). Accesi i medici (src/lib/medici.ts): «Versione di prova» con i tre medici
+ * Sezione 3 «Medici» (15/11/2026, prima «A domicilio»; Simone la sera stessa: prevenzione, lettura referti e medici
+ * sono tre sezioni separate). Accesi i medici (src/lib/medici.ts): «Versione di prova» con i tre medici
  * inventati, il percorso in quattro schermate, i servizi con il prezzo, la verifica del CAP e la prova a tre ruoli.
  * Spenti: «In arrivo», niente medici né prezzi, la stessa spiegazione e la lista d'attesa.
  */
-export default function ADomicilioPage() {
+export default function MediciPage() {
   const attivo = mediciEnabled();
   const prices = publicPricesEnabled();
   const info = PRESTAZIONI.domicilio;
   return (
     <div className="tm ds">
-      <section className="ds-ph ds-ph-2" aria-labelledby="dom-titolo">
+      <section className="ds-ph ds-ph-3" aria-labelledby="dom-titolo">
         <div className="tm-wrap ds-ph-g">
           <div>
             <Link href="/" className="ds-crumb">
               <ArrowLeft aria-hidden className="tm-ic" /> Home
             </Link>
-            <p className="ds-sec-tag ds-sec-tag-2">
-              <span>2</span> Sezione A domicilio <StatoDomicilio attivo={attivo} dark />
+            <p className="ds-sec-tag ds-sec-tag-3">
+              <span>3</span> Sezione Medici <StatoDomicilio attivo={attivo} dark />
             </p>
             <h1 id="dom-titolo">
-              Il medico <em>a casa tua.</em>
+              Un medico, <em>quando serve.</em>
             </h1>
             <p className="tm-lead">
-              Un medico di medicina generale ti visita a casa, per esigenze non urgenti: per te o per un familiare che fa fatica a uscire. Per cominciare a Brescia città.
+              In video, a casa tua o di un familiare, oppure un secondo parere di uno specialista. Per esigenze non urgenti; la visita a casa parte da Brescia città.
             </p>
             <div className="ds-ph-buy">
               {attivo && prices ? (
                 <p className="ds-price">
                   <b>{prestazionePrice("domicilio")}</b>
-                  <span>prezzo fisso, {info.durationLabel}</span>
+                  <span>visita a casa, prezzo fisso</span>
                 </p>
               ) : null}
               {attivo ? (
@@ -94,11 +95,27 @@ export default function ADomicilioPage() {
         </div>
       ) : null}
 
-      <section className="ds-sec-light" aria-labelledby="dom-medici">
+      <section className="ds-sec-light" aria-labelledby="dom-modi">
         <div className="tm-wrap">
           <div className="tm-sec-h">
             <div>
-              <p className="tm-kicker">Chi viene da te</p>
+              <p className="tm-kicker">Tre modi</p>
+              <h2 id="dom-modi">
+                A casa, in video <em>o con uno specialista.</em>
+              </h2>
+            </div>
+            <p>Il medico a casa quando serve una visita di persona. Il videoconsulto quando basta parlarsi. Il secondo parere per un dubbio su esami già fatti.</p>
+          </div>
+          <ServiziMedico prices={prices} attivo={attivo} onSection />
+          {attivo && prices ? <p className="tm-note">{PRICE_NOTE}</p> : null}
+        </div>
+      </section>
+
+      <section className="ds-sec-light ds-sec-alt" aria-labelledby="dom-medici">
+        <div className="tm-wrap">
+          <div className="tm-sec-h">
+            <div>
+              <p className="tm-kicker">I medici</p>
               <h2 id="dom-medici">
                 Medici con nome e cognome, <em>prima di pagare.</em>
               </h2>
@@ -117,11 +134,11 @@ export default function ADomicilioPage() {
         </div>
       </section>
 
-      <section className="ds-sec-light ds-sec-alt" aria-labelledby="dom-come">
+      <section className="ds-sec-light" aria-labelledby="dom-come">
         <div className="tm-wrap">
           <div className="tm-sec-h">
             <div>
-              <p className="tm-kicker">Come funziona</p>
+              <p className="tm-kicker">La visita a casa, passo per passo</p>
               <h2 id="dom-come">
                 Quattro passi, <em>e sai sempre a che punto sei.</em>
               </h2>
@@ -215,22 +232,6 @@ export default function ADomicilioPage() {
         </div>
       </section>
 
-      <section className="ds-sec-light" aria-labelledby="dom-modi">
-        <div className="tm-wrap">
-          <div className="tm-sec-h">
-            <div>
-              <p className="tm-kicker">Con un medico, in tre modi</p>
-              <h2 id="dom-modi">
-                A casa, in video <em>o con uno specialista.</em>
-              </h2>
-            </div>
-            <p>Se non serve che il medico venga di persona, c’è il videoconsulto. Per un dubbio su esami già fatti, il secondo parere di uno specialista.</p>
-          </div>
-          <ServiziMedico prices={prices} attivo={attivo} onSection />
-          {attivo && prices ? <p className="tm-note">{PRICE_NOTE}</p> : null}
-        </div>
-      </section>
-
       {attivo ? (
         <section id="copertura" className="ds-sec-light ds-sec-alt" aria-labelledby="dom-dove">
           <div className="tm-wrap ds-ph-g ds-g-even">
@@ -294,16 +295,16 @@ export default function ADomicilioPage() {
 
       <section className="ds-bridge" aria-labelledby="dom-ponte">
         <div className="tm-wrap">
-          <Link href={ONLINE_HREF} className="ds-bridge-a ds-bridge-1">
+          <Link href={REFERTI_HREF} className="ds-bridge-a ds-bridge-2">
             <span className="ds-door-ic" aria-hidden>
-              <Laptop className="tm-ic" />
+              <FileText className="tm-ic" />
             </span>
             <span>
-              <span className="ds-sec-tag ds-sec-tag-1">
-                <span>1</span> Sezione Online
+              <span className="ds-sec-tag ds-sec-tag-2">
+                <span>2</span> Sezione Lettura referti
               </span>
               <span id="dom-ponte" className="ds-bridge-t">
-                Prima o dopo la visita: capire i tuoi esami, da casa.
+                Prima o dopo la visita: il tuo referto spiegato in parole semplici.
               </span>
             </span>
             <ArrowRight aria-hidden className="tm-ic ds-bridge-go" />

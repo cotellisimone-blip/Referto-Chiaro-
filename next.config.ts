@@ -61,6 +61,9 @@ const nextConfig: NextConfig = {
       ["/referti/come-funziona", "/come-funziona"],
       // 13/11/2026: l'archivio «in preparazione» è diventato Famiglia e salute nel tempo.
       ["/servizi/archivio", "/famiglia"],
+      // 15/11/2026 sera: da due a tre sezioni (Prevenzione, Lettura referti, Medici).
+      ["/online", "/prevenzione"],
+      ["/a-domicilio", "/medici"],
     ];
     return [
       ...moved.map(([source, destination]) => ({ source, destination, permanent: true })),

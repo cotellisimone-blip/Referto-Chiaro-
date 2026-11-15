@@ -8,7 +8,7 @@ import { isDoctorPath, mediciEnabled } from "@/lib/medici";
 
 const pdpReviewed = () => AREAS.every((a) => a.reviewStatus === "revisionato");
 
-const PUBLIC = ["/", "/online", "/a-domicilio", "/referti", "/come-funziona", "/servizi", "/famiglia", "/servizi/parla-con-un-medico", "/servizi/visita-a-domicilio", "/prezzi", "/strumenti/preparati-alla-visita", "/servizi/prevenzione", "/servizi/secondo-parere", "/domande-frequenti", "/inizia", "/chi-siamo", "/per-i-medici", "/stato-del-progetto", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/per-le-strutture", "/referti/esempio", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/punto-di-partenza", "/con-un-medico"];
+const PUBLIC = ["/", "/prevenzione", "/lettura-referti", "/medici", "/referti", "/come-funziona", "/servizi", "/famiglia", "/servizi/parla-con-un-medico", "/servizi/visita-a-domicilio", "/prezzi", "/strumenti/preparati-alla-visita", "/servizi/prevenzione", "/servizi/secondo-parere", "/domande-frequenti", "/inizia", "/chi-siamo", "/per-i-medici", "/stato-del-progetto", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/per-le-strutture", "/referti/esempio", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/punto-di-partenza", "/con-un-medico"];
 
 /**
  * Sitemap vuota finché l'indicizzazione è spenta: nessun URL viene proposto ai motori.
