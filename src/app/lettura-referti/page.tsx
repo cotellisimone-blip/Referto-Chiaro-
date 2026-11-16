@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ChartLine, FileCheck2, MessageCircleQuestionMark, Printer, ShieldCheck, SpellCheck, Stethoscope } from "lucide-react";
+import { ArrowRight, ChartLine, FileCheck2, MessageCircleQuestionMark, Printer, ShieldCheck, SpellCheck, Stethoscope } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { DemoReferto } from "@/components/home/demo-referto";
-import { MEDICI_HREF, MiniReferto, StatoDomicilio } from "@/components/sezioni/parts";
+import { MEDICI_HREF, MiniReferto, StatoDomicilio, PercorsoSezioni } from "@/components/sezioni/parts";
 import { GLOSSARY } from "@/content/glossario";
 import { PRICE_NOTE, coreService, firstPromoEnabled, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled } from "@/domain/offerta";
 import { mediciEnabled } from "@/lib/medici";
@@ -32,11 +32,11 @@ export default function LetturaRefertiPage() {
   return (
     <div className="tm ds">
       <section className="ds-ph ds-ph-2" aria-labelledby="lr-titolo">
+        <div className="tm-wrap">
+          <PercorsoSezioni current={2} />
+        </div>
         <div className="tm-wrap ds-ph-g">
           <div>
-            <Link href="/" className="ds-crumb">
-              <ArrowLeft aria-hidden className="tm-ic" /> Home
-            </Link>
             <p className="ds-sec-tag ds-sec-tag-2">
               <span>2</span> Sezione Lettura referti
             </p>

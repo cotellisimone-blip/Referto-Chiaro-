@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ChartLine, FileText, MessageCircleQuestionMark, SpellCheck, Users } from "lucide-react";
+import { ArrowRight, ChartLine, FileText, MessageCircleQuestionMark, SpellCheck, Users } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { PrevenzioneCards } from "@/components/sezioni/prevenzione-cards";
-import { MiniPrevenzione, REFERTI_HREF } from "@/components/sezioni/parts";
+import { MiniPrevenzione, REFERTI_HREF, PercorsoSezioni } from "@/components/sezioni/parts";
 import { GUIDE_CATEGORIES, GUIDES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS } from "@/content/integratori";
@@ -29,11 +29,11 @@ export default function PrevenzionePage() {
   return (
     <div className="tm ds">
       <section className="ds-ph ds-ph-1" aria-labelledby="pv-titolo">
+        <div className="tm-wrap">
+          <PercorsoSezioni current={1} />
+        </div>
         <div className="tm-wrap ds-ph-g">
           <div>
-            <Link href="/" className="ds-crumb">
-              <ArrowLeft aria-hidden className="tm-ic" /> Home
-            </Link>
             <p className="ds-sec-tag ds-sec-tag-1">
               <span>1</span> Sezione Prevenzione
             </p>

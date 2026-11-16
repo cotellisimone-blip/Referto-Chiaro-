@@ -1,6 +1,9 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  BookOpen,
+  MessageCircle,
+  Users,
   Ban,
   Eye,
   FileText,
@@ -93,29 +96,38 @@ export function HomeDueSezioni() {
           </div>
         </section>
 
-        {/* 2 · FATTI */}
-        <section className="tm-strip ds-strip" aria-label="In breve">
+        {/* 2 · PERCHÉ FIDARSI (proposta 16/11/2026): chi c'è dietro, come parlarci, che fine fanno i dati, da dove viene quello che scriviamo */}
+        <section className="ds-trust" aria-labelledby="trust-titolo">
           <div className="tm-wrap">
+            <h2 id="trust-titolo" className="ds-trust-h">Perché fidarsi</h2>
             <ul>
               <li>
-                <Sparkles aria-hidden className="tm-ic" />
-                <b>Prevenzione gratis</b>
-                <span>primo controllo e {nGuide + nInt} guide</span>
+                <Link href="/chi-siamo">
+                  <Users aria-hidden className="tm-ic" />
+                  <b>Chi c’è dietro</b>
+                  <span>Nomi, sede e partita IVA, in chiaro</span>
+                </Link>
               </li>
               <li>
-                <FileText aria-hidden className="tm-ic" />
-                <b>Referto spiegato</b>
-                <span>{prices ? (promo ? `il primo ${first}, poi ${std}` : `${std} a referto`) : "senza abbonamento"}</span>
+                <Link href="/contatti">
+                  <MessageCircle aria-hidden className="tm-ic" />
+                  <b>Risponde una persona</b>
+                  <span>Scrivici: niente risponditori automatici</span>
+                </Link>
               </li>
               <li>
-                <Stethoscope aria-hidden className="tm-ic" />
-                <b>Un medico</b>
-                <span>{attivo ? (prices ? `video ${prestazionePrice("video")}, a casa ${prestazionePrice("domicilio")}` : "in video o a casa") : "in arrivo"}</span>
+                <Link href="/sicurezza-e-privacy">
+                  <LockKeyhole aria-hidden className="tm-ic" />
+                  <b>Dati mai venduti</b>
+                  <span>Li cancelli quando vuoi, con un clic</span>
+                </Link>
               </li>
               <li>
-                <Timer aria-hidden className="tm-ic" />
-                <b>Paghi quando sai tutto</b>
-                <span>prezzo, orario e nome prima</span>
+                <Link href="/guide">
+                  <BookOpen aria-hidden className="tm-ic" />
+                  <b>Fonti ufficiali</b>
+                  <span>Ogni guida dice da dove viene</span>
+                </Link>
               </li>
             </ul>
           </div>

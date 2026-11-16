@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, CircleAlert, FileText, FlaskConical, MapPin } from "lucide-react";
+import { ArrowRight, Check, CircleAlert, FileText, FlaskConical, MapPin } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { WaitlistForm } from "@/components/site/waitlist-form";
 import { CoverageCheck } from "@/components/prestazioni/public";
 import { EmergencyNumbers } from "@/components/prestazioni/ui";
 import { MediciProva } from "@/components/sezioni/medici";
-import { MiniVisita, REFERTI_HREF, ServiziMedico, StatoDomicilio } from "@/components/sezioni/parts";
+import { MiniVisita, REFERTI_HREF, ServiziMedico, StatoDomicilio, PercorsoSezioni } from "@/components/sezioni/parts";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
 import { PRICE_NOTE, publicPricesEnabled } from "@/domain/offerta";
 import { mediciEnabled } from "@/lib/medici";
@@ -39,11 +39,11 @@ export default function MediciPage() {
   return (
     <div className="tm ds">
       <section className="ds-ph ds-ph-3" aria-labelledby="dom-titolo">
+        <div className="tm-wrap">
+          <PercorsoSezioni current={3} />
+        </div>
         <div className="tm-wrap ds-ph-g">
           <div>
-            <Link href="/" className="ds-crumb">
-              <ArrowLeft aria-hidden className="tm-ic" /> Home
-            </Link>
             <p className="ds-sec-tag ds-sec-tag-3">
               <span>3</span> Sezione Medici <StatoDomicilio attivo={attivo} dark />
             </p>

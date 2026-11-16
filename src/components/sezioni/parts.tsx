@@ -218,3 +218,32 @@ export function ServiziMedico({ prices, attivo, dark = false, onSection = false 
     </ul>
   );
 }
+
+/**
+ * Proposta 16/11/2026: il percorso tra le tre sezioni, in testa a ogni pagina di sezione. Dice dove sei e che cosa
+ * viene dopo: 1 Prevenzione → 2 Lettura referti → 3 Medici.
+ */
+export function PercorsoSezioni({ current }: { current: 1 | 2 | 3 }) {
+  const steps = [
+    { n: 1, href: PREVENZIONE_HREF, t: "Prevenzione", d: "prima degli esami" },
+    { n: 2, href: REFERTI_HREF, t: "Lettura referti", d: "quando hai il referto" },
+    { n: 3, href: MEDICI_HREF, t: "Medici", d: "se serve una persona" },
+  ] as const;
+  return (
+    <nav className={`ds-path ds-path-on-${current}`} aria-label="Le tre sezioni">
+      <ol>
+        {steps.map((s) => (
+          <li key={s.n} className={s.n === current ? "is-on" : s.n < current ? "is-done" : undefined}>
+            <Link href={s.href} aria-current={s.n === current ? "page" : undefined}>
+              <span className="ds-path-n">{s.n}</span>
+              <span>
+                <b>{s.t}</b>
+                <small>{s.d}</small>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+}
