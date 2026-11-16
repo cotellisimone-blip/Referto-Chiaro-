@@ -36,7 +36,11 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     ".next-vetrina/types/**/*.ts",
-    ".next-vetrina/dev/types/**/*.ts"
+    ".next-vetrina/dev/types/**/*.ts",
+    ".next-medici/types/**/*.ts",
+    ".next-medici/dev/types/**/*.ts",
+    ".next-vetrina-medici/types/**/*.ts",
+    ".next-vetrina-medici/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

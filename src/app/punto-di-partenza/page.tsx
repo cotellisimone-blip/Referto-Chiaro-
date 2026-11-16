@@ -10,6 +10,7 @@ import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { AREAS, CATEGORY_HINT, NOT_ROUTINE, NOT_ROUTINE_SOURCE, type AreaCategory } from "@/content/punto-di-partenza";
 import { coreService, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
+import { mediciEnabled } from "@/lib/medici";
 import { absoluteUrl, indexingEnabled, NOINDEX_DRAFT } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -53,12 +54,14 @@ export default function PuntoDiPartenzaPage() {
   const showPrices = publicPricesEnabled();
   const capisci = coreService("capisci");
   const medico = coreService("parla-con-un-medico");
+  // 14/11/2026: senza medici (src/lib/medici.ts) la fine del percorso porta allo strumento per la visita.
+  const medici = mediciEnabled();
   const cp = priceDisplay("capisci");
   // Fase 3: non la stessa paziente di «Parla con un medico» e delle sezioni della home.
   const photo = ILLUSTRATIVE_PHOTOS.hero;
   const prices: PdpPrices = {
     capisci: showPrices ? { lead: cp.lead, amount: cp.amount } : null,
-    medico: showPrices ? priceDisplay("parla-con-un-medico").amount : null,
+    medico: showPrices && medici ? priceDisplay("parla-con-un-medico").amount : null,
   };
 
   return (
@@ -128,7 +131,7 @@ export default function PuntoDiPartenzaPage() {
               Costruiamo il tuo Punto di Partenza.
             </h2>
           </div>
-          <PuntoDiPartenzaGuide prices={prices} capisciHref={capisci.href} medicoHref={medico.href} />
+          <PuntoDiPartenzaGuide prices={prices} capisciHref={capisci.href} medicoHref={medici ? medico.href : null} />
         </div>
       </section>
 

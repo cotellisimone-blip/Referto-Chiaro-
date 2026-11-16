@@ -5,6 +5,7 @@ import { sessionCookie } from "@/lib/auth/session";
 import { readJson } from "@/lib/auth/guard";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 import { json } from "@/lib/api";
+import { mediciEnabled } from "@/lib/medici";
 
 const Body = z.object({ role: z.enum(["physician", "admin"]) }).strict();
 
@@ -16,6 +17,8 @@ export async function POST(req: Request) {
   if ("response" in b) return b.response;
   const parsed = Body.safeParse(b.body);
   if (!parsed.success) return json({ error: "invalid-request" }, { status: 400 });
+  // Senza medici (src/lib/medici.ts) l'account dimostrativo del medico non si apre.
+  if (parsed.data.role === "physician" && !mediciEnabled()) return json({ error: "non-disponibile", message: "I servizi con un medico non sono attivi." }, { status: 404 });
   const r = await loginDemoRole(parsed.data.role);
   if (!r.ok) return json({ error: "demo-disabled", message: "Gli account dimostrativi esistono solo in modalità dimostrativa." }, { status: 403 });
   (await cookies()).set(sessionCookie(r.sessionToken));

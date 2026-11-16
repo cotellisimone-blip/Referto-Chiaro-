@@ -3,16 +3,24 @@ import Link from "next/link";
 import { Ban, CircleDashed, EyeOff, FileWarning, FlaskConical, ScanSearch, UserRoundCheck } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
+import { mediciEnabled } from "@/lib/medici";
+
+/** 14/11/2026: senza medici (src/lib/medici.ts) i testi dicono solo quello che c'è. */
+const MEDICI = mediciEnabled();
 
 export const metadata: Metadata = {
   title: "Sicurezza dei dati",
-  description: "Come proteggiamo i tuoi documenti: cifratura, accessi registrati, medici che vedono solo ciò che scegli, nessun dato venduto o usato per pubblicità.",
+  description: MEDICI
+    ? "Come proteggiamo i tuoi documenti: cifratura, accessi registrati, medici che vedono solo ciò che scegli, nessun dato venduto o usato per pubblicità."
+    : "Come proteggiamo i tuoi documenti: cifratura, accessi registrati, nessun dato venduto o usato per pubblicità.",
   alternates: { canonical: "/sicurezza-e-privacy" },
 };
 
 const PRINCIPLES = [
   { icon: EyeOff, title: "Il referto non va in giro", text: "Nessun contenuto dei referti finisce in registri tecnici, statistiche, indirizzi web o email." },
-  { icon: UserRoundCheck, title: "Il medico vede solo ciò che scegli", text: "Decidi tu quali documenti condividere, e solo finché il caso è aperto. Ogni accesso è registrato." },
+  MEDICI
+    ? { icon: UserRoundCheck, title: "Il medico vede solo ciò che scegli", text: "Decidi tu quali documenti condividere, e solo finché il caso è aperto. Ogni accesso è registrato." }
+    : { icon: UserRoundCheck, title: "I referti li vedi solo tu", text: "Chi amministra il sito vede ordini e registro, non il contenuto dei documenti. Ogni accesso è registrato." },
   { icon: ScanSearch, title: "Numeri controllati", text: "Un controllo automatico verifica che i numeri spiegati coincidano con quelli stampati sul documento." },
   { icon: FileWarning, title: "Un documento non dà ordini", text: "Le istruzioni che dovessero trovarsi scritte dentro un documento sono trattate come semplice testo." },
   { icon: Ban, title: "Mai venduti, mai pubblicità", text: "I tuoi dati non vengono venduti né usati per mostrarti pubblicità." },
@@ -42,7 +50,7 @@ export default function Page() {
                 Oggi: solo dati inventati
               </h2>
               <p className="callout-text">
-                La versione dimostrativa non accetta documenti reali. Caricamento, elaborazione automatica, pagamento e secondo parere sono spenti anche sul server, non solo nascosti nelle pagine.
+                La versione dimostrativa non accetta documenti reali. {MEDICI ? "Caricamento, elaborazione automatica, pagamento e secondo parere" : "Caricamento, elaborazione automatica e pagamento"} sono spenti anche sul server, non solo nascosti nelle pagine.
               </p>
             </div>
           </div>

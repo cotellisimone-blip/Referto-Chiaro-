@@ -5,10 +5,16 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Photo } from "@/components/ui/photo";
 import { Section } from "@/components/ui/section";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
+import { mediciEnabled } from "@/lib/medici";
+
+/** 14/11/2026: senza medici (src/lib/medici.ts) i testi dicono solo quello che c'è. */
+const MEDICI = mediciEnabled();
 
 export const metadata: Metadata = {
   title: "Chi siamo",
-  description: "Perché esiste Cura Privata: spiegare i referti in parole semplici e portarti da un medico quando serve. In che cosa crediamo e che cosa qui non troverai.",
+  description: MEDICI
+    ? "Perché esiste Cura Privata: spiegare i referti in parole semplici e portarti da un medico quando serve. In che cosa crediamo e che cosa qui non troverai."
+    : "Perché esiste Cura Privata: spiegare i referti in parole semplici e prepararti a parlarne con il tuo medico. In che cosa crediamo e che cosa qui non troverai.",
   alternates: { canonical: "/chi-siamo" },
 };
 
@@ -33,7 +39,7 @@ export default function Page() {
       <PageHeader
         eyebrow="Chi siamo"
         title="Un referto non dovrebbe fare paura."
-        lead="Spesso spaventa solo perché è scritto in un'altra lingua. Cura Privata nasce per tradurlo in parole semplici e, quando serve una persona, portarti da un medico."
+        lead={MEDICI ? "Spesso spaventa solo perché è scritto in un'altra lingua. Cura Privata nasce per tradurlo in parole semplici e, quando serve una persona, portarti da un medico." : "Spesso spaventa solo perché è scritto in un'altra lingua. Cura Privata nasce per tradurlo in parole semplici e prepararti a parlarne con il tuo medico."}
       />
 
       <section aria-labelledby="storia-titolo" className="section">
@@ -51,7 +57,7 @@ export default function Page() {
             <p className="lead mt-5">
               Con un referto in mano ci si sente soli: sigle, asterischi, numeri fuori colonna. Noi partiamo da lì. Ti diciamo che cosa misura ogni esame e dove cade il tuo valore rispetto all&apos;intervallo del laboratorio, senza giudicarlo.
             </p>
-            <p className="lead mt-4">Se vuoi andare avanti c&apos;è un medico abilitato: a casa, in video o per un secondo parere. Le decisioni restano tue e del tuo medico.</p>
+            <p className="lead mt-4">{MEDICI ? "Se vuoi andare avanti c'è un medico abilitato: a casa, in video o per un secondo parere. Le decisioni restano tue e del tuo medico." : "Poi ne parli con il tuo medico, con le domande già pronte. Le decisioni restano tue e sue."}</p>
           </div>
         </div>
       </section>
@@ -110,7 +116,7 @@ export default function Page() {
                 A che punto siamo.
               </h2>
               <p className="lead mt-3 max-w-[40rem]">
-                Cura Privata è un progetto italiano in fase di sviluppo, nato come «Referto Chiaro». Oggi è una versione dimostrativa: provi tutti i servizi su documenti inventati, con medici di prova. Ogni servizio apre davvero solo dopo le verifiche che un
+                Cura Privata è un progetto italiano in fase di sviluppo, nato come «Referto Chiaro». Oggi è una versione dimostrativa: {MEDICI ? "provi tutti i servizi su documenti inventati, con medici di prova" : "provi tutto su documenti inventati"}. Ogni servizio apre davvero solo dopo le verifiche che un
                 servizio sanitario richiede.
               </p>
             </div>

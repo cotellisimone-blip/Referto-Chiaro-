@@ -33,9 +33,9 @@ describe("rebrand Cura Privata", () => {
     expect(publicPricesEnabled({ ENABLE_PUBLIC_PRICES: "false" })).toBe(false);
   });
 
-  it("i tre servizi protagonisti sono provabili (demo); archivio e prevenzione restano in preparazione", () => {
+  it("i servizi protagonisti e Famiglia sono provabili (demo); prevenzione resta in preparazione", () => {
     const usable = ECOSYSTEM.filter((s) => s.status !== "in-preparation").map((s) => s.id);
-    expect(usable.sort()).toEqual(["guide", "referti", "secondo-parere", "visite"]);
+    expect(usable.sort()).toEqual(["famiglia", "guide", "referti", "secondo-parere", "visite"]);
     for (const s of ECOSYSTEM.filter((x) => x.status === "in-preparation")) {
       expect(s.href.startsWith("/servizi/")).toBe(true);
     }

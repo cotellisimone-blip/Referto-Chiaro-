@@ -6,10 +6,10 @@ import { CircleCheck, Loader2 } from "lucide-react";
 import { api } from "@/components/area/api";
 import { currentSource, track } from "@/components/site/track";
 
-type Interest = "completo" | "secondo-parere" | "strutture" | "archivio" | "visite" | "prevenzione" | "domicilio";
+type Interest = "completo" | "secondo-parere" | "strutture" | "archivio" | "visite" | "prevenzione" | "domicilio" | "famiglia";
 type State = { kind: "idle" } | { kind: "sending" } | { kind: "done"; already: boolean } | { kind: "error"; message: string };
 
-const AVVISAMI_EVENT: Partial<Record<Interest, string>> = { completo: "avvisami-capisci", visite: "avvisami-medico", "secondo-parere": "avvisami-parere", domicilio: "avvisami-domicilio" };
+const AVVISAMI_EVENT: Partial<Record<Interest, string>> = { completo: "avvisami-capisci", visite: "avvisami-medico", "secondo-parere": "avvisami-parere", domicilio: "avvisami-domicilio", famiglia: "avvisami-famiglia" };
 
 const INPUT = "field-input";
 

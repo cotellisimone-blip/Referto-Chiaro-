@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
-import { gotoReady } from "./_lib/ready";
-import { expectAccessible as checkA11y } from "./_lib/a11y";
+import { gotoReady } from "../e2e/_lib/ready";
+import { expectAccessible as checkA11y } from "../e2e/_lib/a11y";
 
 /**
  * Prestazioni con un medico (12/11/2026): domicilio 149 €, videoconsulto 69 €, secondo parere 149 €.

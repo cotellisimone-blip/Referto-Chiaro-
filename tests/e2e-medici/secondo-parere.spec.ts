@@ -161,11 +161,4 @@ test.describe("secondo parere e portali riservati", () => {
     await doc.close();
   });
 
-  test("report diretto senza ordine pagato: 402", async ({ browser }) => {
-    const ctx = await browser.newContext();
-    await signup(ctx.request, `nopay-${Date.now()}@test.invalid`);
-    const id = await verifiedDocument(ctx.request);
-    expect((await ctx.request.post(`/api/v1/area/documents/${id}/reports`, { data: { service: "essenziale" } })).status()).toBe(402);
-    await ctx.close();
-  });
 });

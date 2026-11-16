@@ -1,3 +1,5 @@
+import { mediciEnabled } from "@/lib/medici";
+import { PrestoMedico } from "@/components/site/presto-medico";
 import type { Metadata } from "next";
 import { NeedPicker } from "@/components/offerta/need-picker";
 import { pickerServices, publicPricesEnabled } from "@/domain/offerta";
@@ -12,10 +14,14 @@ export const metadata: Metadata = {
 
 export default function IniziaPage() {
   const dom = offerItems().find((x) => x.key === "domicilio")!;
-  const services = [
-    ...pickerServices(),
-    { id: "domicilio" as const, name: dom.name, href: dom.href, startHref: PRESTAZIONI.domicilio.startHref, startLabel: "Richiedi la visita", price: publicPricesEnabled() ? prestazionePrice("domicilio") : null, timing: dom.timing, need: dom.need },
-  ];
+  const medici = mediciEnabled();
+  // 13/11/2026: senza medici restano il referto e lo strumento gratuito; i servizi con un medico solo come «presto».
+  const services = medici
+    ? [
+        ...pickerServices(),
+        { id: "domicilio" as const, name: dom.name, href: dom.href, startHref: PRESTAZIONI.domicilio.startHref, startLabel: "Richiedi la visita", price: publicPricesEnabled() ? prestazionePrice("domicilio") : null, timing: dom.timing, need: dom.need },
+      ]
+    : pickerServices().filter((s) => s.id === "capisci");
   return (
     <section aria-labelledby="inizia-titolo" className="page-hero">
       <div className="container-rc page-hero-inner page-hero-flat">
@@ -27,6 +33,7 @@ export default function IniziaPage() {
         <div className="mt-8 sm:mt-11">
           <NeedPicker services={services} headingId="inizia-titolo" />
         </div>
+        {medici ? null : <PrestoMedico className="mt-10" />}
       </div>
     </section>
   );

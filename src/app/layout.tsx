@@ -10,6 +10,7 @@ import { DemoRibbon } from "@/components/site/demo-ribbon";
 import { SiteSearch } from "@/components/search/site-search";
 import { BackToTop } from "@/components/site/back-to-top";
 import { PREFS_INIT_SCRIPT } from "@/lib/prefs-init";
+import { mediciEnabled } from "@/lib/medici";
 import "./globals.css";
 
 const manrope = localFont({
@@ -21,8 +22,10 @@ const manrope = localFont({
 
 export const metadata: Metadata = {
   title: { default: "Cura Privata — i tuoi referti, finalmente comprensibili", template: "%s · Cura Privata" },
-  description:
-    "Il tuo referto spiegato valore per valore, in parole semplici. Se serve, un videoconsulto con un medico o un secondo parere. Uno strumento informativo, non una diagnosi.",
+  // 14/11/2026: senza medici (src/lib/medici.ts) la descrizione dice quello che c'è davvero.
+  description: mediciEnabled()
+    ? "Il tuo referto spiegato valore per valore, in parole semplici. Se serve, un videoconsulto con un medico o un secondo parere. Uno strumento informativo, non una diagnosi."
+    : "Il tuo referto spiegato valore per valore, in parole semplici, e gli esami di tutta la famiglia in fila negli anni. Uno strumento informativo, non una diagnosi.",
   robots: indexingEnabled() ? { index: true, follow: true } : { index: false, follow: false },
   metadataBase: new URL(SITE_URL),
 };

@@ -4,6 +4,13 @@ import emocromo002 from "./referto-emocromo-002.json";
 import tiroide003 from "./referto-tiroide-003.json";
 import lipidico004 from "./referto-lipidico-004.json";
 import epatico005 from "./referto-epatico-005.json";
+import storicoIo2023 from "./storico/storico-io-2023.json";
+import storicoIo2024 from "./storico/storico-io-2024.json";
+import storicoIo2025 from "./storico/storico-io-2025.json";
+import storicoLucia202503 from "./storico/storico-lucia-2025-03.json";
+import storicoLucia202509 from "./storico/storico-lucia-2025-09.json";
+import storicoLucia202603 from "./storico/storico-lucia-2026-03.json";
+import storicoLucia202609 from "./storico/storico-lucia-2026-09.json";
 
 /**
  * Unici documenti accettati dalla modalità demo: fixture sintetiche incluse nel codice.
@@ -12,6 +19,22 @@ import epatico005 from "./referto-epatico-005.json";
 const FIXTURES: Record<string, ExtractedDocument> = Object.fromEntries(
   [lab001, emocromo002, tiroide003, lipidico004, epatico005].map((f) => [f.documentId, ExtractedDocumentSchema.parse(f)]),
 );
+
+/**
+ * «Storico di esempio» (salute nel tempo e famiglia, 13/11/2026): referti inventati di anni precedenti,
+ * per la persona di esempio e per un familiare di esempio («Lucia»). Non compaiono nel catalogo dei referti
+ * da scegliere: entrano solo con «Carica lo storico di esempio», già nell'area giusta della famiglia.
+ */
+const HISTORY: Record<string, ExtractedDocument> = Object.fromEntries(
+  [storicoIo2023, storicoIo2024, storicoIo2025, storicoLucia202503, storicoLucia202509, storicoLucia202603, storicoLucia202609].map((f) => [f.documentId, ExtractedDocumentSchema.parse(f)]),
+);
+
+/** Lo storico di esempio: per ogni referto, a chi appartiene («io» = titolare dell'account, «lucia» = familiare di esempio). */
+export const DEMO_HISTORY: { sampleId: string; owner: "io" | "lucia"; title: string }[] = Object.values(HISTORY).map((d) => ({
+  sampleId: d.documentId,
+  owner: d.documentId.includes("-lucia-") ? "lucia" : "io",
+  title: d.displayTitle.replace(" — esempio sintetico", ""),
+}));
 
 export const DEMO_DOCUMENT_ID = lab001.documentId;
 
@@ -44,7 +67,7 @@ export function listSyntheticSamples(): SyntheticSample[] {
 }
 
 export function getSyntheticDocument(id: string): ExtractedDocument | null {
-  const doc = FIXTURES[id];
+  const doc = FIXTURES[id] ?? HISTORY[id];
   if (!doc || !doc.isSynthetic) return null;
   return doc;
 }

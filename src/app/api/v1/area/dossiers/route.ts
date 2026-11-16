@@ -22,6 +22,6 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(r.body);
   if (!parsed.success || !parsed.data.documentIds.every(isUuid)) return json({ error: "invalid-request" }, { status: 400 });
   const id = await createDossier(g.user.id, parsed.data.title, [...new Set(parsed.data.documentIds)]);
-  if (!id) return json({ error: "invalid-state", message: "Scegli almeno due referti con report pronto." }, { status: 409 });
+  if (!id) return json({ error: "invalid-state", message: "Scegli almeno due referti pronti della stessa persona." }, { status: 409 });
   return json({ id, status: "queued" }, { status: 201 });
 }

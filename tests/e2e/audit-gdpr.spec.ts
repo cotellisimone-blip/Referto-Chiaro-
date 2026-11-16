@@ -58,15 +58,6 @@ test.describe("audit GDPR: consensi, revoca, cancellazione", () => {
     expect(second.link).toBeUndefined();
   });
 
-  test("il secondo parere richiede il consenso alla condivisione e una domanda breve", async ({ browser }) => {
-    const ctx = await browser.newContext();
-    await signup(ctx.request, `parere-${Date.now()}@test.invalid`);
-    const base = { documentId: "00000000-0000-0000-0000-000000000000", specialty: "Medicina interna (simulazione)", question: "Una domanda abbastanza lunga da passare la validazione minima.", acknowledgeSimulation: true };
-    expect((await ctx.request.post("/api/v1/area/casi", { data: { ...base, consentToShare: false } })).status()).toBe(400);
-    expect((await ctx.request.post("/api/v1/area/casi", { data: { ...base, consentToShare: true, question: "x".repeat(501) } })).status()).toBe(400);
-    await ctx.close();
-  });
-
   test("le pagine legali descrivono dati, durate e diritti", async ({ page }) => {
     await page.goto("/privacy-policy");
     await expect(page.getByRole("heading", { name: "I tuoi diritti" })).toBeVisible();

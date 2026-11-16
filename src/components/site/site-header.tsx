@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, BookOpen, ChevronRight, Euro, FileText, Home, Menu, Stethoscope, Video, X, type LucideIcon } from "lucide-react";
+import { ArrowRight, BookOpen, ChevronRight, Euro, FileText, Home, Menu, Stethoscope, Video, X, type LucideIcon, Users } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { MAIN_NAV, type NavIcon } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
 import { TextSizeToggle } from "./text-size-toggle";
 import { SearchTrigger } from "@/components/search/site-search";
 
-const NAV_ICON: Record<NavIcon, LucideIcon> = { file: FileText, home: Home, video: Video, stethoscope: Stethoscope, euro: Euro, book: BookOpen };
+const NAV_ICON: Record<NavIcon, LucideIcon> = { file: FileText, home: Home, video: Video, stethoscope: Stethoscope, euro: Euro, book: BookOpen, users: Users };
 
 /**
  * Il percorso corrente serve solo a evidenziare la voce attiva. Sulle pagine dinamiche
@@ -99,7 +99,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
             {MAIN_NAV.map((item) => {
               const active = pathname === item.href || !!pathname?.startsWith(item.href + "/");
               return (
-                <li key={item.href} className={item.wideOnly ? "hidden xl:list-item" : undefined}>
+                <li key={item.href} className={item.wideOnly === "xl" ? "hidden xl:list-item" : item.wideOnly === "2xl" ? "hidden 2xl:list-item" : undefined}>
                   <Link href={item.href} aria-current={active ? "page" : undefined} className="nav-link">
                     {item.label}
                   </Link>

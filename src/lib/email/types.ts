@@ -4,7 +4,7 @@ export interface EmailMessage {
   text: string;
   html: string;
   /** Etichetta interna per i log (mai il contenuto). */
-  tag: "magic-link" | "order-paid" | "report-ready" | "opinion-ready";
+  tag: "magic-link" | "order-paid" | "report-ready" | "opinion-ready" | "reminder";
 }
 
 export interface EmailProvider {

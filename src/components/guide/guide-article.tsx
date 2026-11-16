@@ -152,7 +152,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                 Aggiungi altri esami e stampa la lista <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
             </section>
-            <ContextualCta category={guide.category} />
+            <ContextualCta category={guide.category} slug={guide.slug} />
             <section aria-labelledby="faq-titolo">
               <h2 id="faq-titolo" className="guide-h2 flex items-center gap-2.5">
                 <HelpCircle aria-hidden /> Domande frequenti

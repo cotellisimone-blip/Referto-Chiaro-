@@ -16,6 +16,10 @@ import { api, formatDate } from "./api";
 import { StatusChip } from "./status-chip";
 import { WORKFLOW_STEPS } from "./new-document";
 import { ConfirmButton } from "@/components/ui/confirm-button";
+import { mediciEnabled } from "@/lib/medici";
+
+/** 14/11/2026: senza medici (src/lib/medici.ts) dopo il report non si propone un medico di Cura Privata. */
+const MEDICI = mediciEnabled();
 
 interface Doc {
   id: string;
@@ -394,7 +398,7 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
                   </li>
                 ))}
               </ul>
-              <p className="mt-5 border-t border-line pt-4 text-base text-muted">{INFORMATIVE_NOTE} Nessun medico rivede questo report: se vuoi parlarne con un medico, dopo puoi farlo senza ricaricare il documento.</p>
+              <p className="mt-5 border-t border-line pt-4 text-base text-muted">{INFORMATIVE_NOTE} {MEDICI ? "Nessun medico rivede questo report: se vuoi parlarne con un medico, dopo puoi farlo senza ricaricare il documento." : "Nessun medico rivede questo report: serve a parlarne meglio con il tuo."}</p>
             </div>
             <aside aria-labelledby="dopo-titolo" className="side-card lg:mt-2">
               <h2 id="dopo-titolo" className="side-card-title">
@@ -403,7 +407,7 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
               <ol className="num-list num-list-mist mt-4 text-[1.0625rem] leading-snug text-ink-soft">
                 <li>Arrivi subito al report: la pagina si aggiorna da sola.</li>
                 <li>Lo leggi qui e scarichi il PDF da portare in visita.</li>
-                <li>Se vuoi parlarne con un medico, parti dal report: il documento è già caricato.</li>
+                <li>{MEDICI ? "Se vuoi parlarne con un medico, parti dal report: il documento è già caricato." : "Resta nel tuo spazio: lo ritrovi in fila con gli altri, anche negli anni."}</li>
               </ol>
             </aside>
           </div>
@@ -471,7 +475,7 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
                   <FolderPlus aria-hidden className="h-5 w-5" /> Metti in un dossier
                 </Link>
               </div>
-              <NextStep documentId={documentId} prices={quote} />
+              {MEDICI ? <NextStep documentId={documentId} prices={quote} /> : null}
               <div className="space-y-3 xl:sticky xl:top-28">
                 {/* Sotto i 1280 px il documento originale si apre a richiesta (o toccando «Pag., riga» in una voce): la pagina resta corta. */}
                 <button type="button" className="btn btn-secondary w-full xl:hidden" aria-expanded={docOpen} aria-controls="documento-originale" onClick={() => setDocOpen((v) => !v)}>

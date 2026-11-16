@@ -1,3 +1,5 @@
+import { mediciEnabled } from "@/lib/medici";
+
 export interface FaqItem {
   q: string;
   a: string;
@@ -5,7 +7,7 @@ export interface FaqItem {
 }
 
 /** Domande frequenti del sito. Nessun prezzo scritto a mano: i prezzi stanno nel listino e nella pagina Prezzi. */
-export const FAQ: FaqItem[] = [
+const FAQ_CON_MEDICI: FaqItem[] = [
   {
     topic: "servizio",
     q: "State facendo una diagnosi?",
@@ -77,3 +79,20 @@ export const FAQ: FaqItem[] = [
     a: "Sì. Finché il medico non ha confermato non c'è alcun addebito. Dopo la conferma valgono i termini che leggi nel riepilogo della richiesta, prima di pagare, e nella pagina Prezzi.",
   },
 ];
+
+/**
+ * 14/11/2026: senza medici (src/lib/medici.ts) restano le domande sul referto, sui dati e sui prezzi. Al posto delle
+ * quattro domande sui servizi con un medico ce n'è una sola, con la risposta vera: non ancora.
+ */
+const SENZA_MEDICI: FaqItem[] = [
+  ...FAQ_CON_MEDICI.filter((f) => f.topic !== "medico" && f.q !== "Posso annullare una richiesta?").map((f) =>
+    f.q === "Quanto costa?" ? { ...f, a: f.a.replace(" Per le prestazioni con un medico paghi solo dopo che il medico ha confermato.", "") } : f,
+  ),
+  {
+    topic: "medico",
+    q: "Posso parlare con un medico di Cura Privata?",
+    a: "Non ancora. Stiamo scegliendo i medici con cui lavorare: visita a domicilio, videoconsulto e secondo parere arriveranno dopo, e finché i contratti non sono firmati non li vendiamo. Intanto la spiegazione ti prepara a parlarne con il tuo medico, con le domande già pronte.",
+  },
+];
+
+export const FAQ: FaqItem[] = mediciEnabled() ? FAQ_CON_MEDICI : SENZA_MEDICI;

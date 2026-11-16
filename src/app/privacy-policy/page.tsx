@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { DraftNotice, Prose } from "@/components/ui/draft-notice";
+import { mediciEnabled } from "@/lib/medici";
+
+/** 14/11/2026: senza medici (src/lib/medici.ts) l'informativa non descrive trattamenti che non avvengono. */
+const MEDICI = mediciEnabled();
 
 export const metadata: Metadata = { title: "Informativa privacy", description: "Come Cura Privata tratta i dati personali e sanitari: finalità, basi giuridiche, conservazione, diritti e come esercitarli." };
 
@@ -12,10 +16,10 @@ const DATA = [
   ["Indirizzo email", "Creare l'account, inviare il link di accesso, rispondere alle richieste", "Finché l'account esiste; anonimizzato alla cancellazione"],
   ["Consensi (tipo, versione, data)", "Dimostrare che cosa è stato accettato e quando", "Finché l'account esiste"],
   ["Referti, valori confermati, spiegazioni, dossier", "Spiegare i referti con parole semplici (dati relativi alla salute)", "Finché li tieni; cancellati subito se revochi il consenso o elimini l'account"],
-  ["Richieste di secondo parere e risposte", "Far rispondere un medico alla tua domanda (dati relativi alla salute)", "Come sopra"],
+  ...(MEDICI ? [["Richieste di secondo parere e risposte", "Far rispondere un medico alla tua domanda (dati relativi alla salute)", "Come sopra"]] : []),
   ["Ordini (servizio, importo, stato)", "Erogare il servizio acquistato e rispettare gli obblighi contabili", "[10 anni per obblighi fiscali]; senza contenuti sanitari"],
   ["Registro delle attività (azione, data)", "Sicurezza e tracciabilità degli accessi", "[12 mesi]"],
-  ["Sessioni di accesso (identificativo cifrato)", "Tenerti collegato in sicurezza", "14 giorni; 12 ore per medici e amministratori"],
+  ["Sessioni di accesso (identificativo cifrato)", "Tenerti collegato in sicurezza", MEDICI ? "14 giorni; 12 ore per medici e amministratori" : "14 giorni; 12 ore per gli amministratori"],
   ["Lista d'attesa (email, interesse, nota)", "Avvisarti quando il servizio parte", "12 mesi, poi cancellata"],
 ];
 
@@ -58,13 +62,13 @@ export default function Page() {
             <h2>Basi giuridiche</h2>
             <ul>
               <li>Account, accesso e ordini: esecuzione del contratto (art. 6.1.b).</li>
-              <li>Referti e spiegazioni, richieste di secondo parere: consenso esplicito per i dati relativi alla salute (art. 9.2.a), che puoi revocare in ogni momento dalle impostazioni. La revoca cancella subito i contenuti sanitari.</li>
+              <li>{MEDICI ? "Referti e spiegazioni, richieste di secondo parere" : "Referti e spiegazioni"}: consenso esplicito per i dati relativi alla salute (art. 9.2.a), che puoi revocare in ogni momento dalle impostazioni. La revoca cancella subito i contenuti sanitari.</li>
               <li>Registro delle attività e sicurezza: legittimo interesse a proteggere il servizio (art. 6.1.f).</li>
               <li>Novità via email: consenso facoltativo, revocabile dalle impostazioni.</li>
             </ul>
 
             <h2>Chi vede i dati</h2>
-            <p>Solo tu vedi i tuoi referti. Un medico vede un referto soltanto se gli hai inviato una richiesta di secondo parere con un consenso specifico, e solo quel referto. Gli amministratori vedono ordini, lista d&apos;attesa e registro, non il contenuto dei referti. Fornitori tecnici: [hosting, servizio email, pagamenti; nomi e paese, da compilare]. Nessun dato viene venduto o usato per pubblicità.</p>
+            <p>Solo tu vedi i tuoi referti. {MEDICI ? "Un medico vede un referto soltanto se gli hai inviato una richiesta di secondo parere con un consenso specifico, e solo quel referto. " : ""}Gli amministratori vedono ordini, lista d&apos;attesa e registro, non il contenuto dei referti. Fornitori tecnici: [hosting, servizio email, pagamenti; nomi e paese, da compilare]. Nessun dato viene venduto o usato per pubblicità.</p>
 
             <h2>Cookie e memoria del browser</h2>
             <p>Un solo cookie tecnico di sessione (rc_session), necessario per restare collegato. Le preferenze di tema e dimensione del testo restano nel tuo browser (localStorage) e non vengono inviate a nessuno. La demo usa la memoria della scheda (sessionStorage) per ricordare a che punto sei. Nessun cookie di profilazione o di terze parti.</p>
@@ -73,7 +77,7 @@ export default function Page() {
             <p>Puoi accedere ai tuoi dati, correggerli, scaricarli in formato leggibile, revocare i consensi, limitare o opporti al trattamento e chiedere la cancellazione. Dalle impostazioni puoi esportare tutto in un file, revocare il consenso ai dati sanitari ed eliminare l&apos;account da solo, senza chiedere a nessuno. Per il resto scrivi a [email dedicata]. Puoi anche rivolgerti al Garante per la protezione dei dati personali.</p>
 
             <h2>Sicurezza</h2>
-            <p>Ogni persona vede solo le proprie righe grazie a regole applicate direttamente dal database. I link di accesso sono monouso e scadono in 15 minuti. Medici e amministratori usano una seconda verifica (codice a tempo). Le azioni importanti vengono registrate.</p>
+            <p>Ogni persona vede solo le proprie righe grazie a regole applicate direttamente dal database. I link di accesso sono monouso e scadono in 15 minuti. {MEDICI ? "Medici e amministratori" : "Gli amministratori"} usano una seconda verifica (codice a tempo). Le azioni importanti vengono registrate.</p>
           </Prose>
         </div>
       </div>

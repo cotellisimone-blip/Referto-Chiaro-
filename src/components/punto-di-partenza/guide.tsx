@@ -111,7 +111,8 @@ export function CategoryChip({ category, className }: { category: AreaCategory; 
   return <span className={clsx("pdp-chip", `pdp-chip-${category}`, className)}>{CATEGORY_LABEL[category]}</span>;
 }
 
-export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { prices: PdpPrices; capisciHref: string; medicoHref: string }) {
+/** `medicoHref` nullo = servizi con un medico spenti (src/lib/medici.ts): al loro posto, lo strumento per la visita. */
+export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { prices: PdpPrices; capisciHref: string; medicoHref: string | null }) {
   const [a, setA] = useState<PdpAnswers>(EMPTY_ANSWERS);
   const [step, setStep] = useState(1);
   const [started, setStarted] = useState(false);
@@ -501,16 +502,28 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                     ) : null}
                   </div>
                 </div>
-                <div className="pdp-bridge-side tone-medico">
-                  <p className="flex items-center gap-2 text-lg font-bold text-ink">
-                    <Stethoscope aria-hidden className="tone-text h-6 w-6" /> Preferisci parlarne direttamente?
-                  </p>
-                  <p className="mt-2 text-[1.0625rem] text-ink-soft">Un videoconsulto con un medico di medicina generale o internista, con la tua scheda già letta.</p>
-                  <Link href={medicoHref} data-track="pdp-to-medico" className="tone-text mt-4 inline-flex min-h-11 items-center gap-2 text-lg font-bold">
-                    Parla con un medico
-                    {prices.medico ? ` — ${prices.medico}` : ""} <ArrowRight aria-hidden className="h-5 w-5" />
-                  </Link>
-                </div>
+                {medicoHref ? (
+                  <div className="pdp-bridge-side tone-medico">
+                    <p className="flex items-center gap-2 text-lg font-bold text-ink">
+                      <Stethoscope aria-hidden className="tone-text h-6 w-6" /> Preferisci parlarne direttamente?
+                    </p>
+                    <p className="mt-2 text-[1.0625rem] text-ink-soft">Un videoconsulto con un medico di medicina generale o internista, con la tua scheda già letta.</p>
+                    <Link href={medicoHref} data-track="pdp-to-medico" className="tone-text mt-4 inline-flex min-h-11 items-center gap-2 text-lg font-bold">
+                      Parla con un medico
+                      {prices.medico ? ` — ${prices.medico}` : ""} <ArrowRight aria-hidden className="h-5 w-5" />
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="pdp-bridge-side tone-partenza">
+                    <p className="flex items-center gap-2 text-lg font-bold text-ink">
+                      <Stethoscope aria-hidden className="tone-text h-6 w-6" /> Hai una visita in programma?
+                    </p>
+                    <p className="mt-2 text-[1.0625rem] text-ink-soft">Porta questa scheda al tuo medico. In due minuti prepari anche la lista di cosa portare e che cosa chiedere.</p>
+                    <Link href="/strumenti/preparati-alla-visita" className="tone-text mt-4 inline-flex min-h-11 items-center gap-2 text-lg font-bold">
+                      Preparati alla visita <ArrowRight aria-hidden className="h-5 w-5" />
+                    </Link>
+                  </div>
+                )}
               </section>
 
               <p className="pdp-note mt-5 text-[1.0625rem] text-ink-soft">

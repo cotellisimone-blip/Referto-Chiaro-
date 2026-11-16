@@ -33,3 +33,9 @@
 - [ ] Listino approvato (oggi i prezzi sono nascosti: `ENABLE_PUBLIC_PRICES=false`).
 - [ ] IVA (esenzione per prestazioni sanitarie solo dove applicabile), compensi dei medici, fatturazione, recesso e rimborsi.
 - [ ] Pubblicità sanitaria: nessuna frase non dimostrabile (il test automatico ne blocca le principali).
+
+## 7. Famiglia e salute nel tempo (13/11/2026)
+- [ ] Base giuridica e condizione art. 9 per i referti di familiari adulti caricati da un altro; validare il testo della dichiarazione e del consenso `family-delegation` (versione `bozza-2026-11`).
+- [ ] Minori, tutela, amministrazione di sostegno: quali prove chiedere e cosa succede al compimento dei 14 e dei 18 anni.
+- [ ] Diritti dell'interessato quando non è l'intestatario dell'account (accesso, cancellazione, opposizione).
+- [ ] Piano Famiglia (oggi «proposta», 39 €/anno): prezzo, IVA, rinnovo, recesso. Dettagli in `FAMIGLIA_E_NEL_TEMPO.md`.

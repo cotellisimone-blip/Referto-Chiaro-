@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
-import { gotoReady } from "./_lib/ready";
-import { expectAccessible } from "./_lib/a11y";
+import { gotoReady } from "../e2e/_lib/ready";
+import { expectAccessible } from "../e2e/_lib/a11y";
 
 /**
  * Ciclo 4 (12/11/2026): un'offerta sola, la richiesta da paziente senza la barra dei ruoli,

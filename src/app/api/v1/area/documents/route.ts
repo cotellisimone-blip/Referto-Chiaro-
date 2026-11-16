@@ -4,6 +4,7 @@ import { json } from "@/lib/api";
 import { hasHealthDataConsent } from "@/lib/auth/service";
 import { createSyntheticDocument, listDocuments, listReports } from "@/domain/pipeline/repository";
 import { tickJobs } from "@/domain/pipeline/worker";
+import { UUID_RE, profileIdForDb } from "@/domain/famiglia/persone";
 import { getSyntheticDocument, listSyntheticSamples } from "@/fixtures/synthetic";
 
 export async function GET() {
@@ -14,7 +15,7 @@ export async function GET() {
   return json({ documents: documents.map((d) => ({ ...d, extracted: undefined, observationCount: d.extracted?.observations.length ?? null })), reports: reports.map((r) => ({ ...r, explanation: undefined })) });
 }
 
-const Body = z.object({ sampleId: z.string().max(64) }).strict();
+const Body = z.object({ sampleId: z.string().max(64), profileId: z.string().max(64).nullable().optional() }).strict();
 
 /** Nuovo documento. In demo si può solo scegliere un referto di esempio: nessun file reale viene accettato. */
 export async function POST(req: Request) {
@@ -30,7 +31,14 @@ export async function POST(req: Request) {
   const count = (await listDocuments(g.user.id)).length;
   if (count >= 30) return json({ error: "limit-reached", message: "Hai raggiunto il limite di documenti per questo account." }, { status: 409 });
   const title = listSyntheticSamples().find((s) => s.id === sample.documentId)?.title ?? sample.displayTitle;
-  const id = await createSyntheticDocument(g.user.id, sample.documentId, title);
+  const profileId = profileIdForDb(parsed.data.profileId);
+  if (profileId && !UUID_RE.test(profileId)) return json({ error: "invalid-request" }, { status: 400 });
+  let id: string;
+  try {
+    id = await createSyntheticDocument(g.user.id, sample.documentId, title, profileId);
+  } catch {
+    return json({ error: "profile-not-found", message: "Familiare non trovato." }, { status: 404 });
+  }
   return json({ id, status: "queued" }, { status: 201 });
 }
 

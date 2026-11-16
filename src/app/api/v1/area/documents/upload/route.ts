@@ -1,3 +1,4 @@
+import { UUID_RE } from "@/domain/famiglia/persone";
 import { randomUUID } from "node:crypto";
 import { requireUser } from "@/lib/auth/guard";
 import { capabilityError, json } from "@/lib/api";
@@ -32,10 +33,14 @@ export async function POST(req: Request) {
   const declared = Number(req.headers.get("content-length") ?? "0");
   if (declared > MAX_UPLOAD_BYTES + 64 * 1024) return json({ error: "too-large", message: "Il file supera i 4 MB." }, { status: 413 });
   let file: File | null = null;
+  let profileId: string | null = null;
   try {
     const form = await req.formData();
     const f = form.get("file");
     file = f instanceof File ? f : null;
+    // Famiglia: a chi appartiene il referto («io» o l'identificativo di un familiare).
+    const p = form.get("profileId");
+    profileId = typeof p === "string" && UUID_RE.test(p) ? p : null;
   } catch {
     return json({ error: "invalid-request", message: "Richiesta non valida." }, { status: 400 });
   }
@@ -48,8 +53,9 @@ export async function POST(req: Request) {
   const result = await withUser(userId, async (tx) => {
     const c = await tx.query<{ n: number }>("SELECT count(*)::int AS n FROM documents");
     if (Number(c.rows[0]?.n ?? 0) >= 30) return null;
+    if (profileId && (await tx.query("SELECT 1 FROM family_profiles WHERE id = $1", [profileId])).rows.length === 0) profileId = null;
     const id = randomUUID();
-    await tx.query("INSERT INTO documents(id, user_id, title, source_kind, source_ref, status) VALUES ($1, $2, $3, 'upload', $4, 'queued')", [id, userId, safeTitle(file!.name), id]);
+    await tx.query("INSERT INTO documents(id, user_id, profile_id, title, source_kind, source_ref, status) VALUES ($1, $2, $3, $4, 'upload', $5, 'queued')", [id, userId, profileId, safeTitle(file!.name), id]);
     const { sha256 } = await storeDocumentFile(tx, { documentId: id, userId, bytes, mimeType: check.mimeType });
     await tx.query("INSERT INTO jobs(id, user_id, kind, target_id, status) VALUES ($1, $2, 'extract-document', $3, 'queued')", [randomUUID(), userId, id]);
     await audit(tx, { userId, actor: "user", action: "document-uploaded", target: `${id}:${sha256.slice(0, 12)}` });

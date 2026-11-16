@@ -16,6 +16,8 @@
 # next.js
 /.next/
 /.next-vetrina/
+/.next-medici/
+/.next-vetrina-medici/
 /out/
 
 # production
