@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, ChartLine, FileCheck2, MessageCircleQuestionMark, Printer, ShieldCheck, SpellCheck, Stethoscope } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
-import { DemoReferto } from "@/components/home/demo-referto";
+import { BeforeAfter } from "@/components/offerta/before-after";
 import { MEDICI_HREF, MiniReferto, StatoDomicilio, PercorsoSezioni } from "@/components/sezioni/parts";
 import { GLOSSARY } from "@/content/glossario";
 import { PRICE_NOTE, coreService, firstPromoEnabled, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled } from "@/domain/offerta";
@@ -78,9 +78,9 @@ export default function LetturaRefertiPage() {
                 Lo stesso referto, <em>da così a così.</em>
               </h2>
             </div>
-            <p>Tocca una riga: accanto la leggi in parole semplici. È un esempio, con dati inventati.</p>
+            <p>Trascina il cursore con il dito: da una parte il referto com’è, dall’altra lo stesso referto in parole semplici.</p>
           </div>
-          <DemoReferto />
+          <BeforeAfter />
           <ol className="tm-how">
             <li>
               <span className="tm-n">1</span>

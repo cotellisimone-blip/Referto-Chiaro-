@@ -17,7 +17,7 @@ import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { MobileHelpBar } from "@/components/site/mobile-help-bar";
 import { TrackView } from "@/components/site/track";
 import { WaitlistForm } from "@/components/site/waitlist-form";
-import { DemoReferto } from "@/components/home/demo-referto";
+import { BeforeAfter } from "@/components/offerta/before-after";
 import { CercaParola, Domande } from "@/components/home/home-client";
 import { MediciProva } from "@/components/sezioni/medici";
 import { PrevenzioneCards } from "@/components/sezioni/prevenzione-cards";
@@ -187,10 +187,10 @@ export function HomeDueSezioni() {
               <div className="ds-try-h">
                 <p className="tm-kicker">Prova adesso, con un esempio</p>
                 <h3>
-                  Tocca una riga del referto: <em>accanto la leggi spiegata.</em>
+                  Trascina il cursore: <em>dal referto com’è a quello spiegato.</em>
                 </h3>
               </div>
-              <DemoReferto />
+              <BeforeAfter />
             </div>
             <div className="ds-sec-end">
               <Link href={capisci.href} className="tm-btn tm-btn-ink" data-track="cta-capisci">

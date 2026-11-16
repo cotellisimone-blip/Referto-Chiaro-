@@ -109,12 +109,12 @@ test.describe("home a tre sezioni", () => {
     // Sezione 1: prevenzione, con la guida agli integratori
     const s1 = main.locator("#prevenzione");
     for (const href of ["/punto-di-partenza", "/guide", "/integratori"]) await expect(s1.locator(`a[href="${href}"]`).first()).toBeVisible();
-    // Da così a così: ogni riga del foglio è un pulsante, la spiegazione accanto cambia
-    const xpl = page.locator("#tm-xpl");
-    await expect(xpl.getByRole("heading", { level: 3 })).toHaveText("Colesterolo LDL");
-    await page.getByRole("button", { name: /^GLICEMIA 92 mg\/dL/ }).click();
-    await expect(xpl.getByRole("heading", { level: 3 })).toHaveText("Glicemia");
-    await expect(page.getByRole("button", { name: /^GLICEMIA/ })).toHaveAttribute("aria-pressed", "true");
+    // Da così a così: lo schermo con il cursore, dal referto com'è a quello spiegato
+    const slider = main.locator("#lettura-referti").getByRole("slider", { name: /Sposta per confrontare/ });
+    await expect(slider).toBeVisible();
+    await slider.focus();
+    await page.keyboard.press("End");
+    await expect(slider).toHaveValue("100");
     // Sezione 3 spenta: niente medici, niente prezzi, la lista d'attesa
     const s2 = main.locator("#medici");
     await expect(s2).toContainText("In arrivo");
@@ -135,7 +135,8 @@ test.describe("home a tre sezioni", () => {
     }
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
     // 15/11/2026, home a due sezioni: due sezioni intere in una pagina, quindi un po' più lunga dei «tre momenti».
-    expect(h, "schermate").toBeLessThan(isMobile ? 11.5 : 7.5);
+    // 16/11/2026: il «prima e dopo» con il cursore (richiesto da Simone) è un po' più alto del referto da toccare.
+    expect(h, "schermate").toBeLessThan(isMobile ? 11.5 : 8);
     const words = (await main.innerText()).split(/\s+/).length;
     expect(words).toBeLessThan(isMobile ? 1100 : 1250);
     await expectAccessible(page);
@@ -170,7 +171,7 @@ test.describe("sezioni e integratori", () => {
     await expectAccessible(page);
     await page.goto("/lettura-referti");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Il tuo referto,\s*in parole semplici\./);
-    await expect(page.locator("#tm-xpl")).toBeVisible();
+    await expect(page.getByRole("slider", { name: /Sposta per confrontare/ })).toBeVisible();
     await expectAccessible(page);
     // I vecchi indirizzi delle due sezioni portano alle nuove.
     await page.goto("/online");
