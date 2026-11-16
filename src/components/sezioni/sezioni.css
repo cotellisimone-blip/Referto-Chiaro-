@@ -663,3 +663,4 @@
 .tm .ds-ph-3 .ds-path-n{border-color:rgba(255,255,255,.3);color:rgba(244,239,230,.8)}
 @media (max-width:820px){.tm .ds-path{padding-top:14px}.tm .ds-path a{padding:9px 8px;gap:7px}.tm .ds-path small{display:none}.tm .ds-path b{font-size:0.8125rem;line-height:1.2}.tm .ds-path-n{width:24px;height:24px;font-size:0.875rem}}
 .tm .ds-path{margin-bottom:26px}
+.tm .ds-trust .ds-todo{display:inline-block;margin-top:2px;padding:1px 7px;border:1.5px dashed #B7791F;border-radius:6px;background:#FFF4DC;color:#6B4400;font-weight:700}

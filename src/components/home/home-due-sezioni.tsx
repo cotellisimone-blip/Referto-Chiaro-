@@ -6,13 +6,11 @@ import {
   Users,
   Ban,
   Eye,
-  FileText,
   LockKeyhole,
   Phone,
   ShieldCheck,
   Sparkles,
   Stethoscope,
-  Timer,
 } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
@@ -25,10 +23,8 @@ import { MediciProva } from "@/components/sezioni/medici";
 import { PrevenzioneCards } from "@/components/sezioni/prevenzione-cards";
 import { MEDICI_HREF, MiniReferto, MiniVisita, PREVENZIONE_HREF, Porte, REFERTI_HREF, ServiziMedico, StatoDomicilio } from "@/components/sezioni/parts";
 import { mediciEnabled } from "@/lib/medici";
-import { GUIDES } from "@/content/guides";
-import { INTEGRATORI } from "@/content/integratori";
+import { readTitolare } from "@/domain/titolare";
 import { PRICE_NOTE, coreService, firstPromoEnabled, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled } from "@/domain/offerta";
-import { prestazionePrice } from "@/domain/prestazioni/listino";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 
@@ -47,13 +43,12 @@ import "@/components/sezioni/sezioni.css";
 export function HomeDueSezioni() {
   const prices = publicPricesEnabled();
   const attivo = mediciEnabled();
+  const titolare = readTitolare();
   const promo = firstPromoEnabled() && firstRefertoCents() < priceCents("capisci");
   const std = formatEuro(priceCents("capisci"));
   const first = formatEuro(firstRefertoCents());
   const entry = promo ? first : std;
   const capisci = coreService("capisci");
-  const nGuide = GUIDES.length;
-  const nInt = INTEGRATORI.length;
 
   return (
     <>
@@ -105,7 +100,17 @@ export function HomeDueSezioni() {
                 <Link href="/chi-siamo">
                   <Users aria-hidden className="tm-ic" />
                   <b>Chi c’è dietro</b>
-                  <span>Nomi, sede e partita IVA, in chiaro</span>
+                  {titolare ? (
+                    <span>
+                      {titolare.name}
+                      {titolare.address ? ` · ${titolare.address}` : ""} · P.IVA {titolare.vat}
+                    </span>
+                  ) : (
+                    // Segnaposto voluto da Simone (16/11/2026) finché non dà i dati veri: si vede che manca, non si inventa.
+                    <span className="ds-todo" data-segnaposto="titolare">
+                      Nome, sede e P.IVA: da completare
+                    </span>
+                  )}
                 </Link>
               </li>
               <li>
