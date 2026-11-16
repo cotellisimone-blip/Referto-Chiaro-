@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { PercorsoSezioni } from "@/components/sezioni/parts";
+import { Jar } from "@/components/wow/jar";
 import { ArrowLeft, ArrowRight, BookOpen, MessageCircleQuestionMark, TriangleAlert } from "lucide-react";
 import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS, INTEGRATORI_PRIMA_DI_TUTTO, getIntegratore } from "@/content/integratori";
 import { getGuide } from "@/content/guides";
@@ -14,11 +16,12 @@ export function IntegratoreArticle({ slug }: { slug: string }) {
     <div className="tm ds">
       <section className="ds-ph ds-ph-1 ds-ph-short" aria-labelledby="i-titolo">
         <div className="tm-wrap">
+          <PercorsoSezioni current={1} />
           <Link href="/integratori" className="ds-crumb">
             <ArrowLeft aria-hidden className="tm-ic" /> Guide agli integratori
           </Link>
           <p className="ds-int-head">
-            <span aria-hidden className="ds-int-cap" style={{ "--c": c, "--d": d } as React.CSSProperties} />
+            <Jar c={c} d={d} />
             <span className="ds-int-g">{INTEGRATORI_GROUPS[i.group]}</span>
           </p>
           <h1 id="i-titolo">{i.name}</h1>
@@ -52,11 +55,14 @@ export function IntegratoreArticle({ slug }: { slug: string }) {
             </section>
             <section aria-labelledby="i-ref">
               <h2 id="i-ref">Sul tuo referto</h2>
-              <div className="ds-onrep">
+              <div className="ds-onrep wow-paper">
                 <p className="ds-onrep-ex">
                   {i.onReport.exams.map((e) => (
                     <span key={e}>{e}</span>
                   ))}
+                </p>
+                <p aria-hidden className="wow-mono-row">
+                  {i.onReport.exams[0]} · ris. · u.m. · val. rif.
                 </p>
                 <p>{i.onReport.text}</p>
                 {guide ? (
@@ -123,7 +129,7 @@ export function IntegratoreArticle({ slug }: { slug: string }) {
               return (
                 <li key={o.slug}>
                   <Link href={`/integratori/${o.slug}`} className="ds-int">
-                    <span aria-hidden className="ds-int-cap" style={{ "--c": oc, "--d": od } as React.CSSProperties} />
+                    <Jar c={oc} d={od} />
                     <span className="ds-int-t">{o.name}</span>
                     <span className="ds-int-d">{o.oneLine}</span>
                     <span className="ds-int-go">

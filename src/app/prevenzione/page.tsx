@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Jar } from "@/components/wow/jar";
 import Link from "next/link";
+import { CategoryBadge } from "@/components/wow/category-art";
 import { ArrowRight, ChartLine, FileText, MessageCircleQuestionMark, SpellCheck, Users } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
@@ -25,7 +27,7 @@ export const metadata: Metadata = {
  */
 export default function PrevenzionePage() {
   const pdp = puntoDiPartenzaEnabled();
-  const cats = Object.values(GUIDE_CATEGORIES);
+  const cats = Object.entries(GUIDE_CATEGORIES).map(([id, c]) => ({ id, ...c }));
   return (
     <div className="tm ds">
       <section className="ds-ph ds-ph-1" aria-labelledby="pv-titolo">
@@ -97,7 +99,7 @@ export default function PrevenzionePage() {
               return (
                 <li key={i.slug}>
                   <Link href={`/integratori/${i.slug}`} className="ds-int">
-                    <span aria-hidden className="ds-int-cap" style={{ "--c": c, "--d": d } as React.CSSProperties} />
+                    <Jar c={c} d={d} />
                     <span className="ds-int-g">{INTEGRATORI_GROUPS[i.group]}</span>
                     <span className="ds-int-t">{i.name}</span>
                     <span className="ds-int-d">{i.oneLine}</span>
@@ -126,9 +128,12 @@ export default function PrevenzionePage() {
           <ul className="ds-cats">
             {cats.map((c) => (
               <li key={c.title}>
-                <Link href="/guide">
-                  <b>{c.title}</b>
-                  <span>{c.lead}</span>
+                <Link href="/guide" className="wow-catlink">
+                  <CategoryBadge id={c.id} size={48} />
+                  <span>
+                    <b>{c.title}</b>
+                    <span>{c.lead}</span>
+                  </span>
                 </Link>
               </li>
             ))}

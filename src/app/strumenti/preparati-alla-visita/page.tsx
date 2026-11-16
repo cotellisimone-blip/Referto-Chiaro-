@@ -24,7 +24,7 @@ export default function PreparatiAllaVisitaPage() {
   const medico = coreService("parla-con-un-medico");
   return (
     <>
-      <PageHeader
+      <PageHeader section={1}
         eyebrow="Strumento gratuito"
         title={
           <>

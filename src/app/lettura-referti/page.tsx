@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { StepScene } from "@/components/wow/scenes";
+import { FoglioMedico } from "@/components/wow/foglio";
 import { ArrowRight, ChartLine, FileCheck2, MessageCircleQuestionMark, Printer, ShieldCheck, SpellCheck, Stethoscope } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
@@ -83,16 +85,19 @@ export default function LetturaRefertiPage() {
           <BeforeAfter />
           <ol className="tm-how">
             <li>
+              <StepScene n={1} />
               <span className="tm-n">1</span>
               <b>Carichi il referto</b>
               <span className="tm-d">Un PDF o una foto del foglio.</span>
             </li>
             <li>
+              <StepScene n={2} />
               <span className="tm-n">2</span>
               <b>Controlli i valori letti</b>
               <span className="tm-d">Li confermi tu, uno per uno.</span>
             </li>
             <li>
+              <StepScene n={3} />
               <span className="tm-n">3</span>
               <b>Paghi e leggi il report</b>
               <span className="tm-d">Di norma in pochi minuti.</span>
@@ -141,6 +146,19 @@ export default function LetturaRefertiPage() {
               </li>
             ))}
           </ul>
+          <div className="wow-sheet-wrap mt-14">
+            <div>
+              <p className="tm-kicker">Il foglio per la visita</p>
+              <h3 className="wow-h3">
+                Una pagina, <em>da portare al medico.</em>
+              </h3>
+              <p className="mt-3 text-[1.125rem] text-[var(--t-soft)]">I tuoi numeri, quelli fuori dall’intervallo segnati, e le domande da fare. Da stampare o da mostrare dal telefono.</p>
+              <Link href="/referti/esempio" className="tm-tlink mt-4 inline-flex">
+                Apri l’esempio completo
+              </Link>
+            </div>
+            <FoglioMedico />
+          </div>
         </div>
       </section>
 

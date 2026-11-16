@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PercorsoSezioni } from "@/components/sezioni/parts";
 import { famigliaIncludes, famigliaPrice } from "@/domain/famiglia/piano";
 import {
   ArrowRight,
@@ -87,9 +88,14 @@ export default function PrezziPage() {
         className="page-hero page-hero-wave"
       >
         <div className="container-rc page-hero-inner page-hero-overlap">
-          <p className="eyebrow">Prezzi</p>
+          <div className="tm ds ds-bare">
+            <PercorsoSezioni current={2} />
+            <p className="ds-sec-tag ds-sec-tag-2">
+              <span>2</span> Lettura referti · Prezzi
+            </p>
+          </div>
           <h1 id="prezzi-titolo" className="page-title mt-4 max-w-[16ch]">
-            Un prezzo chiaro, prima di pagare.
+            Un prezzo chiaro, <em>prima di pagare.</em>
           </h1>
           <p className="lead mt-5 max-w-[40rem]">
             {medici

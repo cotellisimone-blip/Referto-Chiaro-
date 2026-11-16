@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function EsempioPage() {
   return (
     <>
-      <PageHeader
+      <PageHeader section={2}
         art="translate"
         eyebrow="Demo con dati inventati"
         title="Esplora un referto di esempio."

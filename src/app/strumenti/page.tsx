@@ -29,7 +29,7 @@ export default function StrumentiPage() {
   ];
   return (
     <>
-      <PageHeader art="questions" eyebrow="Gratis, anche senza registrarti" title="Strumenti gratuiti." lead="Per arrivare alla visita preparato: che cosa portare, che cosa chiedere, che cosa vogliono dire le parole del referto." />
+      <PageHeader section={1} art="questions" eyebrow="Gratis, anche senza registrarti" title="Strumenti gratuiti." lead="Per arrivare alla visita preparato: che cosa portare, che cosa chiedere, che cosa vogliono dire le parole del referto." />
       <section className="section-tight">
         <div className="container-rc">
           <ul className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2">

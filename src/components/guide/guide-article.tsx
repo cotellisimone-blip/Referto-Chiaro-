@@ -9,6 +9,9 @@ import { getGlossaryEntry } from "@/content/glossario";
 import { FaqList } from "@/components/ui/faq-list";
 import { ReviewNotice } from "./review-notice";
 import { Breadcrumbs } from "./breadcrumbs";
+import { CategoryBadge } from "@/components/wow/category-art";
+import { enfasi } from "@/components/ui/titolo";
+import { PercorsoSezioni } from "@/components/sezioni/parts";
 
 /** Prima frase di un paragrafo, per il riquadro «In breve» (stesso testo già validato, nessuna parola nuova). */
 function firstSentence(p: string) {
@@ -48,10 +51,14 @@ export function GuideArticle({ guide }: { guide: Guide }) {
     <div className="article-shell">
       <article className="container-rc article-body">
         <ReadingProgress />
+        <div className="tm ds ds-bare max-w-3xl">
+          <PercorsoSezioni current={1} />
+        </div>
         <Breadcrumbs items={[{ name: "Guide", path: "/guide" }, { name: cat.title, path: `/guide#${guide.category}` }, { name: guide.examName, path: `/guide/${guide.slug}` }]} />
-        <header className="mt-6 max-w-3xl">
+        <header className="wow-guide-head mt-9 max-w-3xl">
+          <CategoryBadge id={guide.category} size={80} />
           <p className="eyebrow">{cat.title}</p>
-          <h1 className="page-title page-title-sm mt-4">{guide.title}</h1>
+          <h1 className="page-title page-title-sm mt-4">{enfasi(guide.title)}</h1>
           <p className="lead mt-5">{guide.summary}</p>
           {guide.aliases.length ? <p className="mt-3 text-base text-muted">Altri nomi: {guide.aliases.join(", ")}.</p> : null}
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -125,8 +132,12 @@ export function GuideArticle({ guide }: { guide: Guide }) {
             ) : null}
             <Block id="come-leggere" title={guide.procedure ? "Come leggere il referto" : "Come leggere il risultato"}>{guide.sections.howToRead}</Block>
             {guide.unitsAndRanges ? (
-              <section aria-labelledby="unita-titolo">
+              <section aria-labelledby="unita-titolo" className="wow-paper p-5 sm:p-7">
                 <h2 id="unita-titolo" className="guide-h2">Unità e intervalli</h2>
+                <p className="mt-3 text-[1.0625rem] text-ink-soft">Sul referto lo trovi in una riga come questa:</p>
+                <p aria-hidden className="wow-mono-row">
+                  {guide.examName} · ris. · {guide.unitsAndRanges.commonUnits[0]} · val. rif.
+                </p>
                 <p className="mt-4 font-semibold text-ink">Unità più comuni: {guide.unitsAndRanges.commonUnits.join(", ")}.</p>
                 <p className="mt-3">{guide.unitsAndRanges.rangeNote}</p>
               </section>

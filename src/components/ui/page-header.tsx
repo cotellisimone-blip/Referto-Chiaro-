@@ -22,6 +22,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Wave } from "./wave";
+import { enfasi } from "./titolo";
+import { PercorsoSezioni } from "@/components/sezioni/parts";
 
 export type HeaderArt = "translate" | "magnify" | "dossier" | "dialogue" | "shield" | "faq" | "search" | "questions" | "structures" | "none";
 
@@ -37,6 +39,8 @@ const ART: Record<Exclude<HeaderArt, "none">, [LucideIcon, LucideIcon, LucideIco
   questions: [ListChecks, MessageCircleQuestionMark, Stethoscope],
   structures: [Building2, FileText, Share2],
 };
+
+const SEZIONE = { 1: "Prevenzione", 2: "Lettura referti", 3: "Medici" } as const;
 
 /** Tre tessere di vetro sul filo tratteggiato: il disegno delle aperture, solo decorativo e solo su schermi larghi. */
 export function HeroTiles({ icons: [Main, Second, Third] }: { icons: [LucideIcon, LucideIcon, LucideIcon] }) {
@@ -72,6 +76,7 @@ export function PageHeader({
   art = "none",
   visual,
   compact = false,
+  section,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -81,14 +86,26 @@ export function PageHeader({
   /** Un «pezzo di prodotto» disegnato in HTML al posto dell'illustrazione: si vede solo sugli schermi larghi. */
   visual?: ReactNode;
   compact?: boolean;
+  /** La sezione a cui appartiene la pagina (1 Prevenzione, 2 Lettura referti, 3 Medici): barra 1 → 2 → 3 e numero in cima. */
+  section?: 1 | 2 | 3;
 }) {
   const icons = art === "none" ? null : ART[art];
   return (
     <div className="page-hero page-hero-wave">
       <div className={clsx("container-rc page-hero-inner", (icons || visual) && "page-hero-split")}>
         <div className="max-w-3xl">
-          {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-          <h1 className={clsx("page-title", compact && "page-title-sm", eyebrow && "mt-4")}>{title}</h1>
+          {section ? (
+            <div className="tm ds ds-bare">
+              <PercorsoSezioni current={section} />
+              <p className={`ds-sec-tag ds-sec-tag-${section}`}>
+                <span>{section}</span> {SEZIONE[section]}
+                {eyebrow ? ` · ${eyebrow}` : ""}
+              </p>
+            </div>
+          ) : eyebrow ? (
+            <p className="eyebrow">{eyebrow}</p>
+          ) : null}
+          <h1 className={clsx("page-title", compact && "page-title-sm", (eyebrow || section) && "mt-4")}>{enfasi(title)}</h1>
           {lead ? <div className="lead mt-5 max-w-[40rem]">{lead}</div> : null}
           {children}
         </div>

@@ -23,7 +23,15 @@ export default function Page() {
   const t = readTitolare();
   return (
     <>
-      <PageHeader art="dialogue" eyebrow="Contatti" title="Come contattarci." lead="Il servizio non è ancora aperto al pubblico. Qui trovi che cosa puoi fare già oggi, e che cosa no." />
+      <PageHeader art="dialogue" eyebrow="Contatti" title="Come contattarci." lead="Il servizio non è ancora aperto al pubblico. Qui trovi che cosa puoi fare già oggi, e che cosa no.">
+        {t?.email ? (
+          <a href={`mailto:${t.email}`} className="wow-big-contact mt-7">
+            <Mail aria-hidden className="h-7 w-7 shrink-0 text-teal" /> {t.email}
+          </a>
+        ) : (
+          <p className="wow-quote mt-7">Niente risponditori automatici: quando apriremo, ti risponderà una persona.</p>
+        )}
+      </PageHeader>
 
       <section aria-labelledby="contatti-titolo" className="section">
         <div className="container-rc">

@@ -204,7 +204,7 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
                 <Trash2 aria-hidden className="h-4 w-4" /> Svuota
               </button>
             </div>
-            <div className="p-5 sm:p-7">
+            <div className="wow-lined p-5 sm:p-7">
               <p className="eyebrow">Domande per il medico</p>
               <p className="mt-2 text-base text-muted">
                 Esami: {sections.map((s) => s.exam.name).join(", ")}. Lista preparata con Cura Privata, dalle guide agli esami. Non contiene valori né dati personali.

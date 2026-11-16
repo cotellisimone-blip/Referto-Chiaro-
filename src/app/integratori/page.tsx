@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Jar } from "@/components/wow/jar";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ShieldAlert } from "lucide-react";
+import { PercorsoSezioni } from "@/components/sezioni/parts";
+import { ArrowRight, ShieldAlert } from "lucide-react";
 import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS, INTEGRATORI_PRIMA_DI_TUTTO, type IntegratoreGroup } from "@/content/integratori";
 import { NOINDEX_DRAFT, indexingEnabled } from "@/lib/seo";
 import "@/components/home/tre-momenti.css";
@@ -21,9 +23,7 @@ export default function IntegratoriPage() {
     <div className="tm ds">
       <section className="ds-ph ds-ph-1 ds-ph-short" aria-labelledby="int-titolo">
         <div className="tm-wrap">
-          <Link href="/prevenzione" className="ds-crumb">
-            <ArrowLeft aria-hidden className="tm-ic" /> Sezione Prevenzione
-          </Link>
+          <PercorsoSezioni current={1} />
           <p className="ds-sec-tag ds-sec-tag-1">
             <span>1</span> Guide agli integratori
           </p>
@@ -59,7 +59,7 @@ export default function IntegratoriPage() {
                 return (
                   <li key={i.slug}>
                     <Link href={`/integratori/${i.slug}`} className="ds-int">
-                      <span aria-hidden className="ds-int-cap" style={{ "--c": c, "--d": d } as React.CSSProperties} />
+                      <Jar c={c} d={d} />
                       <span className="ds-int-t">{i.name}</span>
                       <span className="ds-int-d">{i.oneLine}</span>
                       <span className="ds-int-go">

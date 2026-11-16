@@ -26,7 +26,7 @@ export default function DomandePerIlMedicoPage() {
   const categories = ORDER.map((id) => ({ id, title: GUIDE_CATEGORIES[id].title }));
   return (
     <>
-      <PageHeader
+      <PageHeader section={1}
         art="questions"
         eyebrow="Strumento gratuito"
         title="Le domande giuste, prima di entrare in visita."

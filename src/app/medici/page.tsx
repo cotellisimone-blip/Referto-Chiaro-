@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CalendarioArrivo, MappaPassi } from "@/components/wow/medici-art";
 import { ArrowRight, Check, CircleAlert, FileText, FlaskConical, MapPin } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
@@ -145,6 +146,7 @@ export default function MediciPage() {
             </div>
             <p>Non paghi nulla quando invii la richiesta. Paghi solo quando vedi nome del medico, orario confermato, indirizzo e prezzo totale.</p>
           </div>
+          <MappaPassi />
           <ol className="ds-flow">
             <li>
               <div className="ds-flow-scr" aria-hidden>
@@ -254,7 +256,8 @@ export default function MediciPage() {
         <section id="avvisami" className="ds-sec-light ds-sec-alt" aria-labelledby="dom-avvisami">
           <div className="tm-wrap ds-ph-g ds-g-even">
             <div>
-              <p className="tm-kicker">Lista d’attesa</p>
+              <CalendarioArrivo />
+              <p className="tm-kicker mt-4">Lista d’attesa</p>
               <h2 id="dom-avvisami">
                 Avvisami quando parte <em>nella mia zona.</em>
               </h2>

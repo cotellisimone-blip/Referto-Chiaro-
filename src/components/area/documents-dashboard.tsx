@@ -279,7 +279,9 @@ export function DocumentsDashboard() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Il tuo spazio</p>
-          <h1 className="area-title mt-3">I tuoi referti</h1>
+          <h1 className="area-title mt-3">
+            I tuoi <em>referti</em>
+          </h1>
           <p className="area-lead">
             Ogni documento mostra a che punto è. Apri un referto per continuare
             da dove eri rimasto.
@@ -478,7 +480,7 @@ export function DocumentsDashboard() {
           return (
             <li
               key={d.id}
-              className="card card-lift card-glow relative flex flex-col p-5 sm:p-6"
+              className="card card-lift card-glow wow-stack relative flex flex-col p-5 sm:p-6"
             >
               <div className="flex items-start justify-between gap-3">
                 <h3 className="area-h2 text-[1.375rem]">{d.title}</h3>

@@ -71,6 +71,8 @@ function Before() {
  */
 export function BeforeAfter() {
   const [pos, setPos] = useState(52);
+  // «Trascinami» resta finché la persona non sposta il cursore la prima volta (16/11/2026).
+  const [touched, setTouched] = useState(false);
   const id = useId();
   return (
     <figure className="mx-auto max-w-5xl">
@@ -95,6 +97,12 @@ export function BeforeAfter() {
         </span>
         {/* maniglia */}
         <span aria-hidden className="pointer-events-none absolute inset-y-0 z-10 flex w-0 items-center justify-center" style={{ left: `${pos}%` }}>
+          {touched ? null : (
+            <>
+              <span className="wow-pulse" />
+              <span className="wow-drag">Trascinami</span>
+            </>
+          )}
           <span className="ba-handle">
             <MoveHorizontal className="h-6 w-6" strokeWidth={2.2} />
           </span>
@@ -102,9 +110,16 @@ export function BeforeAfter() {
         <label htmlFor={id} className="sr-only">
           Sposta per confrontare il referto originale e quello spiegato
         </label>
-        <input id={id} type="range" min={0} max={100} value={pos} onChange={(e) => setPos(Number(e.target.value))} className="before-after-range absolute inset-0 z-20 h-full w-full cursor-ew-resize opacity-0" />
+        <input id={id} type="range" min={0} max={100} value={pos} onChange={(e) => {
+            setPos(Number(e.target.value));
+            setTouched(true);
+          }} className="before-after-range absolute inset-0 z-20 h-full w-full cursor-ew-resize opacity-0" />
       </div>
-      <figcaption className="mt-4 text-center text-[1rem] text-muted">Referto di esempio, con dati inventati.</figcaption>
+      <p aria-hidden className="wow-ba-legend">
+        <span>← il referto com’è</span>
+        <span>spiegato →</span>
+      </p>
+      <figcaption className="mt-3 text-center text-[1rem] text-muted">Referto di esempio, con dati inventati.</figcaption>
     </figure>
   );
 }

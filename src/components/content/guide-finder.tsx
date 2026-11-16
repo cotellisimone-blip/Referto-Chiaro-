@@ -2,26 +2,8 @@
 
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Bean,
-  BookOpenText,
-  Camera,
-  Candy,
-  Droplet,
-  Droplets,
-  Flame,
-  FlaskConical,
-  Gauge,
-  HeartPulse,
-  Pill,
-  Plus,
-  ScanLine,
-  Search,
-  TestTubes,
-  type LucideIcon,
-} from "lucide-react";
+import { CategoryBadge } from "@/components/wow/category-art";
+import { ArrowLeft, ArrowRight, Plus, Search } from "lucide-react";
 import { SearchField } from "@/components/ui/search-field";
 import { normalizeQuery } from "@/lib/search-core";
 
@@ -33,22 +15,6 @@ export interface GuideCard {
   category: string;
 }
 
-/** Un'icona per argomento: aiuta a ritrovare la categoria a colpo d'occhio. Solo decorazione. */
-const CATEGORY_ICON: Record<string, LucideIcon> = {
-  "come-leggere": BookOpenText,
-  emocromo: Droplets,
-  metabolismo: Candy,
-  lipidi: Droplet,
-  fegato: FlaskConical,
-  reni: Bean,
-  tiroide: Gauge,
-  ferro: Pill,
-  infiammazione: Flame,
-  ormoni: TestTubes,
-  immagini: ScanLine,
-  "cuore-e-funzionali": HeartPulse,
-  endoscopie: Camera,
-};
 
 /**
  * Hub delle guide, grafica «Luce»: un campo di ricerca grande, le più consultate, gli argomenti con la loro icona.
@@ -159,13 +125,10 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
                 {categories.map((c) => {
                   const n = guides.filter((g) => g.category === c.id).length;
                   if (!n) return null;
-                  const Icon = CATEGORY_ICON[c.id] ?? BookOpenText;
                   return (
                     <li key={c.id}>
                       <button type="button" onClick={() => pick(c.id)} className="row-card">
-                        <span aria-hidden className="tile-ico tile-ico-sm">
-                          <Icon />
-                        </span>
+                        <CategoryBadge id={c.id} size={52} />
                         <span className="min-w-0 flex-1">
                           <span className="row-card-title">{c.title}</span>
                           <span className="row-card-meta">{n} guide</span>

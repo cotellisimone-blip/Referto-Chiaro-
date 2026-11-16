@@ -342,7 +342,7 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
           ) : null}
 
           {step === 5 ? (
-            <div className="pdp-result">
+            <div className="pdp-result wow-lined rounded-[24px] p-5 sm:p-7">
               <div className="flex items-start gap-4 sm:gap-5">
                 <span className="hidden sm:block">
                   <span aria-hidden className="pdp-ico pdp-ico-lg">

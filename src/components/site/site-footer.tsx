@@ -30,6 +30,34 @@ export function SiteFooter() {
       {/* L'onda prende il colore della pagina: per questo sta fuori dallo «scope» scuro. */}
       <Wave position="top" className="text-canvas" />
       <div className="scope-strong container-rc relative pb-8 pt-[clamp(4rem,10vw,8.5rem)]">
+        <nav aria-label="Vai a una sezione">
+          <ul className="wow-fdoors">
+            <li>
+              <Link href="/prevenzione">
+                <b aria-hidden>1</b>
+                <span>
+                  Prevenzione<small>prima degli esami</small>
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/lettura-referti">
+                <b aria-hidden>2</b>
+                <span>
+                  Lettura referti<small>quando hai il referto</small>
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/medici">
+                <b aria-hidden>3</b>
+                <span>
+                  Medici<small>se serve una persona</small>
+                </span>
+              </Link>
+            </li>
+          </ul>
+        </nav>
         <div className="grid grid-cols-2 gap-x-6 gap-y-9 md:gap-y-11 md:grid-cols-3 lg:grid-cols-[1.4fr_1.2fr_1fr_1fr] lg:gap-x-10">
           <div className="col-span-2 max-w-md md:col-span-3 lg:col-span-1">
             {/* «.it» solo quando il sito gira davvero su un dominio .it (PUBLIC_BASE_URL). */}

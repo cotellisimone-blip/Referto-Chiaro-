@@ -48,6 +48,12 @@ export function TrendChart({
           aria-hidden
           focusable="false"
         >
+          {g.points.length > 1 ? (
+            <polygon
+              className="wow-trend-area"
+              points={`${g.points[0].x},100 ${g.points.map((p) => `${p.x},${p.y}`).join(" ")} ${g.points[g.points.length - 1].x},100`}
+            />
+          ) : null}
           <polyline
             className="trend-line"
             points={g.points.map((p) => `${p.x},${p.y}`).join(" ")}

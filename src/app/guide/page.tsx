@@ -16,7 +16,7 @@ export default function GuideHubPage() {
   const guides = GUIDES.map((g) => ({ slug: g.slug, examName: g.examName, metaDescription: g.metaDescription, aliases: g.aliases, category: g.category }));
   return (
     <>
-      <PageHeader
+      <PageHeader section={1}
         art="magnify"
         eyebrow="Guide"
         title="Gli esami, spiegati uno per uno."

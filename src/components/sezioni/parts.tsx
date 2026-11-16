@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CountUp } from "@/components/wow/count-up";
 import { ArrowRight, ArrowUp, Check, FileText, HeartPulse, Home, Stethoscope, Video } from "lucide-react";
 import { PRESTAZIONI, prestazionePrice, type PrestazioneKind } from "@/domain/prestazioni/listino";
 
@@ -125,7 +126,10 @@ export function MiniReferto() {
       <p className="ds-mini-r">
         <b>Colesterolo LDL</b>
         <span>
-          <b>134</b> mg/dL
+          <b>
+            <CountUp to={134} />
+          </b>{" "}
+          mg/dL
         </span>
       </p>
       <div className="tm-rb" style={{ "--b0": "0%", "--b1": "68%" } as React.CSSProperties}>

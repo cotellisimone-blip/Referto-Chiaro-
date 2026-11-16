@@ -40,7 +40,9 @@ export default function Page() {
         eyebrow="Chi siamo"
         title="Un referto non dovrebbe fare paura."
         lead={MEDICI ? "Spesso spaventa solo perché è scritto in un'altra lingua. Cura Privata nasce per tradurlo in parole semplici e, quando serve una persona, portarti da un medico." : "Spesso spaventa solo perché è scritto in un'altra lingua. Cura Privata nasce per tradurlo in parole semplici e prepararti a parlarne con il tuo medico."}
-      />
+      >
+        <p className="wow-quote mt-7">Un referto si capisce meglio quando qualcuno te lo spiega con calma.</p>
+      </PageHeader>
 
       <section aria-labelledby="storia-titolo" className="section">
         <div className="container-rc story">
