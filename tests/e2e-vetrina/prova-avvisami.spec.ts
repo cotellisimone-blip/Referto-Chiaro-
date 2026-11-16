@@ -59,7 +59,9 @@ test("account demo: «Avvisami» a fine prova, per l'unico servizio aperto, senz
 test("account demo: le pagine dei servizi con un medico portano a «Presto anche con un medico»", async ({ page }) => {
   await page.goto("/accedi?next=/area-personale");
   await page.getByRole("button", { name: "Entra con l'account demo" }).click();
-  await expect(page).toHaveURL(/\/area-personale$/, { timeout: 15_000 });
+  // 15/11/2026: «/area-personale$» combaciava già con «/accedi?next=/area-personale»: si aspetta il percorso vero,
+  // altrimenti la navigazione dell'accesso può interrompere il goto qui sotto.
+  await page.waitForURL((u) => u.pathname === "/area-personale", { timeout: 15_000 });
   for (const path of ["/area-personale/appuntamenti", "/area-personale/secondo-parere", "/richiedi/domicilio"]) {
     await page.goto(path);
     await expect(page, path).toHaveURL(/\/con-un-medico$/);
