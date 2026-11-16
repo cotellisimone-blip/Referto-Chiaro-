@@ -8,9 +8,9 @@ import { mediciEnabled } from "@/lib/medici";
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 /**
- * 19/11/2026: la home «chiara e scura» (Simone: «Sì a questa home»), al posto della home a tre sezioni (che resta in
- * src/components/home/home-due-sezioni.tsx, per tornare indietro). Il percorso in quattro passi, il medico, i mondi da
- * esplorare, vicino a casa e nel tempo.
+ * 19/11/2026: la home «chiara e scura» (Simone: «Sì a questa home»), al posto della home a tre sezioni (tolta il 27/11:
+ * resta nella storia di git). Dal 22/11 il percorso in cinque passi, il medico in video, «Prenditi cura di te».
+ * 27/11/2026: la descrizione dei dati strutturati è la stessa del sito (layout.tsx): niente più «a casa, a Brescia».
  */
 export default function Home() {
   return (
@@ -19,8 +19,8 @@ export default function Home() {
         path="/"
         meta={{
           description: mediciEnabled()
-            ? "Prevenzione e stato di salute: fai gli esami di base, carica il referto e ricevi la tua guida personale. Un medico in video o a casa, a Brescia. Non è una diagnosi."
-            : "Prevenzione e stato di salute: fai gli esami di base, carica il referto e ricevi la tua guida personale. Presto anche un medico, in video o a casa. Non è una diagnosi.",
+            ? "Cinque passi per la tua salute: poche domande su di te, gli esami da conoscere, il referto spiegato, un medico in video, e ogni giorno sonno e alimentazione."
+            : "Cinque passi per la tua salute: poche domande su di te, gli esami da conoscere, il referto spiegato in parole semplici, e ogni giorno sonno e alimentazione.",
         }}
       />
       <HomeB />

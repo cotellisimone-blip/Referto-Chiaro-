@@ -7,7 +7,7 @@ import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { MEDICI_HREF, PercorsoSezioni } from "@/components/sezioni/parts";
 import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS } from "@/content/integratori";
 import { SONNO_BASE } from "@/content/sonno";
-import "@/components/home/tre-momenti.css";
+import "@/components/sezioni/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
 import { ScaffaleStrip } from "@/components/scaffale/scaffale-strip";

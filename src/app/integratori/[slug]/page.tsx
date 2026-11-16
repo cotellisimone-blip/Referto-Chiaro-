@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { INTEGRATORI, INTEGRATORI_GROUPS, getIntegratore } from "@/content/integratori";
 import { IntegratoreArticle } from "@/components/sezioni/integratore-article";
 import { NOINDEX_DRAFT, absoluteUrl, breadcrumbLd, indexingEnabled, integratoreIndexable, jsonLd, metaDescription, pageTitle } from "@/lib/seo";
-import "@/components/home/tre-momenti.css";
+import "@/components/sezioni/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 
 export function generateStaticParams() {

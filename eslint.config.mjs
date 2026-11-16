@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
     ".next-vetrina/**",
     ".next-medici/**",
     ".next-vetrina-medici/**",
+    ".next-lancio/**",
     ".next-dev/**",
     "test-results/**",
     "playwright-report/**",

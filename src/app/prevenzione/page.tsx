@@ -9,7 +9,7 @@ import { MiniPrevenzione, REFERTI_HREF, PercorsoSezioni } from "@/components/sez
 import { EXAM_GUIDE_COUNT, GUIDE_CATEGORIES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
-import "@/components/home/tre-momenti.css";
+import "@/components/sezioni/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
 

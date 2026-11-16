@@ -50,7 +50,8 @@ export function domicilioEnabled(): boolean {
 export const DOMICILIO_PATHS = ["/servizi/visita-a-domicilio", "/richiedi/domicilio", "/prova/paziente/domicilio"] as const;
 
 /** Indirizzi del secondo parere che esistono solo con il suo interruttore acceso (spento portano alla sua pagina). */
-export const PARERE_PATHS = ["/richiedi/secondo-parere"] as const;
+// 27/11/2026 (fase 1): anche la richiesta dall'area personale, che prima si poteva pagare con il parere «In arrivo».
+export const PARERE_PATHS = ["/richiedi/secondo-parere", "/prova/paziente/secondo-parere", "/area-personale/secondo-parere"] as const;
 export const PARERE_HREF = "/servizi/secondo-parere";
 
 /** Indirizzi che esistono solo con i medici accesi: spenti, portano alla sezione Medici («In arrivo», lista d'attesa). */

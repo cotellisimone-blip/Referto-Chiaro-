@@ -20,7 +20,7 @@ import {
 import { LogoMark } from "@/components/brand/logo";
 import { api } from "./api";
 import { isFocusPath } from "./area-shell";
-import { isDoctorPath, mediciEnabled } from "@/lib/medici";
+import { isDoctorPath, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) spariscono «Visite e videoconsulti» e «I miei pareri». */
 const MEDICI = mediciEnabled();
@@ -102,7 +102,8 @@ const ITEMS_ALL = [
   },
 ];
 
-export const AREA_ITEMS = MEDICI ? ITEMS_ALL : ITEMS_ALL.filter((i) => !isDoctorPath(i.href));
+// 27/11/2026 (fase 1): con il secondo parere «In arrivo» la voce «I miei pareri» non c'è (prima portava a pagare).
+export const AREA_ITEMS = (MEDICI ? ITEMS_ALL : ITEMS_ALL.filter((i) => !isDoctorPath(i.href))).filter((i) => secondoParereEnabled() || i.href !== "/area-personale/secondo-parere");
 /** Quinta voce della barra in basso su telefono: le richieste al medico oppure, senza medici, i promemoria. */
 const byHref = (h: string) => ITEMS_ALL.find((i) => i.href === h)!;
 // 21/11/2026: le voci si cercano per indirizzo, non per posizione (i diari si sono aggiunti in mezzo).

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CountUp } from "@/components/wow/count-up";
-import { ArrowRight, ArrowUp, Check, FileText, HeartPulse, Home, Stethoscope, Video } from "lucide-react";
+import { ArrowUp, Check, Home, Stethoscope, Video } from "lucide-react";
 import { PRESTAZIONI, prestazionePrice, type PrestazioneKind } from "@/domain/prestazioni/listino";
 import { domicilioEnabled, secondoParereEnabled } from "@/lib/medici";
 
@@ -30,67 +30,6 @@ export function StatoDomicilio({ attivo, dark = false, medici = false }: { attiv
       <i aria-hidden />
       {medici ? "Medici in arrivo" : "In arrivo"}
     </span>
-  );
-}
-
-/** Le tre porte: la prima cosa che si vede. Ognuna dice che cosa c'è dietro, in una riga, e porta alla sua sezione. */
-export function Porte({ attivo, entry, prices }: { attivo: boolean; entry: string | null; prices: boolean }) {
-  return (
-    <ul className="ds-doors ds-doors-3" aria-label="Le tre sezioni di Cura Privata">
-      <li>
-        <Link href={PREVENZIONE_HREF} className="ds-door ds-door-1" data-track="porta-prevenzione">
-          <span className="ds-door-n" aria-hidden>
-            1
-          </span>
-          <span className="ds-door-ic" aria-hidden>
-            <HeartPulse className="tm-ic" />
-          </span>
-          <span className="ds-door-k">Prevenzione</span>
-          <span className="ds-door-t">Gli esami giusti, al momento giusto</span>
-          <span className="ds-door-d">Quali controlli conoscere, guide agli esami e agli integratori.</span>
-          <span className="ds-door-f">
-            <span>Gratis</span>
-            <ArrowRight aria-hidden className="tm-ic" />
-          </span>
-        </Link>
-      </li>
-      <li>
-        <Link href={REFERTI_HREF} className="ds-door ds-door-2" data-track="porta-referti">
-          <span className="ds-door-n" aria-hidden>
-            2
-          </span>
-          <span className="ds-door-ic" aria-hidden>
-            <FileText className="tm-ic" />
-          </span>
-          <span className="ds-door-k">Capisci il referto</span>
-          <span className="ds-door-t">Il tuo referto, in parole semplici</span>
-          <span className="ds-door-d">Carichi il referto, controlli i valori e lo leggi spiegato riga per riga.</span>
-          <span className="ds-door-f">
-            <span>{prices && entry ? `Da ${entry}` : "Senza abbonamento"}</span>
-            <ArrowRight aria-hidden className="tm-ic" />
-          </span>
-        </Link>
-      </li>
-      <li>
-        <Link href={MEDICI_HREF} className="ds-door ds-door-3" data-track="porta-medici">
-          <span className="ds-door-n" aria-hidden>
-            3
-          </span>
-          <span className="ds-door-ic" aria-hidden>
-            <Stethoscope className="tm-ic" />
-          </span>
-          <span className="ds-door-k">
-            Medici <StatoDomicilio attivo={attivo} dark />
-          </span>
-          <span className="ds-door-t">Un medico, quando serve</span>
-          <span className="ds-door-d">{domicilioEnabled() ? "In video, a casa tua o per un secondo parere di uno specialista." : "In video, o per un secondo parere di uno specialista."}</span>
-          <span className="ds-door-f">
-            <span>{attivo && prices ? (domicilioEnabled() ? `Video ${prestazionePrice("video")} · casa ${prestazionePrice("domicilio")}` : `Video ${prestazionePrice("video")} · parere ${prestazionePrice("parere")}`) : "Lista d’attesa aperta"}</span>
-            <ArrowRight aria-hidden className="tm-ic" />
-          </span>
-        </Link>
-      </li>
-    </ul>
   );
 }
 

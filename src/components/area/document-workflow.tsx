@@ -16,7 +16,7 @@ import { api, formatDate } from "./api";
 import { StatusChip } from "./status-chip";
 import { WORKFLOW_STEPS } from "./new-document";
 import { ConfirmButton } from "@/components/ui/confirm-button";
-import { mediciEnabled } from "@/lib/medici";
+import { PARERE_HREF, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) dopo il report non si propone un medico di Cura Privata. */
 const MEDICI = mediciEnabled();
@@ -75,9 +75,15 @@ function NextStep({ documentId, prices }: { documentId: string; prices: Quote | 
       </Link>
       <p className="mt-4 text-[1.0625rem] text-ink-soft">
         Hai già una diagnosi o una proposta di cura?{" "}
-        <Link href={`/area-personale/secondo-parere?documento=${documentId}`} className="link font-semibold">
-          Chiedi un secondo parere{prices?.parere ? ` (${prices.parere})` : ""}
-        </Link>
+        {secondoParereEnabled() ? (
+          <Link href={`/area-personale/secondo-parere?documento=${documentId}`} className="link font-semibold">
+            Chiedi un secondo parere{prices?.parere ? ` (${prices.parere})` : ""}
+          </Link>
+        ) : (
+          <Link href={PARERE_HREF} className="link font-semibold">
+            Il secondo parere è in arrivo: avvisami
+          </Link>
+        )}
       </p>
     </div>
   );

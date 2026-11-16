@@ -37,7 +37,7 @@ import {
   type PrestazioniState,
 } from "@/domain/prestazioni/engine";
 import { PRESTAZIONI, PRESTAZIONI_ORDER, type PrestazioneKind } from "@/domain/prestazioni/listino";
-import { domicilioEnabled } from "@/lib/medici";
+import { PARERE_HREF, domicilioEnabled, secondoParereEnabled } from "@/lib/medici";
 import { act, usePrestazioni } from "./store";
 import { usePatientPaths } from "./paths";
 import { formatEuro } from "@/domain/offerta";
@@ -53,7 +53,32 @@ export function PrestazioneCard({ s, kind, now, startHref }: { s: PrestazioniSta
   const info = PRESTAZIONI[kind];
   const av = availability(s, kind, now);
   const Icon = ICON[kind];
-  const open = av.state === "aperto";
+  // 27/11/2026 (fase 1): con il secondo parere «In arrivo» la scheda non si prenota: porta alla lista d'attesa.
+  const inArrivo = kind === "parere" && !secondoParereEnabled();
+  const open = av.state === "aperto" && !inArrivo;
+  if (inArrivo)
+    return (
+      <article className={clsx(TONE[kind], "card flex h-full flex-col p-6 sm:p-7")} data-prestazione={kind} data-disponibilita="in-arrivo">
+        <div className="flex items-start gap-4">
+          <span aria-hidden className="tile-ico tile-ico-tone">
+            <Icon />
+          </span>
+          <div className="min-w-0">
+            <h3 className="text-xl font-extrabold leading-snug tracking-tight text-ink">{info.title}</h3>
+            <p className="meta mt-1">{info.mode}</p>
+          </div>
+        </div>
+        <p className="mt-5">
+          <span className="chip bg-cream text-warn">In arrivo</span>
+        </p>
+        <p className="mt-3 text-base text-ink-soft">Serve uno specialista, e non c&apos;è ancora. Lascia l&apos;email: ti scriviamo quando si apre.</p>
+        <div className="mt-auto pt-6">
+          <Link href={PARERE_HREF} className="btn btn-secondary btn-wrap w-full max-sm:px-4">
+            Avvisami <ArrowRight aria-hidden className="btn-arrow h-5 w-5 shrink-0" />
+          </Link>
+        </div>
+      </article>
+    );
   return (
     <article className={clsx(TONE[kind], "card flex h-full flex-col p-6 sm:p-7")} data-prestazione={kind} data-disponibilita={av.state}>
       <div className="flex items-start gap-4">

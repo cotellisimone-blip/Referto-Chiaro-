@@ -17,8 +17,8 @@ permissions:
 jobs:
   controlli:
     runs-on: ubuntu-latest
-    # 14/11/2026: quattro giri nel browser (lancio, vetrina, e gli stessi due con i medici accesi), ognuno con la sua build.
-    timeout-minutes: 50
+    # 14/11/2026: quattro giri nel browser (senza medici, vetrina, e gli stessi due con i medici accesi); dal 27/11 un quinto, lo stato vero di lancio.
+    timeout-minutes: 65
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:

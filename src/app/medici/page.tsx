@@ -14,7 +14,7 @@ import { PRICE_NOTE, publicPricesEnabled } from "@/domain/offerta";
 import { domicilioEnabled, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
 import { readFlags } from "@/lib/feature-flags";
 import { nomiMedici } from "@/content/medici";
-import "@/components/home/tre-momenti.css";
+import "@/components/sezioni/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
 

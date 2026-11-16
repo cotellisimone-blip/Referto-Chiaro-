@@ -12,7 +12,7 @@ import { BackToTop } from "@/components/site/back-to-top";
 import { PREFS_INIT_SCRIPT, THEME_COLOR } from "@/lib/prefs-init";
 import { mediciEnabled } from "@/lib/medici";
 import "./globals.css";
-import "@/components/home/tre-momenti.css";
+import "@/components/sezioni/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 import "@/components/wow/wow.css";
 

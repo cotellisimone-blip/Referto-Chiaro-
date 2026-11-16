@@ -19,7 +19,8 @@
     "test:e2e:vetrina": "playwright test -c playwright.vetrina.config.ts --trace off",
     "test:e2e:medici": "playwright test -c playwright.medici.config.ts --trace off",
     "test:e2e:vetrina:medici": "playwright test -c playwright.vetrina-medici.config.ts --trace off",
-    "controlli": "node scripts/controlli.mjs"
+    "controlli": "node scripts/controlli.mjs",
+    "test:e2e:lancio": "playwright test -c playwright.lancio.config.ts --trace off"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.6.0",

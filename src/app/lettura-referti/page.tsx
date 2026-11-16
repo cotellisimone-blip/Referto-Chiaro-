@@ -15,7 +15,7 @@ import { WaitlistForm } from "@/components/site/waitlist-form";
 import { TrackView } from "@/components/site/track";
 import { readFlags } from "@/lib/feature-flags";
 import { mediciEnabled } from "@/lib/medici";
-import "@/components/home/tre-momenti.css";
+import "@/components/sezioni/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 import { PageLd, capisciServiceLd } from "@/components/site/page-ld";
 import { GuidaPersonaleView } from "@/components/report/guida-personale-view";

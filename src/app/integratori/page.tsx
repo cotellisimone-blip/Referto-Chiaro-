@@ -5,7 +5,7 @@ import { PercorsoSezioni } from "@/components/sezioni/parts";
 import { ArrowRight, ShieldAlert } from "lucide-react";
 import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS, INTEGRATORI_PRIMA_DI_TUTTO, type IntegratoreGroup } from "@/content/integratori";
 import { NOINDEX_DRAFT, indexingEnabled } from "@/lib/seo";
-import "@/components/home/tre-momenti.css";
+import "@/components/sezioni/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
 
