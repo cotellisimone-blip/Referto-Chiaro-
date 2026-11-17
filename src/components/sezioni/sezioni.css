@@ -659,3 +659,29 @@
 @media (max-width:820px){.tm .ds-path ol{grid-template-columns:minmax(0,1.32fr) minmax(0,1.04fr) minmax(0,.88fr)}.tm .ds-path a>span:last-child{min-width:0}.tm .ds-path b{overflow-wrap:anywhere}}
 .tm .ds-path{margin-bottom:26px}
 .tm .ds-trust .ds-todo{display:inline-block;margin-top:2px;padding:1px 7px;border:1.5px dashed #B7791F;border-radius:6px;background:#FFF4DC;color:#6B4400;font-weight:700}
+
+/* 17/11/2026 (20 interventi, punto 9): home più corta su telefono. «Apri» sale accanto all'etichetta della scheda,
+   la foto di apertura è più bassa, gli stacchi tra le sezioni un po' più stretti. */
+@media (max-width:600px){
+  .tm .ds-card-k{grid-column:1}
+  .tm .ds-card-go{grid-column:2;grid-row:1;margin:0;align-self:center}
+  .tm .ds-hero-art{height:276px}
+  .tm .ds-s1,.tm .ds-s2{padding-top:40px;padding-bottom:40px}
+  .tm .ds-s3{padding:40px 0 36px}
+  /* In home le tre prestazioni sono già dette nella frase sopra: restano i tre nomi, la descrizione sta nella sezione Medici. */
+  .tm .ds-s3 .ds-svc-d{display:none}
+  .tm .ds-s3 .ds-svc-a{padding:12px 16px}
+  .tm .ds-trust ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px}
+  .tm .ds-trust a{align-items:start}
+}
+/* Telefoni Android da 360 px (e fino a 320): «Medici» andava a capo dopo la «c». Barra più stretta, e sotto i 340 px senza numeri. */
+@media (max-width:400px){
+  .tm .ds-path ol{grid-template-columns:minmax(0,1.3fr) minmax(0,1.02fr) minmax(0,.92fr)}
+  .tm .ds-path a{padding:9px 5px;gap:5px}
+  .tm .ds-path b{font-size:0.7812rem;overflow-wrap:normal}
+  .tm .ds-path-n{width:22px;height:22px;font-size:0.8125rem}
+}
+@media (max-width:340px){
+  .tm .ds-path-n{display:none}
+  .tm .ds-path a{padding:9px 8px}
+}

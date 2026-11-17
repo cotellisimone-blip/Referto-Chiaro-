@@ -5,7 +5,7 @@ import { CalendarClock, Home, MapPin, Stethoscope, Video } from "lucide-react";
 import { doctorFreeSlots } from "@/domain/prestazioni/engine";
 import { MEDICI_PROVA, SERVIZIO_LABEL, type MedicoProva } from "@/content/medici-prova";
 import { usePrestazioni } from "@/components/prestazioni/store";
-import { formatSlot } from "@/components/prestazioni/ui";
+import { formatSlot } from "@/components/prestazioni/format";
 
 const ICON = { domicilio: Home, video: Video, parere: Stethoscope } as const;
 

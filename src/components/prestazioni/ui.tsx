@@ -30,16 +30,7 @@ export function StatusBadge({ status }: { status: RequestStatus }) {
   return <span className={clsx("chip", TONE[status])} data-stato={status}>{STATUS_LABEL[status]}</span>;
 }
 
-/** «oggi alle 15:00», «domani alle 9:00», «giovedì 14 novembre alle 16:00». */
-export function formatSlot(iso: string, now = new Date()): string {
-  const d = new Date(iso);
-  const time = new Intl.DateTimeFormat("it-IT", { hour: "2-digit", minute: "2-digit" }).format(d);
-  if (isSameDay(d, now)) return `oggi alle ${time}`;
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  if (isSameDay(d, tomorrow)) return `domani alle ${time}`;
-  return `${new Intl.DateTimeFormat("it-IT", { weekday: "long", day: "numeric", month: "long" }).format(d)} alle ${time}`;
-}
+export { formatSlot } from "./format";
 
 export function formatDay(iso: string, now = new Date()): string {
   const d = new Date(iso);
