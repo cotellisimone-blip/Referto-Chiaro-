@@ -1,4 +1,5 @@
 "use client";
+import "@/components/report/report.css";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";

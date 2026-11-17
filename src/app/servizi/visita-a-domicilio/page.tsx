@@ -1,3 +1,4 @@
+import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CalendarClock, Check, CircleDashed, ClipboardCheck, Clock3, FileText, Gift, Home, Pill, Signpost, UserRound, X } from "lucide-react";

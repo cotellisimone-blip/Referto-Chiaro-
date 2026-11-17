@@ -1,3 +1,4 @@
+import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BookOpenText, ClipboardList, Compass, ListChecks, Search, X } from "lucide-react";

@@ -1,4 +1,5 @@
 "use client";
+import "@/components/punto-di-partenza/pdp.css";
 
 import { useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";

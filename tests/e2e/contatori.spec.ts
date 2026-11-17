@@ -8,7 +8,7 @@ test("ricarica e ritorno sulla stessa pagina non contano una seconda visita", as
   page.on("request", (r) => {
     if (r.url().endsWith("/api/v1/public/evento")) beacons++;
   });
-  await page.goto("/referti");
+  await page.goto("/lettura-referti");
   await expect.poll(() => beacons).toBe(1);
   await page.reload();
   await page.waitForLoadState("networkidle");
@@ -17,7 +17,7 @@ test("ricarica e ritorno sulla stessa pagina non contano una seconda visita", as
   await expect(page).toHaveURL(/\/famiglia$/);
   await expect.poll(() => beacons).toBe(2);
   await page.goBack();
-  await expect(page).toHaveURL(/\/referti$/);
+  await expect(page).toHaveURL(/\/lettura-referti$/);
   await page.waitForLoadState("networkidle");
   expect(beacons).toBe(2);
 });

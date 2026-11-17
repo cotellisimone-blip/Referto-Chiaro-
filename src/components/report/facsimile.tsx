@@ -1,4 +1,5 @@
 "use client";
+import "@/components/report/report.css";
 
 import { useEffect, useRef } from "react";
 import { clsx } from "clsx";

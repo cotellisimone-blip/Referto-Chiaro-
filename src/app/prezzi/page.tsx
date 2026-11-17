@@ -1,3 +1,4 @@
+import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PercorsoSezioni } from "@/components/sezioni/parts";
@@ -35,7 +36,7 @@ import {
 export const metadata: Metadata = {
   title: "Prezzi",
   description: mediciEnabled()
-    ? "I servizi di Cura Privata a confronto: referto spiegato, visita a domicilio, videoconsulto e secondo parere. Che cosa includono, tempi e prezzo, prima di pagare."
+    ? "I servizi di Cura Privata a confronto: referto spiegato, visita a domicilio, videoconsulto e secondo parere. Che cosa includono, tempi e prezzo."
     : "Quanto costa Cura Privata: il primo referto spiegato, i successivi e che cosa è gratis. Che cosa include, tempi e prezzo, prima di pagare.",
   alternates: { canonical: "/prezzi" },
 };

@@ -19,7 +19,7 @@ export function PrestoMedico({ className = "", headingLevel = 2 }: { className?:
       <div className="min-w-0">
         <p className="presto-medico-kicker">
           <span aria-hidden className="presto-medico-dot" />
-          In preparazione
+          In arrivo
         </p>
         <H id="presto-medico-t" className="presto-medico-title">
           Presto anche con un medico.

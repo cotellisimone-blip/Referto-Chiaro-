@@ -1,4 +1,5 @@
 "use client";
+import "@/components/prestazioni/prestazioni.css";
 
 import Link from "next/link";
 import { clsx } from "clsx";

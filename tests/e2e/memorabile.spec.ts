@@ -23,14 +23,14 @@ async function verifiedDocument(request: APIRequestContext) {
 test.describe("il servizio e i percorsi pubblici", () => {
   test("la pagina del servizio: una frase, tempi, prezzo, un'azione principale; 0 violazioni axe", async ({ page }) => {
     for (const [path, name, cta] of [
-      ["/referti", "Il tuo referto, finalmente leggibile.", "Rendi chiaro il mio referto"],
+      ["/lettura-referti", "Il tuo referto, in parole semplici.", "Carica un referto"],
     ] as const) {
       await page.goto(path);
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(name);
-      await expect(page.getByText("Tempi", { exact: true })).toBeVisible();
+      await expect(page.getByText("Di norma in pochi minuti", { exact: false }).first()).toBeVisible();
       await expect(page.getByRole("note").filter({ hasText: "Versione dimostrativa" }).first()).toBeVisible();
       await expect(page.getByRole("link", { name: "Che cosa manca per il servizio reale" })).toHaveAttribute("href", "/stato-del-progetto");
-      await expect(page.getByRole("link", { name: cta })).toBeVisible();
+      await expect(page.locator("main").getByRole("link", { name: cta }).first()).toBeVisible();
       await expectAccessible(page);
     }
   });
@@ -41,7 +41,7 @@ test.describe("il servizio e i percorsi pubblici", () => {
     // Senza medici le risposte sono due: il referto da capire e la visita da preparare.
     await expect(page.getByRole("radio")).toHaveCount(2);
     await page.getByLabel("Ho un referto che non capisco").check();
-    await expect(page.getByRole("link", { name: "Scopri il servizio" })).toHaveAttribute("href", "/referti");
+    await expect(page.getByRole("link", { name: "Scopri il servizio" })).toHaveAttribute("href", "/lettura-referti");
     await page.getByLabel("Ho una visita e voglio arrivare preparato").check();
     await expect(page.getByRole("link", { name: /Inizia, è gratis/ })).toHaveAttribute("href", "/strumenti/preparati-alla-visita");
     await expect(page.locator("main textarea, main input[type=text]")).toHaveCount(0);
@@ -83,7 +83,7 @@ test.describe("il servizio e i percorsi pubblici", () => {
     test.skip(!isMobile, "solo mobile");
     for (const width of [320, 375, 390, 430]) {
       await page.setViewportSize({ width, height: 800 });
-      for (const path of ["/", "/prezzi", "/servizi", "/con-un-medico", "/inizia", "/strumenti/preparati-alla-visita"]) {
+      for (const path of ["/", "/prezzi", "/lettura-referti", "/medici", "/inizia", "/strumenti/preparati-alla-visita"]) {
         await page.goto(path);
         const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
         expect(overflow, `${path} @${width}`).toBeLessThanOrEqual(0);
@@ -146,9 +146,9 @@ test.describe("home a tre sezioni", () => {
     await page.goto("/");
     // 1. Quanto costa capire un referto? Visibile in home.
     await expect(page.locator("main")).toContainText("2,90 €");
-    // 2. Capire un referto: dalla sezione Lettura referti un clic porta al servizio
+    // 2. Capire un referto: «Carica un referto» porta al primo passo del caricamento; senza sessione, prima all'accesso (17/11/2026, punto 2)
     await page.locator("main #lettura-referti").getByRole("link", { name: /Carica un referto/ }).click();
-    await expect(page).toHaveURL(/\/referti$/);
+    await expect(page).toHaveURL(/\/accedi\?next=%2Farea-personale%2Fnuovo$/);
     // 3. Emergenza: il 112 è in home
     await page.goto("/");
     await expect(page.locator("main")).toContainText("112");
@@ -197,8 +197,8 @@ test.describe("percorsi A e D", () => {
     const ctx = await browser.newContext();
     const page = await ctx.newPage();
     await page.goto("/");
-    await page.getByRole("link", { name: "Capisci il tuo referto" }).first().click();
-    await expect(page).toHaveURL(/\/referti$/);
+    await page.locator('main a[href="/lettura-referti"]').first().click();
+    await expect(page).toHaveURL(/\/lettura-referti$/);
     await signup(ctx.request, `a-${Date.now()}@test.invalid`);
     const doc = await verifiedDocument(ctx.request);
     const o = await (await ctx.request.post("/api/v1/area/orders", { data: { service: "essenziale", documentId: doc } })).json();
@@ -223,10 +223,10 @@ test.describe("percorsi A e D", () => {
       await page.goto(path);
       await expect(page.getByRole("heading", { name: h, level: 1 })).toBeVisible({ timeout: 15_000 });
     }
-    // Le pagine dei servizi con un medico, anche dentro l'area, portano a «Presto anche con un medico».
+    // Le pagine dei servizi con un medico, anche dentro l'area, portano alla sezione Medici, «In arrivo».
     for (const path of ["/area-personale/secondo-parere", "/area-personale/appuntamenti"]) {
       await page.goto(path);
-      await expect(page).toHaveURL(/\/con-un-medico$/);
+      await expect(page).toHaveURL(/\/medici$/);
     }
     await ctx.close();
   });

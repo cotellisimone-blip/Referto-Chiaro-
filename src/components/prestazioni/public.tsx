@@ -1,4 +1,5 @@
 "use client";
+import "@/components/prestazioni/prestazioni.css";
 
 import { useState } from "react";
 import Link from "next/link";

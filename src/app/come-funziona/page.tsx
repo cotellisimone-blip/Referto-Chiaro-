@@ -1,3 +1,4 @@
+import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Ban, Check, ClipboardList, FlaskConical, LineChart, LockKeyhole, X, type LucideIcon } from "lucide-react";

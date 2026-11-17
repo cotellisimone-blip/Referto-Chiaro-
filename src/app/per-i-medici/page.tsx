@@ -7,7 +7,7 @@ import { DoctorCaseVisual } from "@/components/offerta/service-visuals";
 
 export const metadata: Metadata = {
   title: "Per i medici",
-  description: "Come lavora un medico con Cura Privata: casi assegnati solo dopo il pagamento, documenti scelti dal paziente, accesso con 2FA, pareri firmati e non modificabili.",
+  description: "Come lavora un medico con Cura Privata: casi assegnati solo dopo il pagamento, documenti scelti dal paziente, accesso con 2FA, pareri firmati non modificabili.",
   alternates: { canonical: "/per-i-medici" },
 };
 

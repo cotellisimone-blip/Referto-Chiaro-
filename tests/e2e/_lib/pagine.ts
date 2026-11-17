@@ -6,11 +6,11 @@ import { expectAccessible } from "./a11y";
  * Qui l'elenco delle pagine pubbliche di ognuno e i controlli che valgono per tutte: nessun errore, nessuno scorrimento
  * laterale, accessibilità, link interni, testi vietati.
  */
-const PAGINE_COMUNI = ["/", "/referti", "/famiglia", "/servizi/prevenzione", "/referti/esempio", "/prezzi", "/strumenti/preparati-alla-visita", "/come-funziona", "/servizi", "/domande-frequenti", "/per-le-strutture", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/inizia", "/chi-siamo", "/stato-del-progetto", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"] as const;
-/** Senza medici: in più c'è solo «Presto anche con un medico», dove portano tutte le loro pagine. */
-export const PAGINE_LANCIO: readonly string[] = [...PAGINE_COMUNI, "/con-un-medico"];
+const PAGINE_COMUNI = ["/", "/prevenzione", "/lettura-referti", "/medici", "/integratori", "/integratori/vitamina-d", "/strumenti", "/famiglia", "/referti/esempio", "/prezzi", "/strumenti/preparati-alla-visita", "/come-funziona", "/domande-frequenti", "/per-le-strutture", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/inizia", "/chi-siamo", "/stato-del-progetto", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/privacy-policy", "/termini", "/cookie-policy"] as const;
+/** Senza medici: le pagine comuni. La sezione Medici c'è, «In arrivo»; le pagine dei servizi rimandano lì. (17/11/2026: /referti, /servizi/prevenzione e /con-un-medico sono confluite nelle tre sezioni.) */
+export const PAGINE_LANCIO: readonly string[] = [...PAGINE_COMUNI];
 /** Con i medici accesi tornano le pagine dei tre servizi e quella per i medici. */
-export const PAGINE_DEI_MEDICI = ["/servizi/visita-a-domicilio", "/servizi/parla-con-un-medico", "/servizi/secondo-parere", "/per-i-medici"] as const;
+export const PAGINE_DEI_MEDICI = ["/servizi", "/servizi/visita-a-domicilio", "/servizi/parla-con-un-medico", "/servizi/secondo-parere", "/per-i-medici"] as const;
 export const PAGINE_CON_MEDICI: readonly string[] = [...PAGINE_COMUNI, ...PAGINE_DEI_MEDICI];
 
 /** Parole e promesse che il sito non usa mai. «in pochi minuti» è ammesso solo come «di norma in pochi minuti». */

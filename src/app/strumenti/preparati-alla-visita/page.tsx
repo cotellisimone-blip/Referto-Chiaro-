@@ -1,3 +1,4 @@
+import "@/components/punto-di-partenza/pdp.css";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Clock3, FileText, ListChecks, Lock, Printer, Video } from "lucide-react";
@@ -12,7 +13,7 @@ import { mediciEnabled } from "@/lib/medici";
 
 export const metadata: Metadata = {
   title: "Preparati alla visita in 2 minuti",
-  description: "Strumento gratuito: tre domande pratiche e ottieni la lista di cosa portare, cosa preparare e cosa chiedere al medico. Nessun dato personale, nessuna registrazione.",
+  description: "Strumento gratuito: tre domande pratiche e ottieni la lista di cosa portare, cosa preparare e cosa chiedere al medico. Senza registrazione.",
   alternates: { canonical: absoluteUrl("/strumenti/preparati-alla-visita") },
 };
 

@@ -7,15 +7,15 @@ import { test } from "@playwright/test";
  */
 const SHOTS = [
   ["cp-01-home", "/"],
-  ["cp-02-referti", "/referti"],
-  ["cp-03-servizi", "/servizi"],
+  ["cp-02-referti", "/lettura-referti"],
+  ["cp-03-servizi", "/prezzi"],
   ["cp-04-secondo-parere", "/servizi/secondo-parere"],
   ["cp-05-famiglia", "/famiglia"],
   ["cp-06-parla-con-un-medico", "/servizi/parla-con-un-medico"],
   ["cp-18-prezzi", "/prezzi"],
   ["cp-19-preparati-alla-visita", "/strumenti/preparati-alla-visita?tipo=specialistica&ho=referti,farmaci&temi=capire,esami"],
   ["cp-20-scegli", "/inizia"],
-  ["cp-07-prevenzione", "/servizi/prevenzione"],
+  ["cp-07-prevenzione", "/prevenzione"],
   ["cp-08-come-funziona", "/come-funziona"],
   ["cp-09-sicurezza", "/sicurezza-e-privacy"],
   ["cp-10-faq", "/domande-frequenti"],

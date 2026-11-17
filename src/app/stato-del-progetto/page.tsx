@@ -1,3 +1,4 @@
+import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CircleDashed, FolderHeart, Sprout } from "lucide-react";
@@ -77,7 +78,7 @@ export default function StatoDelProgettoPage() {
                             {s.name}
                           </Link>
                         </h3>
-                        <p className="tone-text mt-0.5 text-[1.0625rem] font-bold">{s.kind && !medici ? "In preparazione" : "Versione dimostrativa"}</p>
+                        <p className="tone-text mt-0.5 text-[1.0625rem] font-bold">{s.kind && !medici ? "In arrivo" : "Versione dimostrativa"}</p>
                       </div>
                     </div>
                     <ul className="status-list">

@@ -1,3 +1,4 @@
+import "@/components/prestazioni/prestazioni.css";
 import { Check, Clock3, FileCheck2, FileText, Home, ListChecks, PenLine, Printer, Receipt, Stethoscope, UserRound, Video } from "lucide-react";
 
 /*

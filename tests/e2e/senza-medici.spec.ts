@@ -29,36 +29,43 @@ test("nessuna pagina pubblica porta ai servizi con un medico, ne mostra i prezzi
   }
 });
 
-test("gli indirizzi dei servizi con un medico portano a «Presto anche con un medico»: niente prezzi, solo la lista d'attesa", async ({ request, page }) => {
+test("gli indirizzi dei servizi con un medico portano alla sezione Medici, «In arrivo»: niente prezzi, solo la lista d'attesa", async ({ request, page }) => {
   for (const p of [...DOCTOR_PATHS, "/richiedi/domicilio", "/medico/casi", "/prova/paziente"]) {
     const res = await request.get(p, { maxRedirects: 0 });
     expect(res.status(), p).toBe(307);
-    expect(res.headers()["location"], p).toBe("/con-un-medico");
+    expect(res.headers()["location"], p).toBe("/medici");
   }
   await page.goto("/servizi/secondo-parere");
-  await expect(page).toHaveURL(/\/con-un-medico$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Presto anche con un medico.");
+  // 17/11/2026 (punto 1): la vecchia pagina «Presto anche con un medico» è confluita nella sezione Medici.
+  await expect(page).toHaveURL(/\/medici$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Un medico,\s*quando serve\./);
   const main = page.locator("main");
-  for (const name of ["Visita a domicilio", "Videoconsulto", "Secondo parere"]) await expect(main).toContainText(name);
+  for (const name of ["Visita a casa", "Videoconsulto", "Secondo parere", "Non è ancora attivo"]) await expect(main).toContainText(name);
   await expect(main).not.toContainText("€");
   await expect(main.getByLabel("Indirizzo email")).toBeVisible();
-  // Senza consenso non si iscrive; con il consenso l'interesse è registrato e non parte nessuna email.
+  // Senza consenso non si iscrive; con il consenso l'interesse è registrato, la conferma è in vista e riceve il focus (punto 17).
   await main.getByLabel("Indirizzo email").fill(`medico-${Date.now()}@esempio.test`);
-  await main.getByRole("button", { name: /Iscrivimi/ }).click();
+  await main.getByRole("button", { name: /Avvisami per la mia zona/ }).click();
   await expect(main.getByRole("alert").filter({ hasText: "informativa privacy" })).toBeVisible();
+  await main.getByLabel(/CAP/).fill("25122");
   await main.getByRole("checkbox").check();
-  await main.getByRole("button", { name: /Iscrivimi/ }).click();
-  await expect(main.getByRole("status").filter({ hasText: "Interesse registrato" })).toBeVisible();
+  await main.getByRole("button", { name: /Avvisami per la mia zona/ }).click();
+  const fatto = main.getByTestId("waitlist-done");
+  await expect(fatto).toBeVisible();
+  await expect(fatto).toBeInViewport();
+  await expect(fatto).toBeFocused();
 });
 
-test("un'offerta sola: in Servizi e in Prezzi c'è «Capisci il tuo referto», i servizi con un medico solo come «presto»", async ({ page }) => {
-  for (const path of ["/servizi", "/prezzi"]) {
-    await page.goto(path);
-    const keys = await page.locator("main [data-servizio]").evaluateAll((els) => els.map((e) => e.getAttribute("data-servizio")));
-    expect(keys, path).toEqual(["capisci"]);
-  }
-  await page.goto("/servizi");
-  await expect(page.locator("main").getByRole("link", { name: /Avvisami quando parte/ })).toHaveAttribute("href", "/con-un-medico");
+test("un'offerta sola: in Prezzi c'è «Capisci il tuo referto», i servizi con un medico solo come «presto»", async ({ page }) => {
+  // 17/11/2026 (punto 1): senza medici «Servizi» non è una pagina a sé, porta alla home con le tre sezioni.
+  const res = await page.request.get("/servizi", { maxRedirects: 0 });
+  expect(res.status()).toBe(307);
+  expect(res.headers()["location"]).toBe("/");
+  await page.goto("/prezzi");
+  const keys = await page.locator("main [data-servizio]").evaluateAll((els) => els.map((e) => e.getAttribute("data-servizio")));
+  expect(keys).toEqual(["capisci"]);
+  await expect(page.locator("main").getByRole("link", { name: /Avvisami quando parte/ })).toHaveAttribute("href", "/medici");
+  await expect(page.locator("main .presto-medico")).toContainText("In arrivo");
 });
 
 test("le API dei servizi con un medico rispondono 404, anche a chi ha fatto l'accesso", async ({ browser, request }) => {

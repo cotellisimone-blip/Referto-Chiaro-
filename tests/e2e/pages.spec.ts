@@ -15,7 +15,7 @@ test("pagina inesistente mostra un 404 curato", async ({ page }) => {
 
 test.describe("tema scuro", () => {
   test.use({ colorScheme: "dark" });
-  for (const path of ["/", "/servizi", "/referti/esempio"]) {
+  for (const path of ["/", "/lettura-referti", "/prezzi", "/referti/esempio"]) {
     test(`pagina ${path} in tema scuro: accessibilità`, async ({ page }) => {
       await page.goto(path);
       const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
@@ -60,7 +60,7 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
 
   test("listino di riferimento: gli stessi prezzi ovunque, con la nota, da un'unica fonte", async ({ page }) => {
     // Senza medici il listino è uno solo: primo referto 2,90 €, poi 7,90 € per referto. Nessun prezzo dei servizi con un medico.
-    for (const path of ["/", "/prezzi", "/referti", "/servizi"]) {
+    for (const path of ["/", "/prezzi", "/lettura-referti"]) {
       await page.goto(path);
       const txt = (await page.locator("main").innerText()).replace(/\s/g, " ");
       for (const n of ["2,90", "7,90"]) expect(txt, path).toContain(`${n} €`);
@@ -69,10 +69,10 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     }
   });
 
-  test("i servizi in preparazione lo dicono e non offrono caricamenti, prenotazioni o pagamenti", async ({ page }) => {
-    for (const path of ["/servizi/prevenzione"]) {
+  test("la sezione in arrivo lo dice e non offre caricamenti, prenotazioni o pagamenti", async ({ page }) => {
+    for (const path of ["/medici"]) {
       await page.goto(path);
-      await expect(page.getByText("Servizio in preparazione", { exact: false }).first()).toBeVisible();
+      await expect(page.getByText("Non è ancora attivo", { exact: false }).first()).toBeVisible();
       await expect(page.locator("main input[type=file]")).toHaveCount(0);
       const actions = (await page.locator("main a, main button").allInnerTexts()).join(" ").toLowerCase();
       for (const word of ["prenota", "carica", "paga", "acquista"]) expect(actions, `${path}: ${word}`).not.toContain(word);
@@ -85,7 +85,7 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     // 13/11/2026: la promessa «famiglia e nel tempo» è il titolo. Senza medici il payoff dice quello che c'è davvero.
     // 15/11/2026, home a due sezioni: il titolo dice le due cose che fa Cura Privata.
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Previeni\. Capisci\.\s*Un medico, se serve\./);
-    await expect(page.locator("footer").getByText("Capisci. Segui nel tempo. Arriva preparato dal medico.")).toBeVisible();
+    await expect(page.locator("footer").getByText("Previeni. Capisci. Un medico, se serve.")).toBeVisible();
     // Nessun «.it» accanto al logo finché il sito non gira su un dominio vero (PUBLIC_BASE_URL).
     await expect(page.locator("footer").getByText(".it", { exact: true })).toHaveCount(0);
     const menu = (await page.locator("header").getByRole("link").allInnerTexts()).map((t) => t.trim());
@@ -94,7 +94,7 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
       for (const n of ["Prevenzione", "Lettura referti", "Medici", "Guide", "Integratori", "Prezzi", "Carica un referto"]) expect(menu, n).toContain(n);
       for (const n of ["Videoconsulto", "Secondo parere"]) expect(menu, n).not.toContain(n);
     }
-    await expect(page.getByRole("link", { name: "Capisci il tuo referto" }).first()).toBeAttached();
+    await expect(page.locator('main a[href="/lettura-referti"]').first()).toBeAttached();
     // Above the fold: la porta d'ingresso al servizio è visibile senza scorrere.
     const first = page.locator("main .ds-hero").getByRole("link", { name: /Il tuo referto, in parole semplici/ });
     const box = await first.boundingBox();
@@ -103,7 +103,7 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
   });
 
   test("nessun medico, recensione o metrica inventata nelle pagine dei servizi", async ({ page }) => {
-    for (const path of ["/", "/prezzi", "/servizi", "/con-un-medico", "/referti"]) {
+    for (const path of ["/", "/prezzi", "/medici", "/lettura-referti"]) {
       await page.goto(path);
       const txt = (await page.locator("main").innerText()).toLowerCase();
       for (const bad of ["dott. ", "dr. ", "iscrizione albo: ", "recensioni", "stelle", "pazienti soddisfatti", "professionisti qualificati", "medici qualificati"]) expect(txt, `${path}: ${bad}`).not.toContain(bad);

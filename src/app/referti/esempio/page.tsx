@@ -5,6 +5,7 @@ import { isVetrina, serviceStart } from "@/domain/offerta";
 
 export const metadata: Metadata = {
   title: "Referto di esempio",
+  alternates: { canonical: "/referti/esempio" },
   description: "Prova il percorso completo su un referto di laboratorio inventato: controllo dei valori, spiegazione e PDF.",
 };
 

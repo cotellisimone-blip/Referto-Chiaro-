@@ -64,7 +64,7 @@ test("account demo: le pagine dei servizi con un medico portano a «Presto anche
   await page.waitForURL((u) => u.pathname === "/area-personale", { timeout: 15_000 });
   for (const path of ["/area-personale/appuntamenti", "/area-personale/secondo-parere", "/richiedi/domicilio"]) {
     await page.goto(path);
-    await expect(page, path).toHaveURL(/\/con-un-medico$/);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Presto anche con un medico.");
+    await expect(page, path).toHaveURL(/\/medici$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Un medico,\s*quando serve\./);
   }
 });

@@ -5,22 +5,23 @@ import { test, expect } from "@playwright/test";
  * Stato di lancio, senza medici: le pagine dei servizi con un medico sono provate in tests/e2e-medici.
  */
 
-for (const path of ["/referti"]) {
-  test(`${path}: al massimo 7,3 schermate su telefono e azione principale nella prima`, async ({ page }, info) => {
+for (const path of ["/lettura-referti"]) {
+  test(`${path}: al massimo 9,5 schermate su telefono e azione principale nella prima`, async ({ page }, info) => {
     test.skip(info.project.name !== "mobile", "misura su telefono");
     await page.goto(path);
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    // Erano 9,9 schermate da 844 px.
-    expect(h, "schermate").toBeLessThan(7.3);
-    const cta = page.locator("#servizio-titolo").locator("xpath=ancestor::section[1]").locator("a.btn").first();
+    // 17/11/2026: la pagina unica della sezione riunisce la vecchia /referti (7,3 schermate) e /lettura-referti: prova, che cosa ricevi,
+    // che cosa include, limiti e domande. Insieme erano oltre 14 schermate da 844 px.
+    expect(h, "schermate").toBeLessThan(9.5);
+    const cta = page.locator("#lr-titolo").locator("xpath=ancestor::section[1]").locator("a.tm-btn").first();
     const box = (await cta.boundingBox())!;
     expect(box.y + box.height).toBeLessThan(844);
   });
 }
 
 test("la scheda in home, il «prima e dopo» e l'esempio usano gli stessi valori", async ({ page }) => {
-  await page.goto("/referti");
-  const slider = page.locator("#differenza-titolo").locator("xpath=ancestor::section[1]");
+  await page.goto("/lettura-referti");
+  const slider = page.locator("#lr-prova").locator("xpath=ancestor::section[1]");
   await expect(slider.getByText("Colesterolo LDL").first()).toBeAttached();
   await expect(slider.getByText("134").first()).toBeAttached();
   await page.goto("/");
@@ -30,7 +31,7 @@ test("la scheda in home, il «prima e dopo» e l'esempio usano gli stessi valori
   await expect(page.getByText("134").first()).toBeAttached();
 });
 
-for (const path of ["/referti", "/referti/esempio", "/punto-di-partenza"]) {
+for (const path of ["/lettura-referti", "/prevenzione", "/medici", "/referti/esempio", "/punto-di-partenza"]) {
   test(`${path}: immagine di condivisione propria`, async ({ page, request }, info) => {
     test.skip(info.project.name !== "desktop", "una sola esecuzione");
     await page.goto(path);

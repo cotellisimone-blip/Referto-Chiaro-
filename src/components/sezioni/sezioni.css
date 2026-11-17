@@ -83,7 +83,6 @@
 .tm .ds-av-on{position:absolute;right:-1px;bottom:1px;width:13px;height:13px;border-radius:50%;background:#2DB37A;border:2.5px solid #fff}
 
 /* ---------- STRISCIA ---------- */
-.tm .ds-strip li{flex:1 1 0}
 
 /* ---------- TAG DELLE SEZIONI ---------- */
 .tm .ds-sec-tag{display:inline-flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:0.8438rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
@@ -143,13 +142,6 @@
 .tm .ds-s3 h2{color:#fff}
 .tm .ds-s3 h2 em{color:var(--ds-peach)}
 .tm .ds-s3-h>p{font-size:1.1875rem;line-height:1.5;color:rgba(244,239,230,.8);max-width:31rem;justify-self:end;padding-bottom:6px}
-.tm .ds-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;counter-reset:s}
-.tm .ds-steps li{position:relative;display:flex;flex-direction:column;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:20px 20px 22px}
-.tm .ds-steps li+li::before{content:"";position:absolute;left:-15px;top:44px;width:16px;height:2px;background:var(--ds-peach);opacity:.6}
-.tm .ds-step-n{position:absolute;top:10px;right:18px;font-family:var(--font-fraunces),Georgia,serif;font-style:italic;font-size:2.75rem;line-height:1;color:var(--ds-peach);opacity:.9}
-.tm .ds-steps .tm-ic{font-size:1.75rem;color:#7BE0D2;stroke-width:1.6}
-.tm .ds-steps b{font-size:1.1875rem;font-weight:800;color:#fff;margin-top:16px}
-.tm .ds-steps li>span:last-child{font-size:0.9688rem;line-height:1.45;color:rgba(244,239,230,.76);margin-top:4px}
 .tm .ds-s3-sub{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px 24px;margin:56px 0 18px}
 .tm .ds-s3-sub h3{font-family:var(--font-fraunces),Georgia,serif;font-weight:400;font-size:2rem;letter-spacing:-.015em;color:#fff}
 .tm .ds-s3-sub p{font-size:0.9688rem;color:rgba(244,239,230,.72);max-width:40rem}
@@ -224,7 +216,7 @@
 .tm .ds-ph-photo{position:relative;margin:0;height:520px;border-radius:30px;overflow:hidden;box-shadow:0 40px 70px -40px rgba(0,0,0,.7)}
 .tm .ds-ph-photo img{width:100%;height:100%;object-fit:cover;object-position:30% 30%}
 /* 17/11/2026 (punto 6): una fotografia diversa per sezione, ognuna con il suo taglio */
-.tm .ds-ph-photo-mani img{object-position:50% 50%}
+.tm .ds-ph-photo-mani img{object-position:88% 50%}
 .tm .ds-ph-photo-scrivania img{object-position:50% 64%}
 .tm .ds-ph-art{position:relative}
 .tm .ds-ph-art .ds-mini-3{bottom:-26px;left:-30px;right:auto}
@@ -269,7 +261,6 @@
 .tm .ds-ints{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .tm .ds-int{display:flex;flex-direction:column;height:100%;background:var(--t-card);border:1px solid var(--t-line);border-radius:20px;padding:20px;transition:transform .2s ease,box-shadow .2s ease}
 .tm .ds-int:hover{transform:translateY(-3px);box-shadow:var(--ds-shadow)}
-.tm .ds-int-cap{width:46px;height:22px;border-radius:99px;background:linear-gradient(90deg,var(--c,#F6B98E) 50%,#FFFCF6 50%);box-shadow:inset 0 0 0 2px var(--d,#A4471F)}
 .tm .ds-int-g{font-size:0.75rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--t-muted);margin-top:16px}
 .tm .ds-int-t{font-family:var(--font-fraunces),Georgia,serif;font-size:1.625rem;line-height:1.1;margin-top:4px}
 .tm .ds-int-d{font-size:0.9688rem;line-height:1.45;color:var(--t-soft);margin-top:6px}
@@ -328,10 +319,6 @@
 .tm .ds-bridge-a .ds-door-ic{background:rgba(246,185,142,.16);color:var(--ds-peach)}
 .tm .ds-bridge-t{display:block;font-family:var(--font-fraunces),Georgia,serif;font-size:2rem;line-height:1.12;margin-top:8px;color:#fff}
 .tm .ds-bridge-go{font-size:2rem;color:var(--ds-peach)}
-.tm .ds-bridge-1{background:var(--t-card);color:var(--t-ink);border:1.5px solid var(--t-ink)}
-.tm .ds-bridge-1 .ds-door-ic{background:var(--ds-mint-tint);color:#0B5A55}
-.tm .ds-bridge-1 .ds-bridge-t{color:var(--t-ink)}
-.tm .ds-bridge-1 .ds-bridge-go{color:var(--t-teal)}
 
 .tm .ds-provabar{background:var(--ds-prova-bg);color:var(--ds-prova-ink);border-bottom:1px solid #EBCB8B}
 .tm .ds-provabar .tm-wrap{display:flex;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px}
@@ -370,8 +357,6 @@
   .tm .ds-mini-1{left:-24px;width:240px}
   .tm .ds-mini-3{right:-12px;width:262px}
   .tm .ds-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .tm .ds-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .tm .ds-steps li+li::before{display:none}
   .tm .ds-docs{grid-template-columns:repeat(2,minmax(0,1fr))}
   .tm .ds-svcs{grid-template-columns:minmax(0,1fr)}
   .tm .ds-ph h1{font-size:clamp(3rem,5vw,4.25rem)}
@@ -413,7 +398,6 @@
   .tm .ds-mini{zoom:.86}
   .tm .ds-mini-1{top:auto;bottom:24px;left:-6px;width:248px}
   .tm .ds-mini-3{display:none}
-  .tm .ds-strip li:first-child{padding-left:0}
   .tm .ds-sec-tag{font-size:0.75rem;gap:8px}
   .tm .ds-sec-tag>span:first-child{width:26px;height:26px;font-size:1rem}
   .tm .ds-cards,.tm .ds-cards.ds-cards-3{grid-template-columns:minmax(0,1fr);gap:12px}
@@ -430,13 +414,6 @@
   .tm .ds-s3{padding:48px 0 44px}
   .tm .ds-s3-h{grid-template-columns:minmax(0,1fr);gap:12px;margin-bottom:24px}
   .tm .ds-s3-h>p{justify-self:start;font-size:1.0938rem;padding:0}
-  .tm .ds-steps{grid-template-columns:minmax(0,1fr);gap:8px}
-  .tm .ds-steps li{display:grid;grid-template-columns:34px minmax(0,1fr);column-gap:12px;padding:13px 14px 14px;border-radius:16px}
-  .tm .ds-steps li+li::before{display:none}
-  .tm .ds-steps .tm-ic{grid-row:1/3;font-size:1.5rem;margin-top:2px}
-  .tm .ds-steps b{margin-top:0;font-size:1.0625rem}
-  .tm .ds-steps li>span:last-child{grid-column:2;margin-top:2px;font-size:0.9062rem}
-  .tm .ds-step-n{font-size:1.75rem;top:8px;right:14px}
   .tm .ds-s3-sub{margin:36px 0 14px}
   .tm .ds-s3-sub h3{font-size:1.625rem}
   .tm .ds-docs{grid-template-columns:minmax(0,1fr);gap:12px}
@@ -489,7 +466,6 @@
   .tm .ds-mini-3{display:block;right:-6px;bottom:20px;left:auto}
   .tm .ds-mini-1{top:20px;bottom:auto}
   .tm .ds-cards,.tm .ds-cards.ds-cards-3,.tm .ds-docs{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .tm .ds-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
 /* ---------- TESTO GRANDE ---------- */
@@ -506,7 +482,7 @@
   :root:not([data-theme="light"]) .tm .ds-hero{background:radial-gradient(1200px 520px at 78% 30%,#12303A 0,rgba(18,48,58,0) 70%),var(--t-paper)}
   :root:not([data-theme="light"]) .tm .ds-door-1{border-color:#3A6370}
   :root:not([data-theme="light"]) .tm .ds-door-1 .ds-door-ic{color:#7BE0D2}
-  :root:not([data-theme="light"]) .tm .ds-svc-ic,:root:not([data-theme="light"]) .tm .ds-bridge-1 .ds-door-ic,:root:not([data-theme="light"]) .tm .ds-f-ok{color:#7BE0D2}
+  :root:not([data-theme="light"]) .tm .ds-svc-ic,:root:not([data-theme="light"]) .tm .ds-f-ok{color:#7BE0D2}
   :root:not([data-theme="light"]) .tm .ds-f-ok{background:#12383A}
   :root:not([data-theme="light"]) .tm .ds-door-1 .ds-door-f{background:#7BE0D2;color:#0B1E26}
   :root:not([data-theme="light"]) .tm .ds-door-3,:root:not([data-theme="light"]) .tm .ds-s3,:root:not([data-theme="light"]) .tm .ds-ph-3{box-shadow:inset 0 0 0 1px #21434F}
@@ -523,7 +499,7 @@
 :root[data-theme="dark"] .tm .ds-hero{background:radial-gradient(1200px 520px at 78% 30%,#12303A 0,rgba(18,48,58,0) 70%),var(--t-paper)}
 :root[data-theme="dark"] .tm .ds-door-1{border-color:#3A6370}
 :root[data-theme="dark"] .tm .ds-door-1 .ds-door-ic{color:#7BE0D2}
-:root[data-theme="dark"] .tm .ds-svc-ic,:root[data-theme="dark"] .tm .ds-bridge-1 .ds-door-ic,:root[data-theme="dark"] .tm .ds-f-ok{color:#7BE0D2}
+:root[data-theme="dark"] .tm .ds-svc-ic,:root[data-theme="dark"] .tm .ds-f-ok{color:#7BE0D2}
 :root[data-theme="dark"] .tm .ds-f-ok{background:#12383A}
 :root[data-theme="dark"] .tm .ds-door-1 .ds-door-f{background:#7BE0D2;color:#0B1E26}
 :root[data-theme="dark"] .tm .ds-door-3,:root[data-theme="dark"] .tm .ds-s3,:root[data-theme="dark"] .tm .ds-ph-3{box-shadow:inset 0 0 0 1px #21434F}
@@ -629,7 +605,7 @@
   .tm .ds-doors-3 .ds-door-ic{width:44px;height:44px}
   .tm .ds-doors-3 .ds-door-k{margin-top:12px}
   /* 17/11/2026 (20 interventi, punto 6): le due schede stanno in basso, ai lati: il volto resta libero */
-  .tm .ds-hero-art .ds-mini-1{top:auto;bottom:-18px;left:-30px}
+  .tm .ds-hero-art .ds-mini-1{top:auto;bottom:-18px;left:-72px;width:252px}
   .tm .ds-hero-art .ds-mini-3{bottom:-18px;right:-22px}
   .tm .ds-doors-3 .ds-door{min-height:0}
   .tm .ds-doors-3 .ds-door-n{font-size:4rem}

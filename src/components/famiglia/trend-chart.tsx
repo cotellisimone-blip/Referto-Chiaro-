@@ -1,3 +1,4 @@
+import "@/components/report/report.css";
 import { clsx } from "clsx";
 import {
   chartGeometry,

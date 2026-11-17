@@ -12,7 +12,7 @@ const ROWS = [
 ];
 
 /** Da dove parte il cursore su telefono: il referto spiegato è tutto leggibile, quello com'è spunta a sinistra. */
-const PHONE_START = 10;
+const PHONE_START = 5;
 
 /** Su telefono una riga in meno (la stessa nei due fogli): il confronto resta chiaro e la pagina più corta. */
 const ONLY_WIDE = "Emoglobina glicata";
@@ -108,17 +108,24 @@ export function BeforeAfter() {
         </div>
         {/* PRIMA (sopra, ritagliato dal cursore): il referto com'è. Resta carta chiara anche nel tema scuro. */}
         <div aria-hidden className="ba-before absolute inset-0 border-r-2 border-teal bg-[#FBFBF8] p-5 font-mono sm:p-8" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
-          <Before />
+          {/* Sotto un sesto di corsa del foglio si vedrebbero solo mozziconi di lettere: resta il bordo di carta, pulito. */}
+          <div style={pos < 16 ? { visibility: "hidden" } : undefined}>
+            <Before />
+          </div>
         </div>
         {/* Le due etichette restano agli angoli; ognuna sparisce quando il suo foglio è quasi coperto. */}
-        <span aria-hidden className="ba-tag left-5 bg-[#e9ecea] text-[#44545a] sm:left-8" data-off={pos < 16 ? "" : undefined}>
-          <span className="sm:hidden">Prima</span>
-          <span className="hidden sm:inline">Il referto com&apos;è</span>
-        </span>
-        <span aria-hidden className="ba-tag right-5 bg-marker-soft text-teal-deep sm:right-8" data-off={pos > 84 ? "" : undefined}>
-          <span className="sm:hidden">Dopo</span>
-          <span className="hidden sm:inline">Spiegato da Cura Privata</span>
-        </span>
+        {pos < 16 ? null : (
+          <span aria-hidden className="ba-tag left-5 bg-[#e9ecea] text-[#44545a] sm:left-8">
+            <span className="sm:hidden">Prima</span>
+            <span className="hidden sm:inline">Il referto com&apos;è</span>
+          </span>
+        )}
+        {pos > 84 ? null : (
+          <span aria-hidden className="ba-tag right-5 bg-marker-soft text-teal-deep sm:right-8">
+            <span className="sm:hidden">Dopo</span>
+            <span className="hidden sm:inline">Spiegato da Cura Privata</span>
+          </span>
+        )}
         {/* maniglia */}
         <span aria-hidden className="ba-grip pointer-events-none absolute inset-y-0 z-10 flex w-0 items-center justify-center" data-edge={pos < 20 ? "" : undefined} style={{ left: `${pos}%` }}>
           {touched ? null : (

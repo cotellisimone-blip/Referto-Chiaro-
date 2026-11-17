@@ -6,7 +6,7 @@ import { mediciEnabled } from "@/lib/medici";
 /** 14/11/2026: senza medici (src/lib/medici.ts) restano solo le condizioni di ciò che si offre davvero. */
 const MEDICI = mediciEnabled();
 
-export const metadata: Metadata = { title: "Termini del servizio", description: "Termini del servizio di Cura Privata: che cosa offre, che cosa non è, prezzi, pagamenti, rimborsi e limiti delle spiegazioni informative." };
+export const metadata: Metadata = { title: "Termini del servizio", alternates: { canonical: "/termini" }, description: "Termini del servizio di Cura Privata: che cosa offre, che cosa non è, prezzi, pagamenti, rimborsi e limiti delle spiegazioni informative." };
 
 export default function Page() {
   return (

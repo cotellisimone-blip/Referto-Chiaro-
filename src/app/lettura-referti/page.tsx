@@ -194,6 +194,12 @@ export default function LetturaRefertiPage() {
                 </li>
               ))}
             </ul>
+            <p role="note" className="tm-fine">
+              <strong>Versione dimostrativa:</strong> provi tutto su documenti inventati, senza addebiti.{" "}
+              <Link href="/stato-del-progetto" className="tm-tlink">
+                Che cosa manca per il servizio reale
+              </Link>
+            </p>
           </div>
           <div className="ds-rule">
             <ShieldCheck aria-hidden className="tm-ic" />

@@ -1,3 +1,4 @@
+import "@/components/offerta/offerta.css";
 import { clsx } from "clsx";
 import { priceDisplay, type CoreServiceId } from "@/domain/offerta";
 

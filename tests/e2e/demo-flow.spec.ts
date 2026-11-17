@@ -81,7 +81,7 @@ test("fase 3: su telefono il passo attuale è scritto per intero e il facsimile 
 });
 
 test("«prima e dopo» con il cursore, anche su telefono, da tastiera", async ({ page }) => {
-  await page.goto("/referti");
+  await page.goto("/lettura-referti");
   const slider = page.getByRole("slider", { name: /Sposta per confrontare/ });
   await expect(slider).toBeVisible();
   await expect(page.getByRole("radio", { name: /Prima/ })).toHaveCount(0);

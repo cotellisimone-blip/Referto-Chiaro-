@@ -1,3 +1,4 @@
+import "@/components/punto-di-partenza/pdp.css";
 import { clsx } from "clsx";
 import { Check } from "lucide-react";
 

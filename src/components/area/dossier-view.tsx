@@ -1,4 +1,5 @@
 "use client";
+import "@/components/report/report.css";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

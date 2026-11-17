@@ -33,10 +33,10 @@ test("l'account demo ha davvero un referto inventato già caricato", async ({ pa
   await expect(page.getByText(/Referto di laboratorio/).first()).toBeVisible({ timeout: 15_000 });
 });
 
-for (const s of [{ path: "/referti", interest: "Capisci", tryHref: "/referti/esempio" }]) {
+for (const s of [{ path: "/lettura-referti", interest: "Capisci", tryHref: "/referti/esempio" }]) {
   test(`${s.path}: l'azione principale porta alla lista d'attesa, non a una registrazione`, async ({ page }) => {
     await page.goto(s.path);
-    const hero = page.locator("#servizio-titolo").locator("xpath=ancestor::section[1]");
+    const hero = page.locator("#lr-titolo").locator("xpath=ancestor::section[1]");
     const cta = hero.getByRole("link", { name: /Avvisami quando parte/ });
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", `${s.path}#avvisami`);
@@ -60,7 +60,7 @@ test("prezzi e «Ti aiutiamo a scegliere» non portano all'area personale", asyn
 });
 
 test("senza medici: nessuna pagina li propone, i loro indirizzi portano alla lista d'attesa unica, senza prezzi", async ({ page, request }) => {
-  for (const path of ["/", "/referti", "/servizi", "/prezzi", "/inizia", "/accedi", "/famiglia", "/con-un-medico", "/guide/tsh", "/guide/risonanza-magnetica"]) {
+  for (const path of ["/", "/lettura-referti", "/prevenzione", "/prezzi", "/inizia", "/accedi", "/famiglia", "/medici", "/guide/tsh", "/guide/risonanza-magnetica"]) {
     await page.goto(path);
     const hrefs = await page.locator("a[href]").evaluateAll((as) => as.map((a) => a.getAttribute("href") ?? ""));
     expect(hrefs.filter((h) => h.startsWith("/") && isDoctorPath(h)), `${path}: link ai servizi con un medico`).toEqual([]);
@@ -70,16 +70,17 @@ test("senza medici: nessuna pagina li propone, i loro indirizzi portano alla lis
   for (const path of DOCTOR_PATHS) {
     const r = await request.get(path, { maxRedirects: 0 });
     expect(r.status(), path).toBe(307);
-    expect(r.headers().location, path).toBe("/con-un-medico");
+    expect(r.headers().location, path).toBe("/medici");
   }
   await page.goto("/servizi/visita-a-domicilio");
-  await expect(page).toHaveURL(/\/con-un-medico$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Presto anche con un medico.");
+  await expect(page).toHaveURL(/\/medici$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Un medico,\s*quando serve\./);
   await expect(page.locator("main")).not.toContainText("€");
-  const form = page.locator("#avvisami");
+  const form = page.locator("main");
   await form.getByLabel(/email/i).first().fill(`presto-${Date.now()}-${Math.random().toString(36).slice(2, 6)}@esempio.test`);
+  await form.getByLabel(/CAP/).fill("25122");
   await form.getByRole("checkbox").first().check();
-  await form.getByRole("button", { name: /Iscrivimi/ }).click();
+  await form.getByRole("button", { name: /Avvisami per la mia zona/ }).click();
   await expect(form.getByText("Interesse registrato.")).toBeVisible();
 });
 

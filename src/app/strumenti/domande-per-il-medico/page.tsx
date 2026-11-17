@@ -1,3 +1,4 @@
+import "@/components/punto-di-partenza/pdp.css";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";

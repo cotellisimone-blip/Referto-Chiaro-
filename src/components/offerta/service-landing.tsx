@@ -1,3 +1,4 @@
+import "@/components/offerta/offerta.css";
 import Link from "next/link";
 import { ArrowRight, Check, CircleDashed, Clock3, Gift, UserRound, X } from "lucide-react";
 import { clsx } from "clsx";

@@ -4,7 +4,7 @@ import { ServiceLanding } from "@/components/offerta/service-landing";
 
 export const metadata: Metadata = {
   title: "Videoconsulto con medico generalista",
-  description: "Parla con un medico di medicina generale in video, su appuntamento, dopo che ha letto i documenti che scegli. Prezzo fisso, fasce davvero libere, riepilogo scritto nella tua area personale.",
+  description: "Un medico di medicina generale in video, su appuntamento, dopo aver letto i documenti che scegli. Prezzo fisso, fasce davvero libere, riepilogo scritto.",
   alternates: { canonical: "/servizi/parla-con-un-medico" },
 };
 

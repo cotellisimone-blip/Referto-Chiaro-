@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { DraftNotice, Prose } from "@/components/ui/draft-notice";
 import { mediciEnabled } from "@/lib/medici";
 
-export const metadata: Metadata = { title: "Cookie", description: "Quali cookie usa Cura Privata: solo quelli tecnici necessari al funzionamento, nessun cookie di profilazione o pubblicità." };
+export const metadata: Metadata = { title: "Cookie", alternates: { canonical: "/cookie-policy" }, description: "Quali cookie usa Cura Privata: solo quelli tecnici necessari al funzionamento, nessun cookie di profilazione o pubblicità." };
 
 export default function Page() {
   return (
