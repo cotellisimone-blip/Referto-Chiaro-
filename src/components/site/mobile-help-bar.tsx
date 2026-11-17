@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, LifeBuoy } from "lucide-react";
+import { formNeedsRoom } from "@/lib/form-in-view";
 
 /**
  * Barra fissa in basso, solo su telefono: un'azione principale e l'aiuto a portata di pollice.
@@ -15,12 +16,17 @@ export function MobileHelpBar() {
     const update = () => {
       const y = window.scrollY;
       const nearEnd = y + window.innerHeight > document.documentElement.scrollHeight - 520;
-      setShown(y > window.innerHeight * 0.85 && !nearEnd);
+      setShown(y > window.innerHeight * 0.85 && !nearEnd && !formNeedsRoom());
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
+    // 17/11/2026 (punto 16): davanti a un modulo, o mentre si scrive in un campo, la barra si ritira.
+    document.addEventListener("focusin", update);
+    document.addEventListener("focusout", update);
     return () => {
+      document.removeEventListener("focusin", update);
+      document.removeEventListener("focusout", update);
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };

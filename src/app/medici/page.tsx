@@ -79,8 +79,8 @@ export default function MediciPage() {
           </div>
           <div className="ds-ph-art">
             {SHOW_ILLUSTRATIVE_PHOTOS ? (
-              <figure className="ds-ph-photo">
-                <Photo photo={ILLUSTRATIVE_PHOTOS.hero} sizes="(min-width: 821px) 44vw, 100vw" priority />
+              <figure className="ds-ph-photo ds-ph-photo-scrivania">
+                <Photo photo={ILLUSTRATIVE_PHOTOS.scrivania} sizes="(min-width: 821px) 44vw, 100vw" priority />
                 <figcaption className="tm-illus">Immagine illustrativa</figcaption>
               </figure>
             ) : null}

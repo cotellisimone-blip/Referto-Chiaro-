@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { MoveHorizontal } from "lucide-react";
 
 /** Righe del referto di esempio (sintetico, persona inesistente). Le spiegazioni descrivono, non valutano. */
@@ -10,6 +10,9 @@ const ROWS = [
   { name: "Colesterolo LDL", value: "134", unit: "mg/dL", range: "< 115", plain: "Il colesterolo che si deposita nelle arterie. Il laboratorio indica come riferimento un valore più basso: è una domanda da portare al medico.", flag: true },
   { name: "Creatinina", value: "0,89", unit: "mg/dL", range: "0,70 – 1,20", plain: "Una sostanza prodotta dai muscoli ed eliminata dai reni. Il tuo valore è dentro l'intervallo stampato." },
 ];
+
+/** Da dove parte il cursore su telefono: il referto spiegato è tutto leggibile, quello com'è spunta a sinistra. */
+const PHONE_START = 10;
 
 /** Su telefono una riga in meno (la stessa nei due fogli): il confronto resta chiaro e la pagina più corta. */
 const ONLY_WIDE = "Emoglobina glicata";
@@ -34,7 +37,11 @@ function After() {
   );
 }
 
-const COLS = "grid grid-cols-[1.3fr_0.6fr_0.7fr_1fr] gap-2 sm:grid-cols-[1.4fr_0.6fr_0.6fr_0.9fr]";
+/**
+ * 17/11/2026 (20 interventi, punto 5): su telefono quattro colonne in un foglio stretto andavano a capo e a metà corsa
+ * non si leggeva niente. Ora il nome dell'esame sta su una riga sua e sotto, in tre colonne, risultato, unità e intervallo.
+ */
+const COLS = "grid grid-cols-[0.8fr_0.8fr_1fr] gap-x-2 sm:grid-cols-[1.4fr_0.6fr_0.6fr_0.9fr] sm:gap-2";
 
 function Before() {
   return (
@@ -42,14 +49,14 @@ function Before() {
       <p className="mt-11 text-[0.8125rem] font-bold uppercase tracking-wider text-[#5b6b70] sm:text-sm sm:tracking-widest">Laboratorio Analisi · referto n. 000000</p>
       <div className="mt-3 border-y border-[#d9dfe0] py-2 text-[0.8125rem] text-[#3b4a4f] sm:text-[0.9375rem]">
         <p className={`${COLS} border-b border-dashed border-[#d9dfe0] pb-2 font-bold`}>
-          <span>ESAME</span>
+          <span className="max-sm:hidden">ESAME</span>
           <span>RIS.</span>
           <span>U.M.</span>
           <span>VAL. RIF.</span>
         </p>
         {ROWS.map((r) => (
           <p key={r.name} className={`${COLS} py-3 sm:py-5 ${r.name === ONLY_WIDE ? "max-sm:hidden" : ""}`}>
-            <span className="uppercase">{r.name}</span>
+            <span className="uppercase max-sm:col-span-3 max-sm:font-bold">{r.name}</span>
             <span className="font-bold">
               {r.value}
               {r.flag ? " *" : ""}
@@ -71,19 +78,36 @@ function Before() {
  */
 export function BeforeAfter() {
   const [pos, setPos] = useState(52);
+  // Lo spostamento fatto dai comandi (non dal dito) scorre, così si vede il foglio che si scopre.
+  const [gliding, setGliding] = useState(false);
+  /**
+   * Su telefono a metà corsa i due fogli sono tagliati a metà e non si legge né l'uno né l'altro: lì si parte dal
+   * referto spiegato, tutto leggibile, con il referto com'è che spunta a sinistra e il cursore da trascinare.
+   */
+  useEffect(() => {
+    if (!window.matchMedia("(max-width: 639px)").matches) return;
+    const t = window.setTimeout(() => setPos((p) => (p === 52 ? PHONE_START : p)), 0);
+    return () => window.clearTimeout(t);
+  }, []);
+  const glideTo = (value: number) => {
+    setGliding(true);
+    setPos(value);
+    setTouched(true);
+    window.setTimeout(() => setGliding(false), 450);
+  };
   // «Trascinami» resta finché la persona non sposta il cursore la prima volta (16/11/2026).
   const [touched, setTouched] = useState(false);
   const id = useId();
   return (
     <figure className="mx-auto max-w-5xl">
       {/* Il cursore, a ogni larghezza */}
-      <div className="ba-frame">
+      <div className="ba-frame" data-gliding={gliding ? "" : undefined}>
         {/* DOPO (sotto): spiegato */}
         <div className="p-5 sm:p-8" aria-hidden={pos > 95}>
           <After />
         </div>
         {/* PRIMA (sopra, ritagliato dal cursore): il referto com'è. Resta carta chiara anche nel tema scuro. */}
-        <div aria-hidden className="absolute inset-0 border-r-2 border-teal bg-[#FBFBF8] p-5 font-mono sm:p-8" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
+        <div aria-hidden className="ba-before absolute inset-0 border-r-2 border-teal bg-[#FBFBF8] p-5 font-mono sm:p-8" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
           <Before />
         </div>
         {/* Le due etichette restano agli angoli; ognuna sparisce quando il suo foglio è quasi coperto. */}
@@ -96,7 +120,7 @@ export function BeforeAfter() {
           <span className="hidden sm:inline">Spiegato da Cura Privata</span>
         </span>
         {/* maniglia */}
-        <span aria-hidden className="pointer-events-none absolute inset-y-0 z-10 flex w-0 items-center justify-center" style={{ left: `${pos}%` }}>
+        <span aria-hidden className="ba-grip pointer-events-none absolute inset-y-0 z-10 flex w-0 items-center justify-center" data-edge={pos < 20 ? "" : undefined} style={{ left: `${pos}%` }}>
           {touched ? null : (
             <>
               <span className="wow-pulse" />
@@ -115,9 +139,14 @@ export function BeforeAfter() {
             setTouched(true);
           }} className="before-after-range absolute inset-0 z-20 h-full w-full cursor-ew-resize opacity-0" />
       </div>
-      <p aria-hidden className="wow-ba-legend">
-        <span>← il referto com’è</span>
-        <span>spiegato →</span>
+      {/* Due comandi veri: chi non trascina (o non ci riesce) passa da un foglio all'altro con un tocco. */}
+      <p className="wow-ba-legend">
+        <button type="button" onClick={() => glideTo(100)} aria-pressed={pos >= 95}>
+          <span aria-hidden>← </span>il referto com’è
+        </button>
+        <button type="button" onClick={() => glideTo(PHONE_START)} aria-pressed={pos <= PHONE_START}>
+          spiegato<span aria-hidden> →</span>
+        </button>
       </p>
       <figcaption className="mt-3 text-center text-[1rem] text-muted">Referto di esempio, con dati inventati.</figcaption>
     </figure>

@@ -81,6 +81,10 @@ export default function PrezziPage() {
   const prices = publicPricesEnabled();
   const medici = mediciEnabled();
   const upgrade = upgradeEnabled() && medici;
+  const items = publicOfferItems();
+  // 17/11/2026 (20 interventi, punto 4): senza medici c'è un solo servizio a pagamento. Una scheda sola non sta in una
+  // griglia da quattro (restava una colonna stretta nel vuoto): diventa una scheda larga, con «Che cosa include» in vista.
+  const solo = items.length === 1;
   return (
     <>
       <section
@@ -110,8 +114,8 @@ export default function PrezziPage() {
 
       <section aria-label="Confronto dei servizi" className="price-section">
         <div className="container-rc">
-          <ul className="price-grid">
-            {publicOfferItems().map((s) => {
+          <ul className="price-grid" data-solo={solo ? "true" : undefined}>
+            {items.map((s) => {
               const Icon = OFFER_ICON[s.icon];
               const start = s.kind
                 ? {
@@ -142,24 +146,42 @@ export default function PrezziPage() {
                       <Clock3 aria-hidden />
                       {s.timing}
                     </p>
-                    <details className="price-details">
-                      <summary>
-                        Che cosa include{" "}
-                        <ChevronDown aria-hidden className="h-5 w-5" />
-                      </summary>
-                      <p className="svc-meta">
-                        <UserRound aria-hidden />
-                        {s.who}
-                      </p>
-                      <ul>
-                        {s.includes.map((x) => (
-                          <li key={x}>
-                            <Check aria-hidden />
-                            {x}
-                          </li>
-                        ))}
-                      </ul>
-                    </details>
+                    {solo ? (
+                      <div className="price-solo-incl">
+                        <h3>Che cosa include</h3>
+                        <p className="svc-meta">
+                          <UserRound aria-hidden />
+                          {s.who}
+                        </p>
+                        <ul>
+                          {s.includes.map((x) => (
+                            <li key={x}>
+                              <Check aria-hidden />
+                              {x}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : (
+                      <details className="price-details">
+                        <summary>
+                          Che cosa include{" "}
+                          <ChevronDown aria-hidden className="h-5 w-5" />
+                        </summary>
+                        <p className="svc-meta">
+                          <UserRound aria-hidden />
+                          {s.who}
+                        </p>
+                        <ul>
+                          {s.includes.map((x) => (
+                            <li key={x}>
+                              <Check aria-hidden />
+                              {x}
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
+                    )}
                     <div className="price-card-foot">
                       <Link
                         href={start.href}
@@ -196,7 +218,7 @@ export default function PrezziPage() {
       {prices ? (
         <section
           aria-labelledby="piano-famiglia-titolo"
-          className="section pb-0"
+          className="section pt-6 lg:pt-10"
         >
           <div className="container-rc">
             <div

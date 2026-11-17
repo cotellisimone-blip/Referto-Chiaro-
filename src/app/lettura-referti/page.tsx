@@ -81,8 +81,8 @@ export default function LetturaRefertiPage() {
           </div>
           <div className="ds-ph-art">
             {SHOW_ILLUSTRATIVE_PHOTOS ? (
-              <figure className="ds-ph-photo">
-                <Photo photo={ILLUSTRATIVE_PHOTOS.hero} sizes="(min-width: 821px) 44vw, 100vw" priority />
+              <figure className="ds-ph-photo ds-ph-photo-mani">
+                <Photo photo={ILLUSTRATIVE_PHOTOS.mani} sizes="(min-width: 821px) 44vw, 100vw" priority />
                 <figcaption className="tm-illus">Immagine illustrativa</figcaption>
               </figure>
             ) : null}

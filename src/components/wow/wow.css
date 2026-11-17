@@ -293,10 +293,43 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  margin: 12px 6px 0;
+  margin: 8px 0 0;
+}
+/* 17/11/2026: le due scritte sono comandi (un tocco porta a un foglio o all'altro) */
+.wow-ba-legend button {
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border-radius: 999px;
   font-weight: 800;
   font-size: 1rem;
   color: var(--color-ink-soft);
+  cursor: pointer;
+}
+.wow-ba-legend button:hover,
+.wow-ba-legend button[aria-pressed="true"] {
+  color: var(--color-teal-deep);
+  background: color-mix(in srgb, var(--color-marker) 28%, transparent);
+}
+/* Con il cursore vicino al bordo sinistro (partenza su telefono) il fumetto non esce dal foglio. */
+.ba-grip[data-edge] .wow-drag {
+  left: -30px;
+  transform: none;
+  animation: none;
+}
+.ba-grip[data-edge] .wow-drag::after {
+  left: 30px;
+}
+.ba-frame[data-gliding] .ba-before {
+  transition: clip-path 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ba-frame[data-gliding] .ba-grip {
+  transition: left 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ba-frame[data-gliding] .ba-before,
+  .ba-frame[data-gliding] .ba-grip {
+    transition: none;
+  }
 }
 
 /* 11 · I tre passi con una piccola scena. */

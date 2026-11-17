@@ -33,12 +33,12 @@ describe("rebrand Cura Privata", () => {
     expect(publicPricesEnabled({ ENABLE_PUBLIC_PRICES: "false" })).toBe(false);
   });
 
-  it("i servizi protagonisti e Famiglia sono provabili (demo); prevenzione resta in preparazione", () => {
+  it("i servizi protagonisti e Famiglia sono provabili (demo); la Prevenzione è una sezione gratuita, non più «in preparazione»", () => {
     const usable = ECOSYSTEM.filter((s) => s.status !== "in-preparation").map((s) => s.id);
-    expect(usable.sort()).toEqual(["famiglia", "guide", "referti", "secondo-parere", "visite"]);
-    for (const s of ECOSYSTEM.filter((x) => x.status === "in-preparation")) {
-      expect(s.href.startsWith("/servizi/")).toBe(true);
-    }
+    expect(usable.sort()).toEqual(["famiglia", "guide", "prevenzione", "referti", "secondo-parere", "visite"]);
+    // 17/11/2026 (20 interventi, punto 1): nessuna pagina dice «in preparazione» di una sezione che esiste.
+    expect(ECOSYSTEM.find((s) => s.id === "prevenzione")).toMatchObject({ href: "/prevenzione", status: "free" });
+    expect(ECOSYSTEM.find((s) => s.id === "referti")?.href).toBe("/lettura-referti");
   });
 
   it("nessuna frase vietata dal kit nel sito", () => {

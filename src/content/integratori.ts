@@ -328,6 +328,14 @@ export const INTEGRATORI: Integratore[] = [
   },
 ];
 
+/**
+ * 17/11/2026 (20 interventi, punto 15): le schede che rimandano a una guida, per il collegamento di ritorno dalla guida
+ * dell'esame alla scheda dell'integratore.
+ */
+export function integratoriForGuide(guideSlug: string): Integratore[] {
+  return INTEGRATORI.filter((i) => i.onReport.guide === guideSlug);
+}
+
 export function getIntegratore(slug: string): Integratore | null {
   return INTEGRATORI.find((i) => i.slug === slug) ?? null;
 }

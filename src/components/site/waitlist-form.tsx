@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { CircleCheck, Loader2 } from "lucide-react";
 import { api } from "@/components/area/api";
@@ -29,6 +29,22 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false, de
   const [note, setNote] = useState("");
   const [consent, setConsent] = useState(false);
   const [state, setState] = useState<State>({ kind: "idle" });
+  /**
+   * 17/11/2026 (20 interventi, punto 17): dopo l'invio il modulo (alto) è sostituito dalla conferma (bassa) e su telefono
+   * la conferma finiva sopra il bordo dello schermo. La portiamo in vista e le diamo il fuoco, così la legge anche chi
+   * usa un lettore di schermo o la tastiera.
+   */
+  const doneRef = useRef<HTMLDivElement>(null);
+  const done = state.kind === "done";
+  useEffect(() => {
+    const el = doneRef.current;
+    if (!done || !el) return;
+    el.focus({ preventScroll: true });
+    const r = el.getBoundingClientRect();
+    if (r.top < 96 || r.bottom > window.innerHeight) {
+      el.scrollIntoView({ block: r.height > window.innerHeight - 120 ? "start" : "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    }
+  }, [done]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -68,7 +84,7 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false, de
 
   if (state.kind === "done") {
     return (
-      <div role="status" className={compact ? "" : "card p-6 sm:p-8"}>
+      <div ref={doneRef} tabIndex={-1} role="status" className={`scroll-mt-28 outline-none ${compact ? "" : "card p-6 sm:p-8"}`} data-testid="waitlist-done">
         <p className="flex items-center gap-2.5 text-xl font-bold text-ink">
           <CircleCheck aria-hidden className="h-6 w-6 shrink-0 text-sage-deep" /> {state.already ? "Eri già in lista." : "Interesse registrato."}
         </p>

@@ -6,6 +6,7 @@ import type { Guide } from "@/content/guides/schema";
 import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { getGuide } from "@/content/guides";
 import { getGlossaryEntry } from "@/content/glossario";
+import { integratoriForGuide } from "@/content/integratori";
 import { FaqList } from "@/components/ui/faq-list";
 import { ReviewNotice } from "./review-notice";
 import { Breadcrumbs } from "./breadcrumbs";
@@ -47,15 +48,27 @@ export function GuideArticle({ guide }: { guide: Guide }) {
     { id: "domande-titolo", label: "Domande per il medico" },
     { id: "faq-titolo", label: "Domande frequenti" },
   ];
+  const supplements = integratoriForGuide(guide.slug);
+  // Il percorso non ripete due volte la stessa parola («Emocromo › Emocromo completo»): se l'esame porta già il nome
+  // del suo argomento, l'argomento non compare.
+  const sameWord = guide.examName.toLowerCase().startsWith(cat.title.toLowerCase());
+  const crumbs = [
+    { name: "Guide", path: "/guide" },
+    ...(sameWord ? [] : [{ name: cat.title, path: `/guide#${guide.category}` }]),
+    { name: guide.examName, path: `/guide/${guide.slug}` },
+  ];
   return (
     <div className="article-shell">
       <article className="container-rc article-body">
         <ReadingProgress />
-        <div className="tm ds ds-bare max-w-3xl">
+        {/* 17/11/2026 (20 interventi, punti 7 e 11): la barra delle sezioni è larga quanto la pagina; su computer «In breve»
+            sta accanto al titolo (prima la metà destra della prima schermata era vuota). */}
+        <div className="tm ds ds-bare">
           <PercorsoSezioni current={1} />
         </div>
-        <Breadcrumbs items={[{ name: "Guide", path: "/guide" }, { name: cat.title, path: `/guide#${guide.category}` }, { name: guide.examName, path: `/guide/${guide.slug}` }]} />
-        <header className="wow-guide-head mt-9 max-w-3xl">
+        <Breadcrumbs items={crumbs} />
+        <div className="guide-top">
+        <header className="wow-guide-head mt-9 max-w-3xl lg:mt-6">
           <CategoryBadge id={guide.category} size={80} />
           <p className="eyebrow">{cat.title}</p>
           <h1 className="page-title page-title-sm mt-4">{enfasi(guide.title)}</h1>
@@ -68,11 +81,11 @@ export function GuideArticle({ guide }: { guide: Guide }) {
             <PrintButton label="Stampa la guida" />
           </div>
         </header>
-        <section aria-labelledby="in-breve-titolo" className="guide-brief mt-8 max-w-3xl rounded-[var(--radius-xl)] border border-line bg-paper p-6 shadow-[var(--shadow-lift)] sm:p-8">
+        <section aria-labelledby="in-breve-titolo" className="guide-brief mt-8 max-w-3xl rounded-[var(--radius-xl)] border border-line bg-paper p-6 shadow-[var(--shadow-lift)] sm:p-8 lg:mt-6 lg:max-w-none lg:p-7">
           <h2 id="in-breve-titolo" className="eyebrow">
             In breve
           </h2>
-          <dl className="mt-4 grid gap-4 text-[1.0625rem] sm:grid-cols-3 sm:gap-6">
+          <dl className="mt-4 grid gap-4 text-[1.0625rem] sm:grid-cols-3 sm:gap-6 lg:grid-cols-1 lg:gap-4">
             <div>
               <dt className="font-bold text-teal">{guide.procedure ? "Che cosa mostra" : "Che cosa misura"}</dt>
               <dd className="mt-1 text-ink-soft">{firstSentence(guide.sections.whatItMeasures[0])}</dd>
@@ -87,6 +100,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
             </div>
           </dl>
         </section>
+        </div>
         <div className="mt-6 max-w-3xl">
           <ReviewNotice lastUpdated={guide.lastUpdated} />
         </div>
@@ -207,6 +221,21 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                     <li key={t.slug}>
                       <Link href={`/glossario/${t.slug}`} className="link">
                         {t.term}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            {supplements.length ? (
+              <div className="side-card" data-testid="guida-integratori">
+                <p className="side-card-title">Tra gli integratori</p>
+                <p className="mt-1.5 text-base text-ink-soft">Che cosa sono e che cosa chiedere al medico. Nessun consiglio su che cosa prendere.</p>
+                <ul className="link-list mt-1">
+                  {supplements.map((i) => (
+                    <li key={i.slug}>
+                      <Link href={`/integratori/${i.slug}`} className="link">
+                        {i.name}
                       </Link>
                     </li>
                   ))}
