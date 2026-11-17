@@ -64,3 +64,32 @@ export function organizationLd(t: { name: string; vat: string; address?: string;
     ...(t.email ? { email: t.email } : {}),
   };
 }
+
+/** Le schede degli integratori sono bozze come le guide cliniche: fuori dagli indici finché non sono revisionate. */
+export function integratoreIndexable(i: { reviewStatus: string }, env: Record<string, string | undefined> = process.env): boolean {
+  return indexingEnabled(env) && i.reviewStatus !== "draft-needs-clinical-review";
+}
+
+/**
+ * Lunghezze che i motori mostrano per intero (17/11/2026, 20 interventi, punto 12). Il titolo conta con il suffisso
+ * « · Cura Privata» del modello in layout.tsx; tests/unit/seo.test.ts e tests/e2e/sito-intero.spec.ts le controllano.
+ */
+export const TITLE_MAX = 65;
+export const DESCRIPTION_MAX = 160;
+export const TITLE_SUFFIX = " · Cura Privata";
+
+/**
+ * Titolo di pagina: con il suffisso della marca se ci sta in TITLE_MAX, altrimenti da solo (i titoli lunghi delle
+ * guide dicono già tutto: meglio il titolo intero che la marca tagliata a metà).
+ */
+export function pageTitle(title: string): string | { absolute: string } {
+  return title.length + TITLE_SUFFIX.length <= TITLE_MAX ? title : { absolute: title };
+}
+
+/** Descrizione entro DESCRIPTION_MAX, tagliata a fine parola (mai a metà) con i puntini. */
+export function metaDescription(text: string, max = DESCRIPTION_MAX): string {
+  const t = text.replace(/\s+/g, " ").trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max - 1);
+  return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), 60)).replace(/[,;:.\s]+$/, "")}…`;
+}

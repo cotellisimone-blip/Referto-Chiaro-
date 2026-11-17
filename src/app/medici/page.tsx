@@ -17,7 +17,9 @@ import "@/components/sezioni/sezioni.css";
 
 export const metadata: Metadata = {
   title: "Medici: in video, a casa o per un secondo parere",
-  description: "La sezione Medici di Cura Privata: videoconsulto, visita a casa con un medico di medicina generale (Brescia città come area pilota) e secondo parere di uno specialista. Per esigenze non urgenti.",
+  description: mediciEnabled()
+    ? "Videoconsulto, visita a casa con un medico di medicina generale (si parte da Brescia città) e secondo parere di uno specialista. Per esigenze non urgenti."
+    : "In arrivo: videoconsulto, visita a casa (si parte da Brescia città) e secondo parere di uno specialista. Lascia l'email: ti avvisiamo quando parte.",
   alternates: { canonical: "/medici" },
 };
 
@@ -52,7 +54,9 @@ export default function MediciPage() {
               Un medico, <em>quando serve.</em>
             </h1>
             <p className="tm-lead">
-              In video, a casa tua o di un familiare, oppure un secondo parere di uno specialista. Per esigenze non urgenti; la visita a casa parte da Brescia città.
+              {attivo
+                ? "In video, a casa tua o di un familiare, oppure un secondo parere di uno specialista. Per esigenze non urgenti; la visita a casa parte da Brescia città."
+                : "In video, a casa tua o di un familiare, oppure un secondo parere di uno specialista. Lo stiamo preparando: la visita a casa partirà da Brescia città."}
             </p>
             <div className="ds-ph-buy">
               {attivo && prices ? (
@@ -71,7 +75,7 @@ export default function MediciPage() {
                 </a>
               )}
             </div>
-            <p className="tm-fine">Paghi solo dopo che il medico ha confermato l’orario. Per un’emergenza chiama il 112.</p>
+            <p className="tm-fine">{attivo ? "Paghi solo dopo che il medico ha confermato l’orario." : "Non è ancora attivo: oggi non si prenota e non si paga nulla."} Per un’emergenza chiama il 112.</p>
           </div>
           <div className="ds-ph-art">
             {SHOW_ILLUSTRATIVE_PHOTOS ? (
@@ -105,7 +109,11 @@ export default function MediciPage() {
                 A casa, in video <em>o con uno specialista.</em>
               </h2>
             </div>
-            <p>Il medico a casa quando serve una visita di persona. Il videoconsulto quando basta parlarsi. Il secondo parere per un dubbio su esami già fatti.</p>
+            <p>
+              {attivo
+                ? "Il medico a casa quando serve una visita di persona. Il videoconsulto quando basta parlarsi. Il secondo parere per un dubbio su esami già fatti."
+                : "Ci sarà il medico a casa quando serve una visita di persona, il videoconsulto quando basta parlarsi, il secondo parere per un dubbio su esami già fatti."}
+            </p>
           </div>
           <ServiziMedico prices={prices} attivo={attivo} onSection />
           {attivo && prices ? <p className="tm-note">{PRICE_NOTE}</p> : null}
@@ -118,7 +126,7 @@ export default function MediciPage() {
             <div>
               <p className="tm-kicker">I medici</p>
               <h2 id="dom-medici">
-                Medici con nome e cognome, <em>prima di pagare.</em>
+                Medici con nome e cognome, <em>{attivo ? "prima di pagare." : "prima di scegliere."}</em>
               </h2>
             </div>
             <p>
@@ -139,12 +147,16 @@ export default function MediciPage() {
         <div className="tm-wrap">
           <div className="tm-sec-h">
             <div>
-              <p className="tm-kicker">La visita a casa, passo per passo</p>
+              <p className="tm-kicker">{attivo ? "La visita a casa, passo per passo" : "Come funzionerà la visita a casa"}</p>
               <h2 id="dom-come">
-                Quattro passi, <em>e sai sempre a che punto sei.</em>
+                Quattro passi, <em>{attivo ? "e sai sempre a che punto sei." : "e saprai sempre a che punto sei."}</em>
               </h2>
             </div>
-            <p>Non paghi nulla quando invii la richiesta. Paghi solo quando vedi nome del medico, orario confermato, indirizzo e prezzo totale.</p>
+            <p>
+              {attivo
+                ? "Non paghi nulla quando invii la richiesta. Paghi solo quando vedi nome del medico, orario confermato, indirizzo e prezzo totale."
+                : "Non pagherai nulla all’invio della richiesta: solo quando vedrai nome del medico, orario confermato, indirizzo e prezzo totale."}
+            </p>
           </div>
           <MappaPassi />
           <ol className="ds-flow">
@@ -161,9 +173,9 @@ export default function MediciPage() {
                 <span className="ds-f-btn">Vedi le fasce libere</span>
               </div>
               <b className="ds-flow-t">
-                <span>1</span> Scrivi comune e CAP
+                <span>1</span> {attivo ? "Scrivi comune e CAP" : "Scriverai comune e CAP"}
               </b>
-              <p>Sai subito se arriviamo da te. Se no, te lo diciamo e ti proponiamo un videoconsulto.</p>
+              <p>{attivo ? "Sai subito se arriviamo da te. Se no, te lo diciamo e ti proponiamo un videoconsulto." : "Saprai subito se arriviamo da te. Se no, te lo diremo e ti proporremo un videoconsulto."}</p>
             </li>
             <li>
               <div className="ds-flow-scr" aria-hidden>
@@ -185,9 +197,9 @@ export default function MediciPage() {
                 </div>
               </div>
               <b className="ds-flow-t">
-                <span>2</span> Scegli una fascia
+                <span>2</span> {attivo ? "Scegli una fascia" : "Sceglierai una fascia"}
               </b>
-              <p>Vedi solo gli orari davvero liberi. È una richiesta: il medico la conferma o te ne propone un’altra.</p>
+              <p>{attivo ? "Vedi solo gli orari davvero liberi. È una richiesta: il medico la conferma o te ne propone un’altra." : "Vedrai solo gli orari davvero liberi. Sarà una richiesta: il medico la confermerà o te ne proporrà un’altra."}</p>
             </li>
             <li>
               <div className="ds-flow-scr" aria-hidden>
@@ -211,9 +223,9 @@ export default function MediciPage() {
                 <span className="ds-f-btn">Conferma e paga</span>
               </div>
               <b className="ds-flow-t">
-                <span>3</span> Confermi quando sai tutto
+                <span>3</span> {attivo ? "Confermi quando sai tutto" : "Confermerai quando saprai tutto"}
               </b>
-              <p>Nome, orario, indirizzo e prezzo: li vedi prima di pagare. Puoi ancora annullare.</p>
+              <p>{attivo ? "Nome, orario, indirizzo e prezzo: li vedi prima di pagare. Puoi ancora annullare." : "Nome, orario, indirizzo e prezzo: li vedrai prima di pagare. Potrai ancora annullare."}</p>
             </li>
             <li>
               <div className="ds-flow-scr" aria-hidden>
@@ -227,10 +239,10 @@ export default function MediciPage() {
               <b className="ds-flow-t">
                 <span>4</span> Visita e riepilogo scritto
               </b>
-              <p>Circa 45 minuti a casa. Poi trovi il riepilogo nella tua richiesta, da stampare o mostrare al tuo medico.</p>
+              <p>{attivo ? "Circa 45 minuti a casa. Poi trovi il riepilogo nella tua richiesta, da stampare o mostrare al tuo medico." : "Circa 45 minuti a casa. Poi troverai il riepilogo nella tua richiesta, da stampare o mostrare al tuo medico."}</p>
             </li>
           </ol>
-          <p className="tm-note">Le schermate sono un esempio, con dati inventati.</p>
+          <p className="tm-note">{attivo ? "Le schermate sono un esempio, con dati inventati." : "Le schermate mostrano come sarà, con dati inventati."}</p>
         </div>
       </section>
 

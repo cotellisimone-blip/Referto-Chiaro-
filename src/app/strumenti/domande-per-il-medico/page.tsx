@@ -11,7 +11,7 @@ import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Domande per il medico",
-  description: "Scegli gli esami che hai fatto e ottieni una lista di domande da portare alla visita, da stampare o salvare sul telefono. Nessun dato personale, nessun valore richiesto.",
+  description: "Scegli gli esami che hai fatto e ottieni la lista delle domande da portare alla visita, da stampare o salvare sul telefono. Nessun dato personale.",
   alternates: { canonical: absoluteUrl("/strumenti/domande-per-il-medico") },
 };
 

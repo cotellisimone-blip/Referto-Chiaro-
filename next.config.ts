@@ -45,7 +45,11 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: { "/**": ["./src/db/schema.sql", "./src/domain/reporting/fonts/**"] },
   partialPrefetching: true,
   // 13/11/2026: l'interruttore dei servizi con un medico arriva anche al browser (vedi src/lib/medici.ts).
-  env: { NEXT_PUBLIC_ENABLE_MEDICI: process.env.ENABLE_MEDICI === "true" ? "true" : "false" },
+  // 17/11/2026: anche il profilo vetrina arriva al browser, per l'azione della testata (src/components/site/nav.ts).
+  env: {
+    NEXT_PUBLIC_ENABLE_MEDICI: process.env.ENABLE_MEDICI === "true" ? "true" : "false",
+    NEXT_PUBLIC_VETRINA: process.env.SITE_PROFILE?.trim().toLowerCase() === "vetrina" ? "true" : "false",
+  },
   /** Vecchi indirizzi di Referto Chiaro → nuova mappa del sito Cura Privata (redirect permanenti interni). */
   async redirects() {
     const moved: [string, string][] = [
@@ -64,6 +68,10 @@ const nextConfig: NextConfig = {
       // 15/11/2026 sera: da due a tre sezioni (Prevenzione, Lettura referti, Medici).
       ["/online", "/prevenzione"],
       ["/a-domicilio", "/medici"],
+      // 17/11/2026 (20 interventi, punto 1): una pagina per ogni cosa. Le pagine nate prima delle tre sezioni confluiscono lì.
+      ["/referti", "/lettura-referti"],
+      ["/servizi/prevenzione", "/prevenzione"],
+      ["/con-un-medico", "/medici"],
     ];
     return [
       ...moved.map(([source, destination]) => ({ source, destination, permanent: true })),
@@ -73,13 +81,14 @@ const nextConfig: NextConfig = {
       { source: "/area", destination: "/area-personale", permanent: true },
       { source: "/area/:path*", destination: "/area-personale/:path*", permanent: true },
       // 13/11/2026: con i medici spenti (ENABLE_MEDICI diverso da "true") le loro pagine portano al blocco «Presto anche
-      // con un medico». Redirect temporanei: riaccendendo l'interruttore tornano le pagine di prima.
+      // con un medico» della sezione Medici. Redirect temporanei: riaccendendo l'interruttore tornano le pagine di prima.
+      // 17/11/2026: spenti, anche l'elenco «I servizi» (che presentava i quattro servizi) porta alle tre sezioni della home.
       ...(process.env.ENABLE_MEDICI === "true"
-        ? [{ source: CON_UN_MEDICO_HREF, destination: "/servizi", permanent: false }]
-        : DOCTOR_PATHS.flatMap((p) => [
+        ? []
+        : [{ source: "/servizi", destination: "/", permanent: false }, ...DOCTOR_PATHS.flatMap((p) => [
             { source: p, destination: CON_UN_MEDICO_HREF, permanent: false },
             { source: `${p}/:path*`, destination: CON_UN_MEDICO_HREF, permanent: false },
-          ])),
+          ])]),
     ];
   },
   async headers() {

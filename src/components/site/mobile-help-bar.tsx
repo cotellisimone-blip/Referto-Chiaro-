@@ -28,7 +28,7 @@ export function MobileHelpBar() {
   return (
     <div data-shown={shown} className="mobile-help-bar fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas/90 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-12px_30px_-12px_rgba(12,51,64,0.18)] backdrop-blur-lg lg:hidden">
       <nav aria-label="Azioni rapide" className="mx-auto flex max-w-xl gap-3">
-        <Link href="/referti" className="btn btn-primary min-h-14 min-w-0 flex-[1.4] px-3 text-lg">
+        <Link href="/lettura-referti" className="btn btn-primary min-h-14 min-w-0 flex-[1.4] px-3 text-lg">
           Ho un referto <ArrowRight aria-hidden className="h-5 w-5" />
         </Link>
         <Link href="/inizia" className="btn btn-secondary min-h-14 min-w-0 flex-1 px-3 text-lg">

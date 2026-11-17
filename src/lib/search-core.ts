@@ -4,7 +4,8 @@
  * tutte le guide e il glossario: finivano nel JavaScript di ogni pagina, anche se l'indice arriva già dal server
  * alla prima apertura della ricerca.
  */
-export type SearchKind = "guida" | "termine" | "pagina";
+/** 17/11/2026 (20 interventi, punto 8): entrano le schede degli integratori. */
+export type SearchKind = "guida" | "integratore" | "termine" | "pagina";
 
 export interface SearchItem {
   kind: SearchKind;

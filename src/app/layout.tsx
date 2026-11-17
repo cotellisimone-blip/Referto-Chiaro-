@@ -35,11 +35,11 @@ const fraunces = localFont({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Cura Privata — i tuoi referti, finalmente comprensibili", template: "%s · Cura Privata" },
-  // 14/11/2026: senza medici (src/lib/medici.ts) la descrizione dice quello che c'è davvero.
+  // 17/11/2026 (20 interventi, punto 10): titolo e descrizione dicono le tre sezioni, come la prima schermata.
+  title: { default: "Cura Privata — previeni, capisci i referti, un medico se serve", template: "%s · Cura Privata" },
   description: mediciEnabled()
-    ? "Il tuo referto spiegato valore per valore, in parole semplici. Se serve, un videoconsulto con un medico o un secondo parere. Uno strumento informativo, non una diagnosi."
-    : "Il tuo referto spiegato valore per valore, in parole semplici, e gli esami di tutta la famiglia in fila negli anni. Uno strumento informativo, non una diagnosi.",
+    ? "Prevenzione: quali esami conoscere, con guide gratuite. Lettura referti: il tuo referto in parole semplici. Medici: in video o a casa. Non è una diagnosi."
+    : "Prevenzione: quali esami conoscere, con guide gratuite. Lettura referti: il tuo referto spiegato in parole semplici. Medici: in arrivo. Non è una diagnosi.",
   robots: indexingEnabled() ? { index: true, follow: true } : { index: false, follow: false },
   metadataBase: new URL(SITE_URL),
 };

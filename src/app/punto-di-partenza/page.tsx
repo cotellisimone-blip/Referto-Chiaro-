@@ -14,9 +14,9 @@ import { mediciEnabled } from "@/lib/medici";
 import { absoluteUrl, indexingEnabled, NOINDEX_DRAFT } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Punto di Partenza — Conosci meglio la tua salute. Gratis.",
+  title: "Punto di Partenza: il primo controllo, gratis",
   description:
-    "Strumento gratuito: un percorso guidato in 10 aree per raccogliere ciò che sai già, capire cosa discutere con il medico e prepararti ai prossimi controlli. Informativo, non diagnostico.",
+    "Gratis: un percorso in 10 aree per raccogliere ciò che sai già, capire cosa discutere con il medico e prepararti ai prossimi controlli. Non è una diagnosi.",
   alternates: { canonical: absoluteUrl("/punto-di-partenza") },
   // Finché le 10 aree non hanno la revisione medica, la pagina resta fuori dai motori anche con l'indicizzazione accesa.
   ...(indexingEnabled() && !AREAS.every((a) => a.reviewStatus === "revisionato") ? { robots: NOINDEX_DRAFT } : {}),
@@ -257,8 +257,8 @@ export default function PuntoDiPartenzaPage() {
               <Link href={capisci.href} className="btn btn-primary btn-lg">
                 {capisci.name} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
-              <Link href="/servizi" className="btn btn-secondary btn-lg">
-                Guarda tutti i servizi
+              <Link href="/prevenzione" className="btn btn-secondary btn-lg">
+                Torna alla sezione Prevenzione
               </Link>
             </div>
           </div>

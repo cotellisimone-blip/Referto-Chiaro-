@@ -4,7 +4,7 @@ import { HeroTiles } from "@/components/ui/page-header";
 import { LinkCards } from "@/components/ui/link-cards";
 
 const ELSEWHERE = [
-  { icon: LayoutGrid, title: "I servizi", href: "/servizi", text: "Dal referto al medico, un passo alla volta.", go: "Vedi" },
+  { icon: LayoutGrid, title: "Le tre sezioni", href: "/", text: "Prevenzione, Lettura referti, Medici: da dove vuoi cominciare.", go: "Vedi" },
   { icon: BookOpenText, title: "Guide agli esami", href: "/guide", text: "Che cosa misura un esame e come si legge.", go: "Leggi" },
   { icon: MessageCircleQuestionMark, title: "Domande frequenti", href: "/domande-frequenti", text: "Prezzi, tempi, dati: le risposte dirette.", go: "Leggi" },
 ];

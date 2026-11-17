@@ -21,7 +21,7 @@ export function mediciEnabled(): boolean {
   return process.env.ENABLE_MEDICI === "true";
 }
 
-/** Indirizzi che esistono solo con i medici accesi: spenti, portano a /con-un-medico. */
+/** Indirizzi che esistono solo con i medici accesi: spenti, portano alla sezione Medici («In arrivo», lista d'attesa). */
 export const DOCTOR_PATHS = [
   "/servizi/visita-a-domicilio",
   "/servizi/parla-con-un-medico",
@@ -55,4 +55,8 @@ export function withoutDoctors<T extends { href: string }>(items: readonly T[]):
   return mediciEnabled() ? [...items] : items.filter((i) => !isDoctorPath(i.href));
 }
 
-export const CON_UN_MEDICO_HREF = "/con-un-medico";
+/**
+ * 17/11/2026 (20 interventi, punto 1): la vecchia pagina «Presto anche con un medico» è confluita nella sezione Medici,
+ * che spenta mostra «In arrivo» e la lista d'attesa. /con-un-medico reindirizza lì (next.config.ts).
+ */
+export const CON_UN_MEDICO_HREF = "/medici";

@@ -24,7 +24,7 @@ import { PrevenzioneCards } from "@/components/sezioni/prevenzione-cards";
 import { MEDICI_HREF, MiniReferto, MiniVisita, PREVENZIONE_HREF, Porte, REFERTI_HREF, ServiziMedico, StatoDomicilio } from "@/components/sezioni/parts";
 import { mediciEnabled } from "@/lib/medici";
 import { readTitolare } from "@/domain/titolare";
-import { PRICE_NOTE, coreService, firstPromoEnabled, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled } from "@/domain/offerta";
+import { PRICE_NOTE, firstPromoEnabled, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled, serviceStart } from "@/domain/offerta";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 
@@ -48,7 +48,8 @@ export function HomeDueSezioni() {
   const std = formatEuro(priceCents("capisci"));
   const first = formatEuro(firstRefertoCents());
   const entry = promo ? first : std;
-  const capisci = coreService("capisci");
+  // 17/11/2026 (punto 2): «Carica un referto» porta al caricamento; in vetrina alla lista d'attesa della sezione.
+  const carica = serviceStart("capisci");
 
   return (
     <>
@@ -66,7 +67,7 @@ export function HomeDueSezioni() {
               </h1>
               <p className="tm-lead ds-lead">
                 <b>Prevenzione</b>: quali esami conoscere, con guide agli esami e agli integratori. <b>Lettura referti</b>: il tuo referto spiegato in parole
-                semplici. <b>Medici</b>: in video, a casa o per un secondo parere.
+                semplici. <b>Medici</b>{attivo ? "" : ", in arrivo"}: in video, a casa o per un secondo parere.
               </p>
               <p className="tm-fine ds-fine">
                 <ShieldCheck aria-hidden className="tm-ic" />
@@ -193,8 +194,8 @@ export function HomeDueSezioni() {
               <BeforeAfter />
             </div>
             <div className="ds-sec-end">
-              <Link href={capisci.href} className="tm-btn tm-btn-ink" data-track="cta-capisci">
-                Carica un referto
+              <Link href={carica.href} className="tm-btn tm-btn-ink" data-track="cta-capisci">
+                {carica.waitlist ? carica.label : "Carica un referto"}
                 {prices ? (
                   <>
                     <span className="tm-sep" aria-hidden /> <span className="tm-lite">{promo ? `il primo ${first}` : std}</span>
@@ -293,13 +294,16 @@ export function HomeDueSezioni() {
                 },
                 {
                   icon: <Stethoscope aria-hidden className="tm-ic" />,
-                  q: "Chi viene a casa?",
-                  a: "Un medico di medicina generale iscritto all’Ordine: prima di pagare leggi il suo nome e l’orario confermato.",
+                  // 17/11/2026 (20 interventi, punto 3): finché i medici sono «In arrivo» se ne parla al futuro.
+                  q: attivo ? "Chi viene a casa?" : "Chi verrà a casa?",
+                  a: attivo
+                    ? "Un medico di medicina generale iscritto all’Ordine: prima di pagare leggi il suo nome e l’orario confermato."
+                    : "Un medico di medicina generale iscritto all’Ordine: prima di pagare leggerai il suo nome e l’orario confermato. Il servizio è in arrivo.",
                 },
                 {
                   icon: <Eye aria-hidden className="tm-ic" />,
                   q: "Chi vede i miei documenti?",
-                  a: "Tu. E soltanto chi scegli tu, quando lo scegli: anche il medico vede solo quello che condividi.",
+                  a: attivo ? "Tu. E soltanto chi scegli tu, quando lo scegli: anche il medico vede solo quello che condividi." : "Tu. E soltanto chi scegli tu, quando lo scegli. Quando ci saranno i medici, vedranno solo quello che condividi.",
                 },
                 {
                   icon: <LockKeyhole aria-hidden className="tm-ic" />,
@@ -322,18 +326,13 @@ export function HomeDueSezioni() {
         {/* 7 · CHIUSURA */}
         <section className="tm-end ds-end" aria-labelledby="chiusura-titolo">
           <div className="tm-wrap">
-            <div className="ds-end-g">
+            {/* 17/11/2026 (20 interventi, punto 9): qui c'erano di nuovo le tre porte della prima schermata. Resta la ricerca. */}
+            <div className="tm-find ds-find-solo">
               <h2 id="chiusura-titolo">
-                Da dove vuoi <em>cominciare?</em>
-              </h2>
-              <Porte attivo={attivo} entry={entry} prices={prices} />
-            </div>
-            <div className="tm-find">
-              <h3>
                 Hai solo una parola in testa?
                 <br />
                 <em>Cercala.</em>
-              </h3>
+              </h2>
               <CercaParola examples={["Emocromo", "Ferritina", "Vitamina D", "Colesterolo LDL", "TSH"]} />
             </div>
           </div>

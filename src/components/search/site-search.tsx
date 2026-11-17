@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
-import { ArrowRight, BookOpenText, FileText, Search, SpellCheck, X } from "lucide-react";
+import { ArrowRight, BookOpenText, FileText, HeartPulse, Pill, Search, SpellCheck, Stethoscope, X } from "lucide-react";
 import { searchIndex, type SearchItem, type SearchKind } from "@/lib/search-core";
 
 export const SEARCH_OPEN_EVENT = "cp-search-open";
@@ -18,9 +18,16 @@ const SUGGESTIONS = ["Emocromo", "TSH", "Glicemia", "Colesterolo LDL", "Ferritin
 
 const KIND: Record<SearchKind, { label: string; Icon: typeof FileText }> = {
   guida: { label: "Guide agli esami", Icon: BookOpenText },
+  integratore: { label: "Guide agli integratori", Icon: Pill },
   termine: { label: "Glossario", Icon: SpellCheck },
   pagina: { label: "Pagine", Icon: FileText },
 };
+
+const NO_RESULT_LINKS = [
+  { href: "/prevenzione", label: "Prevenzione: quali esami conoscere", Icon: HeartPulse },
+  { href: "/lettura-referti", label: "Lettura referti: ho un referto da capire", Icon: FileText },
+  { href: "/medici", label: "Medici: vorrei parlare con una persona", Icon: Stethoscope },
+];
 
 function readRecent(): string[] {
   try {
@@ -107,7 +114,7 @@ export function SiteSearch() {
   const results = useMemo(() => (index && query.trim() ? searchIndex(index, query, 14) : []), [index, query]);
   const grouped = useMemo(() => {
     const g: { kind: SearchKind; items: SearchItem[] }[] = [];
-    for (const kind of ["guida", "termine", "pagina"] as SearchKind[]) {
+    for (const kind of ["guida", "integratore", "termine", "pagina"] as SearchKind[]) {
       const items = results.filter((r) => r.kind === kind);
       if (items.length) g.push({ kind, items });
     }
@@ -213,9 +220,19 @@ export function SiteSearch() {
           {noResults ? (
             <div className="px-5 py-8 text-center">
               <p className="text-lg font-semibold text-ink">Nessun risultato per «{query.trim()}».</p>
-              <p className="mt-2 text-muted">Prova con la sigla stampata sul referto (per esempio «ALT», «HbA1c») o sfoglia il glossario.</p>
-              <Link href="/glossario" onClick={remember} className="btn btn-secondary mt-5">
-                Apri il glossario <ArrowRight aria-hidden className="h-4 w-4" />
+              <p className="mt-2 text-muted">Qui trovi esami, sigle e integratori: prova con la sigla stampata sul referto (per esempio «ALT», «HbA1c»). Oppure parti da una delle tre sezioni.</p>
+              {/* 17/11/2026 (punto 8): senza risultati non si resta fermi, si riparte dalle tre sezioni. */}
+              <ul className="search-none-links mt-5" data-testid="search-sezioni">
+                {NO_RESULT_LINKS.map(({ href, label, Icon }) => (
+                  <li key={href}>
+                    <Link href={href} onClick={remember} className="btn btn-secondary w-full justify-start">
+                      <Icon aria-hidden className="h-5 w-5" /> {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/glossario" onClick={remember} className="link mt-4 inline-flex min-h-11 items-center font-semibold">
+                Apri il glossario <ArrowRight aria-hidden className="ml-1 h-4 w-4" />
               </Link>
             </div>
           ) : null}

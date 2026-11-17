@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { GUIDES, getGuide } from "@/content/guides";
 import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { GuideArticle } from "@/components/guide/guide-article";
-import { NOINDEX_DRAFT, absoluteUrl, breadcrumbLd, guideIndexable, indexingEnabled, jsonLd } from "@/lib/seo";
+import { NOINDEX_DRAFT, absoluteUrl, breadcrumbLd, guideIndexable, indexingEnabled, jsonLd, pageTitle } from "@/lib/seo";
 
 export function generateStaticParams() {
   return GUIDES.map((g) => ({ slug: g.slug }));
@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const g = getGuide(slug);
   if (!g) return {};
   return {
-    title: g.title,
+    title: pageTitle(g.title),
     description: g.metaDescription,
     alternates: { canonical: absoluteUrl(`/guide/${g.slug}`) },
     openGraph: { title: g.title, description: g.metaDescription, type: "article", locale: "it_IT" },

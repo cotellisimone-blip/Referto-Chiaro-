@@ -15,8 +15,8 @@ import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 
 export const metadata: Metadata = {
-  title: "Prevenzione: esami da conoscere, guide e integratori",
-  description: "La sezione Prevenzione di Cura Privata: il primo controllo gratuito, le guide agli esami e agli integratori, i promemoria dei controlli. Gratis, senza registrarti.",
+  title: "Prevenzione: esami, guide e integratori",
+  description: "Prevenzione, spiegata semplice: quali controlli conoscere, le guide agli esami e agli integratori, i promemoria. Gratis, senza registrarti.",
   alternates: { canonical: "/prevenzione" },
 };
 

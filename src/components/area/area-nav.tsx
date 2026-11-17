@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { clsx } from "clsx";
 import {
   BellRing,
-  CircleDashed,
   FilePlus2,
   Files,
   FolderOpen,
@@ -98,8 +97,6 @@ const ITEMS_ALL = [
 const ITEMS = MEDICI ? ITEMS_ALL : ITEMS_ALL.filter((i) => !isDoctorPath(i.href));
 /** Quinta voce della barra in basso su telefono: le richieste al medico oppure, senza medici, i promemoria. */
 const LAST_TAB = MEDICI ? ITEMS_ALL[4] : ITEMS_ALL[3];
-
-const COMING = [{ href: "/servizi/prevenzione", label: "Prevenzione" }];
 
 /**
  * Navigazione dell'area personale Cura Privata.
@@ -200,27 +197,6 @@ export function AreaNav({
                 Esci
               </button>
             </nav>
-          </div>
-          <div className="rounded-[var(--radius-lg)] border border-dashed border-line p-5">
-            <p className="flex items-center gap-2 text-base font-extrabold text-ink">
-              <CircleDashed
-                aria-hidden
-                className="h-[1.125rem] w-[1.125rem] text-teal"
-              />{" "}
-              In preparazione
-            </p>
-            <ul className="mt-2">
-              {COMING.map((c) => (
-                <li key={c.href}>
-                  <Link
-                    href={c.href}
-                    className="inline-flex min-h-11 items-center text-base text-ink-soft hover:text-teal-deep hover:underline"
-                  >
-                    {c.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </aside>

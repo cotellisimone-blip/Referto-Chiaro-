@@ -941,7 +941,7 @@ function Outcome({ r, doctorLabel, now }: { r: BookingRequest; doctorLabel: stri
   const title = r.kind === "parere" ? "Sintesi scritta dello specialista" : "Riepilogo del medico";
   const step = r.summary?.nextStep ?? null;
   const action: { href: string; label: string } | null =
-    step === "esami" ? { href: "/referti", label: "Quando hai il referto, rendilo chiaro" } : step === "controllo" ? { href: paths.start(r.kind === "parere" ? "video" : r.kind), label: r.kind === "domicilio" ? "Richiedi un'altra visita" : "Prenota un videoconsulto di controllo" } : step === "specialista" || step === "medico-di-famiglia" ? { href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita in 2 minuti" } : null;
+    step === "esami" ? { href: "/lettura-referti", label: "Quando hai il referto, rendilo chiaro" } : step === "controllo" ? { href: paths.start(r.kind === "parere" ? "video" : r.kind), label: r.kind === "domicilio" ? "Richiedi un'altra visita" : "Prenota un videoconsulto di controllo" } : step === "specialista" || step === "medico-di-famiglia" ? { href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita in 2 minuti" } : null;
   return (
     <>
       <section className="form-card form-card-accent" aria-label="Prestazione conclusa">

@@ -1,0 +1,10 @@
+import { OG_SIZE, ogImage } from "@/lib/og";
+
+export const alt = "Prevenzione: la prevenzione, spiegata semplice · Cura Privata";
+export const size = OG_SIZE;
+export const contentType = "image/png";
+
+/** 17/11/2026 (20 interventi, punto 14): ogni sezione ha la sua immagine di condivisione (WhatsApp, Facebook). */
+export default function OpenGraphImage() {
+  return ogImage({ eyebrow: "1 · Prevenzione", title: "La prevenzione,", accent: "spiegata semplice.", lead: "Quali esami conoscere, le guide e i promemoria. Gratis, senza registrarti.", color: "#0C3340" });
+}

@@ -1,4 +1,4 @@
-import { CON_UN_MEDICO_HREF, isDoctorPath, mediciEnabled } from "@/lib/medici";
+import { isDoctorPath, mediciEnabled } from "@/lib/medici";
 
 /**
  * Navigazione Cura Privata: i servizi per primi (ciclo 1), poi prezzi e guide. 12/11/2026: entra la visita a domicilio;
@@ -23,8 +23,14 @@ const MAIN_NAV_DUE_SEZIONI: readonly NavItem[] = [
   { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro" },
 ];
 export const MAIN_NAV: readonly NavItem[] = MAIN_NAV_DUE_SEZIONI;
-/** Azione principale della testata: il referto, che è la cosa che si fa subito. */
-export const HEADER_CTA = { href: "/referti", label: "Carica un referto", menu: "Carica un referto" };
+/**
+ * Azione principale della testata: il referto, che è la cosa che si fa subito.
+ * 17/11/2026 (20 interventi, punto 2): «Carica un referto» porta al caricamento (chi non è entrato passa dall'accesso e
+ * poi arriva lì), non a una pagina che lo descrive. In vetrina il caricamento è chiuso: porta alla sezione, che lo dice
+ * e ha la lista d'attesa.
+ */
+export const CARICA_HREF = process.env.NEXT_PUBLIC_VETRINA === "true" ? "/lettura-referti" : "/area-personale/nuovo";
+export const HEADER_CTA = { href: CARICA_HREF, label: "Carica un referto", menu: "Carica un referto" };
 
 /** Fondo pagina snello: tre colonne, una dozzina di voci. Le note legali stanno nella riga in basso. */
 const FOOTER_NAV_ALL = {
@@ -32,7 +38,6 @@ const FOOTER_NAV_ALL = {
     { href: "/prevenzione", label: "Prevenzione" },
     { href: "/lettura-referti", label: "Lettura referti" },
     { href: "/medici", label: "Medici" },
-    { href: "/referti", label: "Capisci il tuo referto" },
     { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio" },
     { href: "/servizi/parla-con-un-medico", label: "Videoconsulto con un medico" },
     { href: "/servizi/secondo-parere", label: "Secondo parere specialistico" },
@@ -79,9 +84,7 @@ export const LEGAL_NAV = [
 /** Pagine che non stanno nel fondo pagina ma devono restare trovabili nella ricerca del sito. */
 export const EXTRA_PAGES = [
   { href: "/referti/esempio", label: "Referto di esempio" },
-  { href: "/servizi", label: "Tutti i servizi" },
   { href: "/per-le-strutture", label: "Per le strutture" },
   { href: "/accedi", label: "Area personale" },
   { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio con medico generalista" },
-  { href: CON_UN_MEDICO_HREF, label: "Presto anche con un medico" },
 ] as const;

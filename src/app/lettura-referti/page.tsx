@@ -2,20 +2,25 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { StepScene } from "@/components/wow/scenes";
 import { FoglioMedico } from "@/components/wow/foglio";
-import { ArrowRight, ChartLine, FileCheck2, MessageCircleQuestionMark, Printer, ShieldCheck, SpellCheck, Stethoscope } from "lucide-react";
+import { ArrowRight, Check, ChartLine, FileCheck2, MessageCircleQuestionMark, Printer, ShieldCheck, SpellCheck, Stethoscope } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { BeforeAfter } from "@/components/offerta/before-after";
 import { MEDICI_HREF, MiniReferto, StatoDomicilio, PercorsoSezioni } from "@/components/sezioni/parts";
 import { GLOSSARY } from "@/content/glossario";
-import { PRICE_NOTE, coreService, firstPromoEnabled, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled } from "@/domain/offerta";
+import { PRICE_NOTE, VETRINA_TRY, coreService, firstPromoEnabled, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled, serviceStart } from "@/domain/offerta";
+import { FaqList } from "@/components/ui/faq-list";
+import { FAQ } from "@/content/faq";
+import { WaitlistForm } from "@/components/site/waitlist-form";
+import { TrackView } from "@/components/site/track";
+import { readFlags } from "@/lib/feature-flags";
 import { mediciEnabled } from "@/lib/medici";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 
 export const metadata: Metadata = {
   title: "Lettura referti: il tuo referto in parole semplici",
-  description: "La sezione Lettura referti di Cura Privata: carichi il referto, controlli i valori letti e leggi accanto a ogni riga che cosa misura e dove sta il tuo numero. Non è una diagnosi.",
+  description: "Carichi il referto, controlli i valori letti e leggi accanto a ogni riga che cosa misura e dove sta il tuo numero. In parole semplici. Non è una diagnosi.",
   alternates: { canonical: "/lettura-referti" },
 };
 
@@ -23,6 +28,9 @@ export const metadata: Metadata = {
  * Sezione 2 «Lettura referti» (15/11/2026 sera, Simone: lettura dei referti e medici separate). Il servizio a pagamento
  * del sito: apertura menta, la prova da toccare, i tre passi, che cosa ricevi, i limiti detti chiaro, e il ponte verso
  * la sezione 3 quando serve un medico.
+ * 17/11/2026 (20 interventi, punto 1): è l'unica pagina del servizio. La vecchia /referti («Capisci il tuo referto»)
+ * reindirizza qui e ha portato con sé che cosa include, le domande prima di cominciare, il conteggio delle visite e,
+ * nel profilo vetrina, la lista d'attesa. «Carica un referto» porta al caricamento (punto 2), non a un'altra pagina.
  */
 export default function LetturaRefertiPage() {
   const prices = publicPricesEnabled();
@@ -31,8 +39,11 @@ export default function LetturaRefertiPage() {
   const first = formatEuro(firstRefertoCents());
   const capisci = coreService("capisci");
   const attivo = mediciEnabled();
+  const vetrina = readFlags().vetrina;
+  const start = serviceStart("capisci");
   return (
     <div className="tm ds">
+      <TrackView event="visita-capisci" />
       <section className="ds-ph ds-ph-2" aria-labelledby="lr-titolo">
         <div className="tm-wrap">
           <PercorsoSezioni current={2} />
@@ -53,10 +64,19 @@ export default function LetturaRefertiPage() {
                   <span>{promo ? `il primo referto, poi ${std}` : "a referto, senza abbonamento"}</span>
                 </p>
               ) : null}
-              <Link href={capisci.href} className="tm-btn tm-btn-ink" data-track="cta-capisci">
-                Carica un referto <ArrowRight aria-hidden className="tm-ic" />
+              <Link href={start.href} className="tm-btn tm-btn-ink" data-track="cta-capisci">
+                {vetrina ? start.label : "Carica un referto"} <ArrowRight aria-hidden className="tm-ic" />
               </Link>
             </div>
+            {vetrina ? (
+              // Profilo vetrina: il servizio non è aperto. L'azione porta alla lista d'attesa; accanto, la prova senza registrazione.
+              <p className="tm-fine" data-testid="vetrina-avviso">
+                Il servizio non è ancora aperto: lasciaci la tua email e ti avvisiamo quando parte.{" "}
+                <Link href={VETRINA_TRY.capisci.href} className="tm-tlink">
+                  {VETRINA_TRY.capisci.label}
+                </Link>
+              </p>
+            ) : null}
             <p className="tm-fine">Non è una diagnosi e non sostituisce il tuo medico. Paghi solo dopo aver controllato i valori.</p>
           </div>
           <div className="ds-ph-art">
@@ -162,8 +182,19 @@ export default function LetturaRefertiPage() {
         </div>
       </section>
 
-      <section className="ds-sec-light" aria-labelledby="lr-limiti">
-        <div className="tm-wrap">
+      <section className="ds-sec-light" aria-labelledby="lr-include">
+        <div className="tm-wrap ds-incl">
+          <div className="ds-incl-card">
+            <h2 id="lr-include">Che cosa include</h2>
+            <ul>
+              {capisci.includes.map((t) => (
+                <li key={t}>
+                  <Check aria-hidden className="tm-ic" />
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="ds-rule">
             <ShieldCheck aria-hidden className="tm-ic" />
             <div>
@@ -172,9 +203,42 @@ export default function LetturaRefertiPage() {
                 <li>Non fa diagnosi e non dice che cosa fare: il giudizio spetta al medico.</li>
                 <li>La spiegazione la scrive un sistema automatico; i numeri restano quelli del tuo referto, confermati da te.</li>
                 <li>Non è per le urgenze: se stai male adesso, chiama il 112.</li>
+                <li>Non legge immagini diagnostiche, referti istologici o genetici.</li>
               </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      {vetrina ? (
+        <section id="avvisami" className="ds-sec-light ds-sec-alt scroll-mt-24" aria-labelledby="lr-avvisami">
+          <div className="tm-wrap max-w-2xl">
+            <p className="tm-kicker">Lista d’attesa</p>
+            <h2 id="lr-avvisami" className="wow-h3">
+              Avvisami <em>quando parte.</em>
+            </h2>
+            <p className="mb-6 mt-3 text-[1.125rem] text-[var(--t-soft)]">Solo la tua email, per un interesse non vincolante. Non scrivere informazioni sulla tua salute.</p>
+            <WaitlistForm interest="completo" />
+          </div>
+        </section>
+      ) : null}
+
+      <section id="domande" className="ds-sec-light ds-sec-alt" aria-labelledby="lr-domande">
+        <div className="tm-wrap">
+          <div className="tm-sec-h">
+            <div>
+              <p className="tm-kicker">Prima di cominciare</p>
+              <h2 id="lr-domande">
+                Le domande <em>che ci fanno più spesso.</em>
+              </h2>
+            </div>
+            <p>
+              <Link href="/domande-frequenti" className="tm-tlink">
+                Tutte le domande frequenti
+              </Link>
+            </p>
+          </div>
+          <FaqList items={FAQ.filter((f) => f.topic === "servizio" || f.topic === "dati").slice(0, 3)} />
         </div>
       </section>
 

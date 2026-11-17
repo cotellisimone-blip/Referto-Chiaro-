@@ -1269,6 +1269,12 @@
     overflow-y: auto;
     overscroll-behavior: contain;
   }
+  /* 17/11/2026: senza risultati, le tre sezioni come uscite */
+  .search-none-links {
+    display: grid;
+    gap: 0.5rem;
+    text-align: left;
+  }
   .search-result {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;

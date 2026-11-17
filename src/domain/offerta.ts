@@ -70,7 +70,7 @@ export const CORE_SERVICES: CoreService[] = [
     name: "Capisci il tuo referto",
     oneLiner: "Il tuo referto di laboratorio diventa un report ordinato: valori, sigle, spiegazioni in parole semplici e domande utili per il medico.",
     forWhom: "Hai ricevuto un referto pieno di sigle e valori e vuoi capirlo.",
-    href: "/referti",
+    href: "/lettura-referti",
     startHref: "/area-personale/nuovo",
     startLabel: "Carica il referto",
     orderService: "essenziale",
@@ -168,11 +168,12 @@ export const CORE_SERVICES: CoreService[] = [
   },
 ];
 
-/** Ciclo 2, fase 3 (approvata da Simone l'11/11): il payoff segue l'ordine dei servizi e dei prezzi, come menu e livelli. */
-// 13/11/2026: senza medici (src/lib/medici.ts) il payoff dice quello che c'è davvero: capire, seguire nel tempo, prepararsi.
-export const PAYOFF_LINES: readonly [string, string, string] = mediciEnabled()
-  ? ["Capisci.", "Parla con un medico.", "Chiedi un secondo parere."]
-  : ["Capisci.", "Segui nel tempo.", "Arriva preparato dal medico."];
+/**
+ * Il payoff del sito, uguale in cima alla home e nel piè di pagina (17/11/2026, 20 interventi, punto 10: «un solo
+ * messaggio»). Dal 15/11 il sito è fatto di tre sezioni (Prevenzione, Lettura referti, Medici) e la home apre con
+ * queste tre frasi: prima il piè di pagina ne diceva altre («Capisci. Segui nel tempo…»).
+ */
+export const PAYOFF_LINES: readonly [string, string, string] = ["Previeni.", "Capisci.", "Un medico, se serve."];
 export const PAYOFF = PAYOFF_LINES.join(" ");
 /** I tre livelli del percorso, nell'ordine in cui si sale. */
 export const LEVELS: readonly CoreServiceId[] = mediciEnabled() ? ["capisci", "parla-con-un-medico", "secondo-parere"] : ["capisci"];

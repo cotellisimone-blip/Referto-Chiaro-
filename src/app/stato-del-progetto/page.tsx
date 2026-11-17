@@ -102,9 +102,11 @@ export default function StatoDelProgettoPage() {
         </div>
       </Section>
 
-      <Section id="piu-avanti" title="Più avanti." lead="Idee per dopo i servizi di oggi. Partiranno solo quando saranno pronte davvero." size="md">
-        <LinkCards items={later} columns={2} />
-      </Section>
+      {later.length > 0 ? (
+        <Section id="piu-avanti" title="Più avanti." lead="Idee per dopo i servizi di oggi. Partiranno solo quando saranno pronte davvero." size="md">
+          <LinkCards items={later} columns={2} />
+        </Section>
+      ) : null}
     </>
   );
 }

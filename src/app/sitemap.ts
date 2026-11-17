@@ -2,13 +2,18 @@ import type { MetadataRoute } from "next";
 import { GUIDES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import { AREAS } from "@/content/punto-di-partenza";
-import { absoluteUrl, glossaryIndexable, guideIndexable, indexingEnabled } from "@/lib/seo";
+import { INTEGRATORI } from "@/content/integratori";
+import { absoluteUrl, glossaryIndexable, guideIndexable, indexingEnabled, integratoreIndexable } from "@/lib/seo";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { isDoctorPath, mediciEnabled } from "@/lib/medici";
 
 const pdpReviewed = () => AREAS.every((a) => a.reviewStatus === "revisionato");
 
-const PUBLIC = ["/", "/prevenzione", "/lettura-referti", "/medici", "/referti", "/come-funziona", "/servizi", "/famiglia", "/servizi/parla-con-un-medico", "/servizi/visita-a-domicilio", "/prezzi", "/strumenti/preparati-alla-visita", "/servizi/prevenzione", "/servizi/secondo-parere", "/domande-frequenti", "/inizia", "/chi-siamo", "/per-i-medici", "/stato-del-progetto", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/per-le-strutture", "/referti/esempio", "/guide", "/glossario", "/strumenti/domande-per-il-medico", "/punto-di-partenza", "/con-un-medico"];
+/**
+ * 17/11/2026 (20 interventi, punti 1 e 13): le tre sezioni per prime; fuori le pagine confluite (/referti, /servizi
+ * senza medici, /servizi/prevenzione, /con-un-medico); dentro Strumenti e l'elenco degli integratori.
+ */
+const PUBLIC = ["/", "/prevenzione", "/lettura-referti", "/medici", "/prezzi", "/guide", "/integratori", "/glossario", "/strumenti", "/strumenti/preparati-alla-visita", "/strumenti/domande-per-il-medico", "/punto-di-partenza", "/referti/esempio", "/famiglia", "/come-funziona", "/domande-frequenti", "/inizia", "/chi-siamo", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/stato-del-progetto", "/per-le-strutture", "/servizi", "/servizi/visita-a-domicilio", "/servizi/parla-con-un-medico", "/servizi/secondo-parere", "/per-i-medici"];
 
 /**
  * Sitemap vuota finché l'indicizzazione è spenta: nessun URL viene proposto ai motori.
@@ -20,8 +25,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   return [
     ...PUBLIC.filter((p) => p !== "/punto-di-partenza" || (puntoDiPartenzaEnabled() && pdpReviewed()))
-      .filter((p) => (mediciEnabled() ? p !== "/con-un-medico" : !isDoctorPath(p))).map((p) => ({ url: absoluteUrl(p), lastModified: now, changeFrequency: "weekly" as const, priority: p === "/" ? 1 : 0.7 })),
+      // Senza medici le loro pagine e l'elenco «I servizi» reindirizzano: non vanno proposti ai motori.
+      .filter((p) => mediciEnabled() || (!isDoctorPath(p) && p !== "/servizi")).map((p) => ({ url: absoluteUrl(p), lastModified: now, changeFrequency: "weekly" as const, priority: p === "/" ? 1 : 0.7 })),
     ...GUIDES.filter((g) => guideIndexable(g)).map((g) => ({ url: absoluteUrl(`/guide/${g.slug}`), lastModified: new Date(g.lastUpdated), changeFrequency: "monthly" as const, priority: 0.6 })),
+    ...INTEGRATORI.filter((i) => integratoreIndexable(i)).map((i) => ({ url: absoluteUrl(`/integratori/${i.slug}`), lastModified: new Date(i.lastUpdated), changeFrequency: "monthly" as const, priority: 0.6 })),
     ...(glossaryIndexable() ? GLOSSARY : []).map((e) => ({ url: absoluteUrl(`/glossario/${e.slug}`), lastModified: now, changeFrequency: "monthly" as const, priority: 0.4 })),
   ];
 }

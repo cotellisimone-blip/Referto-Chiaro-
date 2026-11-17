@@ -30,7 +30,7 @@ import { publicPricesEnabled } from "@/domain/offerta";
 export const metadata: Metadata = {
   title: "Famiglia: la salute di tutti, nel tempo",
   description:
-    "I referti di tutta la famiglia in un posto solo: i numeri messi in fila negli anni, una scheda per ogni familiare, promemoria e il foglio per ogni visita. Senza diagnosi.",
+    "I referti di tutta la famiglia in un posto solo: i numeri in fila negli anni, una scheda per ogni familiare, i promemoria e il foglio per ogni visita.",
   alternates: { canonical: "/famiglia" },
 };
 

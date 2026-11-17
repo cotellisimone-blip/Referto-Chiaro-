@@ -337,8 +337,8 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
                       <Link href={startHref} className="btn btn-primary btn-lg max-sm:px-4 sm:whitespace-nowrap">
                         Rendi chiaro il mio referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                       </Link>
-                      <Link href="/servizi" className="btn btn-ghost">
-                        Vedi servizi e prezzi
+                      <Link href="/prezzi" className="btn btn-ghost">
+                        Vedi i prezzi
                       </Link>
                     </div>
                   )}

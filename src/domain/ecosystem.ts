@@ -27,7 +27,7 @@ export const ECOSYSTEM: EcosystemService[] = [
     id: "referti",
     name: "Capisci il tuo referto",
     short: "Le sigle e i valori del referto di laboratorio spiegati in parole semplici, con le domande da portare al medico.",
-    href: "/referti",
+    href: "/lettura-referti",
     status: "demo",
     icon: "file",
   },
@@ -66,9 +66,9 @@ export const ECOSYSTEM: EcosystemService[] = [
   {
     id: "prevenzione",
     name: "Prevenzione",
-    short: "Promemoria e materiali per non dimenticare i controlli che il tuo medico ti ha indicato.",
-    href: "/servizi/prevenzione",
-    status: "in-preparation",
+    short: "Quali controlli conoscere, le guide agli esami e agli integratori, i promemoria. Senza registrarti.",
+    href: "/prevenzione",
+    status: "free",
     icon: "sprout",
   },
 ];
