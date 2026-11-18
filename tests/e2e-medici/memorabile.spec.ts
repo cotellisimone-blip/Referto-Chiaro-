@@ -63,7 +63,7 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
 
   test("guide e glossario: risposta, poi una CTA pertinente e non invadente", async ({ page }) => {
     await page.goto("/guide/tsh");
-    await expect(page.getByText(/Hai già il tuo referto\? Rendilo chiaro: il primo 2,90 €, poi 7,90 €\./)).toBeVisible();
+    await expect(page.getByText(/Hai già il tuo referto\? Rendilo chiaro: il primo 2,90\s€, poi 7,90\s€\./)).toBeVisible();
     await page.goto("/guide/risonanza-magnetica");
     await expect(page.getByText(/Hai già ricevuto una diagnosi o un'indicazione\? Puoi chiedere un secondo parere\./)).toBeVisible();
     await expect(page.getByRole("link", { name: /Preferisci parlarne\? Un medico di medicina generale/ })).toBeVisible();
