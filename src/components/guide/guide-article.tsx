@@ -1,3 +1,4 @@
+import { IN_BREVE } from "@/content/guides/in-breve";
 import Link from "next/link";
 import { ContextualCta } from "@/components/offerta/contextual-cta";
 import { absoluteUrl } from "@/lib/seo";
@@ -16,15 +17,16 @@ import { enfasi } from "@/components/ui/titolo";
 import { PercorsoSezioni } from "@/components/sezioni/parts";
 
 /** Prima frase di un paragrafo, per il riquadro «In breve» (stesso testo già validato, nessuna parola nuova). */
-function firstSentence(p: string) {
+
+export function firstSentence(p: string) {
   const m = p.match(/^(.+?[.!?])(\s|$)/);
   const first = m ? m[1] : p;
   if (first.length <= 130) return first;
   // Frase lunga: ci si ferma alla prima pausa forte (due punti o punto e virgola), senza aggiungere parole.
   const cut = first.search(/[:;]/);
   if (cut > 30 && cut <= 130) return `${first.slice(0, cut)}.`;
-  const sp = first.lastIndexOf(" ", 125);
-  return `${first.slice(0, sp > 40 ? sp : 125)}…`;
+  // Mai una frase tagliata a metà: piuttosto la frase intera. Le righe lunghe hanno un testo dedicato in in-breve.ts.
+  return first;
 }
 
 /** Modello di pagina di una guida: stesse sezioni per tutte, così la lettura è prevedibile. */
@@ -103,11 +105,11 @@ export function GuideArticle({ guide }: { guide: Guide }) {
           <dl className="mt-4 grid gap-4 text-[1.0625rem] sm:grid-cols-3 sm:gap-6 lg:grid-cols-1 lg:gap-4">
             <div>
               <dt className="font-bold text-teal">{T.what}</dt>
-              <dd className="mt-1 text-ink-soft">{firstSentence(guide.sections.whatItMeasures[0])}</dd>
+              <dd className="mt-1 text-ink-soft">{IN_BREVE[guide.slug]?.what ?? firstSentence(guide.sections.whatItMeasures[0])}</dd>
             </div>
             <div>
               <dt className="font-bold text-teal">{pr ? "Quando serve" : "Quando si fa"}</dt>
-              <dd className="mt-1 text-ink-soft">{firstSentence(guide.sections.whyRequested[0])}</dd>
+              <dd className="mt-1 text-ink-soft">{IN_BREVE[guide.slug]?.when ?? firstSentence(guide.sections.whyRequested[0])}</dd>
             </div>
             <div>
               <dt className="font-bold text-teal">Da chiedere al medico</dt>
