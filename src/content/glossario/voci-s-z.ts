@@ -287,7 +287,7 @@ export const GLOSSARIO_S_Z: GlossaryEntry[] = [
       "unità",
       "UM"
     ],
-    "definition": "L'unità di misura indica in che scala è espresso un risultato, per esempio mg/dL, mmol/L, U/L o 10^9/L. Senza unità un numero non si può interpretare.",
+    "definition": "L'unità di misura indica in che scala è espresso un risultato, per esempio mg/dL, mmol/L, U/L o 10⁹/L. Senza unità un numero non si può interpretare.",
     "inDetail": [
       "Lo stesso esame può essere riportato in unità diverse da laboratori diversi. Il confronto è valido solo con la stessa unità o dopo la conversione.",
       "Intervallo di riferimento e risultato devono avere la stessa unità."

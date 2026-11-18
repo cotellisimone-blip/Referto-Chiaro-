@@ -10,7 +10,7 @@ export const GLOSSARIO_N_R: GlossaryEntry[] = [
     ],
     "definition": "I neutrofili sono il tipo più numeroso di globuli bianchi. Sono tra le prime cellule a intervenire contro batteri e altri germi.",
     "inDetail": [
-      "Nella formula leucocitaria sono in percentuale e come numero assoluto (10^9/L o cellule per microlitro).",
+      "Nella formula leucocitaria sono in percentuale e come numero assoluto (10⁹/L o cellule per microlitro).",
       "Il numero assoluto è spesso più utile della percentuale."
     ],
     "relatedGuides": [
@@ -146,7 +146,7 @@ export const GLOSSARIO_N_R: GlossaryEntry[] = [
     ],
     "definition": "Le piastrine sono frammenti di cellule che circolano nel sangue e aiutano a chiudere le lesioni dei vasi formando un tappo e avviando la coagulazione.",
     "inDetail": [
-      "Il numero si esprime in 10^9/L o migliaia per microlitro.",
+      "Il numero si esprime in 10⁹/L o migliaia per microlitro.",
       "A volte il conteggio automatico risulta diverso a causa di aggregati nella provetta; il laboratorio può ripetere l'analisi su un altro campione."
     ],
     "relatedGuides": [
@@ -482,7 +482,7 @@ export const GLOSSARIO_N_R: GlossaryEntry[] = [
     ],
     "definition": "I reticolociti sono globuli rossi giovani, appena usciti dal midollo osseo. Il loro numero indica quanto velocemente il midollo ne produce di nuovi.",
     "inDetail": [
-      "Sono riportati in percentuale e in numero assoluto (10^9/L). Fanno parte di un emocromo con reticolociti.",
+      "Sono riportati in percentuale e in numero assoluto (10⁹/L). Fanno parte di un emocromo con reticolociti.",
       "Si leggono con emoglobina e globuli rossi."
     ],
     "relatedGuides": [

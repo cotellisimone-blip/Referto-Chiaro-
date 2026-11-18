@@ -731,3 +731,47 @@
   html .tm .tm-tlink{min-height:44px;margin-top:12px;border-bottom:0;padding-bottom:0;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
   html .tm .ds-crumb{min-height:44px;display:inline-flex;align-items:center}
 }
+
+/* 18/11/2026 (terzo giro, punto 9): la regola dei 14 px vale a ogni larghezza, non solo su telefono, e vale anche per
+   le schermate d'esempio (le miniature dentro le porte, i disegni delle schede, i tre passi di Medici), che sono
+   nascoste ai lettori di schermo ma si leggono. Unica eccezione: la «A» piccola del pulsante «Aa», che è un segno
+   e non un testo. La prova: tests/e2e/terzo-giro.spec.ts (punto 9). */
+html .tm .ds-door-k,
+html .tm .ds-state,
+html .tm .tm-illus,
+html .tm .ds-todo,
+html .tm .ds-sec-tag,
+html .tm .ds-card-k,
+html .tm .tm-kicker,
+html .tm .ds-int-g,
+html .tm .ds-draft,
+html .tm .ds-onrep-ex span,
+html .tm .ds-trust li span,
+html .tm .ds-path small,
+html .tm .ds-mini-k,
+html .tm .ds-mini-r span,
+html .tm .ds-mini-st,
+html .tm .ds-mini-doc small,
+html .tm .ds-mini-when,
+html .tm .ds-art-pdp i,
+html .tm .ds-art-gui i,
+html .tm .ds-art-int i,
+html .tm .ds-art-row,
+html .tm .ds-flow-scr,
+html .tm .ds-flow-scr .ds-f-in i,
+html .tm .ds-flow-scr .ds-f-btn,
+html .tm .ds-flow-scr .ds-f-slots i,
+html .tm .ds-f-doc .ds-av,
+html .tm .ds-f-next small,
+html .wow-sheet-ex,
+html .wow-sheet .wow-sheet-k,
+html .wow-sheet p,
+html .caption-illus{font-size:0.875rem}
+html .tm .ds-mini-r span b{font-size:1rem}
+html .tm .ds-mini-n{width:22px;height:22px;font-size:0.875rem}
+html .tm .ds-door-k,html .tm .ds-sec-tag,html .tm .ds-card-k,html .tm .tm-kicker,html .tm .ds-int-g,html .tm .ds-mini-k,html .tm .ds-state{letter-spacing:.07em}
+html .tm .ds-f-next small{letter-spacing:.06em}
+html .tm .ds-f-doc .ds-av{width:38px;height:38px}
+html .tm .ds-art-pdp{gap:6px;width:78%}
+html .tm .ds-art-pdp i{padding:5px 10px;white-space:nowrap;overflow:hidden;text-overflow:clip}
+html .tm .ds-art-pro{width:86%}

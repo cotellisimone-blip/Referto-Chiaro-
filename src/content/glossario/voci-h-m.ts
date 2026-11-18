@@ -199,7 +199,7 @@ export const GLOSSARIO_H_M: GlossaryEntry[] = [
     ],
     "definition": "Leucociti è il nome scientifico dei globuli bianchi, le cellule del sangue che difendono l'organismo. Comprendono neutrofili, linfociti, monociti, eosinofili e basofili.",
     "inDetail": [
-      "Il totale si esprime in 10^9/L o cellule per microlitro. La formula leucocitaria ne descrive la composizione.",
+      "Il totale si esprime in 10⁹/L o cellule per microlitro. La formula leucocitaria ne descrive la composizione.",
       "Nelle urine la presenza di leucociti si cerca con la striscia reattiva e il sedimento."
     ],
     "relatedGuides": [

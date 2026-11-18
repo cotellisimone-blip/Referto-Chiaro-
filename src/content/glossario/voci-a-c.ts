@@ -363,7 +363,7 @@ export const GLOSSARIO_A_C: GlossaryEntry[] = [
     ],
     "definition": "I basofili sono un tipo di globuli bianchi, i meno numerosi. Contengono granuli con sostanze coinvolte nelle reazioni allergiche e infiammatorie.",
     "inDetail": [
-      "Nella formula leucocitaria compaiono come percentuale e come numero assoluto (cellule per microlitro o 10^9/L).",
+      "Nella formula leucocitaria compaiono come percentuale e come numero assoluto (cellule per microlitro o 10⁹/L).",
       "Poiché sono pochissimi, piccole variazioni di conteggio sono frequenti; il medico guarda il quadro complessivo della formula."
     ],
     "relatedGuides": [
@@ -519,12 +519,13 @@ export const GLOSSARIO_A_C: GlossaryEntry[] = [
     "term": "Cellule per microlitro",
     "aliases": [
       "/µL",
+      "10⁹/L",
       "10^9/L",
       "per mm3"
     ],
     "definition": "È un modo di esprimere il numero di cellule del sangue: quante ce ne sono in un microlitro, cioè in un millesimo di millilitro. Equivale a «per mm3».",
     "inDetail": [
-      "Molti referti usano 10^9/L (miliardi per litro) per globuli bianchi e piastrine e 10^12/L per i globuli rossi: sono unità equivalenti, scritte in modo diverso.",
+      "Molti referti usano 10⁹/L (miliardi per litro) per globuli bianchi e piastrine e 10¹²/L per i globuli rossi: sono unità equivalenti, scritte in modo diverso. Su alcuni referti l'esponente è scritto con un accento circonflesso: 10^9/L è lo stesso di 10⁹/L.",
       "Controlla l'unità stampata accanto al numero e usa lo stesso intervallo di riferimento per il confronto."
     ],
     "relatedGuides": [

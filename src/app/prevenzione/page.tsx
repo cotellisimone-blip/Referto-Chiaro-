@@ -7,7 +7,7 @@ import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { PrevenzioneCards } from "@/components/sezioni/prevenzione-cards";
 import { MiniPrevenzione, REFERTI_HREF, PercorsoSezioni } from "@/components/sezioni/parts";
-import { GUIDE_CATEGORIES, GUIDES } from "@/content/guides";
+import { EXAM_GUIDE_COUNT, GUIDE_CATEGORIES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS } from "@/content/integratori";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
@@ -127,7 +127,7 @@ export default function PrevenzionePage() {
             <div>
               <p className="tm-kicker">Guide agli esami</p>
               <h2 id="pv-guide">
-                {GUIDES.length} esami, <em>spiegati uno per uno.</em>
+                {EXAM_GUIDE_COUNT} esami, <em>spiegati uno per uno.</em>
               </h2>
             </div>
             <p>Esami del sangue, per immagini, del cuore, endoscopie. E {GLOSSARY.length} parole e sigle del referto, in una riga.</p>

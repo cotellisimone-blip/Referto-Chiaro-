@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, ClipboardList, Compass, MessageCircleQuestionMark, SpellCheck, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
-import { GUIDES } from "@/content/guides";
+import { EXAM_GUIDE_COUNT } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import { absoluteUrl } from "@/lib/seo";
 import { PageLd } from "@/components/site/page-ld";
@@ -25,7 +25,7 @@ export default function StrumentiPage() {
     ...(puntoDiPartenzaEnabled()
       ? [{ href: "/punto-di-partenza", icon: Compass, t: "Punto di partenza", d: "Non hai esami? 10 aree da conoscere e una scheda da portare al medico." }]
       : []),
-    { href: "/guide", icon: BookOpen, t: "Guide agli esami", d: `${GUIDES.length} esami spiegati in parole semplici, con le fonti dichiarate.` },
+    { href: "/guide", icon: BookOpen, t: "Guide agli esami", d: `${EXAM_GUIDE_COUNT} esami spiegati in parole semplici, con le fonti dichiarate.` },
     { href: "/glossario", icon: SpellCheck, t: "Glossario", d: `${GLOSSARY.length} parole e sigle dei referti, spiegate.` },
   ];
   return (

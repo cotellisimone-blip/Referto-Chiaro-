@@ -42,3 +42,7 @@ export function guidesByCategory(category: GuideCategory): Guide[] {
 
 export { GUIDE_CATEGORIES };
 export type { Guide, GuideCategory };
+
+/** Guide che spiegano un esame (senza le guide pratiche): è il numero da scrivere quando si dice «N esami spiegati». */
+export const EXAM_GUIDE_COUNT = GUIDES.filter((g) => !g.practical).length;
+export const PRACTICAL_GUIDE_COUNT = GUIDES.length - EXAM_GUIDE_COUNT;

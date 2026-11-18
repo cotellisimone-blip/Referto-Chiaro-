@@ -324,7 +324,7 @@ export const GLOSSARIO_D_G: GlossaryEntry[] = [
     ],
     "definition": "Gli eosinofili sono un tipo di globuli bianchi coinvolti nelle reazioni allergiche e nella risposta ad alcuni parassiti.",
     "inDetail": [
-      "Nella formula leucocitaria sono riportati in percentuale e come numero assoluto (cellule per microlitro o 10^9/L).",
+      "Nella formula leucocitaria sono riportati in percentuale e come numero assoluto (cellule per microlitro o 10⁹/L).",
       "Il numero cambia nell'arco della giornata e in alcune stagioni."
     ],
     "relatedGuides": [
@@ -347,7 +347,7 @@ export const GLOSSARIO_D_G: GlossaryEntry[] = [
     ],
     "definition": "Eritrociti è il nome scientifico dei globuli rossi, le cellule del sangue che trasportano l'ossigeno grazie all'emoglobina.",
     "inDetail": [
-      "Sul referto compaiono come «RBC» o «globuli rossi», in 10^12/L o milioni per microlitro.",
+      "Sul referto compaiono come «RBC» o «globuli rossi», in 10¹²/L o milioni per microlitro.",
       "Il numero si legge insieme a emoglobina, ematocrito e indici corpuscolari."
     ],
     "relatedGuides": [
@@ -488,7 +488,7 @@ export const GLOSSARIO_D_G: GlossaryEntry[] = [
     ],
     "definition": "La formula leucocitaria indica quanti globuli bianchi di ciascun tipo (neutrofili, linfociti, monociti, eosinofili, basofili) sono presenti nel sangue.",
     "inDetail": [
-      "Ogni tipo è riportato come percentuale sul totale e come numero assoluto (10^9/L o cellule per microlitro). Il numero assoluto è spesso più informativo.",
+      "Ogni tipo è riportato come percentuale sul totale e come numero assoluto (10⁹/L o cellule per microlitro). Il numero assoluto è spesso più informativo.",
       "Compare dopo i globuli bianchi totali nell'emocromo."
     ],
     "relatedGuides": [
@@ -726,7 +726,7 @@ export const GLOSSARIO_D_G: GlossaryEntry[] = [
     ],
     "definition": "I globuli bianchi sono le cellule del sangue che fanno parte del sistema immunitario. Ne esistono cinque tipi principali, contati nella formula leucocitaria.",
     "inDetail": [
-      "Il totale si esprime in 10^9/L o in cellule per microlitro, e varia con età, ora del giorno e stato generale.",
+      "Il totale si esprime in 10⁹/L o in cellule per microlitro, e varia con età, ora del giorno e stato generale.",
       "L'attenzione va al totale e alla ripartizione tra i vari tipi."
     ],
     "relatedGuides": [
@@ -751,7 +751,7 @@ export const GLOSSARIO_D_G: GlossaryEntry[] = [
     ],
     "definition": "I globuli rossi sono le cellule più numerose del sangue. Contengono emoglobina e trasportano ossigeno dai polmoni ai tessuti.",
     "inDetail": [
-      "Il numero si esprime in 10^12/L (o milioni per microlitro). Le dimensioni e il contenuto sono descritti da MCV, MCH, MCHC e RDW.",
+      "Il numero si esprime in 10¹²/L (o milioni per microlitro). Le dimensioni e il contenuto sono descritti da MCV, MCH, MCHC e RDW.",
       "Sono contati nell'emocromo insieme a emoglobina ed ematocrito."
     ],
     "relatedGuides": [

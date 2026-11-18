@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { GuideFinder } from "@/components/content/guide-finder";
-import { GUIDE_CATEGORIES, GUIDES } from "@/content/guides";
+import { EXAM_GUIDE_COUNT, GUIDE_CATEGORIES, GUIDES } from "@/content/guides";
 import type { GuideCategory } from "@/content/guides";
 import { absoluteUrl } from "@/lib/seo";
 import { PageLd } from "@/components/site/page-ld";
@@ -22,7 +22,7 @@ export default function GuideHubPage() {
         art="magnify"
         eyebrow="Guide"
         title="Gli esami, spiegati uno per uno."
-        lead={`${GUIDES.length} esami spiegati in parole semplici: che cosa misurano e che cosa chiedere al medico.`}
+        lead={`${EXAM_GUIDE_COUNT} esami spiegati in parole semplici: che cosa misurano e che cosa chiedere al medico.`}
       />
       <GuideFinder guides={guides} categories={cats} />
     </>

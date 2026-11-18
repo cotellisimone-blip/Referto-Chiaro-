@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, BellRing, BookOpen, Compass, Pill } from "lucide-react";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
-import { GUIDES } from "@/content/guides";
+import { EXAM_GUIDE_COUNT } from "@/content/guides";
 import { INTEGRATORI } from "@/content/integratori";
 
 /** Le quattro cose della sezione 1 «Prevenzione», con un piccolo disegno ciascuna. Usate in home e in /prevenzione. */
@@ -10,7 +10,7 @@ export function PrevenzioneCards() {
     ...(puntoDiPartenzaEnabled()
       ? [{ href: "/punto-di-partenza", icon: Compass, k: "Gratis · 2 minuti", t: "Quali esami conoscere", d: "Il primo controllo: 10 aree della salute da conoscere e una scheda da portare al medico.", v: "pdp" }]
       : []),
-    { href: "/guide", icon: BookOpen, k: "Gratis", t: "Guide agli esami", d: `${GUIDES.length} esami spiegati: a che cosa servono, come si fanno, come si leggono. Con le fonti.`, v: "gui" },
+    { href: "/guide", icon: BookOpen, k: "Gratis", t: "Guide agli esami", d: `${EXAM_GUIDE_COUNT} esami spiegati: a che cosa servono, come si fanno, come si leggono. Con le fonti.`, v: "gui" },
     { href: "/integratori", icon: Pill, k: "Gratis · nuovo", t: "Guide agli integratori", d: `${INTEGRATORI.length} schede: vitamina D, ferro, omega-3 e altri. Che cosa sono e che cosa chiedere.`, v: "int" },
     { href: "/famiglia", icon: BellRing, k: "Gratis", t: "Promemoria dei controlli", d: "Segna quando rifare un esame, per te e per i tuoi cari: te lo ricordiamo noi.", v: "pro" },
   ];

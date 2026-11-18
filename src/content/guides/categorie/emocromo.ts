@@ -33,7 +33,7 @@ export const GUIDE_EMOCROMO: Guide[] = [
       ],
     },
     unitsAndRanges: {
-      commonUnits: ["g/dL", "fL", "pg", "10^6/µL", "10^3/µL"],
+      commonUnits: ["g/dL", "fL", "pg", "10⁶/µL", "10³/µL"],
       rangeNote: "Gli intervalli dell'emocromo dipendono da laboratorio, strumento, età e sesso, e talvolta dalla gravidanza. Fai riferimento solo a quelli stampati sul tuo referto e confronta esami fatti con lo stesso metodo.",
     },
     questionsForDoctor: [
@@ -57,21 +57,21 @@ export const GUIDE_EMOCROMO: Guide[] = [
   {
     slug: "globuli-rossi",
     title: "Globuli rossi (RBC): che cosa misura il conteggio",
-    metaDescription: "Il conteggio dei globuli rossi (RBC, eritrociti): che cosa misura, unità 10^6/µL, lettura con emoglobina ed ematocrito e fattori che lo influenzano.",
+    metaDescription: "Il conteggio dei globuli rossi (RBC, eritrociti): che cosa misura, unità 10⁶/µL, lettura con emoglobina ed ematocrito e fattori che lo influenzano.",
     category: "emocromo",
     examName: "Globuli rossi (RBC)",
     aliases: ["eritrociti", "RBC", "emazie", "conta dei globuli rossi"],
     summary: "Il conteggio dei globuli rossi indica quante di queste cellule ci sono in un volume di sangue. Da solo dice poco: si legge insieme a emoglobina, ematocrito e agli indici che descrivono dimensioni e contenuto delle cellule.",
     sections: {
       whatItMeasures: [
-        "I globuli rossi sono le cellule che trasportano l'emoglobina, la proteina che lega l'ossigeno. Il conteggio (RBC, dall'inglese red blood cells) esprime quante ce ne sono per unità di volume di sangue, di solito in milioni per microlitro (10^6/µL) o in 10^12 per litro.",
+        "I globuli rossi sono le cellule che trasportano l'emoglobina, la proteina che lega l'ossigeno. Il conteggio (RBC, dall'inglese red blood cells) esprime quante ce ne sono per unità di volume di sangue, di solito in milioni per microlitro (10⁶/µL) o in 10¹² per litro.",
         "Il numero è una concentrazione: dipende quindi anche da quanta parte liquida (plasma) c'è nel campione. Per questo l'idratazione può modificarlo senza che cambi il numero reale di cellule nell'organismo.",
       ],
       whyRequested: [
         "Il conteggio dei globuli rossi fa parte dell'emocromo ed è richiesto nei controlli generali, in caso di stanchezza o pallore, prima di interventi o durante il monitoraggio di alcune condizioni. Il medico lo usa insieme agli altri parametri della serie rossa, non come dato isolato.",
       ],
       howToRead: [
-        "Guarda il risultato, l'unità (10^6/µL o 10^12/L, che hanno lo stesso numero) e l'intervallo stampato, che spesso è diverso per uomini, donne e bambini. Poi leggi accanto emoglobina ed ematocrito: i tre parametri tendono a seguire la stessa direzione.",
+        "Guarda il risultato, l'unità (10⁶/µL o 10¹²/L, che hanno lo stesso numero) e l'intervallo stampato, che spesso è diverso per uomini, donne e bambini. Poi leggi accanto emoglobina ed ematocrito: i tre parametri tendono a seguire la stessa direzione.",
         "Il numero dei globuli rossi non dice nulla sulla loro dimensione o sul loro contenuto: per questo l'emocromo riporta anche MCV, MCH e MCHC. Può accadere che il conteggio sia fuori intervallo mentre l'emoglobina no, o viceversa, e il medico interpreta la combinazione.",
         "Per un confronto nel tempo usa lo stesso laboratorio e le stesse condizioni di prelievo; piccole oscillazioni sono comuni.",
       ],
@@ -85,8 +85,8 @@ export const GUIDE_EMOCROMO: Guide[] = [
       ],
     },
     unitsAndRanges: {
-      commonUnits: ["10^6/µL", "10^12/L"],
-      rangeNote: "L'intervallo dei globuli rossi dipende da sesso, età, metodo e laboratorio. 10^6/µL e 10^12/L hanno lo stesso valore numerico: controlla quale unità è stampata sul referto e usa solo l'intervallo del tuo laboratorio.",
+      commonUnits: ["10⁶/µL", "10¹²/L"],
+      rangeNote: "L'intervallo dei globuli rossi dipende da sesso, età, metodo e laboratorio. 10⁶/µL e 10¹²/L hanno lo stesso valore numerico: controlla quale unità è stampata sul referto e usa solo l'intervallo del tuo laboratorio.",
     },
     questionsForDoctor: [
       "Il conteggio dei globuli rossi va letto con emoglobina ed ematocrito: che cosa dicono insieme?",
@@ -369,7 +369,7 @@ export const GUIDE_EMOCROMO: Guide[] = [
     summary: "I globuli bianchi (leucociti) sono le cellule del sistema di difesa. L'emocromo ne riporta il totale e la formula leucocitaria, cioè la suddivisione nei cinque tipi principali, in percentuale e in valore assoluto.",
     sections: {
       whatItMeasures: [
-        "I globuli bianchi (WBC, white blood cells) sono cellule coinvolte nelle difese dell'organismo. L'esame ne misura il numero totale per unità di volume, di solito in migliaia per microlitro (10^3/µL) o in 10^9 per litro.",
+        "I globuli bianchi (WBC, white blood cells) sono cellule coinvolte nelle difese dell'organismo. L'esame ne misura il numero totale per unità di volume, di solito in migliaia per microlitro (10³/µL) o in 10⁹ per litro.",
         "La formula leucocitaria suddivide il totale nei cinque tipi principali: neutrofili, linfociti, monociti, eosinofili e basofili. Ognuno ha compiti diversi e viene riportato sia come percentuale sul totale sia come valore assoluto, cioè numero di cellule per microlitro.",
       ],
       whyRequested: [
@@ -390,8 +390,8 @@ export const GUIDE_EMOCROMO: Guide[] = [
       ],
     },
     unitsAndRanges: {
-      commonUnits: ["10^3/µL", "10^9/L", "cellule/µL", "%"],
-      rangeNote: "Gli intervalli dei globuli bianchi e di ciascun tipo cellulare dipendono da età, sesso, laboratorio e metodo. 10^3/µL e 10^9/L hanno lo stesso numero. Fai riferimento solo agli intervalli stampati sul tuo referto.",
+      commonUnits: ["10³/µL", "10⁹/L", "cellule/µL", "%"],
+      rangeNote: "Gli intervalli dei globuli bianchi e di ciascun tipo cellulare dipendono da età, sesso, laboratorio e metodo. 10³/µL e 10⁹/L hanno lo stesso numero. Fai riferimento solo agli intervalli stampati sul tuo referto.",
     },
     questionsForDoctor: [
       "I valori assoluti della formula sono coerenti con le percentuali?",
@@ -414,14 +414,14 @@ export const GUIDE_EMOCROMO: Guide[] = [
   {
     slug: "piastrine",
     title: "Piastrine (PLT) e MPV: che cosa misurano",
-    metaDescription: "Le piastrine nell'emocromo: conteggio (PLT) in 10^3/µL e volume medio (MPV) in fL. Che cosa misurano, fattori che le influenzano, come leggere il referto.",
+    metaDescription: "Le piastrine nell'emocromo: conteggio (PLT) in 10³/µL e volume medio (MPV) in fL. Che cosa misurano, fattori che le influenzano, come leggere il referto.",
     category: "emocromo",
     examName: "Piastrine (PLT) e MPV",
     aliases: ["PLT", "trombociti", "conta piastrinica", "volume piastrinico medio"],
     summary: "Le piastrine sono frammenti cellulari che partecipano alla coagulazione. L'emocromo ne riporta il numero (PLT) e spesso il volume medio (MPV): sono parametri sensibili alle condizioni del campione, e a volte il laboratorio ripete la conta.",
     sections: {
       whatItMeasures: [
-        "Le piastrine (PLT, platelets o trombociti) sono piccoli frammenti di cellule che partecipano alla fase iniziale della coagulazione. La conta indica quante ce ne sono per unità di volume, di solito in migliaia per microlitro (10^3/µL) o in 10^9 per litro.",
+        "Le piastrine (PLT, platelets o trombociti) sono piccoli frammenti di cellule che partecipano alla fase iniziale della coagulazione. La conta indica quante ce ne sono per unità di volume, di solito in migliaia per microlitro (10³/µL) o in 10⁹ per litro.",
         "L'MPV (mean platelet volume) è il volume medio delle piastrine, espresso in femtolitri (fL). Descrive la dimensione media e non il loro numero, e va letto come informazione complementare.",
       ],
       whyRequested: [
@@ -442,8 +442,8 @@ export const GUIDE_EMOCROMO: Guide[] = [
       ],
     },
     unitsAndRanges: {
-      commonUnits: ["10^3/µL", "10^9/L", "fL"],
-      rangeNote: "Gli intervalli di PLT (10^3/µL, uguali numericamente a 10^9/L) e di MPV (fL) dipendono dal laboratorio e dallo strumento. Usa solo quelli stampati sul tuo referto e leggi le note del laboratorio.",
+      commonUnits: ["10³/µL", "10⁹/L", "fL"],
+      rangeNote: "Gli intervalli di PLT (10³/µL, uguali numericamente a 10⁹/L) e di MPV (fL) dipendono dal laboratorio e dallo strumento. Usa solo quelli stampati sul tuo referto e leggi le note del laboratorio.",
     },
     questionsForDoctor: [
       "Il laboratorio ha segnalato aggregati di piastrine o altre note sul campione?",
