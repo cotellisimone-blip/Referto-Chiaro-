@@ -474,3 +474,8 @@ ALTER TABLE consents ADD CONSTRAINT consents_kind_check CHECK (kind IN ('terms',
 ALTER TABLE waitlist DROP CONSTRAINT IF EXISTS waitlist_interest_check;
 ALTER TABLE waitlist ADD CONSTRAINT waitlist_interest_check CHECK (interest IN ('completo', 'secondo-parere', 'strutture', 'archivio', 'visite', 'prevenzione', 'domicilio', 'famiglia'));
 INSERT INTO schema_migrations(version) VALUES (9) ON CONFLICT DO NOTHING;
+
+-- 18/11/2026 (terzo giro, punto 3): il nome del referto lo scegliamo noi (tipo e data del prelievo) finché la persona
+-- non lo cambia; da quel momento title_custom = true e non lo tocchiamo più.
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS title_custom boolean NOT NULL DEFAULT false;
+INSERT INTO schema_migrations(version) VALUES (10) ON CONFLICT DO NOTHING;

@@ -1,3 +1,4 @@
+import { dropTwins } from "@/domain/pipeline/titolo";
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { audit, withUser, type Queryable } from "@/db/client";
@@ -178,8 +179,9 @@ async function documentsOf(
 }
 
 export function timelineFrom(docs: DocumentRow[]): Timeline {
+  // Terzo giro, punto 4: lo stesso referto caricato due volte conta una volta sola.
   return buildTimeline(
-    docs
+    dropTwins(docs.filter((d) => d.extracted && d.verification && (d.status === "verified" || d.status === "ready")))
       .filter(
         (d) =>
           d.extracted &&

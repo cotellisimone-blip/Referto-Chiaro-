@@ -182,6 +182,15 @@ export async function createDossier(userId: string, title: string, documentIds: 
   });
 }
 
+/** Il nome scelto dalla persona: da qui in poi non viene più sostituito da quello automatico. */
+export async function renameDocument(userId: string, id: string, title: string): Promise<boolean> {
+  return withUser(userId, async (tx) => {
+    const r = await tx.query("UPDATE documents SET title = $2, title_custom = true, updated_at = now() WHERE id = $1", [id, title]);
+    if (r.rowCount) await audit(tx, { userId, actor: "user", action: "document-renamed", target: id });
+    return Boolean(r.rowCount);
+  });
+}
+
 export async function deleteDocument(userId: string, id: string): Promise<boolean> {
   return withUser(userId, async (tx) => {
     const r = await tx.query("DELETE FROM documents WHERE id = $1", [id]);

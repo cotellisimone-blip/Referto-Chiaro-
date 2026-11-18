@@ -6,13 +6,15 @@ import { createSyntheticDocument, listDocuments, listReports } from "@/domain/pi
 import { tickJobs } from "@/domain/pipeline/worker";
 import { UUID_RE, profileIdForDb } from "@/domain/famiglia/persone";
 import { getSyntheticDocument, listSyntheticSamples } from "@/fixtures/synthetic";
+import { autoTitle, findOlderTwin } from "@/domain/pipeline/titolo";
 
 export async function GET() {
   const g = await requireUser();
   if ("response" in g) return g.response;
   await tickJobs(g.user.id);
   const [documents, reports] = await Promise.all([listDocuments(g.user.id), listReports(g.user.id)]);
-  return json({ documents: documents.map((d) => ({ ...d, extracted: undefined, observationCount: d.extracted?.observations.length ?? null })), reports: reports.map((r) => ({ ...r, explanation: undefined })) });
+  // twinOf (terzo giro, punto 4): l'elenco segnala il referto uguale a uno già presente per la stessa persona.
+  return json({ documents: documents.map((d) => ({ ...d, extracted: undefined, observationCount: d.extracted?.observations.length ?? null, twinOf: findOlderTwin(d, documents)?.id ?? null })), reports: reports.map((r) => ({ ...r, explanation: undefined })) });
 }
 
 const Body = z.object({ sampleId: z.string().max(64), profileId: z.string().max(64).nullable().optional() }).strict();
@@ -30,7 +32,7 @@ export async function POST(req: Request) {
   if (!sample) return json({ error: "sample-not-found", message: "Referto di esempio non trovato." }, { status: 404 });
   const count = (await listDocuments(g.user.id)).length;
   if (count >= 30) return json({ error: "limit-reached", message: "Hai raggiunto il limite di documenti per questo account." }, { status: 409 });
-  const title = listSyntheticSamples().find((s) => s.id === sample.documentId)?.title ?? sample.displayTitle;
+  const title = autoTitle(listSyntheticSamples().find((s) => s.id === sample.documentId)?.title ?? sample.displayTitle, sample.reportDate);
   const profileId = profileIdForDb(parsed.data.profileId);
   if (profileId && !UUID_RE.test(profileId)) return json({ error: "invalid-request" }, { status: 400 });
   let id: string;

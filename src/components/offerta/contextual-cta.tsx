@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, FileText, ListChecks, Stethoscope } from "lucide-react";
-import { coreService, formatEuro, priceCents, priceLabel, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
+import { coreService, priceDisplay, priceLabel, publicPricesEnabled, type CoreServiceId } from "@/domain/offerta";
+import { CARICA_HREF } from "@/components/site/nav";
 import { mediciEnabled } from "@/lib/medici";
 
 /**
@@ -14,10 +15,17 @@ export function ctaForCategory(category: string | null | undefined): CoreService
   return category && PROCEDURAL.has(category) ? "secondo-parere" : "capisci";
 }
 
+/** «il primo 2,90 €, poi 7,90 €» con la promozione accesa, altrimenti «7,90 € per referto». Unica fonte: priceDisplay. */
+function capisciPrice(): string {
+  const d = priceDisplay("capisci");
+  return d.lead ? `il primo ${d.amount}, ${(d.note ?? "").replace(" per referto", "")}` : d.label;
+}
+
 function copy(id: "capisci" | "secondo-parere", prices: boolean): { title: string; text: string; icon: typeof FileText } {
   if (id === "capisci")
     return {
-      title: prices ? `Hai già il tuo referto? Rendilo chiaro per ${formatEuro(priceCents("capisci"))}.` : "Hai già il tuo referto? Rendilo chiaro.",
+      // 18/11/2026 (terzo giro, punto 1): qui c'era solo il prezzo pieno; il primo referto costa meno e va detto come in Prezzi.
+      title: prices ? `Hai già il tuo referto? Rendilo chiaro: ${capisciPrice()}.` : "Hai già il tuo referto? Rendilo chiaro.",
       text: "Tutti i valori del tuo documento in ordine, spiegati in parole semplici, con le domande da portare al medico. Di norma in pochi minuti.",
       icon: FileText,
     };
@@ -70,10 +78,21 @@ export function ContextualCta({ category, slug }: { category?: string | null; sl
         <p className="next-card-title">{c.title}</p>
         <p className="next-card-text">{c.text}</p>
         <div className="next-card-actions">
-          <Link href={s.href} className="btn btn-primary w-full sm:w-auto">
-            {/* 18/11/2026 (secondo giro, punto 7): «Carica un referto» è solo il comando che apre il caricamento; questo porta alla pagina che lo spiega. */}
-            {s.id === "capisci" ? "Vedi come funziona" : s.name} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-          </Link>
+          {s.id === "capisci" ? (
+            <>
+              <Link href={CARICA_HREF} className="btn btn-primary w-full sm:w-auto">
+                Carica un referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              </Link>
+              <Link href={s.href} className="next-card-alt">
+                <span>Prima vuoi vedere come funziona?</span>
+                <ArrowRight aria-hidden className="h-4 w-4 shrink-0" />
+              </Link>
+            </>
+          ) : (
+            <Link href={s.href} className="btn btn-primary w-full sm:w-auto">
+              {s.name} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+            </Link>
+          )}
           {medici ? (
             <Link href={video.href} className="next-card-alt">
               <span>Preferisci parlarne? Un medico di medicina generale{prices ? `, ${priceLabel("parla-con-un-medico")}` : ""}</span>

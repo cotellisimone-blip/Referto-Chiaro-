@@ -69,7 +69,7 @@ test.describe("il servizio e i percorsi pubblici", () => {
 
   test("guide e glossario: risposta, poi una proposta pertinente e non invadente", async ({ page }) => {
     await page.goto("/guide/tsh");
-    await expect(page.getByText(/Hai già il tuo referto\? Rendilo chiaro per 7,90/)).toBeVisible();
+    await expect(page.getByText(/Hai già il tuo referto\? Rendilo chiaro: il primo 2,90 €, poi 7,90 €\./)).toBeVisible();
     await expect(page.getByRole("link", { name: /Preferisci parlarne/ })).toHaveCount(0);
     // Per gli esami che «Capisci» non legge, senza medici la proposta è lo strumento gratuito, già aperto su quell'esame.
     await page.goto("/guide/risonanza-magnetica");

@@ -1,6 +1,7 @@
 import { isUuid, requireUser } from "@/lib/auth/guard";
 import { json } from "@/lib/api";
-import { deleteDocument, getDocument, listDocuments, listReports } from "@/domain/pipeline/repository";
+import { deleteDocument, getDocument, listDocuments, listReports, renameDocument } from "@/domain/pipeline/repository";
+import { cleanTitle, findOlderTwin } from "@/domain/pipeline/titolo";
 import { enrichReport } from "@/domain/reporting/enrich";
 import { tickJobs } from "@/domain/pipeline/worker";
 import { assignDocument } from "@/domain/famiglia/repository";
@@ -26,7 +27,10 @@ export async function GET(_req: Request, ctx: RouteContext<"/api/v1/area/documen
       previous: others.map((d) => ({ document: d.extracted!, confirmedObservationIds: d.verification!.confirmedObservationIds })),
     });
   }
-  return json({ document: doc, reports, enrichment });
+  // Terzo giro, punto 4: lo stesso referto (stessa data, stesse righe) già presente per la stessa persona.
+  const older = doc.extracted ? findOlderTwin(doc, await listDocuments(g.user.id)) : null;
+  const twin = older ? { id: older.id, title: older.title, createdAt: older.createdAt } : null;
+  return json({ document: doc, reports, enrichment, twin });
 }
 
 export async function DELETE(_req: Request, ctx: RouteContext<"/api/v1/area/documents/[id]">) {
@@ -44,7 +48,14 @@ export async function PATCH(req: Request, ctx: RouteContext<"/api/v1/area/docume
   if ("response" in g) return g.response;
   const { id } = await ctx.params;
   if (!isUuid(id)) return json({ error: "not-found" }, { status: 404 });
-  const body = (await req.json().catch(() => ({}))) as { profileId?: unknown };
+  const body = (await req.json().catch(() => ({}))) as { profileId?: unknown; title?: unknown };
+  // Cambio del nome (body: { title }): una riga, al massimo 80 caratteri.
+  if (body.title !== undefined) {
+    const title = cleanTitle(body.title);
+    if (!title) return json({ error: "invalid-request", message: "Scrivi un nome per il referto." }, { status: 400 });
+    const renamed = await renameDocument(g.user.id, id, title);
+    return renamed ? json({ ok: true, title }) : json({ error: "not-found", message: "Documento non trovato." }, { status: 404 });
+  }
   const pid = typeof body.profileId === "string" ? body.profileId : "";
   if (pid !== SELF_ID && !isUuid(pid)) return json({ error: "invalid-request" }, { status: 400 });
   const ok = await assignDocument(g.user.id, id, pid);

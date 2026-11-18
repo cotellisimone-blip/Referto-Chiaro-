@@ -1,3 +1,4 @@
+import { autoTitle } from "@/domain/pipeline/titolo";
 import { cookies } from "next/headers";
 import { loginDemoAccount } from "@/lib/auth/service";
 import { sessionCookie } from "@/lib/auth/session";
@@ -15,7 +16,8 @@ export async function POST(req: Request) {
   // Ciclo 2, fase 1: la pagina di accesso promette «referti inventati già caricati». Se l'account condiviso è vuoto
   // (prima apertura, o qualcuno ha cancellato tutto), ci rimettiamo il referto di esempio principale.
   if ((await listDocuments(r.user.id)).length === 0) {
-    const title = listSyntheticSamples().find((s) => s.id === DEMO_DOCUMENT_ID)?.title ?? "Referto di laboratorio";
+    const sample = listSyntheticSamples().find((s) => s.id === DEMO_DOCUMENT_ID);
+    const title = autoTitle(sample?.title ?? "Referto di laboratorio", sample?.reportDate ?? "");
     await createSyntheticDocument(r.user.id, DEMO_DOCUMENT_ID, title);
   }
   (await cookies()).set(sessionCookie(r.sessionToken));

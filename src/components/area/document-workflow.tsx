@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, Download, FileText, FolderPlus, Loader2, RotateCcw, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, Download, FileText, FolderPlus, Loader2, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import type { ExtractedDocument } from "@/domain/extraction/schema";
 import type { Explanation } from "@/domain/reporting/explanation-schema";
 import type { ReportEnrichment } from "@/domain/reporting/enrich";
@@ -28,6 +28,11 @@ interface Doc {
   extracted: ExtractedDocument | null;
   verification: { confirmedObservationIds: string[]; verifiedAt: string } | null;
   errorMessage: string | null;
+  createdAt: string;
+}
+interface Twin {
+  id: string;
+  title: string;
   createdAt: string;
 }
 interface Rep {
@@ -84,6 +89,7 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
   const [doc, setDoc] = useState<Doc | null>(null);
   const [reports, setReports] = useState<Rep[]>([]);
   const [enrichment, setEnrichment] = useState<ReportEnrichment | null>(null);
+  const [twin, setTwin] = useState<Twin | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [removeError, setRemoveError] = useState(false);
   const [confirmed, setConfirmed] = useState<string[]>([]);
@@ -99,8 +105,9 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
 
   const load = useCallback(async () => {
     try {
-      const r = await api<{ document: Doc; reports: Rep[]; enrichment: ReportEnrichment | null }>(`/api/v1/area/documents/${documentId}`);
+      const r = await api<{ document: Doc; reports: Rep[]; enrichment: ReportEnrichment | null; twin?: Twin | null }>(`/api/v1/area/documents/${documentId}`);
       setDoc(r.document);
+      setTwin(r.twin ?? null);
       setReports(r.reports);
       setEnrichment(r.enrichment ?? null);
       if (!seeded.current && r.document.verification) {
@@ -324,7 +331,7 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
             </h1>
             <p className="area-lead mt-3 sm:mt-4">Conferma le righe corrette: spiegheremo solo quelle.</p>
             <p className="meta mt-1.5">
-              {doc.title} · {extracted.laboratoryName} · {formatDate(extracted.reportDate)}
+              {doc.title} · {extracted.laboratoryName}
             </p>
           </div>
           <div className="mt-6 grid sm:mt-8 gap-8 lg:grid-cols-2 lg:items-start lg:gap-10 [&>*]:min-w-0">
@@ -492,6 +499,81 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
           </div>
         </section>
       ) : null}
+      {twin && (phase === "verify" || phase === "service" || phase === "report") ? <TwinNote twin={twin} /> : null}
+      {extracted ? <RenameBox key={doc.title} documentId={documentId} title={doc.title} onSaved={() => void load()} /> : null}
     </div>
+  );
+}
+
+/** Terzo giro, punto 4: lo stesso referto (stessa data, stesse righe) è già nello spazio della persona. */
+function TwinNote({ twin }: { twin: Twin }) {
+  return (
+    <aside className="twin-note mt-8" aria-label="Referto già presente" data-testid="doppione">
+      <p>
+        <strong>Questo referto c&apos;è già:</strong> è uguale a «{twin.title}», aggiunto il {formatDate(twin.createdAt)}. Puoi tenerli tutti e due: nei numeri nel tempo conta una volta sola.
+      </p>
+      <Link href={`/area-personale/documenti/${twin.id}`} className="link mt-2 inline-flex min-h-11 items-center font-semibold">
+        Apri quello di prima <ArrowRight aria-hidden className="ml-1.5 h-4 w-4" />
+      </Link>
+    </aside>
+  );
+}
+
+/** Terzo giro, punto 3: il nome del referto si può cambiare; da quel momento non lo tocchiamo più. */
+function RenameBox({ documentId, title, onSaved }: { documentId: string; title: string; onSaved: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(title);
+  const [state, setState] = useState<"idle" | "saving" | "error">("idle");
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    const next = value.trim();
+    if (!next) return setState("error");
+    setState("saving");
+    try {
+      await api(`/api/v1/area/documents/${documentId}`, { method: "PATCH", body: { title: next } });
+      setState("idle");
+      setOpen(false);
+      onSaved();
+    } catch {
+      setState("error");
+    }
+  }
+  return (
+    <section className="rename-box no-print mt-8" aria-label="Nome del referto">
+      {open ? (
+        <form onSubmit={save} className="flex flex-col gap-3">
+          <label htmlFor="nome-referto" className="field-label">
+            Nome del referto
+          </label>
+          <input id="nome-referto" className="field-input" value={value} maxLength={80} autoComplete="off" onChange={(e) => setValue(e.target.value)} aria-describedby="nome-referto-aiuto" />
+          <p id="nome-referto-aiuto" className="meta">
+            Per esempio «Esami per il cardiologo». Lo vedi solo tu.
+          </p>
+          {state === "error" ? (
+            <p role="alert" className="field-error">
+              Non siamo riusciti a salvare il nome. Controlla che non sia vuoto e riprova.
+            </p>
+          ) : null}
+          <div className="flex flex-wrap gap-3">
+            <button type="submit" className="btn btn-primary" disabled={state === "saving"}>
+              {state === "saving" ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <Check aria-hidden className="h-5 w-5" />} Salva il nome
+            </button>
+            <button type="button" className="btn btn-ghost" onClick={() => { setOpen(false); setValue(title); setState("idle"); }}>
+              Annulla
+            </button>
+          </div>
+        </form>
+      ) : (
+        <p className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+          <span className="min-w-0">
+            <span className="meta block">Nome del referto</span>
+            <strong className="break-words text-ink">{title}</strong>
+          </span>
+          <button type="button" className="btn btn-secondary" onClick={() => setOpen(true)}>
+            <Pencil aria-hidden className="h-5 w-5" /> Cambia nome
+          </button>
+        </p>
+      )}
+    </section>
   );
 }

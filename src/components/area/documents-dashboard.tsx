@@ -39,6 +39,8 @@ interface Doc {
   updatedAt: string;
   observationCount: number | null;
   errorMessage: string | null;
+  /** Referto uguale già presente per la stessa persona (stessa data, stesse righe). */
+  twinOf?: string | null;
 }
 interface Rep {
   id: string;
@@ -497,6 +499,11 @@ export function DocumentsDashboard() {
                   ? ` · ${d.observationCount} voci lette`
                   : ""}
               </p>
+              {d.twinOf ? (
+                <p className="twin-note mt-3" data-testid="doppione">
+                  Uguale a un referto che hai già: nei numeri nel tempo conta una volta sola.
+                </p>
+              ) : null}
               <div
                 className="mt-4"
                 aria-label={`Avanzamento: ${p.count} passaggi su ${STEPS.length} completati`}

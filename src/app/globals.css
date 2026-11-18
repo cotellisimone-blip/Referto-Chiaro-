@@ -640,6 +640,16 @@
   }
 }
 
+/* 18/11/2026 (terzo giro, punto 2): chi stampa senza aver scorso la pagina aveva i blocchi non ancora «rivelati»
+   spostati di 28 px, con l'ultima riga fuori dalla scheda. Sulla carta niente spostamenti. */
+@media print {
+  .reveal-prep,
+  .reveal-in {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 /* Solo trasformazione, mai opacità: resta visibile anche se l'animazione viene riavviata (screenshot, stampa, axe). */
 @keyframes draw {
   to {
@@ -4309,6 +4319,9 @@ input[type="search"]::-webkit-search-decoration {
 .pos-not-comparable .pos-ico { background: var(--color-mist); color: var(--color-muted); }
 
 .paid-note { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; padding: 0.5rem 0.875rem; border-radius: 999px; background: var(--color-marker-soft); font-size: 1rem; font-weight: 700; color: var(--color-teal-deep); }
+/* Terzo giro, punti 3 e 4: nome del referto e avviso «questo referto c'è già». */
+.twin-note { padding: 0.875rem 1rem; border-radius: var(--radius-lg); border: 1px dashed color-mix(in srgb, var(--color-amber) 55%, var(--color-line)); background: color-mix(in srgb, var(--color-amber) 9%, var(--color-paper)); font-size: 1rem; line-height: 1.5; color: var(--color-ink); max-width: 42rem; }
+.rename-box { padding: 1rem 1.125rem; border-radius: var(--radius-lg); border: 1px solid var(--color-line); background: var(--color-paper); max-width: 42rem; }
 /* Su telefono resta la freccia nel cerchio: la scritta è per i lettori di schermo e la riga sopra l'elenco spiega il gesto. */
 
 /* Comando del passo: sotto i 1024 px resta attaccato al fondo dello schermo, sopra la barra dell'area personale.
