@@ -274,6 +274,24 @@ export const IN_BREVE: Record<string, InBreve> = {
     what: "La gastroscopia permette di osservare direttamente l'interno di esofago, stomaco e duodeno.",
     when: "Con disturbi di esofago e stomaco, per approfondire altri esami o controllare una situazione già nota.",
   },
+  "pap-test-e-hpv-test": {
+    what: "Il Pap test guarda al microscopio le cellule del collo dell'utero; il test HPV cerca il virus sullo stesso prelievo.",
+    when: "Nello screening del collo dell'utero, offerto dai 25 ai 64 anni con l'invito della Regione.",
+  },
+  "sangue-occulto-nelle-feci": {
+    what: "L'esame cerca in un piccolo campione di feci tracce di sangue troppo piccole per essere viste.",
+    when: "Nello screening del colon-retto, proposto ogni due anni tra i 50 e i 69 anni.",
+  },
+  urinocoltura: {
+    when: "Con bruciore o bisogno frequente di urinare, in gravidanza e prima di alcune procedure.",
+  },
+  "beta-hcg": {
+    what: "La hCG è un ormone prodotto dalla placenta: l'esame lo cerca nelle urine o lo misura nel sangue.",
+  },
+  "esami-per-la-celiachia": {
+    what: "Il prelievo cerca gli anticorpi che di solito sono presenti nelle persone con celiachia.",
+    when: "Con disturbi intestinali che durano, stanchezza o anemia senza spiegazione, o se un familiare stretto è celiaco.",
+  },
   colonscopia: {
     what: "La colonscopia permette di osservare direttamente la superficie interna del retto e del colon.",
     when: "Con sintomi intestinali, per controlli nel tempo o nell'ambito dei programmi di screening.",

@@ -1,4 +1,4 @@
-import { UPLOAD_BASE_TITLE, autoTitle } from "@/domain/pipeline/titolo";
+import { UPLOAD_BASE_TITLE, autoTitle, uploadedTitle } from "@/domain/pipeline/titolo";
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { after } from "next/server";
@@ -118,6 +118,7 @@ async function extractDocument(userId: string, documentId: string) {
     withUser(userId, (tx) => tx.query("UPDATE documents SET status = 'error', error_message = $2, updated_at = now() WHERE id = $1", [documentId, msg.slice(0, 400)]));
 
   let extracted: ExtractedDocument | null = null;
+  let dateFound = true;
   if (doc.sourceKind === "synthetic") {
     extracted = getSyntheticDocument(doc.sourceRef);
     if (!extracted) return void (await setError("Documento di esempio non trovato."));
@@ -135,9 +136,10 @@ async function extractDocument(userId: string, documentId: string) {
     }
     if (!out.ok) return void (await setError(out.reason));
     extracted = out.document;
+    dateFound = out.trace?.reportDateFound !== false;
   }
   // Terzo giro, punto 3: un file caricato non resta con il nome del file; lo chiamiamo dalla data del prelievo, se la persona non l'ha già rinominato.
-  const named = doc.sourceKind === "upload" ? autoTitle(UPLOAD_BASE_TITLE, extracted.reportDate) : null;
+  const named = doc.sourceKind === "upload" ? (dateFound ? autoTitle(UPLOAD_BASE_TITLE, extracted.reportDate) : uploadedTitle(extracted.reportDate)) : null;
   await withUser(userId, (tx) =>
     tx.query("UPDATE documents SET status = 'needs-verification', extracted = $2, error_message = NULL, title = CASE WHEN $3::text IS NOT NULL AND NOT title_custom THEN $3::text ELSE title END, updated_at = now() WHERE id = $1", [documentId, JSON.stringify(extracted), named]),
   );

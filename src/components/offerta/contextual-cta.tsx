@@ -15,7 +15,7 @@ export function ctaForCategory(category: string | null | undefined): CoreService
   return category && PROCEDURAL.has(category) ? "secondo-parere" : "capisci";
 }
 
-/** «il primo 2,90 €, poi 7,90 €» con la promozione accesa, altrimenti «7,90 € per referto». Unica fonte: priceDisplay. */
+/** Prezzo del primo referto e dei successivi con la promozione accesa, altrimenti il prezzo per referto. Unica fonte: priceDisplay. */
 function capisciPrice(): string {
   const d = priceDisplay("capisci");
   return d.lead ? `il primo ${d.amount}, ${(d.note ?? "").replace(" per referto", "")}` : d.label;

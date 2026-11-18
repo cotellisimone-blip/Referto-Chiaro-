@@ -14,6 +14,8 @@ export interface OcrTrace {
   structuring: "ai" | "heuristic";
   usage: LlmUsage;
   droppedObservations: number;
+  /** false quando sul documento non c'era una data leggibile e reportDate è il giorno del caricamento. */
+  reportDateFound?: boolean;
   model?: string;
 }
 

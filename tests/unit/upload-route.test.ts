@@ -45,7 +45,8 @@ describe("API di caricamento (gate aperti)", () => {
     const { id } = (await res.json()) as { id: string };
     await Promise.all(pending);
     const doc = await getDocument(user.id, id);
-    expect(doc?.title).toBe("Esami");
+    // Il PDF di prova non ha una data: il nome dice il giorno del caricamento, non una data del prelievo inventata.
+    expect(doc?.title).toMatch(/^Esami caricati il \d{1,2} [a-z]+ \d{4}$/);
     expect(doc?.status).toBe("needs-verification");
     expect(doc?.extracted?.observations).toHaveLength(3);
   });

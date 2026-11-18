@@ -26,6 +26,12 @@ export function autoTitle(base: string, reportDate: string): string {
   return d ? `${b} del ${d}` : b;
 }
 
+/** Quando sul documento non c'è una data leggibile non ne inventiamo una: il nome dice il giorno del caricamento. */
+export function uploadedTitle(today: string): string {
+  const d = longDate(today);
+  return d ? `${UPLOAD_BASE_TITLE} caricati il ${d}` : UPLOAD_BASE_TITLE;
+}
+
 export const TITLE_MAX = 80;
 
 /** Il nome scritto dalla persona: una riga, senza caratteri di controllo, al massimo 80 caratteri. Vuoto = non valido. */

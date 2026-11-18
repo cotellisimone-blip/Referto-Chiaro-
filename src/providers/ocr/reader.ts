@@ -200,7 +200,7 @@ export class DocumentReader implements OcrProvider {
           ? "Il testo è stato letto automaticamente da una foto o da una scansione: controlla ogni valore con il documento originale prima di confermarlo."
           : "Il testo è stato letto dal PDF originale. Controlla comunque ogni valore prima di confermarlo.",
     };
-    return { ok: true, document, trace: { method, structuring, usage, droppedObservations: dropped, model: llm?.model } };
+    return { ok: true, document, trace: { method, structuring, usage, droppedObservations: dropped, model: llm?.model, reportDateFound: Boolean(reportDate) } };
   }
 }
 
