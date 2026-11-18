@@ -202,3 +202,36 @@ details[open] > .val-head .val-more svg { transform: rotate(180deg); }
 @media print {
   .trend-card { box-shadow: none; break-inside: avoid; }
 }
+
+/* 18/11/2026 (terzo giro, punto 6): stampare il report dalla pagina. Prima uscivano tre pagine con i pulsanti e le barre
+   degli intervalli vuote (il browser non stampa gli sfondi). Ora: solo titolo, colpo d'occhio, valori e domande; le barre
+   sono disegnate con i bordi, che si stampano sempre, e gli sfondi sono forzati dove il browser lo consente. */
+@media print {
+  .report-print .glance-links,
+  .report-print .val-toggle-all,
+  .report-print .val-more,
+  .report-print .paid-note { display: none !important; }
+  /* Tutto un po' più piccolo: sulla carta la pagina del telefono occuperebbe tre fogli. */
+  .report-print { zoom: 0.8; }
+  .report-print .val-body details,
+  .report-print .val-source { display: none !important; }
+  .report-print #domande-medico { padding: 0.875rem 1rem; box-shadow: none; break-inside: avoid; }
+  .report-print .area-title { font-size: 1.5rem; }
+  .report-print .glance,
+  .report-print .val-card { box-shadow: none; break-inside: avoid; }
+  .report-print .glance { padding: 0.75rem 1rem; }
+  .report-print .glance-title { margin-top: 0.25rem; font-size: 1.25rem; }
+  .report-print .glance-num { font-size: 1.75rem; }
+  .report-print .glance-count { padding: 0.375rem 0.75rem; }
+  .report-print .glance-watch-row { min-height: 0; padding: 0.25rem 0; }
+  .report-print .val-card { padding: 0.625rem 0.875rem; }
+  .report-print [data-testid="valori-colpo-occhio"] > * + * { margin-top: 0.5rem; }
+  .report-print .space-y-6 > * + * { margin-top: 0.875rem; }
+  .report-print .range-bar,
+  .report-print .range-bar > i,
+  .report-print .range-bar > b { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .report-print .range-bar { border: 1px solid #5d7379; }
+  .report-print .range-bar > i { top: -1px; bottom: -1px; border: 1px solid #00756f; }
+  .report-print .range-bar > b { border: 2px solid #0c3340; box-shadow: none; }
+  .report-print .range-bar > b.out { border-width: 5px; }
+}

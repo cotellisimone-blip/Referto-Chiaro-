@@ -54,6 +54,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     const moved: [string, string][] = [
       ["/esempio", "/referti/esempio"],
+      // 18/11/2026 (terzo giro, punto 3): l'elenco dei referti è la pagina dell'area; questo indirizzo dava «pagina non trovata».
+      ["/area-personale/documenti", "/area-personale"],
       ["/secondo-parere", "/servizi/secondo-parere"],
       ["/servizi-prezzi", "/servizi"],
       ["/servizi/visite-e-consulti", "/servizi/parla-con-un-medico"],

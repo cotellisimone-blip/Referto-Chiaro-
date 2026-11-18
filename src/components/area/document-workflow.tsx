@@ -264,7 +264,7 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
 
   return (
     <div>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link href="/area-personale" className="back-link">
           <ArrowLeft aria-hidden /> Tutti i referti
         </Link>
@@ -448,7 +448,7 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
       ) : null}
 
       {phase === "report" && readyReport?.explanation && extracted ? (
-        <section className="flex flex-col" aria-labelledby="step-titolo">
+        <section className="report-print flex flex-col" aria-labelledby="step-titolo">
           <h1 id="step-titolo" ref={headingRef} tabIndex={-1} className="area-title max-w-2xl outline-none">
             Il tuo referto, in parole semplici.
           </h1>
@@ -464,7 +464,7 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
           {/* Su schermi larghi il documento resta in vista mentre si legge: è l'ultimo blocco della colonna e si ferma in alto. */}
           <div className="mt-5 grid gap-8 sm:mt-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] xl:gap-10 [&>*]:min-w-0">
             <ExplanationView explanation={readyReport.explanation} onReveal={reveal} enrichment={enrichment} />
-            <aside className="flex flex-col gap-5" aria-label="Documento e download">
+            <aside className="no-print flex flex-col gap-5" aria-label="Documento e download">
               <div id="scarica-riepilogo" className="form-card form-card-accent scroll-mt-28">
                 <h2 className="form-card-title">Il foglio per il medico</h2>
                 <p className="form-card-text">
@@ -508,7 +508,7 @@ export function DocumentWorkflow({ documentId, paidNote = "none" }: { documentId
 /** Terzo giro, punto 4: lo stesso referto (stessa data, stesse righe) è già nello spazio della persona. */
 function TwinNote({ twin }: { twin: Twin }) {
   return (
-    <aside className="twin-note mt-8" aria-label="Referto già presente" data-testid="doppione">
+    <aside className="twin-note no-print mt-8" aria-label="Referto già presente" data-testid="doppione">
       <p>
         <strong>Questo referto c&apos;è già:</strong> è uguale a «{twin.title}», aggiunto il {formatDate(twin.createdAt)}. Puoi tenerli tutti e due: nei numeri nel tempo conta una volta sola.
       </p>
