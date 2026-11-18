@@ -1,3 +1,4 @@
+import { cheCose } from "@/lib/italiano";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ContextualCta } from "@/components/offerta/contextual-cta";
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const e = getGlossaryEntry(slug);
   if (!e) return {};
-  return { title: pageTitle(`${e.term}: che cos'è`), description: metaDescription(e.definition), alternates: { canonical: absoluteUrl(`/glossario/${e.slug}`) }, ...(indexingEnabled() && !glossaryIndexable() ? { robots: NOINDEX_DRAFT } : {}) };
+  return { title: pageTitle(`${e.term}: ${cheCose(e.term)}`), description: metaDescription(e.definition), alternates: { canonical: absoluteUrl(`/glossario/${e.slug}`) }, ...(indexingEnabled() && !glossaryIndexable() ? { robots: NOINDEX_DRAFT } : {}) };
 }
 
 export default async function VocePage({ params }: { params: Promise<{ slug: string }> }) {

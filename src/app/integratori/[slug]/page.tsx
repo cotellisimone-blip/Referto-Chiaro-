@@ -1,3 +1,4 @@
+import { cheCose } from "@/lib/italiano";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { INTEGRATORI, INTEGRATORI_GROUPS, getIntegratore } from "@/content/integratori";
@@ -10,7 +11,7 @@ export function generateStaticParams() {
   return INTEGRATORI.map((i) => ({ slug: i.slug }));
 }
 
-const titleOf = (name: string) => `${name}: che cos'è e che cosa chiedere`;
+const titleOf = (name: string) => `${name}: ${cheCose(name)} e che cosa chiedere`;
 
 export async function generateMetadata({ params }: PageProps<"/integratori/[slug]">): Promise<Metadata> {
   const { slug } = await params;

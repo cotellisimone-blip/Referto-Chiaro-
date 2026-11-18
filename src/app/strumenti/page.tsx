@@ -5,11 +5,11 @@ import { PageHeader } from "@/components/ui/page-header";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { EXAM_GUIDE_COUNT } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, pageTitle } from "@/lib/seo";
 import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
-  title: "Strumenti gratuiti",
+  title: pageTitle("Strumenti gratuiti per prepararsi alla visita"),
   description: "Preparati alla visita, le domande per il medico, il punto di partenza, le guide agli esami e il glossario: gratis, anche senza registrarti.",
   alternates: { canonical: absoluteUrl("/strumenti") },
 };

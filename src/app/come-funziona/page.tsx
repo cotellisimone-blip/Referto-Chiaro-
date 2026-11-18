@@ -1,3 +1,4 @@
+import { pageTitle } from "@/lib/seo";
 import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -13,7 +14,7 @@ import { PageLd } from "@/components/site/page-ld";
 const MEDICI = mediciEnabled();
 
 export const metadata: Metadata = {
-  title: "Come funziona",
+  title: pageTitle("Come farsi spiegare un referto, passo per passo"),
   description: MEDICI
     ? "Come funziona Cura Privata: il referto spiegato in automatico e, quando serve, un medico a casa, in video o per un secondo parere. Scegli tu fin dove arrivare."
     : "Come funziona Cura Privata: carichi il referto, controlli i valori letti e leggi la spiegazione in parole semplici, con le domande per il tuo medico.",

@@ -1,3 +1,4 @@
+import { pageTitle } from "@/lib/seo";
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { FaqFinder } from "@/components/ui/faq-finder";
@@ -6,7 +7,7 @@ import { mediciEnabled } from "@/lib/medici";
 import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
-  title: "Domande frequenti",
+  title: pageTitle("Referto spiegato online: le domande frequenti"),
   description: `Domande frequenti su Cura Privata: come funziona la spiegazione dei referti, ${mediciEnabled() ? "i medici, " : ""}i prezzi, i tuoi dati e che cosa non facciamo.`,
   alternates: { canonical: "/domande-frequenti" },
 };

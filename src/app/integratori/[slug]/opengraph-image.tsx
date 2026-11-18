@@ -1,3 +1,4 @@
+import { cheCose } from "@/lib/italiano";
 import { OG_SIZE, ogImage } from "@/lib/og";
 import { INTEGRATORI, getIntegratore } from "@/content/integratori";
 
@@ -13,5 +14,5 @@ export function generateStaticParams() {
 export default async function OpenGraphImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const x = getIntegratore(slug);
-  return ogImage({ eyebrow: "Guide agli integratori", title: x ? x.name : "Cura Privata", lead: "Che cos'è, che cosa dicono le fonti e che cosa chiedere.", color: "#0C3340" });
+  return ogImage({ eyebrow: "Guide agli integratori", title: x ? x.name : "Cura Privata", lead: `${x && cheCose(x.name) === "che cosa sono" ? "Che cosa sono" : "Che cos'è"}, che cosa dicono le fonti e che cosa chiedere.`, color: "#0C3340" });
 }

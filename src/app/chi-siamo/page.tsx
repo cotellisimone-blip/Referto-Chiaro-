@@ -1,3 +1,4 @@
+import { pageTitle } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ALargeSmall, ArrowRight, BookOpenCheck, CircleHelp, Footprints, SearchCheck, TextAlignStart, X } from "lucide-react";
@@ -12,7 +13,7 @@ import { PageLd } from "@/components/site/page-ld";
 const MEDICI = mediciEnabled();
 
 export const metadata: Metadata = {
-  title: "Chi siamo",
+  title: pageTitle("Chi siamo e perché spieghiamo i referti"),
   description: MEDICI
     ? "Perché esiste Cura Privata: spiegare i referti in parole semplici e portarti da un medico quando serve. In che cosa crediamo e che cosa qui non troverai."
     : "Perché esiste Cura Privata: spiegare i referti in parole semplici e prepararti a parlarne con il tuo medico. In che cosa crediamo e che cosa qui non troverai.",
