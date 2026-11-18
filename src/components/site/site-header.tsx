@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, BookOpen, ChartLine, ChevronRight, ClipboardList, Euro, FileText, HeartPulse, Home, Laptop, Menu, Pill, Stethoscope, Video, X, type LucideIcon, Users } from "lucide-react";
+import { ArrowRight, BookOpen, ChartLine, ChevronRight, ClipboardList, Euro, FileText, HeartPulse, Home, Laptop, LogOut, Menu, Pill, Stethoscope, Video, X, type LucideIcon, Users } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { HEADER_CTA, MAIN_NAV, type NavIcon } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
 import { TextSizeToggle } from "./text-size-toggle";
 import { SearchTrigger } from "@/components/search/site-search";
+import { AREA_ITEMS, AREA_TAB_HREFS } from "@/components/area/area-nav";
 
 const NAV_ICON: Record<NavIcon, LucideIcon> = { file: FileText, home: Home, video: Video, stethoscope: Stethoscope, euro: Euro, book: BookOpen, users: Users, tools: ClipboardList, chart: ChartLine, laptop: Laptop, pill: Pill, heart: HeartPulse };
 
@@ -31,12 +32,24 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
   const [lastPath, setLastPath] = useState(pathname);
   const [scrolled, setScrolled] = useState(false);
   // Con una sessione attiva il link "Accedi" diventa "Area personale" (controllo leggero, lato client).
-  const [signedIn, setSignedIn] = useState(false);
+  const [me, setMe] = useState<{ email: string; displayName: string | null; isDemo: boolean } | null>(null);
+  const signedIn = Boolean(me);
+  const router = useRouter();
+  // 18/11/2026 (secondo giro, punto 4): nell'area personale, su telefono, il menu della testata porta anche le voci che
+  // non stanno nella barra in basso (dossier, pagamenti, impostazioni) e «Esci». Prima stavano in una terza barra.
+  const inArea = signedIn && Boolean(pathname?.startsWith("/area-personale"));
+  async function logout() {
+    await fetch("/api/v1/auth/logout", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: "{}" }).catch(() => {});
+    setMe(null);
+    setOpen(false);
+    router.push("/");
+    router.refresh();
+  }
   useEffect(() => {
     let alive = true;
     fetch("/api/v1/auth/me", { credentials: "same-origin" })
       .then((r) => (r.ok ? r.json() : null))
-      .then((j) => alive && setSignedIn(Boolean(j?.user)))
+      .then((j) => alive && setMe(j?.user ?? null))
       .catch(() => {});
     return () => {
       alive = false;
@@ -145,6 +158,36 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
           <button type="button" aria-label="Chiudi il menu" tabIndex={-1} className="menu-backdrop" onClick={() => setOpen(false)} />
           <div id="menu-mobile" ref={panelRef} className="menu-panel fade-in">
             <nav aria-label="Menu mobile" className="container-rc pb-6 pt-2">
+              {inArea && me ? (
+                <div className="menu-area" data-testid="menu-area">
+                  <p className="menu-area-who">
+                    <span className="menu-area-label">Il tuo spazio</span>
+                    <span className="menu-area-name">{me.isDemo ? "Account demo" : (me.displayName ?? me.email)}</span>
+                  </p>
+                  <ul className="grid gap-0.5">
+                    {AREA_ITEMS.filter((it) => !AREA_TAB_HREFS.includes(it.href)).map(({ href, label, icon: Icon }) => (
+                      <li key={href}>
+                        <Link href={href} aria-current={pathname === href ? "page" : undefined} className="menu-link">
+                          <span aria-hidden className="tile-ico tile-ico-sm">
+                            <Icon />
+                          </span>
+                          {label}
+                          <ChevronRight aria-hidden className="h-5 w-5" />
+                        </Link>
+                      </li>
+                    ))}
+                    <li>
+                      <button type="button" onClick={logout} className="menu-link w-full text-left">
+                        <span aria-hidden className="tile-ico tile-ico-sm">
+                          <LogOut />
+                        </span>
+                        Esci
+                      </button>
+                    </li>
+                  </ul>
+                  <p className="menu-area-label mt-5">Il sito</p>
+                </div>
+              ) : null}
               <ul className="grid gap-0.5">
                 {MAIN_NAV.map((item) => {
                   const Icon = NAV_ICON[item.icon];

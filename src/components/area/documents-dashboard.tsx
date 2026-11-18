@@ -352,7 +352,7 @@ export function DocumentsDashboard() {
             </h2>
             <Link
               href="/area-personale/famiglia"
-              className="link text-[1.0625rem] font-semibold"
+              className="link inline-flex min-h-11 items-center text-[1.0625rem] font-semibold"
             >
               {persone && persone.length > 1
                 ? "Gestisci"
@@ -413,7 +413,7 @@ export function DocumentsDashboard() {
             <h2 className="area-h2">Prossimi promemoria</h2>
             <Link
               href="/area-personale/promemoria"
-              className="link text-[1.0625rem] font-semibold"
+              className="link inline-flex min-h-11 items-center text-[1.0625rem] font-semibold"
             >
               Tutti
             </Link>
@@ -556,7 +556,7 @@ export function DocumentsDashboard() {
           </h2>
           <Link
             href="/area-personale/dossier"
-            className="link text-[1.0625rem] font-semibold"
+            className="link inline-flex min-h-11 items-center text-[1.0625rem] font-semibold"
           >
             Tutti i dossier
           </Link>

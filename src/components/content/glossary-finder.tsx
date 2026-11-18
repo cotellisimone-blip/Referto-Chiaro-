@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { SearchField } from "@/components/ui/search-field";
 import { normalizeQuery } from "@/lib/search-core";
@@ -15,6 +16,30 @@ export interface TermCard {
 /** Glossario con filtro dal vivo: senza query, l'elenco per lettera con la barra alfabetica. */
 export function GlossaryFinder({ groups }: { groups: { letter: string; entries: TermCard[] }[] }) {
   const [query, setQuery] = useState("");
+  /*
+   * 18/11/2026 (secondo giro, punto 13): su telefono l'elenco intero era lungo 31 schermate. Ora ogni lettera è una riga
+   * con i suoi primi termini, e si apre al tocco (o dalla barra delle lettere, o arrivando con #lettera-T nell'indirizzo).
+   * Su computer tutte le lettere restano aperte come prima: lo decide il foglio di stile, qui si tiene solo quali
+   * lettere ha aperto la persona.
+   */
+  const [openLetters, setOpenLetters] = useState<ReadonlySet<string>>(() => new Set());
+  const openLetter = (letter: string) => setOpenLetters((prev) => (prev.has(letter) ? prev : new Set(prev).add(letter)));
+  const toggleLetter = (letter: string) =>
+    setOpenLetters((prev) => {
+      const next = new Set(prev);
+      if (next.has(letter)) next.delete(letter);
+      else next.add(letter);
+      return next;
+    });
+  useEffect(() => {
+    const fromHash = () => {
+      const m = decodeURIComponent(window.location.hash).match(/^#lettera-(.+)$/);
+      if (m) openLetter(m[1]);
+    };
+    fromHash();
+    window.addEventListener("hashchange", fromHash);
+    return () => window.removeEventListener("hashchange", fromHash);
+  }, []);
   const q = normalizeQuery(query);
   const all = useMemo(() => groups.flatMap((g) => g.entries), [groups]);
   const filtered = useMemo(() => {
@@ -57,7 +82,7 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
           <ul className="container-rc flex gap-1.5 overflow-x-auto sm:flex-wrap">
             {groups.map((g) => (
               <li key={g.letter}>
-                <a href={`#lettera-${g.letter}`} className="letter-pill">
+                <a href={`#lettera-${g.letter}`} className="letter-pill" onClick={() => openLetter(g.letter)}>
                   {g.letter}
                 </a>
               </li>
@@ -65,7 +90,7 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
           </ul>
         </nav>
       )}
-      <div className="container-rc finder-body space-y-10">
+      <div className={filtered ? "container-rc finder-body space-y-10" : "container-rc finder-body gl-body space-y-10"}>
         {filtered ? (
           filtered.length ? (
             <dl className="term-list">
@@ -84,11 +109,21 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
           )
         ) : (
           groups.map((g) => (
-            <section key={g.letter} id={`lettera-${g.letter}`} aria-labelledby={`lettera-${g.letter}-titolo`} className="scroll-mt-44">
+            <section key={g.letter} id={`lettera-${g.letter}`} aria-labelledby={`lettera-${g.letter}-titolo`} className="gl-sec scroll-mt-44" data-open={openLetters.has(g.letter) ? "" : undefined}>
               <h2 id={`lettera-${g.letter}-titolo`} className="letter-head">
-                {g.letter}
+                <span className="gl-head-plain">{g.letter}</span>
+                {/* Solo su telefono: la lettera è il comando che apre e chiude i suoi termini. */}
+                <button type="button" className="gl-head-btn" aria-expanded={openLetters.has(g.letter)} aria-controls={`lettera-${g.letter}-termini`} onClick={() => toggleLetter(g.letter)}>
+                  <span className="gl-head-letter">{g.letter}</span>
+                  <span className="gl-head-sample">
+                    <span className="sr-only">: </span>
+                    {g.entries.length} {g.entries.length === 1 ? "termine" : "termini"} · {g.entries.slice(0, 3).map((e) => e.term).join(", ")}
+                    {g.entries.length > 3 ? "…" : ""}
+                  </span>
+                  <ChevronDown aria-hidden />
+                </button>
               </h2>
-              <dl className="term-list mt-3">
+              <dl id={`lettera-${g.letter}-termini`} className="term-list mt-3">
                 {g.entries.map((e) => (
                   <Row key={e.slug} e={e} />
                 ))}

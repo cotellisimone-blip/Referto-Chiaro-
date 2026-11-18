@@ -256,7 +256,7 @@ export default function PuntoDiPartenzaPage() {
             <p className="display-md max-w-[40rem]">Prima capisci da dove parti. Poi, quando arrivano i risultati, ti aiutiamo a leggerli e a scegliere il passo successivo.</p>
             <div className="flex flex-col gap-3">
               <Link href={capisci.href} className="btn btn-primary btn-lg">
-                {capisci.name} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                Lettura referti: come funziona <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
               <Link href="/prevenzione" className="btn btn-secondary btn-lg">
                 Torna alla sezione Prevenzione

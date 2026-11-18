@@ -72,7 +72,7 @@ export const CORE_SERVICES: CoreService[] = [
     forWhom: "Hai ricevuto un referto pieno di sigle e valori e vuoi capirlo.",
     href: "/lettura-referti",
     startHref: "/area-personale/nuovo",
-    startLabel: "Carica il referto",
+    startLabel: "Carica un referto",
     orderService: "essenziale",
     envPriceKey: "PRICE_CAPISCI_CENTS",
     defaultPriceCents: PRICES.CAPISCI_STANDARD,

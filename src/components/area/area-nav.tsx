@@ -10,7 +10,6 @@ import {
   FolderOpen,
   LineChart,
   LogOut,
-  Menu,
   Receipt,
   Settings,
   Stethoscope,
@@ -94,7 +93,7 @@ const ITEMS_ALL = [
   },
 ];
 
-const ITEMS = MEDICI ? ITEMS_ALL : ITEMS_ALL.filter((i) => !isDoctorPath(i.href));
+export const AREA_ITEMS = MEDICI ? ITEMS_ALL : ITEMS_ALL.filter((i) => !isDoctorPath(i.href));
 /** Quinta voce della barra in basso su telefono: le richieste al medico oppure, senza medici, i promemoria. */
 const LAST_TAB = MEDICI ? ITEMS_ALL[4] : ITEMS_ALL[3];
 
@@ -104,7 +103,7 @@ const LAST_TAB = MEDICI ? ITEMS_ALL[4] : ITEMS_ALL[3];
  * Mobile: barra in basso con 5 voci etichettate (target ≥ 44px), come chiede il kit.
  */
 /** Voci della barra in basso su telefono: referti, nel tempo, nuovo, famiglia, medico (o promemoria). */
-const TAB_HREFS = [
+export const AREA_TAB_HREFS = [
   "/area-personale",
   "/area-personale/nel-tempo",
   "/area-personale/famiglia",
@@ -155,7 +154,7 @@ export function AreaNav({
             </div>
             <nav aria-label="Area personale" className="p-2">
               <ul className="space-y-0.5">
-                {ITEMS.map(({ href, label, icon: Icon, exact }) => {
+                {AREA_ITEMS.map(({ href, label, icon: Icon, exact }) => {
                   const active = isActive(href, exact);
                   return (
                     <li key={href}>
@@ -201,66 +200,19 @@ export function AreaNav({
         </div>
       </aside>
 
-      {/* Mobile: intestazione compatta + barra in basso */}
-      <div className="flex items-center justify-between gap-3 border-b border-line pb-4 text-base text-muted lg:hidden">
-        <span className="flex min-w-0 items-center gap-2">
-          <LogoMark className="h-7 w-7 shrink-0" />
-          {who}
-        </span>
-        <span className="flex shrink-0 items-center gap-1">
-          {/* Su telefono le voci che non stanno nella barra in basso: promemoria, pareri, dossier, pagamenti, profilo. */}
-          <details className="area-more relative">
-            <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-full px-3 font-bold text-teal-deep hover:bg-mist">
-              <Menu aria-hidden className="h-[1.125rem] w-[1.125rem]" /> Altro
-            </summary>
-            <nav
-              aria-label="Altre pagine dell'area personale"
-              className="absolute right-0 z-50 mt-2 w-64 rounded-2xl border border-line bg-paper p-2 shadow-[var(--shadow-lift)]"
-            >
-              <ul>
-                {ITEMS.filter((it) => !TAB_HREFS.includes(it.href)).map(
-                  ({ href, label, icon: Icon }) => (
-                    <li key={href}>
-                      <Link
-                        href={href}
-                        className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-[1.0625rem] font-semibold text-ink hover:bg-mist"
-                        onClick={(e) =>
-                          (
-                            e.currentTarget.closest(
-                              "details",
-                            ) as HTMLDetailsElement | null
-                          )?.removeAttribute("open")
-                        }
-                      >
-                        <Icon
-                          aria-hidden
-                          className="h-5 w-5 shrink-0 text-teal"
-                        />{" "}
-                        {label}
-                      </Link>
-                    </li>
-                  ),
-                )}
-              </ul>
-            </nav>
-          </details>
-          <button
-            type="button"
-            onClick={logout}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 font-bold text-teal-deep hover:bg-mist"
-          >
-            <LogOut aria-hidden className="h-[1.125rem] w-[1.125rem]" /> Esci
-          </button>
-        </span>
-      </div>
+      {/*
+        Mobile: solo la barra in basso. 18/11/2026 (secondo giro, punto 4): la riga con marchio, nome, «Altro» ed «Esci»
+        non c'è più: era una terza barra sotto l'avviso e la testata, con il nome tagliato («Acco…»). Le stesse voci
+        stanno nel menu della testata (src/components/site/site-header.tsx), in cima, sotto «Il tuo spazio».
+      */}
       <nav
         aria-label="Area personale"
         className="area-tabbar no-print fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
       >
         <ul className="mx-auto grid max-w-lg grid-cols-5">
           {[
-            ITEMS[0],
-            ITEMS[1],
+            AREA_ITEMS[0],
+            AREA_ITEMS[1],
             {
               href: "/area-personale/nuovo",
               label: "Nuovo",
@@ -268,7 +220,7 @@ export function AreaNav({
               icon: FilePlus2,
               exact: true,
             },
-            ITEMS[2],
+            AREA_ITEMS[2],
             LAST_TAB,
           ].map(({ href, label, short, icon: Icon, exact }) => {
             const active = isActive(href, exact);

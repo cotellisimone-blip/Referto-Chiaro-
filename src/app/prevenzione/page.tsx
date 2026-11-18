@@ -93,7 +93,7 @@ export default function PrevenzionePage() {
             </div>
             <p>Che cosa sono, perché se ne parla, quale esame del referto li riguarda e che cosa chiedere al medico. Mai quanto prenderne: quello lo decide lui.</p>
           </div>
-          <ul className="ds-ints">
+          <ul className="ds-ints ds-ints-rows">
             {INTEGRATORI.map((i) => {
               const [c, d] = INTEGRATORI_COLORS[i.slug] ?? ["#F6B98E", "#A4471F"];
               return (
@@ -111,6 +111,11 @@ export default function PrevenzionePage() {
               );
             })}
           </ul>
+          <div className="ds-sec-end">
+            <Link href="/integratori" className="tm-btn tm-btn-line">
+              Tutte le guide agli integratori <ArrowRight aria-hidden className="tm-ic" />
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -60,6 +60,26 @@ export function TableOfContents({ items }: { items: { id: string; label: string 
 }
 
 export function PrintButton({ label = "Stampa" }: { label?: string }) {
+  // 18/11/2026 (secondo giro, punto 14): sulla carta le domande frequenti devono avere la risposta. Le fisarmoniche
+  // chiuse non si stampano: si aprono un attimo prima della stampa (anche da Ctrl+P) e tornano com'erano dopo.
+  useEffect(() => {
+    const opened: HTMLDetailsElement[] = [];
+    const before = () => {
+      document.querySelectorAll<HTMLDetailsElement>(".article-body .faq-list details:not([open])").forEach((d) => {
+        d.open = true;
+        opened.push(d);
+      });
+    };
+    const after = () => {
+      for (const d of opened.splice(0)) d.open = false;
+    };
+    window.addEventListener("beforeprint", before);
+    window.addEventListener("afterprint", after);
+    return () => {
+      window.removeEventListener("beforeprint", before);
+      window.removeEventListener("afterprint", after);
+    };
+  }, []);
   return (
     <button type="button" onClick={() => window.print()} className="btn btn-secondary btn-sm no-print">
       <Printer aria-hidden className="h-4 w-4" /> {label}

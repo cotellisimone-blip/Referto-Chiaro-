@@ -71,7 +71,8 @@ export function ContextualCta({ category, slug }: { category?: string | null; sl
         <p className="next-card-text">{c.text}</p>
         <div className="next-card-actions">
           <Link href={s.href} className="btn btn-primary w-full sm:w-auto">
-            {s.name} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+            {/* 18/11/2026 (secondo giro, punto 7): «Carica un referto» è solo il comando che apre il caricamento; questo porta alla pagina che lo spiega. */}
+            {s.id === "capisci" ? "Vedi come funziona" : s.name} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
           </Link>
           {medici ? (
             <Link href={video.href} className="next-card-alt">

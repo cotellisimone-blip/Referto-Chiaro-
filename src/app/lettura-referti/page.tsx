@@ -64,7 +64,7 @@ export default function LetturaRefertiPage() {
                   <span>{promo ? `il primo referto, poi ${std}` : "a referto, senza abbonamento"}</span>
                 </p>
               ) : null}
-              <Link href={start.href} className="tm-btn tm-btn-ink" data-track="cta-capisci">
+              <Link href={start.href} className="tm-btn tm-btn-carica" data-track="cta-capisci">
                 {vetrina ? start.label : "Carica un referto"} <ArrowRight aria-hidden className="tm-ic" />
               </Link>
             </div>

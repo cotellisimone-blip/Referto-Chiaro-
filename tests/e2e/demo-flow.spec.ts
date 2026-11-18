@@ -102,7 +102,7 @@ test("ciclo 3: alla fine dell'esempio si risponde a «Ti è stato utile?» e si 
   await expect(fine).toBeVisible({ timeout: 15_000 });
   await fine.getByRole("button", { name: "Non molto" }).click();
   await expect(fine.getByRole("status").filter({ hasText: /Grazie/ })).toBeVisible();
-  await expect(fine.getByRole("link", { name: /Rendi chiaro il mio referto/ })).toHaveAttribute("href", "/area-personale/nuovo");
+  await expect(fine.getByRole("link", { name: /Carica un referto/ })).toHaveAttribute("href", "/area-personale/nuovo");
   // Fuori dalla vetrina niente lista d'attesa: il servizio si prova davvero.
   await expect(page.getByTestId("prova-avvisami")).toHaveCount(0);
 });

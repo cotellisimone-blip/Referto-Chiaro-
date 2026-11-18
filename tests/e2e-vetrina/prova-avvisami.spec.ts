@@ -27,7 +27,7 @@ test("alla fine dell'esempio: «Ti è stato utile?» risponde e ci si iscrive a 
   const fine = page.getByTestId("esempio-fine");
   await expect(fine).toBeVisible({ timeout: 15_000 });
   // In vetrina nessun link verso l'area personale alla fine della prova.
-  await expect(fine.getByRole("link", { name: /Rendi chiaro il mio referto/ })).toHaveCount(0);
+  await expect(fine.getByRole("link", { name: /Carica un referto/ })).toHaveCount(0);
   await fine.getByRole("button", { name: "Sì, è chiaro" }).click();
   await expect(fine.getByText(/Grazie/)).toBeVisible();
 

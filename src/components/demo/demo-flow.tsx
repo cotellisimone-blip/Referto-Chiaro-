@@ -335,7 +335,7 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
                   {vetrina ? null : (
                     <div className="mt-5 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
                       <Link href={startHref} className="btn btn-primary btn-lg max-sm:px-4 sm:whitespace-nowrap">
-                        Rendi chiaro il mio referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                        Carica un referto <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
                       </Link>
                       <Link href="/prezzi" className="btn btn-ghost">
                         Vedi i prezzi

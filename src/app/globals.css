@@ -4322,6 +4322,34 @@ input[type="search"]::-webkit-search-decoration {
   body:has([data-bottom-nav]) .site-footer .footer-payoff { display: none; }
   body:has([data-bottom-nav]) .site-footer .scope-strong { padding-top: 3.5rem; }
 }
+/* 18/11/2026 (secondo giro, punto 4): nell'area personale, a ogni larghezza, il piè di pagina è quello di uno strumento:
+   il 112 e le note legali. Niente porte, niente elenco dei servizi, niente marchio ripetuto (è già nella testata). */
+body:has([data-bottom-nav]) .site-footer .footer-doors,
+body:has([data-bottom-nav]) .site-footer .footer-acc,
+body:has([data-bottom-nav]) .site-footer .footer-col,
+body:has([data-bottom-nav]) .site-footer .footer-payoff,
+body:has([data-bottom-nav]) .site-footer .footer-brand > a,
+body:has([data-bottom-nav]) .site-footer .footer-brand > .brand-logo,
+body:has([data-bottom-nav]) .site-footer > svg { display: none; }
+body:has([data-bottom-nav]) .site-footer .scope-strong { padding-top: 1.75rem; padding-bottom: 1.25rem; }
+body:has([data-bottom-nav]) .site-footer .footer-emergency { margin-top: 0; }
+body:has([data-bottom-nav]) .site-footer .footer-legal { margin-top: 1.25rem; }
+
+/* 18/11/2026 (secondo giro, punto 9): piè di pagina su telefono. */
+.footer-acc { margin-top: 1.75rem; border-top: 1px solid rgb(255 255 255 / 0.14); }
+.footer-acc details { border-bottom: 1px solid rgb(255 255 255 / 0.14); }
+.footer-acc summary { display: flex; align-items: center; justify-content: space-between; min-height: 3.25rem; cursor: pointer; list-style: none; font-size: 1.0625rem; font-weight: 700; color: var(--color-ink); }
+.footer-acc summary::-webkit-details-marker { display: none; }
+.footer-acc summary svg { width: 1.25rem; height: 1.25rem; color: var(--color-teal); transition: transform 180ms var(--ease-out-soft); }
+.footer-acc details[open] summary svg { transform: rotate(180deg); }
+.footer-acc ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.25rem; padding-bottom: 0.75rem; }
+@media (max-width: 767.98px) {
+  .site-footer .footer-doors { display: none; }
+  .site-footer .scope-strong { padding-top: 3.25rem; }
+  .site-footer .footer-payoff { margin-top: 1rem; font-size: 1.3125rem; }
+  .site-footer .footer-emergency { margin-top: 1.25rem; }
+  .site-footer .footer-legal { margin-top: 1.5rem; }
+}
 
 /* «Dal referto al report»: il foglio del laboratorio in alto a sinistra, inclinato; il report chiaro davanti, in basso a destra. */
 .transform-stage { position: relative; }
@@ -4450,3 +4478,68 @@ input[type="search"]::-webkit-search-decoration {
 .presto-medico-title { margin-top: 0.375rem; font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem); font-weight: 800; line-height: 1.15; color: var(--color-ink); }
 .presto-medico-lead { margin-top: 0.375rem; max-width: 40rem; font-size: 1.0625rem; line-height: 1.5; color: var(--color-ink-soft); }
 /* Le tre righe «Che cosa arriverà» della pagina /con-un-medico (non sono collegamenti). */
+
+/* 18/11/2026 (secondo giro, punto 4): le voci dell'area personale nel menu della testata, su telefono. */
+.menu-area { margin-bottom: 0.25rem; }
+.menu-area-who { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.25rem 1rem; padding: 0.5rem 0 0.5rem; }
+.menu-area-label { font-size: 0.875rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-teal); }
+.menu-area-name { min-width: 0; overflow-wrap: anywhere; font-size: 1rem; font-weight: 600; color: var(--color-ink-soft); }
+
+/* 18/11/2026 (secondo giro, punto 13): glossario su telefono, una riga per lettera che si apre al tocco. */
+.gl-head-btn { display: none; }
+@media (max-width: 639.98px) {
+  .gl-body { margin-top: 0; }
+  .gl-body.space-y-10 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
+  .gl-sec .gl-head-plain { display: none; }
+  .gl-sec .letter-head { font-size: 1rem; line-height: 1.3; }
+  .gl-head-btn { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) auto; align-items: center; column-gap: 0.75rem; width: 100%; min-height: 3.5rem; padding: 0.5rem 0.875rem; border-radius: var(--radius-lg); border: 1px solid var(--color-line); background: var(--color-paper); text-align: left; cursor: pointer; }
+  .gl-head-letter { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 800; line-height: 1; color: var(--color-teal-deep); }
+  .gl-head-sample { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-sans); font-size: 1rem; font-weight: 500; color: var(--color-ink-soft); }
+  .gl-head-btn svg { width: 1.25rem; height: 1.25rem; color: var(--color-teal); transition: transform 180ms var(--ease-out-soft); }
+  .gl-sec[data-open] .gl-head-btn svg { transform: rotate(180deg); }
+  .gl-sec:not([data-open]) > .term-list { display: none; }
+  .gl-sec[data-open] > .term-list { margin-top: 0.5rem; margin-bottom: 0.75rem; }
+}
+@media print {
+  .gl-head-btn { display: none !important; }
+  .gl-sec .gl-head-plain { display: inline !important; }
+  .gl-sec > .term-list { display: block !important; }
+}
+
+/* 18/11/2026 (secondo giro, punto 14): la guida stampata è solo la guida. Fuori barra delle sezioni, pulsanti, riquadri
+   di collegamenti e inviti; dentro titolo, «In breve», testo, domande per il medico, domande frequenti, fonti e data. */
+@media print {
+  .article-body nav[aria-label="Percorso"],
+  .article-body .breadcrumbs,
+  .article-body .next-card,
+  .article-body .cat-badge,
+  .article-body .reading-progress,
+  .article-body .faq-plus { display: none !important; }
+  .article-body .guide-prose { max-width: none; }
+  .article-body .grid { display: block; }
+  .article-body .guide-top { display: block; }
+  .article-body .wow-guide-head,
+  .article-body .guide-brief,
+  .article-body .guide-box,
+  .article-body .wow-paper,
+  .article-body .faq-list { box-shadow: none !important; background: none !important; }
+  .article-body .wow-guide-head { margin-top: 0; padding: 0; border: 0; }
+  .article-body .guide-brief { margin-top: 1rem; padding: 0.75rem 1rem; }
+  .article-body .guide-brief dl { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .article-body .guide-prose > * + * { margin-top: 0.875rem; }
+  .article-body .guide-h2 { break-after: avoid; }
+  .article-body .guide-box, .article-body .wow-paper, .article-body .faq-list details { break-inside: avoid; }
+  .article-body .faq-list details { border: 0; padding: 0.25rem 0; }
+  .article-body .faq-list summary { min-height: 0; padding: 0; font-weight: 700; }
+  .article-body .faq-answer { padding: 0.125rem 0 0.375rem; }
+  .article-body a { text-decoration: none; color: inherit; }
+  .article-body .link-list a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8125rem; word-break: break-all; }
+  .print-foot { display: block; margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid #999; font-size: 0.8125rem; line-height: 1.4; }
+  .article-body { font-size: 10.5pt; }
+  .article-body .guide-prose p, .article-body .guide-prose li, .article-body .guide-brief dd { font-size: 10.5pt; line-height: 1.4; }
+  .article-body .guide-h2 { font-size: 14pt; }
+  .article-body .guide-box, .article-body .wow-paper { padding: 0.5rem 0.875rem; }
+  .article-body .mt-12 { margin-top: 1rem; }
+  .article-body .page-title { font-size: 22pt; }
+  .article-body .lead { font-size: 12pt; }
+}

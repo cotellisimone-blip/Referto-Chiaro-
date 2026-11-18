@@ -25,7 +25,7 @@ import { OtherServices } from "./other-services";
 const VIEW_EVENT: Record<CoreServiceId, string> = { capisci: "visita-capisci", "parla-con-un-medico": "visita-medico", "secondo-parere": "visita-parere" };
 
 const IDENTITY: Record<CoreServiceId, { eyebrow: string; headline: string; cta: string; strong: boolean; track: string }> = {
-  capisci: { eyebrow: "Capisci il tuo referto", headline: "Il tuo referto, finalmente leggibile.", cta: "Rendi chiaro il mio referto", strong: false, track: "cta-capisci" },
+  capisci: { eyebrow: "Capisci il tuo referto", headline: "Il tuo referto, finalmente leggibile.", cta: "Carica un referto", strong: false, track: "cta-capisci" },
   "parla-con-un-medico": { eyebrow: "Videoconsulto con un medico", headline: "Non sai quale specialista ti serve? Parti da un medico.", cta: "Prenota il videoconsulto", strong: false, track: "cta-medico" },
   "secondo-parere": { eyebrow: "Secondo parere specialistico", headline: "Quando vuoi un'altra valutazione, da uno specialista.", cta: "Richiedi un secondo parere", strong: true, track: "cta-parere" },
 };

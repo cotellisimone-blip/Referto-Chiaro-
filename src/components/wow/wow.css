@@ -309,22 +309,37 @@
   color: var(--color-teal-deep);
   background: color-mix(in srgb, var(--color-marker) 28%, transparent);
 }
-/* Con il cursore vicino al bordo sinistro (partenza su telefono) il fumetto non esce dal foglio. */
+/*
+ * Partenza su telefono (cursore sul bordo sinistro). 18/11/2026 (secondo giro, punto 12): maniglia e «Trascinami»
+ * salgono nella riga vuota in cima al foglio, accanto all'etichetta «Dopo». Prima stavano a metà altezza, sopra la
+ * prima riga del Colesterolo LDL. La maniglia è più piccola e sta sul bordo di carta; il fumetto le sta a destra.
+ */
+.ba-grip[data-edge] {
+  align-items: flex-start;
+  padding-top: 0.5rem;
+}
 .ba-grip[data-edge] .wow-drag {
-  left: -22px;
+  top: 0.9375rem;
+  left: 30px;
   transform: none;
   animation: none;
+  padding: 6px 13px;
 }
 .ba-grip[data-edge] .wow-drag::after {
-  left: 10px;
+  left: -13px;
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 7px solid transparent;
+  border-right-color: #16252a;
 }
-/* Alla partenza su telefono la maniglia è più piccola e sta sul bordo di carta: non copre l'inizio delle righe spiegate. */
 .ba-grip[data-edge] .ba-handle {
   transform: translateX(1px) scale(0.7);
 }
 .ba-grip[data-edge] .wow-pulse {
   transform-origin: center;
-  margin-left: -12px;
+  top: -2px;
+  margin-left: 0;
   width: 72px;
   height: 72px;
 }

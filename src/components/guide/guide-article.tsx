@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ContextualCta } from "@/components/offerta/contextual-cta";
+import { absoluteUrl } from "@/lib/seo";
 import { ArrowRight, HelpCircle, ListChecks } from "lucide-react";
 import { PrintButton, ReadingProgress, TableOfContents } from "@/components/content/reading-tools";
 import type { Guide } from "@/content/guides/schema";
@@ -63,7 +64,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
         <ReadingProgress />
         {/* 17/11/2026 (20 interventi, punti 7 e 11): la barra delle sezioni è larga quanto la pagina; su computer «In breve»
             sta accanto al titolo (prima la metà destra della prima schermata era vuota). */}
-        <div className="tm ds ds-bare">
+        <div className="tm ds ds-bare no-print">
           <PercorsoSezioni current={1} />
         </div>
         <Breadcrumbs items={crumbs} />
@@ -75,7 +76,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
           <p className="lead mt-5">{guide.summary}</p>
           {guide.aliases.length ? <p className="mt-3 text-base text-muted">Altri nomi: {guide.aliases.join(", ")}.</p> : null}
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Link href={`/strumenti/domande-per-il-medico?esami=${guide.slug}`} className="btn btn-primary">
+            <Link href={`/strumenti/domande-per-il-medico?esami=${guide.slug}`} className="btn btn-primary no-print">
               <ListChecks aria-hidden className="h-5 w-5" /> Prepara le domande per il medico
             </Link>
             <PrintButton label="Stampa la guida" />
@@ -202,7 +203,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
             ) : null}
           </div>
 
-          <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start" aria-label="Collegamenti">
+          <aside className="no-print space-y-6 lg:sticky lg:top-28 lg:self-start" aria-label="Collegamenti">
             <div className="hidden lg:block">
               <TableOfContents items={toc} />
             </div>
@@ -258,6 +259,10 @@ export function GuideArticle({ guide }: { guide: Guide }) {
             ) : null}
           </aside>
         </div>
+        {/* 18/11/2026 (secondo giro, punto 14): in fondo al foglio stampato, da dove viene e che cosa non è. */}
+        <p className="print-only print-foot">
+          Stampato da Cura Privata · guida «{guide.examName}», {absoluteUrl(`/guide/${guide.slug}`).replace(/^https?:\/\//, "")} · aggiornata il {new Date(guide.lastUpdated).toLocaleDateString("it-IT")}. Informazioni generali: che cosa significa un valore per te lo dice il tuo medico. Per un&apos;urgenza chiama il 112.
+        </p>
       </article>
     </div>
   );

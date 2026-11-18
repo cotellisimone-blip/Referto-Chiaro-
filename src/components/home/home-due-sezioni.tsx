@@ -194,7 +194,7 @@ export function HomeDueSezioni() {
               <BeforeAfter />
             </div>
             <div className="ds-sec-end">
-              <Link href={carica.href} className="tm-btn tm-btn-ink" data-track="cta-capisci">
+              <Link href={carica.href} className="tm-btn tm-btn-carica" data-track="cta-capisci">
                 {carica.waitlist ? carica.label : "Carica un referto"}
                 {prices ? (
                   <>
