@@ -178,7 +178,7 @@ export function QuestionsBuilder({ options, categories }: { options: ExamOption[
             <div>
               <p className="text-xl font-extrabold text-ink">Scegli almeno un esame.</p>
               <p className="mt-1.5 text-lg text-ink-soft">La lista si compone da sola, qui. Se non trovi un esame, cerca la sigla stampata sul referto.</p>
-              <p className="mt-5 text-base font-semibold text-muted">Oppure parti da uno dei più richiesti:</p>
+              <p className="mt-5 text-base font-semibold text-muted">Oppure parti da un esame comune:</p>
               <p className="mt-2 flex flex-wrap gap-2">
                 {["emocromo", "tsh", "glicemia", "colesterolo-ldl"].filter((s) => bySlug.has(s)).map((s) => (
                   <button key={s} type="button" onClick={() => toggle(s)} className="chip min-h-11 bg-mist px-4 text-ink hover:bg-marker-soft">

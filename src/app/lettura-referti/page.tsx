@@ -235,7 +235,7 @@ export default function LetturaRefertiPage() {
             <div>
               <p className="tm-kicker">Prima di cominciare</p>
               <h2 id="lr-domande">
-                Le domande <em>che ci fanno più spesso.</em>
+                Le domande <em>da farsi prima.</em>
               </h2>
             </div>
             <p>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { PageHeader } from "@/components/ui/page-header";
+import { LoginHeading, LoginHeadingStatic } from "@/components/area/login-heading";
 import { LoginForm } from "@/components/area/login-form";
 import { readFlags } from "@/lib/feature-flags";
 
@@ -17,12 +17,10 @@ async function LoginAtRequest() {
 export default function AccediPage() {
   return (
     <>
-      <PageHeader compact eyebrow="Area personale" title="Il tuo archivio, visibile solo a te." lead={
-          readFlags().vetrina
-            ? "Oggi si prova con l'account demo: referti inventati, nessuna registrazione."
-            : "Nessuna password da ricordare: un link via email. Oppure entra con l'account demo e prova subito."
-        }
-      />
+      {/* Il titolo dipende da dove si voleva andare (?next=): si legge nel browser, la pagina resta statica. */}
+      <Suspense fallback={<LoginHeadingStatic vetrina={readFlags().vetrina} />}>
+        <LoginHeading vetrina={readFlags().vetrina} />
+      </Suspense>
       <div className="container-rc page-body">
         <Suspense fallback={<div className="h-64 animate-pulse rounded-[var(--radius-xl)] bg-mist" />}>
           <LoginAtRequest />

@@ -16,6 +16,9 @@ export const RIMANDI: Record<string, string> = { "/referti": "/lettura-referti",
 /** Finché i medici sono «In arrivo» il sito ne parla al futuro (punto 3): queste frasi al presente non devono comparire. */
 const PRESENTE_MEDICI = ["chi viene a casa?", "prima di pagare leggi il suo nome", "paghi solo dopo che il medico", "li vedi prima di pagare", "sai subito se arriviamo da te"];
 
+/** 18/11/2026 (secondo giro, punto 8): il sito non è online, quindi non può vantare ciò che non ha misurato. */
+const NON_MISURATO = ["le più consultate", "le più lette", "le più cercate", "che ci fanno più spesso", "i più richiesti:", "i nostri utenti", "i nostri clienti"];
+
 const decode = (s: string) => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
 const attr = (html: string, re: RegExp) => { const m = html.match(re); return m ? decode(m[1]) : null; };
 const testo = (html: string) => decode(html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<template[\s\S]*?<\/template>/g, " ").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").toLowerCase();
@@ -104,6 +107,7 @@ export function provaSitoIntero({ medici }: { medici: boolean }) {
         const t = testo(p.html);
         // La Prevenzione è una sezione aperta: non può risultare «in preparazione» da nessuna parte.
         if (/prevenzione[^.]{0,40}in preparazione/.test(t)) errori.push(`${p.path}: Prevenzione «in preparazione»`);
+        for (const f of NON_MISURATO) if (t.includes(f)) errori.push(`${p.path}: «${f}» vanta un dato mai misurato`);
         if (!medici) for (const f of PRESENTE_MEDICI) if (t.includes(f)) errori.push(`${p.path}: «${f}» al presente con i medici in arrivo`);
       }
       expect(errori).toEqual([]);

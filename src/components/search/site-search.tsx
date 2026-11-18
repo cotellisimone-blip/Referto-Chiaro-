@@ -4,7 +4,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 import Link from "next/link";
 import { clsx } from "clsx";
 import { ArrowRight, BookOpenText, FileText, HeartPulse, Pill, Search, SpellCheck, Stethoscope, X } from "lucide-react";
-import { searchIndex, type SearchItem, type SearchKind } from "@/lib/search-core";
+import { searchSite, type SearchItem, type SearchKind } from "@/lib/search-core";
 
 export const SEARCH_OPEN_EVENT = "cp-search-open";
 const RECENT_KEY = "cp-search-recent";
@@ -111,7 +111,8 @@ export function SiteSearch() {
     };
   }, [open]);
 
-  const results = useMemo(() => (index && query.trim() ? searchIndex(index, query, 14) : []), [index, query]);
+  const outcome = useMemo(() => (index && query.trim() ? searchSite(index, query, 14) : null), [index, query]);
+  const results = useMemo(() => outcome?.items ?? [], [outcome]);
   const grouped = useMemo(() => {
     const g: { kind: SearchKind; items: SearchItem[] }[] = [];
     for (const kind of ["guida", "integratore", "termine", "pagina"] as SearchKind[]) {
@@ -235,6 +236,15 @@ export function SiteSearch() {
                 Apri il glossario <ArrowRight aria-hidden className="ml-1 h-4 w-4" />
               </Link>
             </div>
+          ) : null}
+
+          {/* 18/11/2026 (secondo giro, punto 1): se la ricerca ha tolto «alta» o corretto un refuso, lo dice. */}
+          {outcome && outcome.items.length && outcome.mode !== "esatta" ? (
+            <p className="search-hint" data-testid="search-hint" role="status">
+              {outcome.mode === "senza-aggettivi"
+                ? `Ti mostriamo che cosa misura «${outcome.used}». Se il tuo valore è alto o basso lo dice il confronto con l’intervallo stampato sul referto, e che cosa significa per te lo dice il medico.`
+                : `Nessun risultato esatto: ti mostriamo quelli per «${outcome.used}».`}
+            </p>
           ) : null}
 
           {grouped.map((g) => {

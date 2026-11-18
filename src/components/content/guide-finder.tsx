@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CategoryBadge } from "@/components/wow/category-art";
 import { ArrowLeft, ArrowRight, Plus, Search } from "lucide-react";
 import { SearchField } from "@/components/ui/search-field";
-import { normalizeQuery } from "@/lib/search-core";
+import { normalizeQuery, stripQualifiers } from "@/lib/search-core";
 
 export interface GuideCard {
   slug: string;
@@ -17,7 +17,7 @@ export interface GuideCard {
 
 
 /**
- * Hub delle guide, grafica «Luce»: un campo di ricerca grande, le più consultate, gli argomenti con la loro icona.
+ * Hub delle guide, grafica «Luce»: un campo di ricerca grande, le guide da cui partire, gli argomenti con la loro icona.
  * Senza JavaScript o senza query si vede l'elenco completo, per categoria (stessi link di prima).
  */
 const POPULAR = ["emocromo", "glicemia", "colesterolo-ldl", "tsh", "creatinina", "esame-delle-urine"];
@@ -39,22 +39,28 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
   const filtered = useMemo(() => {
     let list = guides;
     if (cat) list = list.filter((g) => g.category === cat);
-    if (q) {
-      const words = q.split(" ");
-      list = list
+    const match = (query: string) => {
+      const words = query.split(" ");
+      return list
         .map((g) => {
           const name = normalizeQuery(g.examName);
           const aliases = g.aliases.map(normalizeQuery);
           let score = 0;
-          if (name.startsWith(q)) score = 3;
-          else if (aliases.some((a) => a.startsWith(q))) score = 2.5;
+          if (name.startsWith(query)) score = 3;
+          else if (aliases.some((a) => a.startsWith(query))) score = 2.5;
           else if (words.every((w) => name.includes(w) || aliases.some((a) => a.includes(w)))) score = 2;
-          else if (q.length >= 4 && words.every((w) => normalizeQuery(g.metaDescription).includes(w))) score = 1;
+          else if (query.length >= 4 && words.every((w) => normalizeQuery(g.metaDescription).includes(w))) score = 1;
           return { g, score };
         })
         .filter((x) => x.score > 0)
         .sort((a, b) => b.score - a.score)
         .map((x) => x.g);
+    };
+    if (q) {
+      const exact = match(q);
+      // 18/11/2026 (secondo giro, punto 1): «glicemia alta» trova la guida alla glicemia.
+      const bare = stripQualifiers(q);
+      list = exact.length || !bare || bare === q ? exact : match(bare);
     }
     return list;
   }, [guides, cat, q]);
@@ -105,9 +111,9 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
           )
         ) : (
           <>
-            <section aria-labelledby="piu-consultate">
-              <h2 id="piu-consultate" className="display-md">
-                Le più consultate
+            <section aria-labelledby="da-cui-partire">
+              <h2 id="da-cui-partire" className="display-md">
+                Da cui partire
               </h2>
               <ul className="guide-grid mt-5 sm:mt-7">
                 {POPULAR.map((slug) => guides.find((g) => g.slug === slug))

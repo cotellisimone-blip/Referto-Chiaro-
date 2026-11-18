@@ -12,7 +12,7 @@ import { isDoctorPath, mediciEnabled } from "@/lib/medici";
  * Modulo server-safe (nessun "use client"): la ricerca vera e propria è in `searchIndex`.
  */
 export type { SearchItem, SearchKind } from "./search-core";
-export { normalizeQuery, searchIndex } from "./search-core";
+export { normalizeQuery, searchIndex, searchSite } from "./search-core";
 import type { SearchItem } from "./search-core";
 
 const PAGE_CONTEXT: Record<string, string> = {
@@ -41,7 +41,50 @@ const PAGE_ALIASES: Record<string, string[]> = {
   "/lettura-referti": ["referto", "referti", "analisi", "esami del sangue", "caricare", "carica", "capisci il tuo referto", "spiegazione"],
   "/medici": ["medico", "medici", "visita a domicilio", "visita a casa", "videoconsulto", "secondo parere", "dottore", "dottoressa", "visita", "specialista"],
   "/integratori": ["integratori", "integratore", "vitamine", "supplementi"],
-  "/prezzi": ["costo", "costa", "quanto costa", "tariffe", "pagare"],
+  "/prezzi": ["costo", "costa", "quanto costa", "tariffe", "pagare", "prezzo", "listino", "pagamento", "abbonamento", "gratis"],
+  "/accedi": ["accedi", "accesso", "entra", "login", "account", "registrazione", "registrarsi", "password"],
+  "/sicurezza-e-privacy": ["cancellare account", "eliminare account", "cancellare i dati", "eliminare i dati", "sicurezza", "dati personali", "chi vede i miei dati"],
+  "/referti/esempio": ["esempio", "prova", "demo", "pdf", "report"],
+  "/contatti": ["assistenza", "aiuto", "email", "telefono", "scrivere"],
+  "/strumenti": ["strumenti", "strumenti gratuiti", "gratis"],
+  "/glossario": ["glossario", "sigle", "parole", "dizionario", "significato"],
+};
+
+/**
+ * 18/11/2026 (secondo giro, punto 1): parole di tutti i giorni che portano alla guida dell'esame. Non sono diagnosi:
+ * chi scrive «diabete» o «anemia» cerca gli esami di cui ha sentito parlare, e la guida spiega che cosa misurano.
+ */
+const GUIDE_TOPICS: Record<string, string[]> = {
+  glicemia: ["diabete", "zucchero", "zuccheri", "glucosio"],
+  "emoglobina-glicata": ["diabete", "glicata", "zucchero"],
+  "curva-da-carico-di-glucosio": ["diabete", "curva glicemica"],
+  emocromo: ["anemia", "esami del sangue", "analisi del sangue", "sangue"],
+  emoglobina: ["anemia"],
+  ferritina: ["anemia", "ferro", "carenza di ferro"],
+  sideremia: ["ferro", "carenza di ferro"],
+  "transferrina-e-saturazione": ["ferro"],
+  "colesterolo-ldl": ["colesterolo cattivo"],
+  "colesterolo-hdl": ["colesterolo buono"],
+  trigliceridi: ["grassi nel sangue"],
+  "globuli-bianchi-e-formula-leucocitaria": ["globuli bianchi", "leucociti", "infezione"],
+  "globuli-rossi": ["globuli rossi", "eritrociti"],
+  "transaminasi-alt-ast": ["fegato"],
+  "gamma-gt": ["fegato"],
+  creatinina: ["reni", "rene"],
+  "egfr-filtrato-glomerulare": ["reni", "filtrato"],
+  "azotemia-urea": ["reni"],
+  tsh: ["tiroide"],
+  "ft4-tiroxina-libera": ["tiroide"],
+  "ft3-triiodotironina-libera": ["tiroide"],
+  "pcr-proteina-c-reattiva": ["infiammazione"],
+  ves: ["infiammazione"],
+  "esame-delle-urine": ["urine", "pipì"],
+  psa: ["prostata"],
+  "pt-inr": ["coagulazione"],
+  "acido-urico": ["gotta", "uricemia"],
+  "holter-pressorio": ["pressione"],
+  "elettrocardiogramma-ecg": ["cuore", "ecg"],
+  "moc-densitometria-ossea": ["osteoporosi", "ossa"],
 };
 
 export function buildSearchIndex(): SearchItem[] {
@@ -50,7 +93,7 @@ export function buildSearchIndex(): SearchItem[] {
     title: g.examName,
     href: `/guide/${g.slug}`,
     context: GUIDE_CATEGORIES[g.category].title,
-    aliases: [...g.aliases, g.title],
+    aliases: [...g.aliases, g.title, ...(GUIDE_TOPICS[g.slug] ?? [])],
   }));
   const terms: SearchItem[] = GLOSSARY.map((e) => ({
     kind: "termine",
@@ -80,6 +123,8 @@ export function buildSearchIndex(): SearchItem[] {
   for (const n of MAIN_NAV) add(n.href, n.label, "Cura Privata");
   for (const [section, links] of Object.entries(FOOTER_NAV)) for (const l of links) add(l.href, l.label, section);
   for (const l of [...EXTRA_PAGES, ...LEGAL_NAV]) add(l.href, l.label, "Cura Privata");
+  add("/strumenti", "Strumenti gratuiti", "Gratis");
+  add("/glossario", "Glossario", "Gratis");
   return [...guides, ...supplements, ...terms, ...pages];
 }
 
