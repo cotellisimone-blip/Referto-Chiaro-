@@ -71,7 +71,7 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
         ) : null}
         <p role="note" className="mt-3 max-w-3xl text-base text-muted">
           Bozze editoriali in attesa di revisione medica. Per le guide complete sugli esami vedi{" "}
-          <Link href="/guide" className="link">
+          <Link prefetch={false} href="/guide" className="link">
             Guide
           </Link>
           .
@@ -102,7 +102,7 @@ export function GlossaryFinder({ groups }: { groups: { letter: string; entries: 
             <div className="empty-state">
               <p className="text-xl font-bold text-ink">Nessun termine con questo nome.</p>
               <p className="mt-2 text-lg text-ink-soft">Prova con una parte della parola, oppure cerca l&apos;esame tra le guide.</p>
-              <Link href="/guide" className="btn btn-secondary mt-5">
+              <Link prefetch={false} href="/guide" className="btn btn-secondary mt-5">
                 Vai alle guide
               </Link>
             </div>
@@ -140,7 +140,7 @@ function Row({ e }: { e: TermCard }) {
   return (
     <div className="grid gap-1 px-5 py-4 text-lg sm:grid-cols-[260px_1fr] sm:gap-6 sm:px-7">
       <dt className="font-bold text-ink">
-        <Link href={`/glossario/${e.slug}`} className="link inline-flex min-h-11 items-center">
+        <Link prefetch={false} href={`/glossario/${e.slug}`} className="link inline-flex min-h-11 items-center">
           {e.term}
         </Link>
         {e.aliases.length ? <span className="block text-[0.9375rem] font-normal text-muted">{e.aliases.slice(0, 2).join(" · ")}</span> : null}

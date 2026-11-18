@@ -70,7 +70,7 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
     <div ref={topRef} className="container-rc finder scroll-mt-24">
       <div className="grid grid-cols-[minmax(0,1fr)] gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
         <SearchField value={query} onChange={setQuery} label="Cerca una guida" placeholder={`Cerca tra ${guides.length} guide: TSH, emocromo…`} />
-        <Link href="/strumenti/domande-per-il-medico" className="btn btn-secondary btn-lg">
+        <Link prefetch={false} href="/strumenti/domande-per-il-medico" className="btn btn-secondary btn-lg">
           Prepara le domande per il medico <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
         </Link>
       </div>
@@ -104,7 +104,7 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
             <div className="empty-state">
               <p className="text-xl font-bold text-ink">Nessuna guida con questo nome.</p>
               <p className="mt-2 text-lg text-ink-soft">Prova con la sigla stampata sul referto, oppure cerca la parola nel glossario.</p>
-              <Link href="/glossario" className="btn btn-secondary mt-5">
+              <Link prefetch={false} href="/glossario" className="btn btn-secondary mt-5">
                 Apri il glossario
               </Link>
             </div>
@@ -145,7 +145,7 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
                   );
                 })}
                 <li>
-                  <Link href="/glossario" className="row-card row-card-warm">
+                  <Link prefetch={false} href="/glossario" className="row-card row-card-warm">
                     <span aria-hidden className="tile-ico tile-ico-sm">
                       <Search />
                     </span>
@@ -171,7 +171,7 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
                     .sort((a, b) => a.examName.localeCompare(b.examName, "it"))
                     .map((g) => (
                       <li key={g.slug} className="break-inside-avoid">
-                        <Link href={`/guide/${g.slug}`} className="link inline-flex min-h-11 min-w-11 items-center text-[1.0625rem]">
+                        <Link prefetch={false} href={`/guide/${g.slug}`} className="link inline-flex min-h-11 min-w-11 items-center text-[1.0625rem]">
                           {g.examName}
                         </Link>
                       </li>
@@ -189,7 +189,7 @@ export function GuideFinder({ guides, categories }: { guides: GuideCard[]; categ
 function Card({ g }: { g: GuideCard }) {
   return (
     <li>
-      <Link href={`/guide/${g.slug}`} className="guide-card">
+      <Link prefetch={false} href={`/guide/${g.slug}`} className="guide-card">
         <span className="guide-card-title">{g.examName}</span>
         <span className="guide-card-text">{g.metaDescription}</span>
         <span className="guide-card-go">

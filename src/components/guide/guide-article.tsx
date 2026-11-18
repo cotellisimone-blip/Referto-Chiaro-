@@ -92,7 +92,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
           <p className="lead mt-5">{guide.summary}</p>
           {guide.aliases.length ? <p className="mt-3 text-base text-muted">Altri nomi: {guide.aliases.join(", ")}.</p> : null}
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Link href={`/strumenti/domande-per-il-medico?esami=${guide.slug}`} className="btn btn-primary no-print">
+            <Link prefetch={false} href={`/strumenti/domande-per-il-medico?esami=${guide.slug}`} className="btn btn-primary no-print">
               <ListChecks aria-hidden className="h-5 w-5" /> Prepara le domande per il medico
             </Link>
             <PrintButton label="Stampa la guida" />
@@ -190,7 +190,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                   <li key={q}>{q}</li>
                 ))}
               </ol>
-              <Link href={`/strumenti/domande-per-il-medico?esami=${guide.slug}`} className="link no-print mt-5 inline-flex min-h-11 items-center gap-1.5 font-semibold">
+              <Link prefetch={false} href={`/strumenti/domande-per-il-medico?esami=${guide.slug}`} className="link no-print mt-5 inline-flex min-h-11 items-center gap-1.5 font-semibold">
                 Aggiungi altri esami e stampa la lista <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
             </section>
@@ -226,7 +226,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
             <div className="side-card">
               <p className="side-card-title">Hai una visita in programma?</p>
               <p className="mt-1.5 text-base text-ink-soft">In 2 minuti: cosa portare e cosa chiedere. Gratis.</p>
-              <Link href="/strumenti/preparati-alla-visita" className="btn btn-secondary btn-sm mt-4 w-full">
+              <Link prefetch={false} href="/strumenti/preparati-alla-visita" className="btn btn-secondary btn-sm mt-4 w-full">
                 Preparati alla visita <ArrowRight aria-hidden className="h-4 w-4" />
               </Link>
             </div>
@@ -236,7 +236,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                 <ul className="link-list mt-1">
                   {terms.map((t) => (
                     <li key={t.slug}>
-                      <Link href={`/glossario/${t.slug}`} className="link">
+                      <Link prefetch={false} href={`/glossario/${t.slug}`} className="link">
                         {t.term}
                       </Link>
                     </li>
@@ -251,7 +251,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                 <ul className="link-list mt-1">
                   {supplements.map((i) => (
                     <li key={i.slug}>
-                      <Link href={`/integratori/${i.slug}`} className="link">
+                      <Link prefetch={false} href={`/integratori/${i.slug}`} className="link">
                         {i.name}
                       </Link>
                     </li>
@@ -265,7 +265,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                 <ul className="link-list mt-1">
                   {related.map((r) => (
                     <li key={r.slug}>
-                      <Link href={`/guide/${r.slug}`} className="link">
+                      <Link prefetch={false} href={`/guide/${r.slug}`} className="link">
                         {r.title}
                       </Link>
                     </li>

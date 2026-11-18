@@ -17,7 +17,7 @@ export function IntegratoreArticle({ slug }: { slug: string }) {
       <section className="ds-ph ds-ph-1 ds-ph-short" aria-labelledby="i-titolo">
         <div className="tm-wrap">
           <PercorsoSezioni current={1} />
-          <Link href="/integratori" className="ds-crumb">
+          <Link prefetch={false} href="/integratori" className="ds-crumb">
             <ArrowLeft aria-hidden className="tm-ic" /> Guide agli integratori
           </Link>
           <p className="ds-int-head">
@@ -66,7 +66,7 @@ export function IntegratoreArticle({ slug }: { slug: string }) {
                 </p>
                 <p>{i.onReport.text}</p>
                 {guide ? (
-                  <Link href={`/guide/${guide.slug}`} className="tm-tlink">
+                  <Link prefetch={false} href={`/guide/${guide.slug}`} className="tm-tlink">
                     <BookOpen aria-hidden className="tm-ic" /> Guida all’esame: {guide.examName}
                   </Link>
                 ) : null}
@@ -128,7 +128,7 @@ export function IntegratoreArticle({ slug }: { slug: string }) {
               const [oc, od] = INTEGRATORI_COLORS[o.slug] ?? ["#F6B98E", "#A4471F"];
               return (
                 <li key={o.slug}>
-                  <Link href={`/integratori/${o.slug}`} className="ds-int">
+                  <Link prefetch={false} href={`/integratori/${o.slug}`} className="ds-int">
                     <Jar c={oc} d={od} />
                     <span className="ds-int-t">{o.name}</span>
                     <span className="ds-int-d">{o.oneLine}</span>

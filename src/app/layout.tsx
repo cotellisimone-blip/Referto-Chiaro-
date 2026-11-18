@@ -25,7 +25,10 @@ const manrope = localFont({
 
 // Fraunces (OFL), per i titoli in veste «Carta».
 // 18/11/2026 (secondo giro, punto 20): file alleggeriti senza cambiare il disegno: solo i pesi usati (400–700), solo le
-// lettere dell'italiano e dell'Europa occidentale. La dimensione ottica resta (toglierla cambierebbe la forma delle lettere).
+// lettere dell'italiano e dell'Europa occidentale.
+// 18/11/2026 (terzo giro, punto 14, approvato da Simone sapendo che si vede): tolta la «dimensione ottica». Il disegno è
+// fissato a quello dei 36 punti: nei titoli molto grandi le lettere sono un po' meno sottili, nei titoli piccoli un po' più
+// fini. Da 100 a 54 KB. Gli originali con la dimensione ottica sono nella cartella del terzo giro, per tornare indietro.
 const fraunces = localFont({
   src: [
     { path: "./fonts/fraunces.woff2", style: "normal", weight: "400 700" },

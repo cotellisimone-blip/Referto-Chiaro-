@@ -9,7 +9,7 @@ export function DemoRibbon() {
         <FlaskConical aria-hidden className="h-4 w-4 shrink-0 opacity-80" />
         <span>
           Versione dimostrativa: usiamo solo referti inventati e non accettiamo documenti reali.{" "}
-          <Link href="/sicurezza-e-privacy">Perché</Link>
+          <Link prefetch={false} href="/sicurezza-e-privacy">Perché</Link>
         </span>
       </p>
     </div>

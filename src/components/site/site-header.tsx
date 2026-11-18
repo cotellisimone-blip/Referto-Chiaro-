@@ -103,7 +103,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
   return (
     <header ref={headerRef} className="site-header no-print" data-scrolled={scrolled ? "1" : undefined} data-open={open ? "1" : undefined}>
       <div className="container-rc site-header-row">
-        <Link href="/" className="rounded-md">
+        <Link prefetch={false} href="/" className="rounded-md">
           <Logo />
         </Link>
 
@@ -113,7 +113,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
               const active = pathname === item.href || !!pathname?.startsWith(item.href + "/");
               return (
                 <li key={item.href} className={item.wideOnly === "xl" ? "hidden xl:list-item" : item.wideOnly === "2xl" ? "hidden 2xl:list-item" : undefined}>
-                  <Link href={item.href} aria-current={active ? "page" : undefined} className="nav-link">
+                  <Link prefetch={false} href={item.href} aria-current={active ? "page" : undefined} className="nav-link">
                     {item.label}
                   </Link>
                 </li>
@@ -167,7 +167,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                   <ul className="grid gap-0.5">
                     {AREA_ITEMS.filter((it) => !AREA_TAB_HREFS.includes(it.href)).map(({ href, label, icon: Icon }) => (
                       <li key={href}>
-                        <Link href={href} aria-current={pathname === href ? "page" : undefined} className="menu-link">
+                        <Link prefetch={false} href={href} aria-current={pathname === href ? "page" : undefined} className="menu-link">
                           <span aria-hidden className="tile-ico tile-ico-sm">
                             <Icon />
                           </span>
@@ -193,7 +193,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                   const Icon = NAV_ICON[item.icon];
                   return (
                     <li key={item.href}>
-                      <Link href={item.href} aria-current={pathname === item.href ? "page" : undefined} className="menu-link">
+                      <Link prefetch={false} href={item.href} aria-current={pathname === item.href ? "page" : undefined} className="menu-link">
                         <span aria-hidden className="tile-ico tile-ico-sm">
                           <Icon />
                         </span>

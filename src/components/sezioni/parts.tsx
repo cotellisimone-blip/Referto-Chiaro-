@@ -238,7 +238,7 @@ export function PercorsoSezioni({ current }: { current: 1 | 2 | 3 }) {
       <ol>
         {steps.map((s) => (
           <li key={s.n} className={s.n === current ? "is-on" : s.n < current ? "is-done" : undefined}>
-            <Link href={s.href} aria-current={s.n === current ? "page" : undefined}>
+            <Link prefetch={false} href={s.href} aria-current={s.n === current ? "page" : undefined}>
               <span className="ds-path-n">{s.n}</span>
               <span>
                 <b>{s.t}</b>

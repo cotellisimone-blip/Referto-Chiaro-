@@ -68,7 +68,7 @@ export default async function VocePage({ params }: { params: Promise<{ slug: str
                   <ul className="link-list mt-1">
                     {guides.map((g) => (
                       <li key={g.slug}>
-                        <Link href={`/guide/${g.slug}`} className="link">
+                        <Link prefetch={false} href={`/guide/${g.slug}`} className="link">
                           {g.title}
                         </Link>
                       </li>
@@ -84,7 +84,7 @@ export default async function VocePage({ params }: { params: Promise<{ slug: str
                   <ul className="mt-3 flex flex-wrap gap-2">
                     {terms.map((t) => (
                       <li key={t.slug}>
-                        <Link href={`/glossario/${t.slug}`} className="chip min-h-11 bg-mist text-ink">
+                        <Link prefetch={false} href={`/glossario/${t.slug}`} className="chip min-h-11 bg-mist text-ink">
                           {t.term}
                         </Link>
                       </li>

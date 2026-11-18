@@ -34,7 +34,7 @@ export function SiteFooter() {
         <nav aria-label="Vai a una sezione" className="footer-doors">
           <ul className="wow-fdoors">
             <li>
-              <Link href="/prevenzione">
+              <Link prefetch={false} href="/prevenzione">
                 <b aria-hidden>1</b>
                 <span>
                   Prevenzione<small>prima degli esami</small>
@@ -42,7 +42,7 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link href="/lettura-referti">
+              <Link prefetch={false} href="/lettura-referti">
                 <b aria-hidden>2</b>
                 <span>
                   Lettura referti<small>quando hai il referto</small>
@@ -50,7 +50,7 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link href="/medici">
+              <Link prefetch={false} href="/medici">
                 <b aria-hidden>3</b>
                 <span>
                   Medici<small>se serve una persona</small>
@@ -78,7 +78,7 @@ export function SiteFooter() {
                   .filter((l) => pdp || l.href !== "/punto-di-partenza")
                   .map((l) => (
                     <li key={l.href}>
-                      <Link href={l.href} className="footer-link">
+                      <Link prefetch={false} href={l.href} className="footer-link">
                         {l.label}
                       </Link>
                     </li>
@@ -104,7 +104,7 @@ export function SiteFooter() {
                   .filter((l) => pdp || l.href !== "/punto-di-partenza")
                   .map((l) => (
                     <li key={l.href}>
-                      <Link href={l.href} className="footer-link">
+                      <Link prefetch={false} href={l.href} className="footer-link">
                         {l.label}
                       </Link>
                     </li>
@@ -119,7 +119,7 @@ export function SiteFooter() {
             <ul className="flex flex-wrap gap-x-5">
               {LEGAL_NAV.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="inline-flex min-h-11 items-center hover:text-teal hover:underline">
+                  <Link prefetch={false} href={l.href} className="inline-flex min-h-11 items-center hover:text-teal hover:underline">
                     {l.label}
                   </Link>
                 </li>
