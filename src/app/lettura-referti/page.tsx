@@ -17,6 +17,7 @@ import { readFlags } from "@/lib/feature-flags";
 import { mediciEnabled } from "@/lib/medici";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
+import { PageLd, capisciServiceLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Lettura referti: il tuo referto in parole semplici",
@@ -43,6 +44,7 @@ export default function LetturaRefertiPage() {
   const start = serviceStart("capisci");
   return (
     <div className="tm ds">
+      <PageLd path="/lettura-referti" meta={metadata} name="Lettura referti" service={capisciServiceLd()} />
       <TrackView event="visita-capisci" />
       <section className="ds-ph ds-ph-2" aria-labelledby="lr-titolo">
         <div className="tm-wrap">

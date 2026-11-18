@@ -23,10 +23,12 @@ const manrope = localFont({
   display: "swap",
 });
 
-// Fraunces (OFL), solo per i titoli della home «I tre momenti».
+// Fraunces (OFL), per i titoli in veste «Carta».
+// 18/11/2026 (secondo giro, punto 20): file alleggeriti senza cambiare il disegno: solo i pesi usati (400–700), solo le
+// lettere dell'italiano e dell'Europa occidentale. La dimensione ottica resta (toglierla cambierebbe la forma delle lettere).
 const fraunces = localFont({
   src: [
-    { path: "./fonts/fraunces.woff2", style: "normal", weight: "300 700" },
+    { path: "./fonts/fraunces.woff2", style: "normal", weight: "400 700" },
     { path: "./fonts/fraunces-italic.woff2", style: "italic", weight: "300 700" },
   ],
   variable: "--font-fraunces",

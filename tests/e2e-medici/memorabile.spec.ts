@@ -131,7 +131,10 @@ test.describe("home a tre sezioni, con i medici accesi (versione di prova)", () 
     await expect(page).toHaveURL(/\/richiedi\/domicilio$/);
     // 5. Prepararsi alla visita: un clic, dal piè di pagina
     await page.goto("/");
-    await page.locator("footer").getByRole("link", { name: "Preparati alla visita" }).click();
+    // 18/11/2026 (secondo giro, punto 9): su telefono le colonne del piè di pagina si aprono al tocco (un tocco in più).
+    const gratis = page.locator("footer details:visible", { hasText: "Gratis" });
+    if (await gratis.count()) await gratis.locator("summary").click();
+    await page.locator("footer").getByRole("link", { name: "Preparati alla visita" }).locator("visible=true").click();
     await expect(page).toHaveURL(/preparati-alla-visita/);
   });
 });

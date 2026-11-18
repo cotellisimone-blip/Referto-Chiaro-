@@ -11,6 +11,7 @@ import { PREREQUISITES, PREREQUISITES_DOMICILIO } from "@/content/stato-progetto
 import { ECOSYSTEM } from "@/domain/ecosystem";
 import { offerItems, type OfferKey } from "@/domain/prestazioni/offerta-completa";
 import { CON_UN_MEDICO_HREF, mediciEnabled } from "@/lib/medici";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Stato del progetto",
@@ -49,6 +50,7 @@ export default function StatoDelProgettoPage() {
   const medici = mediciEnabled();
   return (
     <>
+      <PageLd path="/stato-del-progetto" meta={metadata} name="Stato del progetto" />
       <PageHeader eyebrow="Stato del progetto" title="Che cosa manca, detto chiaramente." lead="Oggi Cura Privata è una versione dimostrativa. Ecco che cosa deve succedere prima che ogni servizio diventi reale.">
         <p className="mt-7">
           <a href="#avvisami" className="btn btn-primary btn-lg">

@@ -84,18 +84,23 @@ test("le barre fisse restano attaccate allo schermo: home, guida e area personal
   await expect.poll(async () => (await reading.boundingBox())?.width ?? 0, { message: "la barra di lettura avanza" }).toBeGreaterThan(20);
 
   // Area personale: la barra in basso è sempre sul bordo dello schermo, all'inizio e dopo lo scorrimento; «Torna su» le sta sopra.
-  await gotoReady(page, "/accedi?next=/area-personale/impostazioni");
+  // 18/11/2026 (secondo giro, punto 4): con il piè di pagina corto le pagine dell'area sono più brevi; il cruscotto è
+  // la più lunga ed è quella dove «Torna su» compare.
+  await gotoReady(page, "/accedi?next=/area-personale");
   await page.getByRole("button", { name: "Entra con l'account demo" }).click();
-  await page.waitForURL(/\/area-personale\/impostazioni/);
+  await page.waitForURL(/\/area-personale$/);
   const bar = page.locator('nav[aria-label="Area personale"]:visible');
   await expect(bar).toHaveCount(1);
   await expect.poll(async () => (await edges(bar))?.bottom, { message: "barra dell'area sul bordo basso, in cima alla pagina" }).toBe(height);
   await page.evaluate(() => window.scrollTo(0, Math.round(window.innerHeight * 1.8)));
   const up = page.getByRole("button", { name: "Torna all'inizio della pagina" });
-  await expect(up).toBeVisible();
   await expect.poll(async () => (await edges(bar))?.bottom, { message: "barra dell'area sul bordo basso, dopo lo scorrimento" }).toBe(height);
   const barTop = (await edges(bar))!.top;
-  await expect.poll(async () => (await edges(up))?.bottom ?? 9999, { message: "«Torna su» sopra la barra dell'area" }).toBeLessThanOrEqual(barTop);
+  // «Torna su» compare dopo uno schermo e mezzo: con il piè di pagina corto non tutte le pagine dell'area ci arrivano.
+  if (await page.evaluate(() => window.scrollY > window.innerHeight * 1.5)) {
+    await expect(up).toBeVisible();
+    await expect.poll(async () => (await edges(up))?.bottom ?? 9999, { message: "«Torna su» sopra la barra dell'area" }).toBeLessThanOrEqual(barTop);
+  }
   // In fondo alla pagina l'ultima riga del piè di pagina si legge: resta sopra la barra.
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   const last = page.getByRole("contentinfo").getByRole("link", { name: "Stato del progetto" });

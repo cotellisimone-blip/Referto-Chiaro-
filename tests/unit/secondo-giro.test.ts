@@ -67,3 +67,49 @@ describe("punto 1: la ricerca capisce come si scrive davvero", () => {
     expect(stripQualifiers("alto")).toBe("");
   });
 });
+
+describe("punto 1 · niente risultati a caso", () => {
+  test("«mal di testa» non diventa «testosterone»: nessun risultato, e la ricerca propone le tre sezioni", () => {
+    const index = buildSearchIndex();
+    for (const q of ["mal di testa", "dolore al ginocchio", "pizza margherita"]) expect(searchSite(index, q, 6).items, q).toEqual([]);
+  });
+});
+
+describe("punto 17 · sitemap con date vere", () => {
+  test("le pagine fisse non dichiarano «oggi»: stessa data a ogni compilazione", async () => {
+    const prev = process.env.ENABLE_INDEXING;
+    process.env.ENABLE_INDEXING = "true";
+    try {
+      const { default: sitemap } = await import("@/app/sitemap");
+      const { PAGES_UPDATED } = await import("@/lib/seo");
+      const voci = sitemap();
+      const home = voci.find((v) => new URL(v.url).pathname === "/");
+      expect(new Date(home!.lastModified as Date).toISOString().slice(0, 10)).toBe(PAGES_UPDATED);
+      const oggi = new Date().toISOString();
+      expect(voci.every((v) => new Date(v.lastModified as Date).toISOString() !== oggi)).toBe(true);
+    } finally {
+      if (prev === undefined) delete process.env.ENABLE_INDEXING;
+      else process.env.ENABLE_INDEXING = prev;
+    }
+  });
+});
+
+describe("punto 18 · guide pratiche", () => {
+  test("sono indicizzabili prima della revisione medica, le guide cliniche no", async () => {
+    const { GUIDES } = await import("@/content/guides");
+    const { guideIndexable, NON_CLINICAL_GUIDES } = await import("@/lib/seo");
+    const env = { ENABLE_INDEXING: "true" };
+    const ok = GUIDES.filter((g) => guideIndexable(g, env)).map((g) => g.slug);
+    expect(ok.sort()).toEqual([...NON_CLINICAL_GUIDES].sort());
+    expect(ok).toHaveLength(6);
+    for (const g of GUIDES) expect(Boolean(g.practical), g.slug).toBe(NON_CLINICAL_GUIDES.has(g.slug));
+  });
+});
+
+describe("punto 20 · caratteri", () => {
+  test("i file dei caratteri dei titoli restano sotto i 102 KB in tutto", async () => {
+    const { statSync } = await import("node:fs");
+    const tot = ["fraunces.woff2", "fraunces-italic.woff2"].reduce((a, f) => a + statSync(`src/app/fonts/${f}`).size, 0);
+    expect(tot).toBeLessThan(102_000);
+  });
+});

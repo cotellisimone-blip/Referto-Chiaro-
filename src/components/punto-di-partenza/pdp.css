@@ -51,7 +51,7 @@
   .pdp-step-now { display: none; }
 }
 
-.pdp-q { font-size: 1.875rem; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; color: var(--color-ink); outline: none; }
+.pdp-q { font-family: var(--font-fraunces), Georgia, serif; font-size: 1.9375rem; font-weight: 400; line-height: 1.12; letter-spacing: -0.02em; color: var(--color-ink); outline: none; }
 @media (min-width: 640px) { .pdp-q { font-size: 2.25rem; } }
 .pdp-option, .pdp-pill { display: flex; cursor: pointer; align-items: center; gap: 0.9rem; border-radius: var(--radius-md); border: 2px solid var(--color-line); background: var(--color-paper); min-height: 3.5rem; padding: 0.75rem 1.1rem; transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s; }
 .pdp-option-goal { border-radius: 18px; padding: 0.9rem 1.1rem; }

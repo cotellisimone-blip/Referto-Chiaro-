@@ -14,6 +14,7 @@ import { PRICE_NOTE, publicPricesEnabled } from "@/domain/offerta";
 import { mediciEnabled } from "@/lib/medici";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Medici: in video, a casa o per un secondo parere",
@@ -41,6 +42,7 @@ export default function MediciPage() {
   const info = PRESTAZIONI.domicilio;
   return (
     <div className="tm ds">
+      <PageLd path="/medici" meta={metadata} name="Medici" />
       <section className="ds-ph ds-ph-3" aria-labelledby="dom-titolo">
         <div className="tm-wrap">
           <PercorsoSezioni current={3} />

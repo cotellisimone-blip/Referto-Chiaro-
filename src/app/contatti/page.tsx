@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { LinkCards } from "@/components/ui/link-cards";
 import { readTitolare } from "@/domain/titolare";
 import { withoutDoctors } from "@/lib/medici";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Contatti",
@@ -23,6 +24,7 @@ export default function Page() {
   const t = readTitolare();
   return (
     <>
+      <PageLd path="/contatti" meta={metadata} name="Contatti" />
       <PageHeader art="dialogue" eyebrow="Contatti" title="Come contattarci." lead="Il servizio non è ancora aperto al pubblico. Qui trovi che cosa puoi fare già oggi, e che cosa no.">
         {t?.email ? (
           <a href={`mailto:${t.email}`} className="wow-big-contact mt-7">

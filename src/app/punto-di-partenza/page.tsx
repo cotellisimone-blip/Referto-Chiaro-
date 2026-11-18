@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowDown, ArrowRight, Ban, ClipboardList, Clock3, FileCheck2, Layers, LayoutGrid, Lock, ScanSearch, ShieldCheck } from "lucide-react";
 import { AreaIcon, CategoryChip, PuntoDiPartenzaGuide, type PdpPrices } from "@/components/punto-di-partenza/guide";
+import { PercorsoSezioni } from "@/components/sezioni/parts";
 import { Photo } from "@/components/ui/photo";
 import { Reveal } from "@/components/ui/reveal";
 import { Wave } from "@/components/ui/wave";
@@ -13,6 +14,7 @@ import { coreService, priceDisplay, publicPricesEnabled } from "@/domain/offerta
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { mediciEnabled } from "@/lib/medici";
 import { absoluteUrl, indexingEnabled, NOINDEX_DRAFT } from "@/lib/seo";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Punto di Partenza: il primo controllo, gratis",
@@ -67,13 +69,21 @@ export default function PuntoDiPartenzaPage() {
 
   return (
     <>
+      <PageLd path="/punto-di-partenza" meta={metadata} name="Punto di Partenza" trail={[{ name: "Prevenzione", path: "/prevenzione" }]} />
       {/* HERO */}
       <section aria-labelledby="pdp-titolo" className="no-print tone-partenza pdp-hero">
         <div className="container-rc grid items-center gap-10 pb-14 pt-8 sm:pb-20 sm:pt-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:pb-24">
           <div>
-            <p className="eyebrow">Gratis · Punto di Partenza</p>
-            <h1 id="pdp-titolo" className="display-xl mt-5">
-              Conosci meglio la tua salute. <span className="marker">Gratis.</span>
+            {/* 18/11/2026 (secondo giro, punto 10): il Punto di Partenza è il primo passo della Prevenzione e ne porta la veste:
+                barra 1 → 2 → 3, numero di sezione, titolo con l'ultima parola in corsivo come nelle tre sezioni. */}
+            <div className="tm ds ds-bare">
+              <PercorsoSezioni current={1} />
+              <p className="ds-sec-tag ds-sec-tag-1">
+                <span>1</span> Prevenzione · gratis
+              </p>
+            </div>
+            <h1 id="pdp-titolo" className="display-xl mt-4">
+              Conosci meglio la tua salute. <em>Gratis.</em>
             </h1>
             <p className="mt-6 max-w-2xl text-xl text-ink-soft sm:text-[1.375rem] sm:leading-snug">
               Un percorso guidato in 10 aree per raccogliere ciò che sai già, capire cosa discutere con il medico e prepararti ai prossimi controlli.
@@ -226,7 +236,7 @@ export default function PuntoDiPartenzaPage() {
             <p>
               <CategoryChip category="not-routine" />
             </p>
-            <h2 id="pdp-non-routine" className="mt-3 text-[1.75rem] font-extrabold leading-tight text-ink">
+            <h2 id="pdp-non-routine" className="display-lg mt-3 text-[1.75rem] leading-tight text-ink">
               Più esami non significa più prevenzione.
             </h2>
             <p className="mt-3 text-lg text-ink-soft">Esempi di controlli che non vanno proposti in modo automatico a chi non ha disturbi:</p>

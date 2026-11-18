@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { DemoFlow } from "@/components/demo/demo-flow";
 import { isVetrina, serviceStart } from "@/domain/offerta";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Referto di esempio",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 export default function EsempioPage() {
   return (
     <>
+      <PageLd path="/referti/esempio" meta={metadata} name="Referto di esempio" trail={[{ name: "Lettura referti", path: "/lettura-referti" }]} />
       <PageHeader section={2}
         art="translate"
         eyebrow="Demo con dati inventati"

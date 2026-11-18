@@ -1,5 +1,6 @@
 import { GUIDE_CATEGORIES, type Guide, type GuideCategory } from "./schema";
 import { GUIDE_COME_LEGGERE } from "./categorie/come-leggere";
+import { GUIDE_PRATICHE } from "./categorie/pratiche";
 import { GUIDE_EMOCROMO } from "./categorie/emocromo";
 import { GUIDE_METABOLISMO } from "./categorie/metabolismo";
 import { GUIDE_LIPIDI } from "./categorie/lipidi";
@@ -16,6 +17,7 @@ import { GUIDE_ENDOSCOPIE } from "./categorie/endoscopie";
 /** Tutte le guide, in ordine di categoria. Ogni file di categoria è indipendente. */
 export const GUIDES: Guide[] = [
   ...GUIDE_COME_LEGGERE,
+  ...GUIDE_PRATICHE,
   ...GUIDE_EMOCROMO,
   ...GUIDE_METABOLISMO,
   ...GUIDE_LIPIDI,

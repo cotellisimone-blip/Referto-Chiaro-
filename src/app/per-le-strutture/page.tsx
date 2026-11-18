@@ -4,6 +4,7 @@ import { CircleDashed, Languages, Palette, Plug, X } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { WaitlistForm } from "@/components/site/waitlist-form";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Per le strutture",
@@ -33,6 +34,7 @@ const PILOT = [
 export default function PerLeStrutturePage() {
   return (
     <>
+      <PageLd path="/per-le-strutture" meta={metadata} name="Per le strutture" />
       <PageHeader
         art="structures"
         eyebrow="Per le strutture"

@@ -7,6 +7,7 @@ import { Section } from "@/components/ui/section";
 import { OFFER_ICON } from "@/components/offerta/service-triad";
 import { offerItems, type OfferKey } from "@/domain/prestazioni/offerta-completa";
 import { mediciEnabled } from "@/lib/medici";
+import { PageLd } from "@/components/site/page-ld";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) la pagina racconta il referto, il tempo e la visita dal proprio medico. */
 const MEDICI = mediciEnabled();
@@ -54,6 +55,7 @@ const DATA = [
 export default function ComeFunzionaPage() {
   return (
     <>
+      <PageLd path="/come-funziona" meta={metadata} name="Come funziona" />
       <PageHeader eyebrow="Come funziona" title="Scegli tu fin dove arrivare." lead={MEDICI ? "Puoi fermarti al referto spiegato, o andare avanti con un medico. I documenti che carichi restano nella tua area: non li ricarichi." : "Puoi fermarti al referto spiegato, o tenerlo nel tuo spazio: lo ritrovi in fila con gli altri, negli anni, e arrivi alla visita con le domande pronte."}>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
           <Link href="/referti/esempio" className="btn btn-primary btn-lg sm:shrink-0">

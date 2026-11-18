@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { DraftNotice, Prose } from "@/components/ui/draft-notice";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = { title: "Accessibilità", alternates: { canonical: "/accessibilita" }, description: "Accessibilità di Cura Privata: testo grande, contrasto, navigazione da tastiera, tema scuro e come segnalarci un problema." };
 
 export default function Page() {
   return (
     <>
+      <PageLd path="/accessibilita" meta={metadata} name="Accessibilità" />
       <PageHeader art="faq" eyebrow="Accessibilità" title="Accessibilità" lead="Vogliamo che il sito sia utilizzabile da tutti." />
       <div className="container-rc page-body">
         <DraftNotice />

@@ -34,6 +34,8 @@ export const GuideSchema = z
     metaDescription: z.string().min(90).max(160),
     category: z.enum(Object.keys(GUIDE_CATEGORIES) as [GuideCategory, ...GuideCategory[]]),
     examName: z.string().min(2).max(60),
+    /** Guida pratica, senza contenuto clinico (carte, copie, ricette, archivio): titoli delle sezioni e avviso adatti. */
+    practical: z.boolean().optional(),
     aliases: z.array(z.string().min(2).max(60)).max(8),
     summary: z.string().min(80).max(320),
     sections: z.object({
@@ -73,7 +75,7 @@ export const GuideSchema = z
 export type Guide = z.infer<typeof GuideSchema>;
 
 /** Domini ammessi per le fonti: istituzioni sanitarie e risorse divulgative riconosciute. */
-export const SOURCE_DOMAINS = ["iss.it", "epicentro.iss.it", "salute.gov.it", "aifa.gov.it", "who.int", "nhs.uk", "medlineplus.gov", "labtestsonline.it", "labtestsonline.org", "issalute.it", "fascicolosanitario.gov.it", "regione.sicilia.it"];
+export const SOURCE_DOMAINS = ["iss.it", "epicentro.iss.it", "salute.gov.it", "aifa.gov.it", "who.int", "nhs.uk", "medlineplus.gov", "labtestsonline.it", "labtestsonline.org", "issalute.it", "fascicolosanitario.gov.it", "regione.sicilia.it", "garanteprivacy.it", "gazzettaufficiale.it", "regione.lombardia.it"];
 
 /**
  * Espressioni vietate: diagnosi, giudizi su «normale/anormale», terapie, promesse.

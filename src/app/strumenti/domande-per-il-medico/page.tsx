@@ -9,6 +9,7 @@ import { GUIDES } from "@/content/guides";
 import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import type { GuideCategory } from "@/content/guides/schema";
 import { absoluteUrl } from "@/lib/seo";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Domande per il medico",
@@ -27,6 +28,7 @@ export default function DomandePerIlMedicoPage() {
   const categories = ORDER.map((id) => ({ id, title: GUIDE_CATEGORIES[id].title }));
   return (
     <>
+      <PageLd path="/strumenti/domande-per-il-medico" meta={metadata} name="Domande per il medico" trail={[{ name: "Strumenti gratuiti", path: "/strumenti" }]} />
       <PageHeader section={1}
         art="questions"
         eyebrow="Strumento gratuito"

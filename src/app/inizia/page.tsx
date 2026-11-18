@@ -5,6 +5,7 @@ import { NeedPicker } from "@/components/offerta/need-picker";
 import { pickerServices, publicPricesEnabled } from "@/domain/offerta";
 import { offerItems } from "@/domain/prestazioni/offerta-completa";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Ti aiutiamo a scegliere",
@@ -24,6 +25,7 @@ export default function IniziaPage() {
     : pickerServices().filter((s) => s.id === "capisci");
   return (
     <section aria-labelledby="inizia-titolo" className="page-hero">
+      <PageLd path="/inizia" meta={metadata} name="Ti aiutiamo a scegliere" />
       <div className="container-rc page-hero-inner page-hero-flat">
         <p className="eyebrow">Ti aiutiamo a scegliere</p>
         <h1 id="inizia-titolo" className="page-title mt-4">

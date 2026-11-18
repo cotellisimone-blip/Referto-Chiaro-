@@ -6,7 +6,7 @@ import { isDoctorPath, mediciEnabled } from "@/lib/medici";
  * pagina e nella ricerca), così la testata non va a capo a 1024 px.
  */
 export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users" | "tools" | "chart" | "laptop" | "pill" | "heart";
-type NavItem = { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; icon: NavIcon; wideOnly?: "xl" | "2xl" };
+type NavItem = { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; icon: NavIcon; wideOnly?: "xl" | "2xl"; menuOnly?: boolean };
 /**
  * 15/11/2026 sera: tre sezioni (Prevenzione, Lettura referti, Medici), poi guide, integratori e prezzi; guide e
  * integratori si vedono dai 1280 px (sotto stanno nel menu e nel fondo pagina).
@@ -21,6 +21,9 @@ const MAIN_NAV_DUE_SEZIONI: readonly NavItem[] = [
   { href: "/guide", label: "Guide", tone: null, icon: "book", wideOnly: "xl" },
   { href: "/integratori", label: "Integratori", tone: null, icon: "pill", wideOnly: "xl" },
   { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro" },
+  // 18/11/2026 (secondo giro, punto 15): la pagina esisteva ma nessun collegamento ci portava. Nel menu del telefono
+  // (e, su computer, nel fondo pagina e in Prevenzione): la testata larga resta com'è, senza andare a capo.
+  { href: "/strumenti", label: "Strumenti gratuiti", tone: null, icon: "tools", menuOnly: true },
 ];
 export const MAIN_NAV: readonly NavItem[] = MAIN_NAV_DUE_SEZIONI;
 /**
@@ -51,6 +54,7 @@ const FOOTER_NAV_ALL = {
     { href: "/guide", label: "Guide agli esami" },
     { href: "/integratori", label: "Guide agli integratori" },
     { href: "/glossario", label: "Glossario" },
+    { href: "/strumenti", label: "Tutti gli strumenti gratuiti" },
   ],
   "Cura Privata": [
     { href: "/come-funziona", label: "Come funziona" },

@@ -13,6 +13,7 @@ import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS } from "@/content/i
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Prevenzione: esami, guide e integratori",
@@ -30,6 +31,7 @@ export default function PrevenzionePage() {
   const cats = Object.entries(GUIDE_CATEGORIES).map(([id, c]) => ({ id, ...c }));
   return (
     <div className="tm ds">
+      <PageLd path="/prevenzione" meta={metadata} name="Prevenzione" />
       <section className="ds-ph ds-ph-1" aria-labelledby="pv-titolo">
         <div className="tm-wrap">
           <PercorsoSezioni current={1} />
@@ -149,6 +151,9 @@ export default function PrevenzionePage() {
             </Link>
             <Link href="/glossario" className="tm-btn tm-btn-line">
               <SpellCheck aria-hidden className="tm-ic" /> Glossario
+            </Link>
+            <Link href="/strumenti" className="tm-tlink">
+              Tutti gli strumenti gratuiti <ArrowRight aria-hidden className="tm-ic" />
             </Link>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { GuideFinder } from "@/components/content/guide-finder";
 import { GUIDE_CATEGORIES, GUIDES } from "@/content/guides";
 import type { GuideCategory } from "@/content/guides";
 import { absoluteUrl } from "@/lib/seo";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Guide agli esami di laboratorio",
@@ -16,6 +17,7 @@ export default function GuideHubPage() {
   const guides = GUIDES.map((g) => ({ slug: g.slug, examName: g.examName, metaDescription: g.metaDescription, aliases: g.aliases, category: g.category }));
   return (
     <>
+      <PageLd path="/guide" meta={metadata} name="Guide agli esami" trail={[{ name: "Prevenzione", path: "/prevenzione" }]} />
       <PageHeader section={1}
         art="magnify"
         eyebrow="Guide"

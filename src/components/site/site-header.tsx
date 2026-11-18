@@ -109,7 +109,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
 
         <nav aria-label="Principale" className="hdr-desktop">
           <ul className="flex items-center gap-0.5">
-            {MAIN_NAV.map((item) => {
+            {MAIN_NAV.filter((item) => !item.menuOnly).map((item) => {
               const active = pathname === item.href || !!pathname?.startsWith(item.href + "/");
               return (
                 <li key={item.href} className={item.wideOnly === "xl" ? "hidden xl:list-item" : item.wideOnly === "2xl" ? "hidden 2xl:list-item" : undefined}>

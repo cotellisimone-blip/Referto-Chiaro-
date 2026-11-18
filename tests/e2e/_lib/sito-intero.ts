@@ -17,7 +17,7 @@ export const RIMANDI: Record<string, string> = { "/referti": "/lettura-referti",
 const PRESENTE_MEDICI = ["chi viene a casa?", "prima di pagare leggi il suo nome", "paghi solo dopo che il medico", "li vedi prima di pagare", "sai subito se arriviamo da te"];
 
 /** 18/11/2026 (secondo giro, punto 8): il sito non è online, quindi non può vantare ciò che non ha misurato. */
-const NON_MISURATO = ["le più consultate", "le più lette", "le più cercate", "che ci fanno più spesso", "i più richiesti:", "i nostri utenti", "i nostri clienti"];
+const NON_MISURATO = ["le più consultate", "le più lette", "le più cercate", "che ci fanno più spesso", "i nostri utenti", "i nostri clienti"];
 
 const decode = (s: string) => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
 const attr = (html: string, re: RegExp) => { const m = html.match(re); return m ? decode(m[1]) : null; };
@@ -99,6 +99,22 @@ export function provaSitoIntero({ medici }: { medici: boolean }) {
         if (got !== p.path) errori.push(`${p.path}: canonical verso ${got}`);
       }
       expect(errori).toEqual([]);
+    });
+
+    test("ogni pagina ha un'immagine di condivisione e, se è una pagina del sito pubblico, i dati strutturati", () => {
+      // 18/11/2026 (secondo giro, punti 16 e 17).
+      const errori: string[] = [];
+      const SENZA_LD = /^\/(accedi|privacy-policy|cookie-policy|termini|prova|servizi|per-i-medici|medici\/|richiedi|area-personale)/;
+      for (const p of pagine) {
+        if (!/<meta property="og:image" content="[^"]+"/.test(p.html)) errori.push(`${p.path}: senza og:image`);
+        if (!SENZA_LD.test(p.path) && !p.html.includes('type="application/ld+json"')) errori.push(`${p.path}: senza dati strutturati`);
+      }
+      expect(errori).toEqual([]);
+    });
+
+    test("«Strumenti gratuiti» e le guide pratiche si raggiungono seguendo i collegamenti", () => {
+      const trovate = new Set(pagine.map((p) => p.path));
+      for (const path of ["/strumenti", "/guide/copia-della-cartella-clinica", "/guide/referti-online-e-per-email", "/guide/fotografare-un-referto", "/guide/conservare-i-referti", "/guide/leggere-la-ricetta-classi-di-priorita"]) expect(trovate.has(path), path).toBe(true);
     });
 
     test("nessuna frase contraddice lo stato del sito", () => {

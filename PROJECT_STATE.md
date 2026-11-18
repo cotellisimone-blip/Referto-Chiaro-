@@ -1,6 +1,6 @@
 # Stato del progetto — Cura Privata
 
-*Aggiornato: 17/11/2026, dopo i «20 interventi prima del lancio». Fonte di verità è il codice: se questo file e il codice non coincidono, vince il codice e questo file va corretto.*
+*Aggiornato: 18/11/2026, dopo il secondo giro di «20 interventi». Fonte di verità è il codice: se questo file e il codice non coincidono, vince il codice e questo file va corretto.*
 
 ## Obiettivo e pubblico
 Servizio digitale italiano in tre sezioni: **1 Prevenzione** (che cosa conoscere prima degli esami), **2 Lettura referti** (il referto in parole semplici), **3 Medici** (una persona, quando serve). Messaggio unico: «Previeni. Capisci. Un medico, se serve.»
@@ -10,7 +10,7 @@ Pubblico: adulti italiani con un referto in mano, molti sopra i 55 anni e da tel
 
 | Sezione | Pagina | Che cosa contiene | Prezzo (unica fonte: `src/domain/offerta.ts`) | Stato nel codice |
 |---|---|---|---|---|
-| 1 Prevenzione | `/prevenzione` | Punto di Partenza, 91 guide agli esami, 8 guide agli integratori, glossario (139 termini), promemoria, strumenti per la visita | Gratis | Attiva; contenuti in bozza, `noindex` finché non sono revisionati |
+| 1 Prevenzione | `/prevenzione` | Punto di Partenza, 96 guide (91 agli esami, in bozza, e 5 pratiche: ricetta, cartella clinica, referti online, fotografare, conservare), 8 guide agli integratori, glossario (139 termini), promemoria, strumenti per la visita | Gratis | Attiva; contenuti in bozza, `noindex` finché non sono revisionati |
 | 2 Lettura referti | `/lettura-referti` | «Capisci il tuo referto»: caricamento, controllo dei valori, spiegazione, PDF per il medico; area personale con numeri nel tempo, famiglia, dossier | Primo referto 2,90 €, poi 7,90 € | Demo; il motore reale è spento dai gate |
 | 3 Medici | `/medici` | Al lancio: «In arrivo», lista d'attesa con CAP. Con `ENABLE_MEDICI`: visita a domicilio 149 €, videoconsulto 69 €, secondo parere 149 € (`src/domain/prestazioni/listino.ts`), prova a tre ruoli in `/prova` | Nessun prezzo al lancio | Spenta; il codice resta e ha le sue prove (`tests/e2e-medici`) |
 
@@ -53,6 +53,8 @@ Foto: solo pazienti, sempre con «Immagine illustrativa»; **mai foto di medici*
 - Il PDF è «il foglio per il medico»: valori, posizione e domande in prima pagina.
 - Prima di ogni PR: `npm run controlli` (stessi passi del workflow GitHub). Il controllo del sito intero (`sito-intero`) percorre tutte le pagine: se una pagina nuova non ha titolo, descrizione o canonical a misura, fallisce.
 - Ogni consegna a Simone comprende un'anteprima navigabile nuova, provata a misura di telefono Android (360–412 px).
+- Secondo giro (18/11): l'azione principale si chiama sempre «Carica un referto» ed è il pulsante verde petrolio pieno; su telefono nessun testo sotto i 14 px (`tests/e2e/secondo-giro.spec.ts`); il sito non vanta dati mai misurati («le più consultate»: frasi vietate in `sito-intero`); la ricerca non mostra risultati «a caso» (per somiglianza solo da 5 lettere); la foto d'apertura passa da `Photo priority`, che non la fa precaricare alle altre pagine; ogni pagina pubblica ha immagine di condivisione e dati strutturati (`PageLd`), senza voti né recensioni; la data delle pagine nella sitemap è `PAGES_UPDATED` in `src/lib/seo.ts`, da aggiornare a mano quando cambiano i testi.
+- Guide pratiche (`practical: true`, `src/content/guides/categorie/pratiche.ts`): senza contenuto clinico, sono le sole indicizzabili prima della revisione medica (`NON_CLINICAL_GUIDES`). Solo fonti ufficiali lette davvero; dove la regola cambia per Regione, lo si dice.
 
 ## Problemi noti
 - Nulla è online: mancano titolare, P.IVA, dominio, informativa rivista, account (Neon, Vercel, Resend, Stripe, Anthropic). Vedi `docs/PRODUCTION_GATES.md`.
@@ -63,6 +65,10 @@ Foto: solo pazienti, sempre con «Immagine illustrativa»; **mai foto di medici*
 - Antivirus sui caricamenti assente; CSP con `script-src 'unsafe-inline'`; nessun penetration test.
 - JavaScript: 190–240 KB trasferiti per pagina dopo il ciclo 5; il resto è React e Next, non si riduce senza cambiare architettura. CSS: 227 KB non compressi (43 compressi) su home, sezioni e guide dopo i 20 interventi (erano 325); fino a 257 sulle pagine con stili propri.
 - Le guide agli integratori (8) non hanno revisione medica: fuori da sitemap e indici come le guide cliniche.
+- Caratteri: Fraunces pesa 100 KB in due file; per scendere di altri 50 KB bisogna togliere la dimensione ottica (cambia la forma delle lettere): scelta grafica di Simone, non fatta (secondo giro, punto 20).
+- Pagina di errore (`src/app/error.tsx`) e icona sulla schermata Home (`src/app/manifest.ts`) non sono provate su un dispositivo reale; dati strutturati e immagini di condivisione vanno provati con gli strumenti di Google e con WhatsApp quando il sito sarà online.
+- Le cinque guide pratiche vanno rilette dal titolare; «Fotografare un referto» non ha fonte esterna.
+- La pagina Prezzi mostra ancora la scheda «Cura Privata Famiglia, 39 €/anno, in proposta»: decisione di Simone.
 - Nome, sede e partita IVA del titolare mancano: «Perché fidarsi» mostra il segnaposto finché non sono in configurazione (`PUBLIC_OWNER_*`).
 
 ## Dove guardare

@@ -27,6 +27,7 @@ import {
   famigliaPrice,
 } from "@/domain/famiglia/piano";
 import { publicPricesEnabled } from "@/domain/offerta";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Famiglia: la salute di tutti, nel tempo",
@@ -93,6 +94,7 @@ export default function FamigliaPage() {
   const q = exampleQuestion("Creatinina");
   return (
     <div>
+      <PageLd path="/famiglia" meta={metadata} name="Famiglia" />
       <TrackView event="visita-famiglia" />
 
       {/* APERTURA */}

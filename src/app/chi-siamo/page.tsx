@@ -6,6 +6,7 @@ import { Photo } from "@/components/ui/photo";
 import { Section } from "@/components/ui/section";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { mediciEnabled } from "@/lib/medici";
+import { PageLd } from "@/components/site/page-ld";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) i testi dicono solo quello che c'è. */
 const MEDICI = mediciEnabled();
@@ -36,6 +37,7 @@ export default function Page() {
   const photo = ILLUSTRATIVE_PHOTOS.mani;
   return (
     <>
+      <PageLd path="/chi-siamo" meta={metadata} name="Chi siamo" />
       <PageHeader
         eyebrow="Chi siamo"
         title="Un referto non dovrebbe fare paura."

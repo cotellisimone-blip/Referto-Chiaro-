@@ -3,7 +3,7 @@ import { GUIDES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import { AREAS } from "@/content/punto-di-partenza";
 import { INTEGRATORI } from "@/content/integratori";
-import { absoluteUrl, glossaryIndexable, guideIndexable, indexingEnabled, integratoreIndexable } from "@/lib/seo";
+import { GLOSSARY_UPDATED, PAGES_UPDATED, absoluteUrl, glossaryIndexable, guideIndexable, indexingEnabled, integratoreIndexable } from "@/lib/seo";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { isDoctorPath, mediciEnabled } from "@/lib/medici";
 
@@ -22,13 +22,13 @@ const PUBLIC = ["/", "/prevenzione", "/lettura-referti", "/medici", "/prezzi", "
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   if (!indexingEnabled()) return [];
-  const now = new Date();
+  const pages = new Date(PAGES_UPDATED);
   return [
     ...PUBLIC.filter((p) => p !== "/punto-di-partenza" || (puntoDiPartenzaEnabled() && pdpReviewed()))
       // Senza medici le loro pagine e l'elenco «I servizi» reindirizzano: non vanno proposti ai motori.
-      .filter((p) => mediciEnabled() || (!isDoctorPath(p) && p !== "/servizi")).map((p) => ({ url: absoluteUrl(p), lastModified: now, changeFrequency: "weekly" as const, priority: p === "/" ? 1 : 0.7 })),
+      .filter((p) => mediciEnabled() || (!isDoctorPath(p) && p !== "/servizi")).map((p) => ({ url: absoluteUrl(p), lastModified: pages, changeFrequency: "weekly" as const, priority: p === "/" ? 1 : 0.7 })),
     ...GUIDES.filter((g) => guideIndexable(g)).map((g) => ({ url: absoluteUrl(`/guide/${g.slug}`), lastModified: new Date(g.lastUpdated), changeFrequency: "monthly" as const, priority: 0.6 })),
     ...INTEGRATORI.filter((i) => integratoreIndexable(i)).map((i) => ({ url: absoluteUrl(`/integratori/${i.slug}`), lastModified: new Date(i.lastUpdated), changeFrequency: "monthly" as const, priority: 0.6 })),
-    ...(glossaryIndexable() ? GLOSSARY : []).map((e) => ({ url: absoluteUrl(`/glossario/${e.slug}`), lastModified: now, changeFrequency: "monthly" as const, priority: 0.4 })),
+    ...(glossaryIndexable() ? GLOSSARY : []).map((e) => ({ url: absoluteUrl(`/glossario/${e.slug}`), lastModified: new Date(GLOSSARY_UPDATED), changeFrequency: "monthly" as const, priority: 0.4 })),
   ];
 }

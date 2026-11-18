@@ -12,12 +12,14 @@ async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 }
 
-test("home: il punto di partenza gratis sta nella sezione Prevenzione, il primo referto nell'apertura", async ({ page }) => {
+test("home: il punto di partenza gratis sta nella sezione Prevenzione, il primo referto nell'apertura", async ({ page, isMobile }) => {
   await page.goto("/");
   await expect(page.locator("h1")).toHaveCount(1);
   await expect(page.locator("main #prevenzione").getByRole("link", { name: /Quali esami conoscere/ })).toHaveAttribute("href", "/punto-di-partenza");
   await expect(page.locator("main .ds-hero").getByRole("link", { name: /Il tuo referto, in parole semplici/ })).toContainText("2,90");
-  await expect(page.locator("footer").getByRole("link", { name: "Punto di Partenza" })).toBeVisible();
+  // 18/11/2026 (secondo giro, punto 9): su telefono le colonne del piè di pagina si aprono al tocco.
+  if (isMobile) await page.locator("footer details", { hasText: "Gratis" }).locator("summary").click();
+  await expect(page.locator("footer").getByRole("link", { name: "Punto di Partenza" }).locator("visible=true")).toBeVisible();
   await noOverflow(page);
 });
 

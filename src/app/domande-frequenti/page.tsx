@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { FaqFinder } from "@/components/ui/faq-finder";
 import { FAQ } from "@/content/faq";
 import { mediciEnabled } from "@/lib/medici";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Domande frequenti",
@@ -20,6 +21,7 @@ const GROUPS = [
 export default function FaqPage() {
   return (
     <>
+      <PageLd path="/domande-frequenti" meta={metadata} name="Domande frequenti" faq={FAQ} />
       <PageHeader art="faq" eyebrow="Aiuto" title="Domande frequenti." lead="Risposte dirette, anche quando la risposta è «non ancora»." />
       <FaqFinder items={FAQ.map((f) => ({ q: f.q, a: f.a, topic: f.topic }))} groups={GROUPS} />
     </>

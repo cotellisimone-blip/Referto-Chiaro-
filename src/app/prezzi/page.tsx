@@ -32,6 +32,7 @@ import {
   upgradeEnabled,
   serviceStart,
 } from "@/domain/offerta";
+import { PageLd, capisciServiceLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Prezzi",
@@ -88,6 +89,7 @@ export default function PrezziPage() {
   const solo = items.length === 1;
   return (
     <>
+      <PageLd path="/prezzi" meta={metadata} name="Prezzi" service={capisciServiceLd()} />
       <section
         aria-labelledby="prezzi-titolo"
         className="page-hero page-hero-wave"

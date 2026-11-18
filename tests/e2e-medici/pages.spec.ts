@@ -33,7 +33,8 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
       expect(order).toEqual([...order].sort((a, b) => a - b));
     }
     await expect(page.locator('main a[href="/lettura-referti"]').first()).toBeAttached();
-    for (const name of ["Secondo parere specialistico", "Videoconsulto con un medico"]) await expect(page.getByRole("link", { name }).first()).toBeAttached();
+    // Su telefono stanno nelle colonne del piè di pagina che si aprono al tocco: si controlla il collegamento, non la voce in vista.
+    for (const href of ["/servizi/secondo-parere", "/servizi/parla-con-un-medico"]) await expect(page.locator(`a[href="${href}"]`).first()).toBeAttached();
     // Above the fold: almeno una porta d'ingresso ai servizi è visibile senza scorrere. 12/11/2026: su telefono la
     // prima è la prestazione in evidenza (la visita a domicilio), poi «Ho un referto».
     const first = page.locator("main .ds-hero").getByRole("link", { name: /Il tuo referto, in parole semplici/ });

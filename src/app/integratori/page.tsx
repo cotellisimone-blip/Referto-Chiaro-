@@ -7,6 +7,7 @@ import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS, INTEGRATORI_PRIMA_
 import { NOINDEX_DRAFT, indexingEnabled } from "@/lib/seo";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Guide agli integratori",
@@ -21,6 +22,7 @@ export default function IntegratoriPage() {
   const groups = Object.keys(INTEGRATORI_GROUPS) as IntegratoreGroup[];
   return (
     <div className="tm ds">
+      <PageLd path="/integratori" meta={metadata} name="Guide agli integratori" trail={[{ name: "Prevenzione", path: "/prevenzione" }]} />
       <section className="ds-ph ds-ph-1 ds-ph-short" aria-labelledby="int-titolo">
         <div className="tm-wrap">
           <PercorsoSezioni current={1} />

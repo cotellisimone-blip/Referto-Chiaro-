@@ -4,6 +4,7 @@ import { Ban, CircleDashed, EyeOff, FileWarning, FlaskConical, ScanSearch, UserR
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { mediciEnabled } from "@/lib/medici";
+import { PageLd } from "@/components/site/page-ld";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) i testi dicono solo quello che c'è. */
 const MEDICI = mediciEnabled();
@@ -37,6 +38,7 @@ const BEFORE = [
 export default function Page() {
   return (
     <>
+      <PageLd path="/sicurezza-e-privacy" meta={metadata} name="Sicurezza e privacy" />
       <PageHeader art="shield" eyebrow="Sicurezza e privacy" title="I tuoi referti restano tuoi." lead="Come proteggiamo, e proteggeremo, le tue informazioni. Senza promesse che non possiamo verificare." />
 
       <section aria-labelledby="oggi-titolo" className="section">

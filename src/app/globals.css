@@ -4529,6 +4529,8 @@ body:has([data-bottom-nav]) .site-footer .footer-legal { margin-top: 1.25rem; }
   .article-body .guide-prose > * + * { margin-top: 0.875rem; }
   .article-body .guide-h2 { break-after: avoid; }
   .article-body .guide-box, .article-body .wow-paper, .article-body .faq-list details { break-inside: avoid; }
+  .article-body .faq-list { border: 0 !important; padding: 0 !important; border-radius: 0 !important; overflow: visible !important; }
+  .article-body .faq-list details { overflow: visible !important; border-radius: 0 !important; }
   .article-body .faq-list details { border: 0; padding: 0.25rem 0; }
   .article-body .faq-list summary { min-height: 0; padding: 0; font-weight: 700; }
   .article-body .faq-answer { padding: 0.125rem 0 0.375rem; }

@@ -39,7 +39,7 @@ export async function ogImage({ eyebrow, title, accent, lead, color = "#00756F" 
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
           {eyebrow ? <div style={{ display: "flex", fontSize: 26, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", color }}>{eyebrow}</div> : null}
-          <div style={{ fontSize: title.length + (accent?.length ?? 0) > 44 ? 62 : 72, fontWeight: 700, lineHeight: 1.06, letterSpacing: -3, display: "flex", flexWrap: "wrap", columnGap: 18 }}>
+          <div style={{ fontSize: title.length + (accent?.length ?? 0) > 70 ? 50 : title.length + (accent?.length ?? 0) > 44 ? 62 : 72, fontWeight: 700, lineHeight: 1.06, letterSpacing: -3, display: "flex", flexWrap: "wrap", columnGap: 18 }}>
             <span>{title}</span>
             {accent ? <span style={{ color }}>{accent}</span> : null}
           </div>

@@ -110,9 +110,10 @@ export function searchSite(index: SearchItem[], query: string, limit = 12): Sear
       let d = 3;
       let hit = "";
       for (const v of vocab) {
-        if (v.length < 4) continue;
+        if (v.length < 5) continue; // le parole corte («test», «alto») somigliano a troppe cose
         // Si confronta anche con l'inizio della parola: «colestrolo» trova «colesterolo», «emocrom» trova «emocromo».
-        const dist = Math.min(editDistance(w, v, tolerance(w)), v.length > w.length ? editDistance(w, v.slice(0, w.length), tolerance(w)) : 3);
+        // Solo per parole di almeno 6 lettere: con 5 «testa» (di «mal di testa») diventava «testosterone».
+        const dist = Math.min(editDistance(w, v, tolerance(w)), w.length >= 6 && v.length > w.length ? editDistance(w, v.slice(0, w.length), tolerance(w)) : 3);
         if (dist < d) {
           d = dist;
           hit = v;

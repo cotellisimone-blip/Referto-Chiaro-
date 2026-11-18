@@ -32,20 +32,34 @@ export function GuideArticle({ guide }: { guide: Guide }) {
   const cat = GUIDE_CATEGORIES[guide.category];
   const related = guide.relatedGuides.map(getGuide).filter((g): g is Guide => Boolean(g));
   const terms = guide.glossaryTerms.map(getGlossaryEntry).filter((e): e is NonNullable<typeof e> => Boolean(e));
+  // 18/11/2026 (secondo giro, punto 18): le guide pratiche (carte, copie, ricette) hanno titoli di sezione loro.
+  const pr = guide.practical === true;
+  const T = pr
+    ? { what: "Di che cosa si tratta", why: "Quando serve", prep: "Che cosa ti serve", expect: "Come si fa", after: "E dopo", contains: "Che cosa controllare", read: "Come orientarsi", factors: "A che cosa fare attenzione" }
+    : {
+        what: guide.procedure ? "Che cosa mostra" : "Che cosa misura",
+        why: "Perché viene richiesto",
+        prep: "Come ci si prepara",
+        expect: "Che cosa aspettarsi",
+        after: "E dopo l'esame",
+        contains: "Che cosa c'è nel referto",
+        read: guide.procedure ? "Come leggere il referto" : "Come leggere il risultato",
+        factors: guide.procedure ? "Che cosa può influenzare l'esame" : "Che cosa può influenzare il valore",
+      };
   const toc = [
-    { id: "cosa-misura-titolo", label: guide.procedure ? "Che cosa mostra" : "Che cosa misura" },
-    { id: "perche-titolo", label: "Perché viene richiesto" },
+    { id: "cosa-misura-titolo", label: T.what },
+    { id: "perche-titolo", label: T.why },
     ...(guide.procedure
       ? [
-          { id: "preparazione-titolo", label: "Come ci si prepara" },
-          { id: "aspettarsi-titolo", label: "Che cosa aspettarsi" },
-          { id: "dopo-titolo", label: "E dopo l'esame" },
-          { id: "referto-titolo", label: "Che cosa c'è nel referto" },
+          { id: "preparazione-titolo", label: T.prep },
+          { id: "aspettarsi-titolo", label: T.expect },
+          { id: "dopo-titolo", label: T.after },
+          { id: "referto-titolo", label: T.contains },
         ]
       : []),
-    { id: "come-leggere-titolo", label: guide.procedure ? "Come leggere il referto" : "Come leggere il risultato" },
+    { id: "come-leggere-titolo", label: T.read },
     ...(guide.unitsAndRanges ? [{ id: "unita-titolo", label: "Unità e intervalli" }] : []),
-    { id: "fattori-titolo", label: "Che cosa può influenzare" },
+    { id: "fattori-titolo", label: pr ? T.factors : "Che cosa può influenzare" },
     { id: "domande-titolo", label: "Domande per il medico" },
     { id: "faq-titolo", label: "Domande frequenti" },
   ];
@@ -88,11 +102,11 @@ export function GuideArticle({ guide }: { guide: Guide }) {
           </h2>
           <dl className="mt-4 grid gap-4 text-[1.0625rem] sm:grid-cols-3 sm:gap-6 lg:grid-cols-1 lg:gap-4">
             <div>
-              <dt className="font-bold text-teal">{guide.procedure ? "Che cosa mostra" : "Che cosa misura"}</dt>
+              <dt className="font-bold text-teal">{T.what}</dt>
               <dd className="mt-1 text-ink-soft">{firstSentence(guide.sections.whatItMeasures[0])}</dd>
             </div>
             <div>
-              <dt className="font-bold text-teal">Quando si fa</dt>
+              <dt className="font-bold text-teal">{pr ? "Quando serve" : "Quando si fa"}</dt>
               <dd className="mt-1 text-ink-soft">{firstSentence(guide.sections.whyRequested[0])}</dd>
             </div>
             <div>
@@ -103,7 +117,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
         </section>
         </div>
         <div className="mt-6 max-w-3xl">
-          <ReviewNotice lastUpdated={guide.lastUpdated} />
+          <ReviewNotice lastUpdated={guide.lastUpdated} practical={pr} />
         </div>
         <details className="no-print mt-6 max-w-3xl rounded-2xl border border-line bg-paper lg:hidden">
           <summary className="flex min-h-14 cursor-pointer items-center px-5 text-lg font-bold text-ink">Indice della pagina</summary>
@@ -120,13 +134,13 @@ export function GuideArticle({ guide }: { guide: Guide }) {
 
         <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="guide-prose max-w-3xl">
-            <Block id="cosa-misura" title={guide.procedure ? "Che cosa mostra" : "Che cosa misura"}>{guide.sections.whatItMeasures}</Block>
-            <Block id="perche" title="Perché viene richiesto">{guide.sections.whyRequested}</Block>
+            <Block id="cosa-misura" title={T.what}>{guide.sections.whatItMeasures}</Block>
+            <Block id="perche" title={T.why}>{guide.sections.whyRequested}</Block>
             {guide.procedure ? (
               <>
-                <Block id="preparazione" title="Come ci si prepara">{guide.procedure.preparation}</Block>
+                <Block id="preparazione" title={T.prep}>{guide.procedure.preparation}</Block>
                 <section aria-labelledby="aspettarsi-titolo" className="guide-box guide-box-warm">
-                  <h2 id="aspettarsi-titolo" className="guide-h2">Che cosa aspettarsi</h2>
+                  <h2 id="aspettarsi-titolo" className="guide-h2">{T.expect}</h2>
                   <p className="mt-2 text-[1.0625rem] font-semibold text-ink">Durata indicativa: {guide.procedure.duration}</p>
                   <div className="mt-4 space-y-4">
                     {guide.procedure.whatToExpect.map((p) => (
@@ -134,9 +148,9 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                     ))}
                   </div>
                 </section>
-                <Block id="dopo" title="E dopo l'esame">{guide.procedure.afterwards}</Block>
+                <Block id="dopo" title={T.after}>{guide.procedure.afterwards}</Block>
                 <section aria-labelledby="referto-titolo">
-                  <h2 id="referto-titolo" className="guide-h2">Che cosa c&apos;è nel referto</h2>
+                  <h2 id="referto-titolo" className="guide-h2">{T.contains}</h2>
                   <ul className="dot-list mt-4">
                     {guide.procedure.reportContains.map((f) => (
                       <li key={f}>{f}</li>
@@ -145,7 +159,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                 </section>
               </>
             ) : null}
-            <Block id="come-leggere" title={guide.procedure ? "Come leggere il referto" : "Come leggere il risultato"}>{guide.sections.howToRead}</Block>
+            <Block id="come-leggere" title={T.read}>{guide.sections.howToRead}</Block>
             {guide.unitsAndRanges ? (
               <section aria-labelledby="unita-titolo" className="wow-paper p-5 sm:p-7">
                 <h2 id="unita-titolo" className="guide-h2">Unità e intervalli</h2>
@@ -158,7 +172,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
               </section>
             ) : null}
             <section aria-labelledby="fattori-titolo">
-              <h2 id="fattori-titolo" className="guide-h2">{guide.procedure ? "Che cosa può influenzare l'esame" : "Che cosa può influenzare il valore"}</h2>
+              <h2 id="fattori-titolo" className="guide-h2">{T.factors}</h2>
               <ul className="dot-list mt-4">
                 {guide.sections.factors.map((f) => (
                   <li key={f}>{f}</li>

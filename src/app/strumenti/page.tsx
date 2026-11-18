@@ -6,6 +6,7 @@ import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { GUIDES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import { absoluteUrl } from "@/lib/seo";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Strumenti gratuiti",
@@ -29,6 +30,7 @@ export default function StrumentiPage() {
   ];
   return (
     <>
+      <PageLd path="/strumenti" meta={metadata} name="Strumenti gratuiti" />
       <PageHeader section={1} art="questions" eyebrow="Gratis, anche senza registrarti" title="Strumenti gratuiti." lead="Per arrivare alla visita preparato: che cosa portare, che cosa chiedere, che cosa vogliono dire le parole del referto." />
       <section className="section-tight">
         <div className="container-rc">

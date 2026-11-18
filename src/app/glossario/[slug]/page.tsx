@@ -6,6 +6,7 @@ import { GLOSSARY, getGlossaryEntry } from "@/content/glossario";
 import { getGuide } from "@/content/guides";
 import { Breadcrumbs } from "@/components/guide/breadcrumbs";
 import { ReviewNotice } from "@/components/guide/review-notice";
+import { PercorsoSezioni } from "@/components/sezioni/parts";
 import { NOINDEX_DRAFT, absoluteUrl, breadcrumbLd, glossaryIndexable, indexingEnabled, jsonLd, metaDescription, pageTitle } from "@/lib/seo";
 
 export function generateStaticParams() {
@@ -33,10 +34,14 @@ export default async function VocePage({ params }: { params: Promise<{ slug: str
     <div className="article-shell">
       <article className="container-rc article-body">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
+        {/* 18/11/2026 (secondo giro, punto 10): la voce di glossario appartiene alla Lettura referti, come l'elenco. */}
+        <div className="tm ds ds-bare no-print">
+          <PercorsoSezioni current={2} />
+        </div>
         <Breadcrumbs items={[{ name: "Glossario", path: "/glossario" }, { name: e.term, path: `/glossario/${e.slug}` }]} />
         <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
           <div className="max-w-3xl">
-            <p className="eyebrow">Glossario</p>
+            <p className="eyebrow">Lettura referti · Glossario</p>
             <h1 className="page-title page-title-sm mt-4">{e.term}</h1>
             {e.aliases.length ? <p className="mt-3 text-base text-muted">Altri nomi: {e.aliases.join(", ")}.</p> : null}
             <p className="lead mt-5 text-ink">{e.definition}</p>

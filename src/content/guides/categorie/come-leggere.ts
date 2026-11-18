@@ -322,6 +322,7 @@ export const GUIDE_COME_LEGGERE: Guide[] = [
     metaDescription: "Come entrare nel Fascicolo Sanitario Elettronico con SPID, CIE o CNS, dove trovare i referti, come scaricarli in PDF e prepararli per il medico.",
     category: "come-leggere",
     examName: "Fascicolo Sanitario Elettronico",
+    practical: true,
     aliases: ["FSE", "fascicolo sanitario", "referti online", "scaricare referto"],
     summary: "Il Fascicolo Sanitario Elettronico raccoglie in un unico posto online i documenti sanitari: referti di laboratorio, di radiologia, lettere di dimissione e altro. Si consulta dal portale della propria Regione con SPID, CIE o CNS e i referti si possono scaricare in PDF.",
     sections: {

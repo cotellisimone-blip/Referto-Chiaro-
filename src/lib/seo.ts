@@ -30,7 +30,15 @@ export function breadcrumbLd(items: { name: string; path: string }[]) {
  * (guide, glossario, Punto di Partenza) restano `noindex, follow` e fuori dalla sitemap finché un medico
  * identificato non li ha revisionati. Le guide puramente pratiche, senza contenuto clinico, possono essere indicizzate.
  */
-export const NON_CLINICAL_GUIDES: ReadonlySet<string> = new Set(["fascicolo-sanitario-elettronico"]);
+export const NON_CLINICAL_GUIDES: ReadonlySet<string> = new Set([
+  "fascicolo-sanitario-elettronico",
+  // 18/11/2026 (secondo giro, punto 18): cinque guide pratiche, senza contenuto clinico.
+  "copia-della-cartella-clinica",
+  "referti-online-e-per-email",
+  "fotografare-un-referto",
+  "conservare-i-referti",
+  "leggere-la-ricetta-classi-di-priorita",
+]);
 
 /** Il glossario non ha ancora una revisione medica registrata: resta fuori dagli indici. */
 export const GLOSSARY_REVIEWED = false;
@@ -93,3 +101,11 @@ export function metaDescription(text: string, max = DESCRIPTION_MAX): string {
   const cut = t.slice(0, max - 1);
   return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), 60)).replace(/[,;:.\s]+$/, "")}…`;
 }
+
+/**
+ * 18/11/2026 (secondo giro, punto 17): la data dell'ultima modifica vera delle pagine fisse. Prima la sitemap dichiarava
+ * «oggi» a ogni compilazione; i motori smettono di credere a una data che cambia sempre. Da aggiornare a mano quando
+ * cambiano i testi delle pagine (le guide hanno la loro data).
+ */
+export const PAGES_UPDATED = "2026-11-18";
+export const GLOSSARY_UPDATED = "2026-11-07";

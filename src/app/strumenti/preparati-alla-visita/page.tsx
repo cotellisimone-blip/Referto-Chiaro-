@@ -10,6 +10,7 @@ import { Section } from "@/components/ui/section";
 import { absoluteUrl } from "@/lib/seo";
 import { coreService } from "@/domain/offerta";
 import { mediciEnabled } from "@/lib/medici";
+import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
   title: "Preparati alla visita in 2 minuti",
@@ -25,6 +26,7 @@ export default function PreparatiAllaVisitaPage() {
   const medico = coreService("parla-con-un-medico");
   return (
     <>
+      <PageLd path="/strumenti/preparati-alla-visita" meta={metadata} name="Preparati alla visita" trail={[{ name: "Strumenti gratuiti", path: "/strumenti" }]} />
       <PageHeader section={1}
         eyebrow="Strumento gratuito"
         title={
