@@ -82,25 +82,30 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
   });
 });
 
-test.describe("home a tre sezioni, con i medici accesi (versione di prova)", () => {
-  test("le tre porte, la sezione Medici con tre medici di prova e i prezzi; corta e onesta", async ({ page, isMobile }) => {
+/**
+ * 19/11/2026: la home «chiara e scura» con i medici accesi. I medici sono veri (Sara, Elena e Riccardo, medici di
+ * medicina generale a Brescia): niente più «versione di prova» né persone inventate; i dati che mancano restano «da
+ * completare» nella pagina dei medici. Le fotografie sono di pazienti, sempre «Immagine illustrativa», mai di medici.
+ */
+test.describe("home chiara e scura, con i medici accesi", () => {
+  test("il percorso in quattro passi, il medico a Brescia con i prezzi, chi sono i medici; corta e onesta", async ({ page, isMobile }) => {
     await page.goto("/");
     const main = page.locator("main");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Previeni\. Capisci\.\s*Un medico, se serve\./);
-    const doors = main.locator(".ds-hero .ds-doors");
-    await expect(doors.getByRole("link", { name: /Il tuo referto, in parole semplici/ })).toHaveAttribute("href", "/lettura-referti");
-    await expect(doors.getByRole("link", { name: /Un medico, quando serve/ })).toHaveAttribute("href", "/medici");
-    await expect(doors.locator(".ds-door-3")).toContainText("Versione di prova");
-    await expect(doors.locator(".ds-door-3")).toContainText("149 €");
-    // Sezione 3: i tre medici di prova, ognuno marcato come persona inventata, solo iniziali
-    const s2 = main.locator("#medici");
-    await expect(s2.locator(".ds-doc")).toHaveCount(3);
-    for (const card of await s2.locator(".ds-doc").all()) await expect(card).toContainText("Profilo di prova");
-    await expect(s2.locator(".ds-doc img")).toHaveCount(0);
-    await expect(s2).toContainText("69 €");
-    await expect(s2.getByRole("link", { name: "Prova il percorso completo" })).toHaveAttribute("href", "/prova");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La tua salute,\s*tutta in una pagina\./);
+    await expect(main.locator(".hb-docq")).toContainText("69 €");
+    const medico = main.locator("#medico");
+    await expect(medico).toContainText("Medici a Brescia");
+    await expect(medico).not.toContainText(/versione di prova|profilo di prova|persona inventata/i);
+    await expect(medico).toContainText("69 €");
+    await expect(medico).toContainText("149 €");
+    await expect(medico.getByRole("link", { name: "Prenota il videoconsulto" })).toHaveAttribute("href", "/richiedi/videoconsulto");
+    await expect(medico.getByRole("link", { name: "Prenota la visita a casa" })).toHaveAttribute("href", "/richiedi/domicilio");
+    await expect(medico.getByRole("link", { name: /Chi sono i medici: Sara, Elena e Riccardo/ })).toHaveAttribute("href", "/medici#i-medici");
+    await expect(medico.getByRole("link", { name: /Ti serve un secondo parere/ })).toHaveAttribute("href", "/servizi/secondo-parere");
+    // Le fotografie del riquadro sono di pazienti, dichiarate: nessuna fotografia di medici.
+    for (const f of await medico.locator("figure:has(img)").all()) await expect(f).toContainText("Immagine illustrativa");
     const text = (await main.innerText()).toLowerCase();
-    for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra", "nella norma"]) expect(text).not.toContain(bad);
+    for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra", "nella norma", "dott. ", "dott.ssa "]) expect(text).not.toContain(bad);
     if (isMobile) {
       const bar = page.getByRole("navigation", { name: "Azioni rapide" });
       await page.evaluate(() => window.scrollTo(0, 0));
@@ -109,33 +114,37 @@ test.describe("home a tre sezioni, con i medici accesi (versione di prova)", () 
       await expect(bar).toBeVisible();
     }
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    // 15/11/2026: con i medici le schede dei tre medici aggiungono circa due schermate su telefono.
-    expect(h, "schermate").toBeLessThan(isMobile ? 12.5 : 7.8);
+    expect(h, "schermate").toBeLessThan(isMobile ? 9 : 6);
     await expectAccessible(page);
   });
 
   test("cinque compiti dalla home, in pochi clic", async ({ page }) => {
     await page.goto("/");
-    // 1. Quanto costa il videoconsulto? Visibile in home.
-    await expect(page.locator("main")).toContainText("69 €");
-    // 2. Capire un referto: la porta 2 porta alla sezione Lettura referti
-    await page.locator("main .ds-hero").getByRole("link", { name: /Il tuo referto, in parole semplici/ }).click();
-    await expect(page).toHaveURL(/\/lettura-referti$/);
+    // 1. Quanto costa il videoconsulto? Visibile nel primo schermo.
+    await expect(page.locator("main .hb-docq")).toContainText("69 €");
+    // 2. Capire un referto: la tessera 3 porta al caricamento (senza sessione, prima all'accesso)
+    await page.locator("main #passo-3 a").first().click();
+    await expect(page).toHaveURL(/\/accedi\?next=%2Farea-personale%2Fnuovo$/);
     // 3. Emergenza: il 112 è in home
     await page.goto("/");
     await expect(page.locator("main")).toContainText("112");
-    // 4. Un medico a casa: dalla porta 3 alla richiesta
-    await page.locator("main .ds-hero").getByRole("link", { name: /Un medico, quando serve/ }).click();
-    await expect(page.locator("main .ds-doc:visible")).toHaveCount(3);
-    await page.locator("main .ds-ph").getByRole("link", { name: /Richiedi la visita/ }).click();
+    // 4. Un medico a casa: dal primo schermo al riquadro del medico, poi «Prenota»
+    await page.locator("main .hb-docq").click();
+    await expect(page).toHaveURL(/#medico$/);
+    await page.locator("#medico").getByRole("link", { name: "Prenota la visita a casa" }).click();
     await expect(page).toHaveURL(/\/richiedi\/domicilio$/);
-    // 5. Prepararsi alla visita: un clic, dal piè di pagina
-    await page.goto("/");
-    // 18/11/2026 (secondo giro, punto 9): su telefono le colonne del piè di pagina si aprono al tocco (un tocco in più).
-    const gratis = page.locator("footer details:visible", { hasText: "Gratis" });
-    if (await gratis.count()) await gratis.locator("summary").click();
-    await page.locator("footer").getByRole("link", { name: "Preparati alla visita" }).locator("visible=true").click();
-    await expect(page).toHaveURL(/preparati-alla-visita/);
+    // 5. Chi sono i medici: la pagina dei medici con le tre schede vere
+    await page.goto("/medici#i-medici");
+    const schede = page.locator("#i-medici > li");
+    await expect(schede).toHaveCount(3);
+    for (const [i, nome] of ["Sara", "Elena", "Riccardo"].entries()) {
+      await expect(schede.nth(i)).toContainText(nome);
+      await expect(schede.nth(i)).toContainText("Medico di medicina generale");
+      await expect(schede.nth(i)).toContainText("Brescia");
+    }
+    // I dati non ancora dati da Simone restano dichiarati «da completare», mai inventati.
+    for (const scheda of await schede.all()) await expect(scheda.locator('[data-segnaposto="medico"]').first()).toBeVisible();
+    await expect(page.locator("#i-medici img")).toHaveCount(0);
   });
 });
 

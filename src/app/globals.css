@@ -112,7 +112,7 @@
     --color-teal-deep: #7be0d2;
     --color-sage: #3fb5a9;
     --color-sage-deep: #7be0d2;
-    --color-canvas: #0b1e26;
+    --color-canvas: #061a22;
     --color-paper: #102a33;
     --color-mist: #143440;
     --color-line: #21434f;
@@ -168,7 +168,7 @@
   --color-teal-deep: #7be0d2;
   --color-sage: #3fb5a9;
   --color-sage-deep: #7be0d2;
-  --color-canvas: #0b1e26;
+  --color-canvas: #061a22;
   --color-paper: #102a33;
   --color-mist: #143440;
   --color-line: #21434f;
@@ -1052,11 +1052,15 @@
     bottom: 6.25rem;
   }
 }
-/* Sotto i 360 px il testo grande passa nel menu, così nulla esce dallo schermo. */
+/*
+ * 19/11/2026 (home «chiara e scura»): nella testata del telefono ci sono quattro comandi, lente, luce, «Aa» e menu, da
+ * 44 px. Logo e quattro comandi stanno in riga da 404 px (da 424 px con il testo grande); sotto, «Aa» passa nel menu con
+ * la sua etichetta. Lente, luce e menu restano sempre nella barra.
+ */
 .hdr-narrow-only {
   display: none;
 }
-@media (max-width: 359px) {
+@media (max-width: 403.98px) {
   .hdr-wide-only {
     display: none !important;
   }
@@ -1064,9 +1068,7 @@
     display: flex;
   }
 }
-/* Con il testo grande logo e tre pulsanti non stanno in riga fino a 396 px (i telefoni più diffusi):
-   anche lì «aA» passa nel menu, con la sua etichetta. */
-@media (max-width: 395.98px) {
+@media (max-width: 423.98px) {
   :root[data-size="large"] .hdr-wide-only {
     display: none !important;
   }
@@ -1074,17 +1076,33 @@
     display: flex;
   }
 }
-/* Testo grande su schermi da 320 px: il logo si stringe quanto basta a lasciare il margine a destra. */
-@media (max-width: 339.98px) {
+/* Testo grande sotto i 376 px: il logo torna della misura normale, così logo e tre comandi stanno nei margini. */
+@media (max-width: 375.98px) {
   :root[data-size="large"] .site-header-row .brand-logo {
-    gap: 0.5rem;
+    gap: 10px;
   }
   :root[data-size="large"] .site-header-row .brand-logo-mark {
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 32px;
+    height: 32px;
   }
   :root[data-size="large"] .site-header-row .brand-logo-word {
-    font-size: 1.125rem;
+    font-size: 21px;
+  }
+}
+/* Telefoni da 320-347 px, con ogni misura del testo: il logo si stringe quanto basta a lasciare il margine a destra. */
+@media (max-width: 347.98px) {
+  .site-header-row .brand-logo,
+  :root[data-size="large"] .site-header-row .brand-logo {
+    gap: 7px;
+  }
+  .site-header-row .brand-logo-mark,
+  :root[data-size="large"] .site-header-row .brand-logo-mark {
+    width: 28px;
+    height: 28px;
+  }
+  .site-header-row .brand-logo-word,
+  :root[data-size="large"] .site-header-row .brand-logo-word {
+    font-size: 17px;
   }
 }
 /* «aA» acceso si vede: pieno, turchese (tinta fissa, leggibile anche nel tema scuro). */
@@ -1092,6 +1110,146 @@
   background: linear-gradient(180deg, #00827b, #006c66);
   color: #fff;
   box-shadow: none;
+}
+
+/*
+ * Testata della home «chiara e scura» (19/11/2026, approvata da Simone): comandi rotondi con il filo, come nelle
+ * immagini, e il pulsante della luce accanto alla lente. Il filo sotto la testata c'è sempre.
+ */
+.site-header::before {
+  box-shadow: 0 1px 0 var(--color-line);
+}
+/* Di sera il vetro della testata è quello della «Notte»: il buio della pagina si intravede. */
+:root[data-theme="dark"] .site-header::before {
+  background: rgb(6 26 34 / 0.72);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.13);
+}
+:root[data-theme="dark"] .site-header[data-open="1"]::before {
+  background: var(--color-canvas);
+}
+.hdr-round {
+  /* In px: i comandi della testata restano da 44 px anche con il testo grande, così stanno in riga con il logo. */
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1px solid var(--color-line);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  box-shadow: none;
+}
+.hdr-round:hover {
+  background: var(--color-mist);
+}
+:root[data-theme="dark"] .hdr-round {
+  border-color: rgb(255 255 255 / 0.13);
+  background: rgb(255 255 255 / 0.06);
+}
+:root[data-theme="dark"] .hdr-round:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+.hdr-round svg {
+  width: 1.3125rem;
+  height: 1.3125rem;
+}
+.hdr-aa {
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+/* Il pulsante della luce: mostra dove si va, la luna di giorno e il sole di sera (lo decide data-theme, già alla prima pittura). */
+.luce-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid #0c3340;
+  background: #0c3340;
+  color: #ffe7b3;
+  cursor: pointer;
+  --luce-eco: rgb(12 51 64 / 0.45);
+  transition: scale 150ms var(--ease-out-soft);
+}
+.luce-btn:active {
+  scale: 0.92;
+}
+.luce-btn .luce-ic {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 1.3125rem;
+  height: 1.3125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    rotate 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    scale 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s;
+}
+:root:not([data-theme="dark"]) .luce-btn .luce-sole {
+  opacity: 0;
+  rotate: -90deg;
+  scale: 0.4;
+}
+:root[data-theme="dark"] .luce-btn {
+  border-color: #ffe7b3;
+  background: #ffe7b3;
+  color: #3b2a08;
+  --luce-eco: rgb(255 231 179 / 0.5);
+}
+:root[data-theme="dark"] .luce-btn .luce-luna {
+  opacity: 0;
+  rotate: 90deg;
+  scale: 0.4;
+}
+.luce-btn::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+/* Il richiamo: un alone che pulsa qualche volta, finché la persona non ha usato il pulsante almeno una volta. */
+@keyframes luce-richiamo {
+  0% {
+    box-shadow: 0 0 0 0 var(--luce-eco);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 12px transparent;
+  }
+}
+:root:not([data-luce-vista]) .luce-btn::after {
+  animation: luce-richiamo 2.2s 0.8s ease-out 5;
+}
+/* Il cambio di luce: la pagina nuova si allarga a cerchio dal pulsante (View Transitions); senza, il cambio è immediato. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-luce-vista]) .luce-btn::after {
+    animation: none;
+  }
+  .luce-btn .luce-ic {
+    transition: none;
+  }
 }
 
 /* ───────── Upgrade grafica e funzionalità (8/11/2026): ricerca, strumenti, cruscotto, lettura ───────── */

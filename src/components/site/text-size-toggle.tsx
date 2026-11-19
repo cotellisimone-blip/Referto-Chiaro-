@@ -43,9 +43,9 @@ export function TextSizeToggle({ className }: { className?: string }) {
       className={className ?? "inline-flex h-11 min-w-11 items-center justify-center rounded-full border border-line bg-paper px-2 font-serif text-ink transition-colors hover:bg-mist"}
       title={large ? "Testo più grande attivo" : "Testo più grande"}
     >
-      <span aria-hidden data-aa className="leading-none">
-        <span className="text-[0.75rem]">A</span>
-        <span className="text-[1.125rem]">A</span>
+      {/* 19/11/2026: «Aa», come nelle immagini della home chiara e scura. */}
+      <span aria-hidden data-aa className="hdr-aa">
+        Aa
       </span>
       <span className="sr-only">Testo più grande</span>
     </button>

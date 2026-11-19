@@ -1,0 +1,118 @@
+/*
+ * Pagine dei temi della home «chiara e scura» (19/11/2026): esami di base, intestino e microbiota, alimentazione,
+ * screening, vicino a te, lo Scaffale. Stessa veste della home: carta calda e titoli in Fraunces con l'evidenziatore
+ * nella luce chiara, notte petrolio con il colore della tessera che si accende nella scura.
+ * Le due luci si escludono (:root:not([data-theme="dark"]) contro :root[data-theme="dark"]), come in home-b.css.
+ * Testo mai sotto i 14 px; ogni link che non sta dentro una frase è alto almeno 44 px.
+ */
+.ht{--serif:var(--font-fraunces),Georgia,"Times New Roman",serif;--sans:var(--font-manrope),ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;position:relative;font-family:var(--sans);font-size:1.125rem;line-height:1.55;color:var(--ink);background:var(--bg);overflow-x:clip}
+.ht *,.ht *::before,.ht *::after{box-sizing:border-box}
+.ht-wrap{width:100%;max-width:calc(1176px + 2 * var(--gutter));margin-inline:auto;padding-inline:var(--gutter)}
+.ht-ico svg,svg.ht-ic{fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+svg.ht-ic{width:1.1em;height:1.1em;flex:none}
+.ht h1,.ht h2,.ht h3{font-family:var(--serif);font-weight:560;letter-spacing:-.012em;line-height:1.1;text-wrap:balance;color:var(--ink)}
+.ht h1 em,.ht h2 em{font-style:italic;display:inline-block}
+
+/* Testata della pagina */
+.ht-hero{position:relative;padding-block:.5rem 2.25rem}
+.ht-crumb{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;margin:0 0 .6rem;font-size:.9375rem;color:var(--muted)}
+.ht-crumb a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;color:var(--soft);font-weight:700;text-decoration:underline;text-underline-offset:.2em}
+.ht-hero>.ht-wrap{position:relative;z-index:1}
+svg.ht-art{position:absolute;right:-34px;top:10px;width:176px;height:176px;opacity:.1;color:var(--ta);pointer-events:none;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+@media (min-width:720px){svg.ht-art{right:max(2%,calc(50% - 600px));top:18px;width:300px;height:300px}}
+:root[data-theme="dark"] svg.ht-art{opacity:.17}
+.ht-hero-g{display:grid;gap:1rem}
+.ht-ico{width:60px;height:60px;border-radius:19px;display:grid;place-items:center;background:var(--ti);color:var(--ta)}
+.ht-ico svg{width:32px;height:32px}
+.ht-kicker{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;margin:0;font-size:.875rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ta)}
+.ht-stato{display:inline-flex;align-items:center;padding:.18rem .62rem;border-radius:999px;font-size:.875rem;letter-spacing:.03em;text-transform:none;background:var(--ta);color:var(--on-ta)}
+.ht-hero h1{margin:.5rem 0 0;font-size:clamp(2.15rem,5.2vw,3.5rem);max-width:17ch}
+.ht-lead{margin:1rem 0 0;max-width:40rem;font-size:1.1875rem;line-height:1.55;color:var(--soft)}
+.ht-bozza{margin:1.25rem 0 0;max-width:40rem;padding:.75rem 1rem;border-radius:16px;font-size:1rem;line-height:1.5;color:var(--soft);background:var(--note-bg);border:1.5px dashed var(--note-line)}
+@media (min-width:720px){
+  .ht-hero{padding-block:1rem 3rem}
+  .ht-hero-g{grid-template-columns:auto 1fr;gap:1.5rem;align-items:start}
+  .ht-ico{width:72px;height:72px;border-radius:22px;margin-top:.2rem}
+  .ht-ico svg{width:38px;height:38px}
+}
+
+/* Sezioni e voci */
+.ht-sec{padding-block:1.75rem}
+.ht-sec-h{max-width:46rem;margin-bottom:1.25rem}
+.ht-sec-h .ht-kicker{margin-bottom:.45rem}
+.ht-sec-h h2{margin:0;font-size:clamp(1.6rem,3.6vw,2.3rem)}
+.ht-sec-h p{margin:.6rem 0 0;color:var(--soft)}
+.ht-voci{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+@media (min-width:720px){.ht-voci{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1100px){.ht-voci{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ht-voci>li{display:flex;min-width:0}
+.ht-voce{position:relative;display:flex;flex-direction:column;gap:.45rem;width:100%;padding:1.15rem 1.2rem 1.25rem;border-radius:22px;color:inherit;text-decoration:none;transition:border-color .2s,box-shadow .2s,transform .2s}
+a.ht-voce{min-height:44px}
+.ht-voce-t{display:flex;flex-wrap:wrap;align-items:baseline;gap:.35rem .55rem}
+.ht-voce-t b{font-size:1.125rem;font-weight:800;line-height:1.3;color:var(--ink)}
+.ht-tag{display:inline-flex;align-items:center;padding:.12rem .55rem;border-radius:999px;font-size:.875rem;font-weight:800;letter-spacing:.02em;line-height:1.35;color:var(--ta);background:var(--tag-bg);box-shadow:var(--tag-sh,none)}
+.ht-voce-d{font-size:1rem;line-height:1.5;color:var(--soft)}
+.ht-voce-go{display:inline-flex;align-items:center;gap:.4rem;margin-top:auto;padding-top:.35rem;font-size:1rem;font-weight:800;color:var(--ta)}
+a.ht-voce:hover .ht-voce-go svg{translate:3px 0}
+.ht-voce-go svg{transition:translate .2s}
+.ht a:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:12px}
+a.ht-voce:focus-visible{border-radius:22px}
+
+/* Riquadri liberi sotto le sezioni (note, elenchi da far firmare a un medico) */
+.ht-nota{max-width:46rem;padding:1.1rem 1.2rem;border-radius:20px;font-size:1rem;line-height:1.55;color:var(--soft);background:var(--note-bg);border:1.5px dashed var(--note-line)}
+.ht-nota b{color:var(--ink)}
+.ht-nota p{margin:0}
+.ht-nota p+p{margin-top:.55rem}
+.ht-nota a{color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:.2em}
+
+/* Fine pagina */
+.ht-end{padding-block:1.5rem 3.5rem}
+.ht-azioni{display:flex;flex-wrap:wrap;gap:12px}
+.ht-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:54px;padding:.6rem 1.35rem;border-radius:999px;font:800 1.02rem/1.25 var(--sans);text-align:center;text-decoration:none;background:var(--btn-bg);color:var(--btn-fg);box-shadow:var(--btn-sh,none);border:1.5px solid transparent}
+.ht-btn-line{background:transparent;color:var(--ink);border-color:var(--btn-line);box-shadow:none}
+.ht-btn:hover svg{translate:3px 0}
+.ht-btn svg{transition:translate .2s}
+@media (max-width:479.98px){.ht-btn{flex:1 1 100%}}
+.ht-112{margin:1.35rem 0 0;max-width:46rem;font-size:1rem;color:var(--muted)}
+
+/* Luce chiara */
+:root:not([data-theme="dark"]) .ht{--bg:#fbfaf6;--ink:#10303b;--soft:#2e4c57;--muted:#4f676e;--line:#dfe9e5;--focus:#00756f;--on-ta:#fff;
+  --btn-bg:linear-gradient(180deg,#15485a,#0c3340);--btn-fg:#fff;--btn-sh:0 12px 22px -14px rgba(12,51,64,.8),inset 0 1px 0 rgba(255,255,255,.16);--btn-line:#10303b;
+  --note-bg:color-mix(in srgb,var(--tb) 55%,#fff);--note-line:color-mix(in srgb,var(--ta) 34%,transparent);--tag-bg:color-mix(in srgb,var(--ta) 11%,#fff);
+  background:radial-gradient(42rem 26rem at 106% 0,color-mix(in srgb,var(--tc) 80%,transparent),transparent 64%),radial-gradient(38rem 26rem at -16% 34rem,rgba(123,224,210,.14),transparent 64%),#fbfaf6}
+:root:not([data-theme="dark"]) .ht-es{--tb:#e2f6f0;--tc:#c4efe3;--ta:#00665f;--hl:#7be0d2}
+:root:not([data-theme="dark"]) .ht-mi{--tb:#f8e9e6;--tc:#f5d5ce;--ta:#9b3f33;--hl:#f6c3b8}
+:root:not([data-theme="dark"]) .ht-al{--tb:#ebf3df;--tc:#d7e9bd;--ta:#47701b;--hl:#cde6a3}
+:root:not([data-theme="dark"]) .ht-sc{--tb:#eeeaf6;--tc:#ddd5f2;--ta:#54468a;--hl:#d8cdf7}
+:root:not([data-theme="dark"]) .ht-vi{--tb:#f1ece0;--tc:#e6dcc0;--ta:#5f5433;--hl:#e9dcae}
+:root:not([data-theme="dark"]) .ht-sh{--tb:#fff4dc;--tc:#fdebc8;--ta:#7a5310;--hl:#f9dc8e}
+:root:not([data-theme="dark"]) .ht-in{--tb:#fbf1d3;--tc:#f8e2a4;--ta:#7a5310;--hl:#f9dc8e}
+:root:not([data-theme="dark"]) .ht-gu{--tb:#e2f6f0;--tc:#d3f5ee;--ta:#00756f;--hl:#7be0d2}
+:root:not([data-theme="dark"]) .ht{--ti:var(--tb)}
+/* Il segno dell'evidenziatore sta sulla parola, riga per riga: se la parte in corsivo va a capo, ogni riga ha il suo segno
+   (prima, con il blocco in linea, l'ultima riga si colorava fino al bordo). */
+:root:not([data-theme="dark"]) .ht h1 em>span,:root:not([data-theme="dark"]) .ht h2 em>span{background:linear-gradient(var(--hl),var(--hl)) no-repeat 0 82%/100% 38%;padding:0 .08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+:root:not([data-theme="dark"]) .ht-ico{box-shadow:0 0 0 1px color-mix(in srgb,var(--ta) 16%,transparent),0 12px 22px -14px color-mix(in srgb,var(--ta) 70%,transparent)}
+:root:not([data-theme="dark"]) .ht-voce{border:1px solid color-mix(in srgb,var(--ta) 15%,transparent);background:radial-gradient(110% 80% at 100% 0%,color-mix(in srgb,var(--tc) 70%,transparent) 0%,transparent 58%),#fff;box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(11,49,61,.04),0 20px 32px -28px color-mix(in srgb,var(--ta) 60%,transparent)}
+:root:not([data-theme="dark"]) a.ht-voce:hover{border-color:color-mix(in srgb,var(--ta) 42%,transparent);box-shadow:inset 0 1px 0 #fff,0 2px 4px rgba(11,49,61,.05),0 28px 44px -26px color-mix(in srgb,var(--ta) 66%,transparent)}
+
+/* Luce scura */
+:root[data-theme="dark"] .ht{--bg:#061a22;--ink:#f3f9f9;--soft:rgba(255,255,255,.84);--muted:rgba(255,255,255,.7);--line:rgba(255,255,255,.13);--focus:#7be0d2;--on-ta:#06222b;
+  --btn-bg:linear-gradient(180deg,#9aece0,#6fdccd);--btn-fg:#06222b;--btn-sh:0 12px 22px -12px rgba(123,224,210,.4),inset 0 1px 0 rgba(255,255,255,.55);--btn-line:rgba(255,255,255,.45);
+  --note-bg:rgba(255,255,255,.05);--note-line:rgba(var(--tg),.5);--tag-bg:transparent;--tag-sh:inset 0 0 0 1px rgba(var(--tg),.62);
+  color-scheme:dark;
+  background:radial-gradient(46rem 28rem at 108% 0,rgba(var(--tg),.2),transparent 62%),radial-gradient(40rem 26rem at -14% 36rem,rgba(123,224,210,.1),transparent 62%),linear-gradient(180deg,#061a22 0%,#0a2832 46%,#061a22 100%)}
+:root[data-theme="dark"] .ht-es{--ta:#6fe0d0;--tg:95,211,196}
+:root[data-theme="dark"] .ht-mi{--ta:#ffab9c;--tg:255,159,142}
+:root[data-theme="dark"] .ht-al{--ta:#bfe58c;--tg:181,224,122}
+:root[data-theme="dark"] .ht-sc{--ta:#c4b5ff;--tg:185,168,255}
+:root[data-theme="dark"] .ht-vi{--ta:#eadfb4;--tg:230,217,168}
+:root[data-theme="dark"] .ht-sh{--ta:#ffd98a;--tg:255,210,122}
+:root[data-theme="dark"] .ht-in{--ta:#ffd98a;--tg:255,210,122}
+:root[data-theme="dark"] .ht-gu{--ta:#7be0d2;--tg:123,224,210}
+:root[data-theme="dark"] .ht h1 em,:root[data-theme="dark"] .ht h2 em{color:var(--ta);text-shadow:0 0 34px rgba(var(--tg),.5)}
+:root[data-theme="dark"] .ht-ico{background:rgba(var(--tg),.16);box-shadow:inset 0 0 0 1px rgba(var(--tg),.45),0 0 26px rgba(var(--tg),.28)}
+:root[data-theme="dark"] .ht-voce{border:1px solid rgba(255,255,255,.13);background:radial-gradient(120% 95% at 100% 0%,rgba(var(--tg),.22),transparent 62%),linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.025));box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 20px 30px -24px rgba(var(--tg),.28)}
+:root[data-theme="dark"] a.ht-voce:hover{border-color:rgba(var(--tg),.6)}
+
+@media (prefers-reduced-motion:reduce){.ht-voce,.ht-voce-go svg,.ht-btn svg{transition:none}}

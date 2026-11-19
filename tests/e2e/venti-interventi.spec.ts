@@ -8,10 +8,13 @@ import { gotoReady } from "./_lib/ready";
 
 test("punto 2 · «Carica un referto» porta al caricamento: dalla testata, dalla home e dalla sezione", async ({ page, isMobile }) => {
   test.skip(isMobile, "su telefono la testata sta nel menu: stessa voce, provata in tocco.spec.ts");
-  for (const [path, scope] of [["/", "header"], ["/", "main #lettura-referti"], ["/lettura-referti", "main"]] as const) {
+  for (const [path, scope] of [["/", "header"], ["/lettura-referti", "main"]] as const) {
     await gotoReady(page, path);
     await expect(page.locator(scope).getByRole("link", { name: /Carica un referto/ }).first(), `${path} ${scope}`).toHaveAttribute("href", "/area-personale/nuovo");
   }
+  // 19/11/2026, home «chiara e scura»: in home è il passo 3 del percorso, «Carica il referto», come nelle immagini approvate.
+  await gotoReady(page, "/");
+  await expect(page.locator("main #passo-3").getByRole("link", { name: /Carica il referto/ })).toHaveAttribute("href", "/area-personale/nuovo");
 });
 
 test("punto 4 · prezzi su computer: una scheda larga con «Che cosa include» in vista", async ({ page, isMobile }) => {
@@ -70,13 +73,13 @@ test("punto 8 · la ricerca trova gli integratori e, se non trova, propone le tr
   expect(await sezioni.locator("a").evaluateAll((as) => as.map((a) => a.getAttribute("href")))).toEqual(["/prevenzione", "/lettura-referti", "/medici"]);
 });
 
-test("punto 9 · home da telefono: sotto le 9,5 schermate, senza ripetere le tre porte in fondo", async ({ page, isMobile }) => {
+test("punto 9 · home da telefono: sotto le 9,5 schermate, senza ripetere il percorso in fondo", async ({ page, isMobile }) => {
   test.skip(!isMobile, "misura su telefono");
   await page.goto("/");
-  // Erano 10,6 schermate da 844 px.
+  // Erano 10,6 schermate da 844 px. 19/11/2026, home «chiara e scura»: il percorso in quattro passi c'è una volta sola.
   expect(await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight)).toBeLessThan(9.5);
-  await expect(page.locator("main .ds-doors")).toHaveCount(1);
-  await expect(page.locator("#chiusura-titolo")).toContainText("Cercala");
+  await expect(page.getByRole("navigation", { name: "Il percorso, in quattro passi" })).toHaveCount(1);
+  await expect(page.locator('main section[aria-label="Perché fidarsi"]')).toContainText("Mai diagnosi");
 });
 
 test("punto 16 · mentre si compila un modulo da telefono, i comandi fissi in basso si fanno da parte", async ({ page, isMobile }) => {

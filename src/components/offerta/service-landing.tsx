@@ -81,6 +81,8 @@ export function ServiceLanding({
   const prices = publicPricesEnabled();
   const vetrina = readFlags().vetrina;
   const start = serviceStart(id);
+  // 19/11/2026: il secondo parere può essere «In arrivo» anche con i medici accesi (manca lo specialista).
+  const inArrivo = !vetrina && start.waitlist;
   const interest = WAITLIST_INTEREST[id];
   const facts = [
     { icon: Clock3, label: "Tempi", text: s.timing },
@@ -101,9 +103,9 @@ export function ServiceLanding({
             </h1>
             <p className="lead mt-5 max-w-[36rem]">{s.oneLiner}</p>
             <div className="svc-buy">
-              {prices ? <PriceTag id={s.id} size="lg" /> : null}
+              {prices && !inArrivo ? <PriceTag id={s.id} size="lg" /> : null}
               <Link href={start.href} data-track={look.track} className={clsx("btn btn-lg", look.strong ? "btn-mint" : "btn-primary")}>
-                {vetrina ? start.label : look.cta} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                {vetrina || inArrivo ? start.label : look.cta} <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
             </div>
             {vetrina ? (
@@ -114,6 +116,12 @@ export function ServiceLanding({
                 <Link href={VETRINA_TRY[id].href} className="link mt-2 inline-flex min-h-11 items-center text-lg font-semibold">
                   {VETRINA_TRY[id].label}
                 </Link>
+              </div>
+            ) : inArrivo ? (
+              <div className="mt-5 max-w-xl" data-testid="in-arrivo-avviso">
+                <p className="text-lg text-ink-soft">
+                  <strong className="text-ink">In arrivo.</strong> Per il secondo parere serve uno specialista, e lo stiamo cercando. Lasciaci la tua email e ti avvisiamo quando parte.
+                </p>
               </div>
             ) : secondaryCta ? (
               <p className="mt-4">
@@ -217,7 +225,7 @@ export function ServiceLanding({
         </div>
       </section>
 
-      {vetrina && interest ? (
+      {(vetrina || inArrivo) && interest ? (
         <section id="avvisami" aria-labelledby="avvisami-titolo" className="panel-section section scroll-mt-24 bg-mist">
           <div className="container-rc max-w-2xl">
             <p className="eyebrow">Lista d&apos;attesa</p>

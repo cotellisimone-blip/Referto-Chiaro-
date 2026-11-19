@@ -7,11 +7,13 @@ import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { WaitlistForm } from "@/components/site/waitlist-form";
 import { CoverageCheck } from "@/components/prestazioni/public";
 import { EmergencyNumbers } from "@/components/prestazioni/ui";
-import { MediciProva } from "@/components/sezioni/medici";
+import { MediciRete } from "@/components/sezioni/medici";
 import { MiniVisita, REFERTI_HREF, ServiziMedico, StatoDomicilio, PercorsoSezioni } from "@/components/sezioni/parts";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
 import { PRICE_NOTE, publicPricesEnabled } from "@/domain/offerta";
 import { mediciEnabled } from "@/lib/medici";
+import { readFlags } from "@/lib/feature-flags";
+import { nomiMedici } from "@/content/medici";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
@@ -32,14 +34,16 @@ const NOT_FOR = [
 
 /**
  * Sezione 3 «Medici» (15/11/2026, prima «A domicilio»; Simone la sera stessa: prevenzione, lettura referti e medici
- * sono tre sezioni separate). Accesi i medici (src/lib/medici.ts): «Versione di prova» con i tre medici
- * inventati, il percorso in quattro schermate, i servizi con il prezzo, la verifica del CAP e la prova a tre ruoli.
+ * sono tre sezioni separate). Accesi i medici (src/lib/medici.ts): i tre medici veri (19/11/2026: Sara, Elena e
+ * Riccardo, a Brescia, con i dati che mancano segnati «da completare»), il percorso in quattro schermate, i servizi con
+ * il prezzo, la verifica del CAP e la prova a tre ruoli.
  * Spenti: «In arrivo», niente medici né prezzi, la stessa spiegazione e la lista d'attesa.
  */
 export default function MediciPage() {
   const attivo = mediciEnabled();
   const prices = publicPricesEnabled();
   const info = PRESTAZIONI.domicilio;
+  const demo = readFlags().demoMode;
   return (
     <div className="tm ds">
       <PageLd path="/medici" meta={metadata} name="Medici" />
@@ -91,12 +95,12 @@ export default function MediciPage() {
         </div>
       </section>
 
-      {attivo ? (
+      {attivo && demo ? (
         <div className="ds-provabar" role="note">
           <div className="tm-wrap">
             <FlaskConical aria-hidden className="tm-ic" />
             <p>
-              <b>Versione di prova.</b> Medici, fasce, pagamenti e visite sono simulati: nessuno verrà davvero e nessun addebito parte.
+              <b>Versione dimostrativa.</b> I medici sono veri, ma qui fasce, pagamenti e visite sono simulati: nessuno verrà davvero e nessun addebito parte.
             </p>
           </div>
         </div>
@@ -133,13 +137,13 @@ export default function MediciPage() {
             </div>
             <p>
               {attivo
-                ? "Ogni medico ha la sua scheda: iscrizione all’Ordine, zona, che cosa fa e la prima fascia libera. Qui sono profili di prova, con persone inventate."
+                ? `${nomiMedici()}: medici di medicina generale a Brescia. Ognuno ha la sua scheda; cognome e iscrizione all’Ordine compaiono qui appena completati, e li leggi sempre prima di pagare.`
                 : "Lavoreremo solo con medici iscritti all’Ordine e verificati, ciascuno con la sua scheda: nome, iscrizione, zona e che cosa fa. Li presenteremo quando avremo i contratti firmati."}
             </p>
           </div>
           {attivo ? (
             <div className="ds-light-docs">
-              <MediciProva />
+              <MediciRete />
             </div>
           ) : null}
         </div>
@@ -208,10 +212,10 @@ export default function MediciPage() {
                 <p className="ds-f-k">Il medico ha confermato</p>
                 <div className="ds-f-doc">
                   <span className="ds-av ds-av-teal">
-                    {attivo ? "LB" : "MG"}
+                    MG
                     <i className="ds-av-on" />
                   </span>
-                  <b>{attivo ? "Dott.ssa Laura Bianchi" : "Il tuo medico"}</b>
+                  <b>Il tuo medico</b>
                 </div>
                 <p className="ds-f-row">
                   Quando <b>Domani, 10:00</b>

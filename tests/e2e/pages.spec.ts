@@ -13,29 +13,56 @@ test("pagina inesistente mostra un 404 curato", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Questa pagina non esiste." })).toBeVisible();
 });
 
-test.describe("tema scuro", () => {
-  test.use({ colorScheme: "dark" });
-  for (const path of ["/", "/lettura-referti", "/prezzi", "/referti/esempio"]) {
-    test(`pagina ${path} in tema scuro: accessibilità`, async ({ page }) => {
+/**
+ * 19/11/2026 (home «chiara e scura»): il sito nasce chiaro, anche se il telefono preferisce lo scuro; la visione scura
+ * si sceglie con il pulsante nella barra in alto, accanto alla lente, e resta ricordata (rc-theme).
+ */
+test.describe("visione scura", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      try {
+        localStorage.setItem("rc-theme", "dark");
+      } catch {}
+    });
+  });
+  for (const path of ["/", "/lettura-referti", "/prezzi", "/referti/esempio", "/prevenzione/esami-di-base", "/scaffale"]) {
+    test(`pagina ${path} nella visione scura: accessibilità`, async ({ page }) => {
       await page.goto(path);
+      await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
       const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-      expect(bg).toBe("rgb(11, 30, 38)");
+      expect(bg).toBe("rgb(6, 26, 34)");
       const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
       expect(axe.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
     });
   }
 });
 
-test("il selettore del tema forza il tema scuro e lo ricorda", async ({ page, isMobile }) => {
+test.describe("il sito nasce chiaro", () => {
+  test.use({ colorScheme: "dark" });
+  test("anche con il telefono in modalità scura la prima visita è chiara", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe("rgb(251, 250, 246)");
+  });
+});
+
+test("il pulsante della luce, accanto alla lente, passa alla visione scura e la ricorda", async ({ page }) => {
   await gotoReady(page, "/");
-  // Su telefono il selettore del tema sta dentro il menu: prima si apre quello.
-  if (isMobile) await page.getByRole("button", { name: "Apri il menu" }).click();
-  const toggle = page.getByRole("button", { name: /cambia tema/ }).first();
-  await toggle.click(); // auto -> chiaro
-  await toggle.click(); // chiaro -> scuro
+  // Sta nella barra in alto anche su telefono: niente menu da aprire. La testata ha due file di comandi (computer e telefono):
+  // si prende quello in vista.
+  const luce = page.getByTestId("luce").filter({ visible: true }).first();
+  await expect(luce).toBeVisible();
+  await expect(luce).toHaveAccessibleName("Passa alla visione scura");
+  await expect(luce).toHaveAttribute("aria-pressed", "false");
+  await luce.click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(luce).toHaveAccessibleName("Passa alla visione chiara");
+  await expect(luce).toHaveAttribute("aria-pressed", "true");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  // E si torna alla chiara.
+  await page.getByTestId("luce").filter({ visible: true }).first().click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 });
 
 test("menu mobile: si apre, intrappola il fuoco e si chiude con Esc", async ({ page, isMobile }) => {
@@ -84,7 +111,8 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     await page.goto("/");
     // 13/11/2026: la promessa «famiglia e nel tempo» è il titolo. Senza medici il payoff dice quello che c'è davvero.
     // 15/11/2026, home a due sezioni: il titolo dice le due cose che fa Cura Privata.
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Previeni\. Capisci\.\s*Un medico, se serve\./);
+    // 19/11/2026, home «chiara e scura»: il titolo è la promessa, la frase dei tre servizi resta nel piè di pagina.
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La tua salute,\s*tutta in una pagina\./);
     await expect(page.locator("footer").getByText("Previeni. Capisci. Un medico, se serve.")).toBeVisible();
     // Nessun «.it» accanto al logo finché il sito non gira su un dominio vero (PUBLIC_BASE_URL).
     await expect(page.locator("footer").getByText(".it", { exact: true })).toHaveCount(0);
@@ -95,8 +123,8 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
       for (const n of ["Videoconsulto", "Secondo parere"]) expect(menu, n).not.toContain(n);
     }
     await expect(page.locator('main a[href="/lettura-referti"]').first()).toBeAttached();
-    // Above the fold: la porta d'ingresso al servizio è visibile senza scorrere.
-    const first = page.locator("main .ds-hero").getByRole("link", { name: /Il tuo referto, in parole semplici/ });
+    // Above the fold: il percorso in quattro passi è visibile senza scorrere.
+    const first = page.getByRole("navigation", { name: "Il percorso, in quattro passi" });
     const box = await first.boundingBox();
     expect((box?.y ?? 9999) + (box?.height ?? 0)).toBeLessThan(isMobile ? 844 : 900);
     await expect(page.getByText("Versione dimostrativa", { exact: false }).first()).toBeVisible();

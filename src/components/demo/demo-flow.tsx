@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Download, Loader2, RotateCcw, ScanEye } from "lucide-react";
 import lab001 from "@/fixtures/synthetic/referto-lab-001.json";
 import type { Explanation } from "@/domain/reporting/explanation-schema";
+import type { GuidaPersonale } from "@/domain/reporting/guida-personale";
 import { Facsimile as FacsimileBase, revealFacsimileLine } from "@/components/report/facsimile";
 import { VerificationList, isReadableObs, type VerifiableObservation } from "@/components/report/verification-list";
 import { ExplanationView } from "@/components/report/explanation-view";
@@ -38,7 +39,7 @@ function Stepper({ step }: { step: Step }) {
 type ReportState =
   | { status: "idle" }
   | { status: "loading" }
-  | { status: "ready"; explanation: Explanation; generatedAt: string }
+  | { status: "ready"; explanation: Explanation; generatedAt: string; guida?: GuidaPersonale }
   | { status: "error"; message: string };
 
 /**
@@ -109,7 +110,7 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.message ?? "Non è stato possibile generare la spiegazione.");
-      setReport({ status: "ready", explanation: data.explanation, generatedAt: data.generatedAt });
+      setReport({ status: "ready", explanation: data.explanation, generatedAt: data.generatedAt, guida: data.guida });
       track("esempio-completato");
     } catch (e) {
       setReport({ status: "error", message: e instanceof Error ? e.message : "Errore imprevisto." });
@@ -261,7 +262,7 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
 
           {report.status === "ready" ? (
             <div className="mt-8 grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,34rem)] xl:gap-10 [&>*]:min-w-0">
-              <ExplanationView explanation={report.explanation} onReveal={reveal} />
+              <ExplanationView explanation={report.explanation} onReveal={reveal} enrichment={report.guida ? { factors: {}, history: {}, guida: report.guida } : null} />
 
               {/* Su schermi larghi il documento resta in vista mentre si legge: è l'ultimo blocco della colonna e si ferma in alto. */}
               <aside className="flex flex-col gap-5" aria-label="Documento e download">

@@ -10,6 +10,9 @@ export async function expectAccessible(page: Page) {
       document
         .getAnimations()
         .filter((a) => Number.isFinite(a.effect?.getComputedTiming().endTime ?? Infinity))
+        // 19/11/2026: il richiamo del pulsante della luce (un alone attorno al pulsante, circa 12 s alle prime visite) non
+        // cambia nessun colore che axe misura: aspettarlo rallentava ogni controllo di 12 s.
+        .filter((a) => (a as CSSAnimation).animationName !== "luce-richiamo")
         .map((a) => a.finished.catch(() => undefined)),
     ),
   );

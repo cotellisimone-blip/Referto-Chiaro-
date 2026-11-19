@@ -221,7 +221,7 @@ body:has(.tm){background:#F6F0E6}
 
 /* ───────── tema scuro: stessi token di tutto il sito (carta → notte petrolio), i fogli del laboratorio restano carta ───────── */
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tm{
- --t-paper:#0B1E26;--t-paper-2:#10262F;--t-card:#122C36;
+ --t-paper:#061A22;--t-paper-2:#10262F;--t-card:#122C36;
  --t-ink:#E8F1F2;--t-soft:#C5D7DA;--t-muted:#9AB4BA;
  --t-petrol:#7BE0D2;--t-teal:#5FD3C4;--t-mint:#7BE0D2;
  --t-clay:#F0B88A;--t-clay-tint:#33281F;
@@ -230,7 +230,7 @@ body:has(.tm){background:#F6F0E6}
  color-scheme:dark;
 }}
 :root[data-theme="dark"] .tm{
- --t-paper:#0B1E26;--t-paper-2:#10262F;--t-card:#122C36;
+ --t-paper:#061A22;--t-paper-2:#10262F;--t-card:#122C36;
  --t-ink:#E8F1F2;--t-soft:#C5D7DA;--t-muted:#9AB4BA;
  --t-petrol:#7BE0D2;--t-teal:#5FD3C4;--t-mint:#7BE0D2;
  --t-clay:#F0B88A;--t-clay-tint:#33281F;
@@ -238,8 +238,8 @@ body:has(.tm){background:#F6F0E6}
  --t-hl:rgba(123,224,210,.42);
  color-scheme:dark;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body:has(.tm){background:#0B1E26}}
-:root[data-theme="dark"] body:has(.tm){background:#0B1E26}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body:has(.tm){background:#061A22}}
+:root[data-theme="dark"] body:has(.tm){background:#061A22}
 @media (prefers-color-scheme:dark){
 :root:not([data-theme="light"]) .tm .tm-btn-ink{color:#0B1E26}
 :root:not([data-theme="light"]) .tm .tm-btn-ink:hover{background:#A6EDE3}

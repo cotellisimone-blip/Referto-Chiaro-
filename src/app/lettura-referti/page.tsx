@@ -18,6 +18,8 @@ import { mediciEnabled } from "@/lib/medici";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 import { PageLd, capisciServiceLd } from "@/components/site/page-ld";
+import { GuidaPersonaleView } from "@/components/report/guida-personale-view";
+import { guidaEsempio } from "@/domain/reporting/guida-personale";
 
 export const metadata: Metadata = {
   title: "Lettura referti: il tuo referto in parole semplici",
@@ -181,6 +183,24 @@ export default function LetturaRefertiPage() {
             </div>
             <FoglioMedico />
           </div>
+        </div>
+      </section>
+
+      {/* 19/11/2026 (home «chiara e scura», passo 4): la guida personale, inclusa nel report. L'esempio passa dallo stesso calcolo. */}
+      <section id="guida-personale" className="ds-sec-light scroll-mt-24" aria-labelledby="lr-guida">
+        <div className="tm-wrap">
+          <div className="tm-sec-h">
+            <div>
+              <p className="tm-kicker">Novità · Inclusa nel report</p>
+              <h2 id="lr-guida">
+                La tua guida personale, <em>costruita sui tuoi esami.</em>
+              </h2>
+            </div>
+            <p>La tua guida personale, per preparare il tuo piano con il medico o il farmacista: le guide ai tuoi esami, gli integratori collegati, alimentazione e intestino, la visita. È nel report, senza costi in più.</p>
+          </div>
+          {/* Su telefono l'esempio si apre con un tocco: la pagina resta sotto le 9,5 schermate (tests/e2e/pagine-servizio.spec.ts).
+              «Esempio con valori inventati» lo dicono la pillola della scheda e la nota dentro la scheda. */}
+          <GuidaPersonaleView guida={guidaEsempio()} esempio apribile />
         </div>
       </section>
 

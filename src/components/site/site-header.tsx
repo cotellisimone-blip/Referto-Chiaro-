@@ -24,8 +24,9 @@ export function SiteHeader() {
 }
 
 /**
- * Testata «Luce» (12/11/2026): vetro leggero, voci a pillola, comandi senza bordo. Su telefono restano tre comandi
- * (cerca, testo grande, menu); il tema sta nel menu. Il menu è un pannello che scende dalla testata e oscura la pagina.
+ * Testata «Luce» (12/11/2026): vetro leggero, voci a pillola. Il menu è un pannello che scende dalla testata e oscura la pagina.
+ * 19/11/2026 (home «chiara e scura», approvata da Simone): comandi rotondi con il filo e, accanto alla lente, il pulsante
+ * della luce, su telefono e su computer. Su telefono: cerca, luce, testo grande, menu. Dove non c'è posto «Aa» va nel menu.
  */
 export function SiteHeaderView({ pathname }: { pathname: string | null }) {
   const [open, setOpen] = useState(false);
@@ -124,8 +125,8 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
 
         <div className="hdr-desktop items-center gap-0.5">
           <SearchTrigger variant="compact" className="hdr-roomy" />
-          <TextSizeToggle className="icon-btn px-2 font-serif" />
-          <ThemeToggle className="hdr-roomy icon-btn" />
+          <ThemeToggle className="ml-1" />
+          <TextSizeToggle className="icon-btn hdr-round ml-1 px-2" />
           <span aria-hidden className="hdr-sep hdr-roomy" />
           {signedIn ? (
             <Link href="/area-personale" className="btn btn-primary btn-sm ml-1 whitespace-nowrap">
@@ -144,9 +145,10 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
         </div>
 
         <div className="hdr-mobile items-center gap-1">
-          <SearchTrigger className="icon-btn" />
-          <TextSizeToggle className="hdr-wide-only icon-btn px-2 font-serif" />
-          <button type="button" className="icon-btn icon-btn-solid ml-1" aria-expanded={open} aria-controls="menu-mobile" onClick={() => setOpen((v) => !v)}>
+          <SearchTrigger className="icon-btn hdr-round" />
+          <ThemeToggle />
+          <TextSizeToggle className="hdr-wide-only icon-btn hdr-round px-2" />
+          <button type="button" className="icon-btn hdr-round" aria-expanded={open} aria-controls="menu-mobile" onClick={() => setOpen((v) => !v)}>
             {open ? <X aria-hidden className="h-5 w-5" /> : <Menu aria-hidden className="h-5 w-5" />}
             <span className="sr-only">{open ? "Chiudi il menu" : "Apri il menu"}</span>
           </button>
@@ -212,16 +214,11 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                   {signedIn ? "Vai all'area personale" : "Accedi all'area personale"}
                 </Link>
               </div>
-              {/* Su schermi stretti (o con il testo grande) il pulsante «aA» non sta nella testata: qui ha la sua etichetta. */}
-              <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-[1rem] text-ink-soft">
-                <span className="hdr-narrow-only items-center gap-2.5">
-                  <TextSizeToggle className="icon-btn icon-btn-solid px-2 font-serif" />
-                  <span aria-hidden>Testo più grande</span>
-                </span>
-                <span className="flex items-center gap-2.5">
-                  <ThemeToggle className="icon-btn icon-btn-solid" />
-                  <span>Tema chiaro o scuro</span>
-                </span>
+              {/* Su schermi stretti (o con il testo grande) il pulsante «Aa» non sta nella testata: qui ha la sua etichetta.
+                  Il pulsante della luce invece resta sempre nella testata, accanto alla lente (19/11/2026). */}
+              <div className="hdr-narrow-only mt-5 items-center gap-2.5 text-[1rem] text-ink-soft">
+                <TextSizeToggle className="icon-btn hdr-round px-2" />
+                <span aria-hidden>Testo più grande</span>
               </div>
             </nav>
           </div>

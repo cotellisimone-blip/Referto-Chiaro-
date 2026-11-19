@@ -1,4 +1,4 @@
-import { mediciEnabled } from "@/lib/medici";
+import { mediciEnabled, secondoParereEnabled } from "@/lib/medici";
 /**
  * L'offerta di Cura Privata: i tre servizi protagonisti («Capisci. Parla con un medico. Chiedi un secondo parere.»).
  * È l'UNICA fonte per nomi, frasi, tempi e prezzi: home, pagine servizio, /prezzi, selettore, area personale e
@@ -83,6 +83,7 @@ export const CORE_SERVICES: CoreService[] = [
       "Sigle e termini spiegati in italiano di tutti i giorni",
       "Dove si colloca ogni valore rispetto all'intervallo stampato, senza giudizi",
       "Da 3 a 5 domande da fare al tuo medico",
+      "La tua guida personale, per preparare il tuo piano con il medico o il farmacista: le letture che riguardano i tuoi esami",
       "Un report PDF da stampare o mostrare in visita, salvato nella tua area personale",
     ],
     receives: "Un report chiaro nella tua area personale, che resta tuo e che puoi riusare con un medico.",
@@ -279,6 +280,8 @@ export function isVetrina(env: Env = process.env): boolean {
 export function serviceStart(id: CoreServiceId, env: Env = process.env): { href: string; label: string; waitlist: boolean } {
   const s = coreService(id);
   if (isVetrina(env)) return { href: `${s.href}#avvisami`, label: "Avvisami quando parte", waitlist: true };
+  // 19/11/2026: con i medici accesi il secondo parere resta «In arrivo» finché non c'è uno specialista (src/lib/medici.ts).
+  if (id === "secondo-parere" && env === process.env && mediciEnabled() && !secondoParereEnabled()) return { href: `${s.href}#avvisami`, label: "Avvisami quando parte", waitlist: true };
   return { href: s.startHref, label: s.startLabel, waitlist: false };
 }
 

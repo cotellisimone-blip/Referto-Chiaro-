@@ -4,6 +4,7 @@ import { parseLocaleNumber } from "@/domain/extraction/numbers";
 import type { Explanation } from "@/domain/reporting/explanation-schema";
 import { normalizeName } from "@/domain/dossier/build-dossier";
 import { GUIDES, type Guide } from "@/content/guides";
+import type { GuidaPersonale } from "@/domain/reporting/guida-personale";
 
 /**
  * Arricchimenti del report «Capisci» che NON generano testo nuovo:
@@ -29,6 +30,8 @@ export interface HistoryPoint {
 export interface ReportEnrichment {
   factors: Record<string, ItemFactors>;
   history: Record<string, HistoryPoint[]>;
+  /** «La tua guida personale» (19/11/2026), calcolata con buildGuidaPersonale (src/domain/reporting/guida-personale.ts). */
+  guida?: GuidaPersonale;
 }
 
 const strip = (s: string) => normalizeName(s.replace(/\(([^)]*)\)/g, " "));

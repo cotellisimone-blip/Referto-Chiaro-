@@ -38,9 +38,8 @@ test("un'offerta sola: ogni servizio compare una volta in Servizi e in Prezzi, n
 
 test("dalla home alla visita conclusa da paziente: nessun ruolo, un comando per volta, riepilogo e prossimo passo", async ({ page, isMobile }) => {
   await fresh(page, "/");
-  await page.locator("#medici").getByRole("link", { name: /Tutta la sezione Medici/ }).click();
-  await expect(page).toHaveURL(/\/medici$/);
-  await page.locator(".ds-ph").getByRole("link", { name: /Richiedi la visita/ }).click();
+  // 19/11/2026, home «chiara e scura»: dal riquadro del medico, «Prenota» la visita a casa.
+  await page.locator("#medico").getByRole("link", { name: "Prenota la visita a casa" }).click();
   await expect(page).toHaveURL(/\/richiedi\/domicilio$/);
   await expect(page.locator("[data-percorso-paziente]")).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Prova come" })).toHaveCount(0);

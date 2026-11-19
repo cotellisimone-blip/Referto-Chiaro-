@@ -4,10 +4,11 @@ import "@/components/report/report.css";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { clsx } from "clsx";
-import { ArrowDown, ArrowRight, ArrowUp, Check, ChevronDown, ChevronsUpDown, FileDown, History, MessageCircleQuestionMark, Minus, ScanEye, SlidersHorizontal } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp, BookOpen, Check, ChevronDown, ChevronsUpDown, FileDown, History, MessageCircleQuestionMark, Minus, ScanEye, SlidersHorizontal } from "lucide-react";
 import type { Explanation } from "@/domain/reporting/explanation-schema";
 import type { ReportEnrichment } from "@/domain/reporting/enrich";
 import { reportGlance, type ItemGlance } from "@/domain/reporting/glance";
+import { GuidaPersonaleView } from "@/components/report/guida-personale-view";
 
 const fmtDate = (d: string) => new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(d + "T00:00:00Z"));
 
@@ -148,6 +149,11 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
         ) : null}
         <p className="glance-note">È un confronto tra numeri, non un giudizio: il significato per te lo dice il medico.</p>
         <p className="glance-links">
+          {enrichment?.guida?.gruppi.length ? (
+            <a href="#guida-personale">
+              <BookOpen aria-hidden /> La tua guida
+            </a>
+          ) : null}
           <a href="#domande-medico">
             <MessageCircleQuestionMark aria-hidden /> Le domande
           </a>
@@ -260,6 +266,9 @@ export function ExplanationView({ explanation, onReveal, enrichment }: { explana
           </ul>
         </div>
       ) : null}
+
+      {/* 19/11/2026: la guida personale, inclusa nel report, tra i valori e le domande per il medico. */}
+      {enrichment?.guida?.gruppi.length ? <GuidaPersonaleView guida={enrichment.guida} /> : null}
 
       <div id="domande-medico" className="card scroll-mt-28 p-6 sm:p-7">
         <p className="eyebrow">Per la visita</p>

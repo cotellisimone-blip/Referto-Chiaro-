@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CountUp } from "@/components/wow/count-up";
 import { ArrowRight, ArrowUp, Check, FileText, HeartPulse, Home, Stethoscope, Video } from "lucide-react";
 import { PRESTAZIONI, prestazionePrice, type PrestazioneKind } from "@/domain/prestazioni/listino";
+import { secondoParereEnabled } from "@/lib/medici";
 
 /**
  * Pezzi comuni della home e delle pagine delle tre sezioni (15/11/2026 sera, divisione voluta da Simone):
@@ -16,10 +17,11 @@ export const MEDICI_HREF = "/medici";
 
 /** Etichetta dei medici: «Versione di prova» con i medici accesi, «In arrivo» (o «Medici in arrivo») spenti. */
 export function StatoDomicilio({ attivo, dark = false, medici = false }: { attivo: boolean; dark?: boolean; medici?: boolean }) {
+  // 19/11/2026: accesi, i medici sono quelli veri (Sara, Elena e Riccardo, a Brescia): non più «versione di prova».
   return attivo ? (
     <span className={`ds-state ds-state-prova${dark ? " ds-on-dark" : ""}`}>
       <i aria-hidden />
-      {medici ? "Medici: versione di prova" : "Versione di prova"}
+      {medici ? "Medici a Brescia" : "A Brescia"}
     </span>
   ) : (
     <span className={`ds-state ds-state-arrivo${dark ? " ds-on-dark" : ""}`}>
@@ -175,9 +177,9 @@ export function MiniVisita({ attivo = true }: { attivo?: boolean }) {
         <span className="ds-mini-n">3</span> Visita a casa · esempio
       </p>
       <div className="ds-mini-doc">
-        <span className="ds-av ds-av-teal">LB</span>
+        <span className="ds-av ds-av-teal">MG</span>
         <span>
-          <b>Dott.ssa Laura Bianchi</b>
+          <b>Il tuo medico</b>
           <small>Medico di medicina generale</small>
         </span>
       </div>
@@ -214,7 +216,11 @@ export function ServiziMedico({ prices, attivo, dark = false, onSection = false 
               </span>
               <span className="ds-svc-t">{SVC_TEXT[k].t}</span>
               <span className="ds-svc-d">{SVC_TEXT[k].d}</span>
-              {attivo && prices ? <span className="ds-svc-p">{prestazionePrice(k)}</span> : null}
+              {attivo && k === "parere" && !secondoParereEnabled() ? (
+                <span className="ds-svc-p">In arrivo</span>
+              ) : attivo && prices ? (
+                <span className="ds-svc-p">{prestazionePrice(k)}</span>
+              ) : null}
             </Link>
           </li>
         );

@@ -121,7 +121,7 @@ export default function Page() {
                 A che punto siamo.
               </h2>
               <p className="lead mt-3 max-w-[40rem]">
-                Cura Privata è un progetto italiano in fase di sviluppo, nato come «Referto Chiaro». Oggi è una versione dimostrativa: {MEDICI ? "provi tutti i servizi su documenti inventati, con medici di prova" : "provi tutto su documenti inventati"}. Ogni servizio apre davvero solo dopo le verifiche che un
+                Cura Privata è un progetto italiano in fase di sviluppo, nato come «Referto Chiaro». Oggi è una versione dimostrativa: {MEDICI ? "provi tutti i servizi su documenti inventati, e le prenotazioni con un medico sono di prova" : "provi tutto su documenti inventati"}. Ogni servizio apre davvero solo dopo le verifiche che un
                 servizio sanitario richiede.
               </p>
             </div>

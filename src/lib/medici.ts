@@ -21,6 +21,23 @@ export function mediciEnabled(): boolean {
   return process.env.ENABLE_MEDICI === "true";
 }
 
+/**
+ * 19/11/2026: i medici sono accesi (Sara, Elena e Riccardo, medici di medicina generale a Brescia: decisione di Simone),
+ * ma il secondo parere chiede uno specialista e uno specialista non c'è ancora. Il secondo parere ha quindi un suo
+ * interruttore: ENABLE_SECONDO_PARERE="true" lo accende; spento (il valore di base) la sua pagina dice «In arrivo» e
+ * raccoglie le email, e la richiesta porta lì. Vale solo con i medici accesi. Come ENABLE_MEDICI, è fissato alla build.
+ */
+export function secondoParereEnabled(): boolean {
+  if (!mediciEnabled()) return false;
+  const built = process.env.NEXT_PUBLIC_ENABLE_SECONDO_PARERE;
+  if (built === "true" || built === "false") return built === "true";
+  return process.env.ENABLE_SECONDO_PARERE === "true";
+}
+
+/** Indirizzi del secondo parere che esistono solo con il suo interruttore acceso (spento portano alla sua pagina). */
+export const PARERE_PATHS = ["/richiedi/secondo-parere"] as const;
+export const PARERE_HREF = "/servizi/secondo-parere";
+
 /** Indirizzi che esistono solo con i medici accesi: spenti, portano alla sezione Medici («In arrivo», lista d'attesa). */
 export const DOCTOR_PATHS = [
   "/servizi/visita-a-domicilio",

@@ -50,6 +50,9 @@ const FOOTER_NAV_ALL = {
   ],
   Gratis: [
     { href: "/punto-di-partenza", label: "Punto di Partenza" },
+    { href: "/prevenzione/esami-di-base", label: "Esami di base" },
+    { href: "/prevenzione/screening", label: "Screening gratuiti" },
+    { href: "/vicino-a-te", label: "Vicino a te" },
     { href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita" },
     { href: "/guide", label: "Guide agli esami" },
     { href: "/integratori", label: "Guide agli integratori" },
@@ -88,6 +91,10 @@ export const LEGAL_NAV = [
 /** Pagine che non stanno nel fondo pagina ma devono restare trovabili nella ricerca del sito. */
 export const EXTRA_PAGES = [
   { href: "/referti/esempio", label: "Referto di esempio" },
+  // 19/11/2026: le pagine delle tessere della home «chiara e scura».
+  { href: "/prevenzione/intestino-e-microbiota", label: "Intestino e microbiota: fibre, fermentati, probiotici" },
+  { href: "/prevenzione/alimentazione", label: "Alimentazione, peso e forma" },
+  { href: "/scaffale", label: "Lo Scaffale: i criteri per i partner" },
   { href: "/per-le-strutture", label: "Per le strutture" },
   { href: "/accedi", label: "Area personale" },
   { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio con medico generalista" },

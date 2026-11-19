@@ -110,6 +110,13 @@ test.describe("ciclo 5 · colpo d'occhio e percorso", () => {
     const screens = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
     // Quarto giro, punto 6: l'account demo ha anche il referto di maggio, quindi la scheda aperta mostra «Nei tuoi referti
     // precedenti» (circa 180 px in più). Il limite passa da 6 a 6,5 schermate.
-    expect(screens).toBeLessThan(6.5);
+    // 19/11/2026: nel report entra la guida personale (decisione di Simone). Su telefono è una scheda chiusa, circa 0,7
+    // schermate (aperta erano quasi 2): il limite passa da 6,5 a 7.
+    expect(screens).toBeLessThan(7);
+    const guida = page.getByTestId("guida-personale");
+    await expect(guida.getByRole("button", { name: /Apri la guida/ })).toHaveAttribute("aria-expanded", "false");
+    await expect(guida.locator(".gp-row").first()).toBeHidden();
+    await guida.getByRole("button", { name: /Apri la guida/ }).click();
+    await expect(guida.locator(".gp-row").first()).toBeVisible();
   });
 });

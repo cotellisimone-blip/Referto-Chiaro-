@@ -92,39 +92,39 @@ test.describe("il servizio e i percorsi pubblici", () => {
   });
 });
 
-test.describe("home a tre sezioni", () => {
-  test("apertura con le tre porte, il referto che si tocca, la sezione Medici «In arrivo»; corta e senza dati inventati", async ({ page, isMobile }) => {
+/**
+ * 19/11/2026: la home «chiara e scura» (Simone: «Sì a questa home»). Senza medici (lo stato di queste prove) il medico
+ * è «In arrivo», senza prezzi, con la lista d'attesa. Con i medici accesi: tests/e2e-medici/memorabile.spec.ts.
+ */
+test.describe("home chiara e scura", () => {
+  test("il percorso in quattro passi, il medico «In arrivo», i mondi da esplorare; corta e senza dati inventati", async ({ page, isMobile }) => {
     await page.goto("/");
     const main = page.locator("main");
-    // Apertura: che cosa fa Cura Privata, in una frase, e le tre porte
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Previeni\. Capisci\.\s*Un medico, se serve\./);
-    const doors = main.locator(".ds-hero .ds-doors");
-    await expect(doors.getByRole("link", { name: /Gli esami giusti/ })).toHaveAttribute("href", "/prevenzione");
-    await expect(doors.getByRole("link", { name: /Il tuo referto, in parole semplici/ })).toHaveAttribute("href", "/lettura-referti");
-    await expect(doors.getByRole("link", { name: /Un medico, quando serve/ })).toHaveAttribute("href", "/medici");
-    await expect(doors.locator(".ds-door-2")).toContainText("2,90 €");
-    // Medici spenti: la porta 3 dice «In arrivo» e non ha prezzi
-    await expect(doors.locator(".ds-door-3")).toContainText("In arrivo");
-    await expect(doors.locator(".ds-door-3")).not.toContainText("€");
-    // Sezione 1: prevenzione, con la guida agli integratori
-    const s1 = main.locator("#prevenzione");
-    for (const href of ["/punto-di-partenza", "/guide", "/integratori"]) await expect(s1.locator(`a[href="${href}"]`).first()).toBeVisible();
-    // Da così a così: lo schermo con il cursore, dal referto com'è a quello spiegato
-    const slider = main.locator("#lettura-referti").getByRole("slider", { name: /Sposta per confrontare/ });
-    await expect(slider).toBeVisible();
-    await slider.focus();
-    await page.keyboard.press("End");
-    await expect(slider).toHaveValue("100");
-    // Sezione 3 spenta: niente medici, niente prezzi, la lista d'attesa
-    const s2 = main.locator("#medici");
-    await expect(s2).toContainText("In arrivo");
-    await expect(s2.locator(".ds-doc")).toHaveCount(0);
-    await expect(s2).not.toContainText("€");
-    await expect(s2.getByRole("button", { name: /Avvisami/ })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La tua salute,\s*tutta in una pagina\./);
+    // Il percorso: quattro passi, ognuno porta alla sua tessera
+    const filo = main.getByRole("navigation", { name: "Il percorso, in quattro passi" });
+    await expect(filo.getByRole("link")).toHaveCount(4);
+    for (const n of [1, 2, 3, 4]) await expect(filo.getByRole("link").nth(n - 1)).toHaveAttribute("href", `#passo-${n}`);
+    await expect(main.locator("#passo-1 a").first()).toHaveAttribute("href", "/punto-di-partenza");
+    await expect(main.locator("#passo-2 a").first()).toHaveAttribute("href", "/prevenzione/esami-di-base");
+    await expect(main.locator("#passo-2")).toContainText("Senza ricetta*");
+    await expect(main.locator("#passo-3")).toContainText("2,90 €");
+    await expect(main.locator("#passo-4 a").first()).toHaveAttribute("href", "/lettura-referti#guida-personale");
+    await expect(main.locator("#passo-4")).toContainText("Inclusa nel report");
+    // Il medico, spento: «In arrivo», niente prezzi, la lista d'attesa
+    const medico = main.locator("#medico");
+    await expect(medico).toContainText("In arrivo");
+    await expect(medico).not.toContainText("€");
+    await expect(medico.getByRole("button", { name: "Avvisami per la mia zona" })).toBeVisible();
     await expect(page.locator('main a[href^="/servizi/"], main a[href^="/richiedi/"]')).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: /Non facciamo diagnosi\.\s*Facciamo chiarezza\./ })).toBeVisible();
+    // I mondi da esplorare, vicino a casa e nel tempo, lo Scaffale «In arrivo» e segnato come pubblicità
+    for (const href of ["/integratori", "/prevenzione/intestino-e-microbiota", "/prevenzione/alimentazione", "/prevenzione/screening", "/vicino-a-te", "/famiglia", "/scaffale"]) await expect(main.locator(`a[href="${href}"]`).first()).toBeVisible();
+    await expect(main.locator("#scaffale")).toContainText("Pubblicità");
+    await expect(main.locator("#scaffale")).toContainText("In arrivo");
+    // Ogni fotografia è dichiarata
+    for (const f of await main.locator("figure:has(img)").all()) await expect(f).toContainText("Immagine illustrativa");
     const text = (await main.innerText()).toLowerCase();
-    for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra", "nella norma"]) expect(text).not.toContain(bad);
+    for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra", "nella norma", "esami consigliati", "pulizia intestinale"]) expect(text).not.toContain(bad);
     // Barra d'aiuto mobile: nascosta sull'apertura, visibile scorrendo
     if (isMobile) {
       const bar = page.getByRole("navigation", { name: "Azioni rapide" });
@@ -134,11 +134,7 @@ test.describe("home a tre sezioni", () => {
       await expect(bar).toBeVisible();
     }
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    // 15/11/2026, home a due sezioni: due sezioni intere in una pagina, quindi un po' più lunga dei «tre momenti».
-    // 16/11/2026: il «prima e dopo» con il cursore (richiesto da Simone) è un po' più alto del referto da toccare.
-    expect(h, "schermate").toBeLessThan(isMobile ? 11.5 : 8);
-    const words = (await main.innerText()).split(/\s+/).length;
-    expect(words).toBeLessThan(isMobile ? 1100 : 1250);
+    expect(h, "schermate").toBeLessThan(isMobile ? 9 : 6);
     await expectAccessible(page);
   });
 
@@ -146,20 +142,44 @@ test.describe("home a tre sezioni", () => {
     await page.goto("/");
     // 1. Quanto costa capire un referto? Visibile in home.
     await expect(page.locator("main")).toContainText("2,90 €");
-    // 2. Capire un referto: «Carica un referto» porta al primo passo del caricamento; senza sessione, prima all'accesso (17/11/2026, punto 2)
-    await page.locator("main #lettura-referti").getByRole("link", { name: /Carica un referto/ }).click();
+    // 2. Capire un referto: la tessera 3 porta al primo passo del caricamento; senza sessione, prima all'accesso
+    await page.locator("main #passo-3 a").first().click();
     await expect(page).toHaveURL(/\/accedi\?next=%2Farea-personale%2Fnuovo$/);
     // 3. Emergenza: il 112 è in home
     await page.goto("/");
     await expect(page.locator("main")).toContainText("112");
-    // 4. Vorrei un medico: la porta 3 porta alla sezione, «In arrivo», con la lista d'attesa
-    await page.locator("main .ds-hero").getByRole("link", { name: /Un medico, quando serve/ }).click();
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Un medico,\s*quando serve\./);
-    await expect(page.locator("main")).toContainText("In arrivo");
-    // 5. Un integratore: un clic dalla sezione Prevenzione
-    await page.goto("/");
-    await page.locator("main #prevenzione").getByRole("link", { name: /Guide agli integratori/ }).click();
+    // 4. Vorrei un medico: dal primo schermo al riquadro del medico, «In arrivo», con la lista d'attesa
+    await page.locator("main .hb-docq").click();
+    await expect(page).toHaveURL(/#medico$/);
+    await expect(page.locator("main #medico")).toContainText("In arrivo");
+    // 5. Un integratore: un clic dalla tessera
+    await page.locator("main #esplora").getByRole("link", { name: /Integratori e nutraceutica/ }).click();
     await expect(page).toHaveURL(/\/integratori$/);
+  });
+
+  test("le pagine delle tessere: un titolo, la bozza dichiarata, i rimandi alle guide", async ({ page }) => {
+    for (const [path, h1] of [
+      ["/prevenzione/esami-di-base", /L’elenco degli\s*esami di base\./],
+      ["/prevenzione/intestino-e-microbiota", /Equilibrio intestinale:\s*fibre, fermentati, probiotici\./],
+      ["/prevenzione/alimentazione", /Mangiare bene,\s*senza mode\./],
+      ["/prevenzione/screening", /Gli screening gratuiti,\s*per chi e quando\./],
+      ["/vicino-a-te", /Il servizio pubblico,\s*vicino a te\./],
+      ["/scaffale", /Lo Scaffale:\s*pubblicità, e lo diciamo\./],
+    ] as const) {
+      await page.goto(path);
+      await expect(page.getByRole("heading", { level: 1 }), path).toHaveText(h1);
+      await expect(page.locator("main [data-bozza]"), path).toHaveCount(1);
+      await expect(page.locator("main"), path).toContainText("112");
+    }
+    // L'elenco degli esami di base spiega l'asterisco e porta alle guide
+    await page.goto("/prevenzione/esami-di-base");
+    await expect(page.locator("#senza-ricetta")).toContainText("In molti laboratori privati");
+    await page.getByRole("link", { name: /Emocromo/ }).first().click();
+    await expect(page).toHaveURL(/\/guide\/emocromo$/);
+    // Lo Scaffale non mostra prodotti né prezzi
+    await page.goto("/scaffale");
+    await expect(page.locator("main")).not.toContainText("€");
+    await expect(page.locator("main")).toContainText("In arrivo");
   });
 });
 
@@ -197,8 +217,9 @@ test.describe("percorsi A e D", () => {
     const ctx = await browser.newContext();
     const page = await ctx.newPage();
     await page.goto("/");
-    await page.locator('main a[href="/lettura-referti"]').first().click();
-    await expect(page).toHaveURL(/\/lettura-referti$/);
+    // 19/11/2026, home «chiara e scura»: dalla tessera 4 («Ricevi la tua guida personale») alla pagina del servizio.
+    await page.locator('main a[href^="/lettura-referti"]').filter({ visible: true }).first().click();
+    await expect(page).toHaveURL(/\/lettura-referti(#guida-personale)?$/);
     await signup(ctx.request, `a-${Date.now()}@test.invalid`);
     const doc = await verifiedDocument(ctx.request);
     const o = await (await ctx.request.post("/api/v1/area/orders", { data: { service: "essenziale", documentId: doc } })).json();

@@ -3,6 +3,7 @@ import { json } from "@/lib/api";
 import { deleteDocument, getDocument, listDocuments, listReports, renameDocument } from "@/domain/pipeline/repository";
 import { cleanTitle, findOlderTwin } from "@/domain/pipeline/titolo";
 import { enrichReport } from "@/domain/reporting/enrich";
+import { buildGuidaPersonale } from "@/domain/reporting/guida-personale";
 import { tickJobs } from "@/domain/pipeline/worker";
 import { assignDocument } from "@/domain/famiglia/repository";
 import { SELF_ID } from "@/domain/famiglia/persone";
@@ -21,11 +22,15 @@ export async function GET(_req: Request, ctx: RouteContext<"/api/v1/area/documen
   let enrichment = null;
   if (ready?.explanation && doc.extracted) {
     const others = (await listDocuments(g.user.id)).filter((d) => d.id !== doc.id && d.profileId === doc.profileId && d.extracted && d.verification);
-    enrichment = enrichReport({
-      current: doc.extracted,
-      explanation: ready.explanation,
-      previous: others.map((d) => ({ document: d.extracted!, confirmedObservationIds: d.verification!.confirmedObservationIds })),
-    });
+    enrichment = {
+      ...enrichReport({
+        current: doc.extracted,
+        explanation: ready.explanation,
+        previous: others.map((d) => ({ document: d.extracted!, confirmedObservationIds: d.verification!.confirmedObservationIds })),
+      }),
+      // 19/11/2026: la guida personale è inclusa nel report a pagamento, senza costi in più.
+      guida: buildGuidaPersonale(ready.explanation),
+    };
   }
   // Terzo giro, punto 4: lo stesso referto (stessa data, stesse righe) già presente per la stessa persona.
   const older = doc.extracted ? findOlderTwin(doc, await listDocuments(g.user.id)) : null;

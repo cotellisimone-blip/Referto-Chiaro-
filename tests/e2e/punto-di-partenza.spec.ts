@@ -12,11 +12,13 @@ async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 }
 
-test("home: il punto di partenza gratis sta nella sezione Prevenzione, il primo referto nell'apertura", async ({ page, isMobile }) => {
+test("home: il punto di partenza gratis è il primo passo, il primo referto il terzo", async ({ page, isMobile }) => {
   await page.goto("/");
   await expect(page.locator("h1")).toHaveCount(1);
-  await expect(page.locator("main #prevenzione").getByRole("link", { name: /Quali esami conoscere/ })).toHaveAttribute("href", "/punto-di-partenza");
-  await expect(page.locator("main .ds-hero").getByRole("link", { name: /Il tuo referto, in parole semplici/ })).toContainText("2,90");
+  // 19/11/2026, home «chiara e scura»: «Fatti conoscere» è il passo 1, gratis, senza registrarti.
+  await expect(page.locator("main #passo-1 a").first()).toHaveAttribute("href", "/punto-di-partenza");
+  await expect(page.locator("main #passo-1")).toContainText("Inizia, gratis");
+  await expect(page.locator("main #passo-3")).toContainText("2,90");
   // 18/11/2026 (secondo giro, punto 9): su telefono le colonne del piè di pagina si aprono al tocco.
   if (isMobile) await page.locator("footer details", { hasText: "Gratis" }).locator("summary").click();
   await expect(page.locator("footer").getByRole("link", { name: "Punto di Partenza" }).locator("visible=true")).toBeVisible();
@@ -96,8 +98,10 @@ test("landing: nessun overflow a 390 px, accessibile, anche in tema scuro", asyn
   await page.goto("/punto-di-partenza");
   await noOverflow(page);
   await axe(page);
-  await page.emulateMedia({ colorScheme: "dark" });
+  // Visione scura scelta con il pulsante della luce (19/11/2026: il sito nasce chiaro).
+  await page.evaluate(() => localStorage.setItem("rc-theme", "dark"));
   await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await axe(page);
 });
 

@@ -8,7 +8,8 @@ import { defineConfig, devices } from "@playwright/test";
  * Avvio: `npm run test:e2e:vetrina:medici` (compila e poi prova).
  */
 const PORT = 3103;
-const ENV = { SITE_PROFILE: "vetrina", ENABLE_MEDICI: "true", DEMO_MODE: "true", NEXT_DIST_DIR: ".next-vetrina-medici" };
+// 19/11/2026: anche qui il secondo parere acceso, come in playwright.medici.config.ts.
+const ENV = { SITE_PROFILE: "vetrina", ENABLE_MEDICI: "true", ENABLE_SECONDO_PARERE: "true", DEMO_MODE: "true", NEXT_DIST_DIR: ".next-vetrina-medici" };
 
 export default defineConfig({
   testDir: "tests/e2e-vetrina-medici",

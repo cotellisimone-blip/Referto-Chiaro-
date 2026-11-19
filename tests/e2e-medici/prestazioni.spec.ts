@@ -38,10 +38,12 @@ async function pickFirstSlot(page: Page) {
 
 test("listino e accessi dalla home: sezione Medici, prezzi coerenti su schede, pagine e riepilogo", async ({ page }) => {
   await fresh(page, "/");
-  const sec2 = page.locator("#medici");
-  await expect(sec2).toContainText(eur(149));
-  await sec2.getByRole("link", { name: /Tutta la sezione Medici/ }).click();
-  await expect(page).toHaveURL(/\/medici$/);
+  // 19/11/2026, home «chiara e scura»: il riquadro del medico, con i due prezzi e chi sono i medici.
+  const medico = page.locator("#medico");
+  await expect(medico).toContainText(eur(149));
+  await expect(medico).toContainText(eur(69));
+  await medico.getByRole("link", { name: /Chi sono i medici/ }).click();
+  await expect(page).toHaveURL(/\/medici#i-medici$/);
   await expect(page.locator(".ds-ph")).toContainText(eur(149));
   await gotoReady(page, "/servizi/visita-a-domicilio");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Il medico a casa tua");

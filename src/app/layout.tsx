@@ -9,7 +9,7 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { DemoRibbon } from "@/components/site/demo-ribbon";
 import { SiteSearch } from "@/components/search/site-search";
 import { BackToTop } from "@/components/site/back-to-top";
-import { PREFS_INIT_SCRIPT } from "@/lib/prefs-init";
+import { PREFS_INIT_SCRIPT, THEME_COLOR } from "@/lib/prefs-init";
 import { mediciEnabled } from "@/lib/medici";
 import "./globals.css";
 import "@/components/home/tre-momenti.css";
@@ -49,17 +49,16 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 };
 
+// 19/11/2026: il sito nasce chiaro per tutti (home «chiara e scura», decisione di Simone). La barra del browser prende il
+// colore della carta; lo script delle preferenze la fa scura solo se la persona ha scelto la luce scura.
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F5FAF8" },
-    { media: "(prefers-color-scheme: dark)", color: "#0B1E26" },
-  ],
+  themeColor: THEME_COLOR.light,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   const org = organizationLd(readTitolare());
   return (
-    <html lang="it" className={`${manrope.variable} ${fraunces.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="it" data-theme="light" className={`${manrope.variable} ${fraunces.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: PREFS_INIT_SCRIPT }} />
         {org ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(org) }} /> : null}

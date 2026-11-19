@@ -22,7 +22,8 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     await page.goto("/");
     // 13/11/2026: la promessa «famiglia e nel tempo» è il titolo; il payoff dei tre servizi resta subito sotto, nello stesso ordine.
     // 15/11/2026 sera: tre sezioni; il titolo le dice, le tre porte subito sotto.
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Previeni\. Capisci\.\s*Un medico, se serve\./);
+    // 19/11/2026, home «chiara e scura»: il titolo è la promessa, la frase dei tre servizi resta nel piè di pagina.
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La tua salute,\s*tutta in una pagina\./);
     await expect(page.locator("footer").getByText("Previeni. Capisci. Un medico, se serve.")).toBeVisible();
     // Nessun «.it» accanto al logo finché il sito non gira su un dominio vero (PUBLIC_BASE_URL).
     await expect(page.locator("footer").getByText(".it", { exact: true })).toHaveCount(0);
@@ -37,16 +38,18 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     for (const href of ["/servizi/secondo-parere", "/servizi/parla-con-un-medico"]) await expect(page.locator(`a[href="${href}"]`).first()).toBeAttached();
     // Above the fold: almeno una porta d'ingresso ai servizi è visibile senza scorrere. 12/11/2026: su telefono la
     // prima è la prestazione in evidenza (la visita a domicilio), poi «Ho un referto».
-    const first = page.locator("main .ds-hero").getByRole("link", { name: /Il tuo referto, in parole semplici/ });
+    const first = page.getByRole("navigation", { name: "Il percorso, in quattro passi" });
     const box = await first.boundingBox();
     expect((box?.y ?? 9999) + (box?.height ?? 0)).toBeLessThan(isMobile ? 844 : 900);
     await expect(page.getByText("Versione dimostrativa", { exact: false }).first()).toBeVisible();
   });
 
   test("nessun medico, recensione o metrica inventata nelle pagine dei servizi", async ({ page }) => {
-    // 15/11/2026: la home mostra i medici di prova chiesti da Simone, ognuno marcato «Profilo di prova · persona inventata».
-    await page.goto("/");
-    for (const card of await page.locator("main .ds-doc").all()) await expect(card).toContainText("persona inventata");
+    // 19/11/2026: i medici sono veri (Sara, Elena e Riccardo); finché Simone non li scrive, titolo, cognome e Ordine
+    // restano «da completare», mai inventati. Nessun nome di medico dimostrativo nelle pagine pubbliche.
+    await page.goto("/medici");
+    for (const card of await page.locator("#i-medici > li").all()) await expect(card).toContainText("da completare");
+    await expect(page.locator("main")).not.toContainText(/\b(?:Bianchi|Ferri|Conti)\b|persona inventata/);
     for (const path of ["/prezzi", "/servizi/secondo-parere", "/servizi/parla-con-un-medico", "/lettura-referti"]) {
       await page.goto(path);
       const txt = (await page.locator("main").innerText()).toLowerCase();

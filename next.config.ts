@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { CON_UN_MEDICO_HREF, DOCTOR_PATHS } from "./src/lib/medici";
+import { CON_UN_MEDICO_HREF, DOCTOR_PATHS, PARERE_HREF, PARERE_PATHS } from "./src/lib/medici";
 
 /**
  * Intestazioni di sicurezza su tutte le rotte.
@@ -48,6 +48,8 @@ const nextConfig: NextConfig = {
   // 17/11/2026: anche il profilo vetrina arriva al browser, per l'azione della testata (src/components/site/nav.ts).
   env: {
     NEXT_PUBLIC_ENABLE_MEDICI: process.env.ENABLE_MEDICI === "true" ? "true" : "false",
+    // 19/11/2026: il secondo parere ha il suo interruttore (serve uno specialista), vedi src/lib/medici.ts.
+    NEXT_PUBLIC_ENABLE_SECONDO_PARERE: process.env.ENABLE_MEDICI === "true" && process.env.ENABLE_SECONDO_PARERE === "true" ? "true" : "false",
     NEXT_PUBLIC_VETRINA: process.env.SITE_PROFILE?.trim().toLowerCase() === "vetrina" ? "true" : "false",
   },
   /** Vecchi indirizzi di Referto Chiaro → nuova mappa del sito Cura Privata (redirect permanenti interni). */
@@ -86,7 +88,12 @@ const nextConfig: NextConfig = {
       // con un medico» della sezione Medici. Redirect temporanei: riaccendendo l'interruttore tornano le pagine di prima.
       // 17/11/2026: spenti, anche l'elenco «I servizi» (che presentava i quattro servizi) porta alle tre sezioni della home.
       ...(process.env.ENABLE_MEDICI === "true"
-        ? []
+        ? process.env.ENABLE_SECONDO_PARERE === "true"
+          ? []
+          : PARERE_PATHS.flatMap((p) => [
+              { source: p, destination: PARERE_HREF, permanent: false },
+              { source: `${p}/:path*`, destination: PARERE_HREF, permanent: false },
+            ])
         : [{ source: "/servizi", destination: "/", permanent: false }, ...DOCTOR_PATHS.flatMap((p) => [
             { source: p, destination: CON_UN_MEDICO_HREF, permanent: false },
             { source: `${p}/:path*`, destination: CON_UN_MEDICO_HREF, permanent: false },
