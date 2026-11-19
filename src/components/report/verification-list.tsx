@@ -17,6 +17,9 @@ export interface VerifiableObservation {
 export const isReadableObs = (o: VerifiableObservation) => o.valueRaw !== null && o.parseConfidence !== "low";
 
 /** Elenco dei valori estratti da confermare uno per uno. Le righe illeggibili non si possono confermare. */
+/** Stessa soglia di `lg:` in Tailwind: da qui il documento è accanto all'elenco. */
+const SIDE_BY_SIDE_HOVER = "(hover: hover) and (pointer: fine) and (min-width: 64rem)";
+
 export function VerificationList({
   observations,
   confirmed,
@@ -54,7 +57,11 @@ export function VerificationList({
           return (
             <li
               key={o.id}
-              onMouseEnter={() => onHighlight(o.sourceLine)}
+              // Quarto giro, punto 1: il passaggio del puntatore accende la riga solo dove il documento sta accanto (computer con mouse).
+              // Su telefono e tablet la pagina scorre sotto il dito o il puntatore fermo e accendeva la riga di un'altra voce.
+              onMouseEnter={(e) => {
+                if (e.buttons === 0 && window.matchMedia(SIDE_BY_SIDE_HOVER).matches) onHighlight(o.sourceLine);
+              }}
               onFocus={() => onHighlight(o.sourceLine)}
               className={clsx("rounded-[1.25rem] border bg-paper p-4 transition-colors duration-150 sm:p-5", !ok ? "border-dashed border-muted/40 bg-canvas" : checked ? "border-teal/60 shadow-[var(--shadow-card)]" : "border-line")}
             >

@@ -316,7 +316,7 @@ export const GUIDE_RENI: Guide[] = [
     metaDescription: "Come leggere l'esame delle urine completo: aspetto, densità, pH, glucosio, proteine, chetoni, nitriti, sedimento e come raccogliere il campione.",
     category: "reni",
     examName: "Esame delle urine completo",
-    aliases: ["urine standard", "esame chimico-fisico e microscopico delle urine", "stick urine", "analisi delle urine"],
+    aliases: ["urine standard", "esame chimico-fisico e microscopico delle urine", "stick urine", "analisi delle urine", "sangue nelle urine", "leucociti nelle urine", "globuli bianchi nelle urine", "emoglobina nelle urine"],
     summary: "L'esame delle urine completo ha tre parti: aspetto e caratteristiche fisiche, striscia reattiva (pH, proteine, glucosio, chetoni e altro) e sedimento al microscopio. Il modo in cui si raccoglie il campione influisce sul risultato.",
     sections: {
       whatItMeasures: [

@@ -243,7 +243,9 @@ export function SiteSearch() {
             <p className="search-hint" data-testid="search-hint" role="status">
               {outcome.mode === "senza-aggettivi"
                 ? `Ti mostriamo che cosa misura «${outcome.used}». Se il tuo valore è alto o basso lo dice il confronto con l’intervallo stampato sul referto, e che cosa significa per te lo dice il medico.`
-                : `Nessun risultato esatto: ti mostriamo quelli per «${outcome.used}».`}
+                : outcome.mode === "parziale"
+                  ? `Nessuna voce contiene tutte le parole: ti mostriamo quelle che ne contengono almeno una.`
+                  : `Nessun risultato esatto: ti mostriamo quelli per «${outcome.used}».`}
             </p>
           ) : null}
 

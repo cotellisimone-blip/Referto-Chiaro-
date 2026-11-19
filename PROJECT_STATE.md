@@ -1,6 +1,6 @@
 # Stato del progetto — Cura Privata
 
-*Aggiornato: 18/11/2026, dopo il terzo giro di interventi (14 punti). Fonte di verità è il codice: se questo file e il codice non coincidono, vince il codice e questo file va corretto.*
+*Aggiornato: 19/11/2026, dopo il quarto giro di interventi (10 punti). Fonte di verità è il codice: se questo file e il codice non coincidono, vince il codice e questo file va corretto.*
 
 ## Obiettivo e pubblico
 Servizio digitale italiano in tre sezioni: **1 Prevenzione** (che cosa conoscere prima degli esami), **2 Lettura referti** (il referto in parole semplici), **3 Medici** (una persona, quando serve). Messaggio unico: «Previeni. Capisci. Un medico, se serve.»
@@ -10,7 +10,7 @@ Pubblico: adulti italiani con un referto in mano, molti sopra i 55 anni e da tel
 
 | Sezione | Pagina | Che cosa contiene | Prezzo (unica fonte: `src/domain/offerta.ts`) | Stato nel codice |
 |---|---|---|---|---|
-| 1 Prevenzione | `/prevenzione` | Punto di Partenza, 101 guide (95 agli esami, in bozza, e 6 pratiche: Fascicolo Sanitario, ricetta, cartella clinica, referti online, fotografare, conservare), 8 guide agli integratori, glossario (139 termini), promemoria, strumenti per la visita | Gratis | Attiva; contenuti in bozza, `noindex` finché non sono revisionati |
+| 1 Prevenzione | `/prevenzione` | Punto di Partenza, 107 guide (101 agli esami, in bozza, e 6 pratiche: Fascicolo Sanitario, ricetta, cartella clinica, referti online, fotografare, conservare), 8 guide agli integratori, glossario (139 termini), promemoria, strumenti per la visita | Gratis | Attiva; contenuti in bozza, `noindex` finché non sono revisionati |
 | 2 Lettura referti | `/lettura-referti` | «Capisci il tuo referto»: caricamento, controllo dei valori, spiegazione, PDF per il medico; area personale con numeri nel tempo, famiglia, dossier | Primo referto 2,90 €, poi 7,90 € | Demo; il motore reale è spento dai gate |
 | 3 Medici | `/medici` | Al lancio: «In arrivo», lista d'attesa con CAP. Con `ENABLE_MEDICI`: visita a domicilio 149 €, videoconsulto 69 €, secondo parere 149 € (`src/domain/prestazioni/listino.ts`), prova a tre ruoli in `/prova` | Nessun prezzo al lancio | Spenta; il codice resta e ha le sue prove (`tests/e2e-medici`) |
 
@@ -48,9 +48,12 @@ Foto: solo pazienti, sempre con «Immagine illustrativa»; **mai foto di medici*
 - Ogni servizio compare una volta sola in Servizi e in Prezzi (ciclo 4, `tests/e2e/ciclo4.spec.ts`). Il paziente non vede mai la barra dei ruoli.
 - Domicilio e video si chiudono con un riepilogo scritto e un prossimo passo. Annullamento: rimborso intero fino a 2 ore prima (domicilio) o 1 ora prima (video); regola proposta, da confermare con un legale.
 - La pagina del domicilio dice che il medico può, se lo ritiene, lasciare una prescrizione su ricetta bianca (approvato il 12/11).
-- Il report apre con «A colpo d'occhio»; la posizione rispetto all'intervallo stampato è calcolata dal codice (`src/domain/reporting/glance.ts`), mai dall'AI, e si dice solo con «dentro», «sopra», «sotto», «non confrontabile». Prima i valori fuori intervallo; report su telefono sotto le 6 schermate (ciclo 5, `tests/e2e/ciclo5.spec.ts`).
+- Il report apre con «A colpo d'occhio»; la posizione rispetto all'intervallo stampato è calcolata dal codice (`src/domain/reporting/glance.ts`), mai dall'AI, e si dice solo con «dentro», «sopra», «sotto», «non confrontabile». Prima i valori fuori intervallo; report su telefono sotto le 6,5 schermate (ciclo 5, `tests/e2e/ciclo5.spec.ts`; erano 6 fino al quarto giro, quando l'account demo ha avuto un referto precedente e il report la riga «Nei tuoi referti precedenti»).
 - Dal referto al report: cinque tocchi, comando del passo attaccato al fondo dello schermo su telefono, dopo il pagamento si atterra sul report (ciclo 5).
-- Il PDF è «il foglio per il medico»: valori, posizione e domande in prima pagina.
+- Il PDF è «il foglio per il medico»: valori, posizione e domande in prima pagina; nessuna scritta sotto i 10,5 punti e nessuna sigla tecnica nel testo, che sta solo nei metadati del file (quarto giro, `tests/unit/quarto-giro.test.ts`).
+- Valori esclusi (quarto giro): prima si guarda se il valore è leggibile, poi se è confermato. I due motivi stanno in `src/domain/reporting/esclusi.ts` e valgono per la spiegazione deterministica e per quella di Claude.
+- Ricerca (quarto giro): le sigle fino a 3 lettere valgono solo come parola intera nei sinonimi e nel contesto; se la sigla esiste come voce, le parole che iniziano solo con le stesse lettere non si aggiungono; due parole che non stanno nella stessa voce mostrano quelle che ne contengono di più, con una riga che lo dice (`src/lib/search-core.ts`).
+- Account demo (quarto giro): la prima volta che è vuoto riceve anche l'assetto lipidico del 20 maggio 2026, già confermato, così «Nel tempo» si vede appena si conferma il referto di novembre.
 - Prima di ogni PR: `npm run controlli` (stessi passi del workflow GitHub). Il controllo del sito intero (`sito-intero`) percorre tutte le pagine: se una pagina nuova non ha titolo, descrizione o canonical a misura, fallisce.
 - Ogni consegna a Simone comprende un'anteprima navigabile nuova, provata a misura di telefono Android (360–412 px).
 - Secondo giro (18/11): l'azione principale si chiama sempre «Carica un referto» ed è il pulsante verde petrolio pieno; su telefono nessun testo sotto i 14 px (`tests/e2e/secondo-giro.spec.ts`); il sito non vanta dati mai misurati («le più consultate»: frasi vietate in `sito-intero`); la ricerca non mostra risultati «a caso» (per somiglianza solo da 5 lettere); la foto d'apertura passa da `Photo priority`, che non la fa precaricare alle altre pagine; ogni pagina pubblica ha immagine di condivisione e dati strutturati (`PageLd`), senza voti né recensioni; la data delle pagine nella sitemap è `PAGES_UPDATED` in `src/lib/seo.ts`, da aggiornare a mano quando cambiano i testi.
@@ -66,9 +69,9 @@ Foto: solo pazienti, sempre con «Immagine illustrativa»; **mai foto di medici*
 - JavaScript: 190–240 KB trasferiti per pagina dopo il ciclo 5; il resto è React e Next, non si riduce senza cambiare architettura. CSS: 227 KB non compressi (43 compressi) su home, sezioni e guide dopo i 20 interventi (erano 325); fino a 257 sulle pagine con stili propri.
 - Le guide agli integratori (8) non hanno revisione medica: fuori da sitemap e indici come le guide cliniche.
 - Caratteri: dal terzo giro (punto 14, approvato) Fraunces è senza dimensione ottica, 54 KB in due file, disegno fissato a 36 punti. Per tornare indietro: gli originali sono nella cartella del progetto, `cura-privata/20-interventi-giro-3/caratteri-originali/`.
-- PDF per il medico: testo a 10,5–11 punti, ma etichette della copertina e piè di pagina a 8,5–9 (terzo giro, punto 5, parziale).
-- Cinque guide cliniche nuove del terzo giro (Pap test e HPV test, sangue occulto, urinocoltura, beta-hCG, celiachia): bozze, da far rivedere al medico come le altre. Le pagine del Ministero sugli screening non sono state lette in automatico: età e intervalli vengono da ISS.
+- Cinque guide cliniche nuove del terzo giro (Pap test e HPV test, sangue occulto, urinocoltura, beta-hCG, celiachia) e sei del quarto (marcatori tumorali, fattore reumatoide e ANA, Helicobacter pylori, calprotectina fecale, radiografia del torace, ecografia della tiroide): bozze, da far rivedere al medico come le altre. La durata di ecografia della tiroide e radiografia del torace non viene dalle fonti lette. Le pagine del Ministero sugli screening non sono state lette in automatico: età e intervalli vengono da ISS.
 - Il nome di un referto caricato viene dalla data letta sul documento; se manca, «Esami caricati il …». Il riconoscimento del doppione guarda data e righe: due referti davvero diversi con stessa data e stessi valori verrebbero segnalati come uguali (solo un avviso, niente viene bloccato).
+- «Vedi nel documento» (quarto giro, punto 1) è provato con il tocco simulato, non su un telefono Android vero.
 - Pagina di errore (`src/app/error.tsx`) e icona sulla schermata Home (`src/app/manifest.ts`) non sono provate su un dispositivo reale; dati strutturati e immagini di condivisione vanno provati con gli strumenti di Google e con WhatsApp quando il sito sarà online.
 - Le cinque guide pratiche vanno rilette dal titolare; «Fotografare un referto» non ha fonte esterna.
 - La pagina Prezzi mostra ancora la scheda «Cura Privata Famiglia, 39 €/anno, in proposta»: decisione di Simone.

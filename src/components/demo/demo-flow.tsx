@@ -207,18 +207,21 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
             </div>
           </div>
 
-          <div className="mt-10 flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <button type="button" className="btn btn-ghost" onClick={() => goTo(0)}>
-              <ArrowLeft aria-hidden className="h-5 w-5" /> Torna al documento
-            </button>
-            <div className="flex flex-col items-stretch gap-2.5 sm:items-end">
-              <button type="button" className="btn btn-primary btn-lg" disabled={confirmed.length === 0} onClick={generate} aria-describedby="hint-genera">
+          {/* Quarto giro, punto 7: sotto i 1024 px il comando resta attaccato al fondo dello schermo, come nell'area personale.
+              Prima stava dopo tutte le voci e tutto il documento, e il pulsante «torna su» ne copriva la freccia. */}
+          {/* «contents» sotto i 1024 px: la barra diventa figlia diretta della sezione, così resta attaccata in basso finché la sezione è in vista. */}
+          <div className="max-lg:contents lg:mt-10 lg:flex lg:flex-row-reverse lg:items-center lg:justify-between lg:gap-3 lg:border-t lg:border-line lg:pt-6">
+            <div className="step-bar step-bar-free mt-10 flex flex-col items-stretch gap-2.5 lg:mt-0 lg:items-end">
+              <button type="button" className="btn btn-primary btn-lg max-lg:w-full" disabled={confirmed.length === 0} onClick={generate} aria-describedby="hint-genera">
                 Genera la spiegazione <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </button>
-              <p id="hint-genera" className="text-center text-base text-muted sm:text-right">
+              <p id="hint-genera" className="text-center text-base text-muted lg:text-right">
                 {confirmed.length === 0 ? "Conferma almeno un valore per continuare." : "Nessun dato lascia questa demo: è tutto inventato."}
               </p>
             </div>
+            <button type="button" className="btn btn-ghost max-lg:mt-4 max-lg:w-full" onClick={() => goTo(0)}>
+              <ArrowLeft aria-hidden className="h-5 w-5" /> Torna al documento
+            </button>
           </div>
         </section>
       ) : null}
@@ -331,7 +334,12 @@ export function DemoFlow({ vetrina = false, startHref = "/area-personale/nuovo" 
                   )}
                 </div>
                 <div className="lg:max-w-[24rem] xl:max-w-[36rem]">
-                  <p className="text-[1.0625rem] text-ink-soft">Il servizio per i referti reali non è ancora attivo: stiamo completando le verifiche cliniche, legali e di sicurezza.</p>
+                  <p className="text-[1.0625rem] text-ink-soft">
+                    {/* Quarto giro, punto 8: prima «il servizio non è attivo» stava proprio sopra «Carica un referto». */}
+                    {vetrina
+                      ? "Il servizio per i referti reali non è ancora attivo: stiamo completando le verifiche cliniche, legali e di sicurezza."
+                      : "Puoi già provare tutto il percorso nell'area personale, con referti inventati: caricamento, controllo dei valori, report e PDF. I referti veri si potranno caricare dopo le verifiche cliniche, legali e di sicurezza."}
+                  </p>
                   {vetrina ? null : (
                     <div className="mt-5 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
                       <Link href={startHref} className="btn btn-primary btn-lg max-sm:px-4 sm:whitespace-nowrap">

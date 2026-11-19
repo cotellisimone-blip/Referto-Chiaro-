@@ -25,12 +25,12 @@
     {
       "id": "obs-01",
       "nameExact": "Leucociti",
-      "reason": "Valore non leggibile con sufficiente affidabilità."
+      "reason": "Non leggibile sul documento: controllalo sull'originale."
     },
     {
       "id": "obs-02",
       "nameExact": "Piastrine",
-      "reason": "Valore non leggibile con sufficiente affidabilità."
+      "reason": "Non leggibile sul documento: controllalo sull'originale."
     }
   ],
   "questionsForDoctor": [

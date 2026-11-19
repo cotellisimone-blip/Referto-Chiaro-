@@ -116,8 +116,9 @@ export function WaitlistForm({ interest, afterTrial = false, compact = false, de
     <form onSubmit={submit} noValidate className={compact ? "space-y-5" : "card space-y-5 p-6 sm:p-8"} aria-label="Lista d'attesa">
       <p className="text-[1.0625rem] text-ink-soft">
         {compact
-          ? "Solo la tua email: nessuna email in questa versione dimostrativa, nessun impegno. Non inserire dati sanitari."
-          : "Lascia la tua email per manifestare interesse. In questa versione dimostrativa non inviamo email e l'iscrizione non è vincolante. Non inserire dati sanitari."}
+          ? // Quarto giro, punto 8: prima diceva «Solo la tua email: nessuna email…» anche sopra il campo del CAP.
+            `${capMode ? "Email e CAP" : "Solo l'email"}, nessun impegno. In questa versione di prova non ti scriviamo ancora. Non inserire dati sulla salute.`
+          : `Lascia ${capMode ? "email e CAP" : "la tua email"} per dirci che ti interessa: non è un impegno. In questa versione di prova non ti scriviamo ancora. Non inserire dati sulla salute.`}
       </p>
       <div>
         <label htmlFor={`${uid}-email`} className="field-label">

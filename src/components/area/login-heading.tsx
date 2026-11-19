@@ -1,6 +1,3 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/ui/page-header";
 
 /**
@@ -27,9 +24,4 @@ const DEFAULT = {
 export function LoginHeadingStatic({ vetrina, next }: { vetrina: boolean; next?: string | null }) {
   const m = (next && MOTIVI[next]) || DEFAULT;
   return <PageHeader compact eyebrow={m.eyebrow} title={m.title} lead={vetrina ? m.leadVetrina : m.lead} />;
-}
-
-export function LoginHeading({ vetrina }: { vetrina: boolean }) {
-  const next = useSearchParams().get("next");
-  return <LoginHeadingStatic vetrina={vetrina} next={next} />;
 }

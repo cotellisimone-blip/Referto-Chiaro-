@@ -33,15 +33,29 @@ export function TableOfContents({ items }: { items: { id: string; label: string 
   useEffect(() => {
     const els = items.map((i) => document.getElementById(i.id)).filter((e): e is HTMLElement => Boolean(e));
     if (!els.length) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible[0]) setActive(visible[0].target.id);
-      },
-      { rootMargin: "-20% 0px -65% 0px", threshold: [0, 1] },
-    );
-    els.forEach((e) => io.observe(e));
-    return () => io.disconnect();
+    // Quarto giro, punto 10: prima un IntersectionObserver accendeva solo i titoli che passavano nella fascia alta dello
+    // schermo. Tornando in cima restava acceso l'ultimo, e l'ultimo capitolo (corto) in fondo non si accendeva mai.
+    // Ora: il capitolo acceso è l'ultimo il cui titolo è salito sopra il 30% dello schermo; in cima il primo, in fondo l'ultimo.
+    let raf = 0;
+    const update = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+        if (atBottom) return setActive(els[els.length - 1].id);
+        const line = window.innerHeight * 0.3;
+        let current = els[0].id;
+        for (const el of els) if (el.getBoundingClientRect().top <= line) current = el.id;
+        setActive(current);
+      });
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
   }, [items]);
   return (
     <nav aria-label="In questa pagina" className="no-print">

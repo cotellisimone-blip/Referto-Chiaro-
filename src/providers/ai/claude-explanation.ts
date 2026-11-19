@@ -1,3 +1,4 @@
+import { UNCONFIRMED_REASON, UNREADABLE_REASON } from "@/domain/reporting/esclusi";
 import { z } from "zod";
 import { isReadable, type Observation } from "@/domain/extraction/schema";
 import { parseLocaleNumber } from "@/domain/extraction/numbers";
@@ -51,12 +52,13 @@ function prepare(input: VerifiedExtraction) {
   const ready: Prepared[] = [];
   const excluded: Explanation["excludedObservations"] = [];
   for (const o of input.document.observations) {
-    if (!confirmed.has(o.id)) {
-      excluded.push({ id: o.id, nameExact: o.nameRaw, reason: "Non confermato durante il controllo dei valori." });
+    // Quarto giro, punto 2: prima la leggibilità. Un valore illeggibile non si può confermare, quindi «non confermato» era un motivo sbagliato.
+    if (!isReadable(o) || o.valueRaw === null) {
+      excluded.push({ id: o.id, nameExact: o.nameRaw, reason: UNREADABLE_REASON });
       continue;
     }
-    if (!isReadable(o) || o.valueRaw === null) {
-      excluded.push({ id: o.id, nameExact: o.nameRaw, reason: "Valore non leggibile con sufficiente affidabilità." });
+    if (!confirmed.has(o.id)) {
+      excluded.push({ id: o.id, nameExact: o.nameRaw, reason: UNCONFIRMED_REASON });
       continue;
     }
     const num = parseLocaleNumber(o.valueRaw);

@@ -37,7 +37,7 @@ const QUALIFIERS = new Set([
   "alto", "alta", "alti", "alte", "basso", "bassa", "bassi", "basse", "elevato", "elevata", "elevati", "elevate", "aumentato", "aumentata", "aumentati",
   "diminuito", "diminuita", "diminuiti", "sballato", "sballata", "sballati", "fuori", "norma", "normale", "normali", "troppo", "poco", "molto",
   "valore", "valori", "esame", "esami", "analisi", "risultato", "risultati", "referto", "significa", "significato", "vuol", "dire", "cosa", "che", "cos",
-  "il", "lo", "la", "i", "gli", "le", "un", "una", "di", "del", "dello", "della", "dei", "degli", "delle", "nel", "nella", "nei", "al", "alla", "e", "a", "per", "con", "mio", "mia", "miei", "ho", "e'",
+  "il", "lo", "la", "i", "gli", "le", "un", "una", "di", "del", "dello", "della", "dei", "degli", "delle", "nel", "nella", "nei", "nelle", "negli", "nello", "sul", "sulla", "sui", "sulle", "in", "al", "alla", "e", "a", "per", "con", "mio", "mia", "miei", "ho", "e'",
 ]);
 
 /** La ricerca senza le parole di contorno («glicemia alta» → «glicemia»). Vuota se resterebbe niente. */
@@ -46,6 +46,21 @@ export function stripQualifiers(query: string): string {
     .split(" ")
     .filter((w) => w && !QUALIFIERS.has(w))
     .join(" ");
+}
+
+/**
+ * Quarto giro, punto 3: una sigla corta (fino a 3 lettere) vale solo come parola intera nei sinonimi e nel contesto. Prima «ana» si trovava dentro
+ * «emocromo… analisi», «tas» dentro «potassio», «moc» dentro «omocisteina», «ast» dentro «gastroscopia».
+ */
+/** Come `startsWith`, ma una sigla corta deve finire dove finisce una parola: «ana» non è l'inizio di «analisi». */
+export function startsWithTerm(text: string, q: string): boolean {
+  if (!text.startsWith(q)) return false;
+  return q.length > 3 || text.length === q.length || !/[a-z]/.test(text[q.length]);
+}
+
+export function containsTerm(text: string, word: string): boolean {
+  if (word.length > 3) return text.includes(word);
+  return text.split(/[\s-]+/).includes(word);
 }
 
 /** Distanza di modifica con scambio di lettere vicine («emocrmo» → «emocromo» vale 1), fermata oltre `max`. */
@@ -78,7 +93,7 @@ function tolerance(word: string) {
 export interface SearchOutcome {
   items: SearchItem[];
   /** "esatta": la ricerca così com'è. "senza-aggettivi": tolte parole come «alta» o «basso». "simile": corretto un errore di battitura. */
-  mode: "esatta" | "senza-aggettivi" | "simile";
+  mode: "esatta" | "senza-aggettivi" | "parziale" | "simile";
   /** Le parole effettivamente cercate, quando non sono quelle scritte. */
   used?: string;
 }
@@ -97,6 +112,10 @@ export function searchSite(index: SearchItem[], query: string, limit = 12): Sear
     const again = searchIndex(index, stripped, limit);
     if (again.length) return { items: again, mode: "senza-aggettivi", used: stripped };
   }
+  // Quarto giro, punto 3: due parole che non stanno nella stessa voce («leucociti urine»). Prima: nessun risultato.
+  // Ora le voci che contengono il maggior numero di quelle parole, con le guide davanti.
+  const partial = searchPartial(index, kept, limit);
+  if (partial.length) return { items: partial, mode: "parziale", used: kept.join(" ") };
   const words = (kept.length ? kept : q.split(" ")).filter((w) => tolerance(w) > 0);
   if (!words.length) return { items: [], mode: "esatta" };
   const scored: { item: SearchItem; score: number }[] = [];
@@ -143,6 +162,26 @@ export function searchSite(index: SearchItem[], query: string, limit = 12): Sear
   return items.length ? { items, mode: "simile", used: best } : { items: [], mode: "esatta" };
 }
 
+/** Le voci che contengono almeno una delle parole (titolo o sinonimi), ordinate per quante ne contengono. Solo con 2+ parole. */
+function searchPartial(index: SearchItem[], words: string[], limit: number): SearchItem[] {
+  const ws = words.filter((w) => w.length >= 3);
+  if (ws.length < 2) return [];
+  const scored: { item: SearchItem; score: number }[] = [];
+  for (const item of index) {
+    const title = normalizeQuery(item.title);
+    const texts = [title, ...item.aliases.map(normalizeQuery)];
+    const hits = ws.filter((w) => texts.some((t) => containsTerm(t, w))).length;
+    // Almeno una parola nel titolo: «fattore reumatoide» non deve portare a Fibrinogeno solo perché un sinonimo è «fattore I».
+    if (!hits || !ws.some((w) => containsTerm(title, w))) continue;
+    const score = hits * 10 + (item.kind === "guida" ? 5 : item.kind === "pagina" ? -1 : 0) - Math.min(item.title.length, 60) / 100;
+    scored.push({ item, score });
+  }
+  return scored
+    .sort((a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title, "it"))
+    .slice(0, limit)
+    .map((s) => s.item);
+}
+
 /**
  * Ricerca con punteggio: titolo che inizia con la query > sinonimo che inizia > contiene nel titolo > contiene nei sinonimi > contiene nel contesto.
  * Le guide pesano un po' di più dei termini a parità di corrispondenza; le pagine un po' meno.
@@ -151,28 +190,36 @@ export function searchIndex(index: SearchItem[], query: string, limit = 12): Sea
   const q = normalizeQuery(query);
   if (q.length < 1) return [];
   const words = q.split(" ");
-  const scored: { item: SearchItem; score: number }[] = [];
+  const scored: { item: SearchItem; score: number; exact: boolean; loose: boolean }[] = [];
   for (const item of index) {
     const title = normalizeQuery(item.title);
     const aliases = item.aliases.map(normalizeQuery);
     const context = normalizeQuery(item.context);
     let score = 0;
     if (title === q) score = 100;
-    else if (title.startsWith(q)) score = 80;
+    else if (title.startsWith(q)) score = 80; // chi sta scrivendo («glic», «emo») deve vedere i titoli che iniziano così
     else if (aliases.some((a) => a === q)) score = 75;
-    else if (aliases.some((a) => a.startsWith(q))) score = 60;
+    else if (aliases.some((a) => startsWithTerm(a, q))) score = 60;
     else if (title.split(" ").some((w) => w.startsWith(q))) score = 55;
-    else if (words.every((w) => title.includes(w))) score = 40;
-    else if (words.every((w) => aliases.some((a) => a.includes(w)))) score = 30;
-    else if (q.length >= 3 && words.every((w) => context.includes(w))) score = 12;
+    else if (words.every((w) => containsTerm(title, w))) score = 40;
+    else if (words.every((w) => aliases.some((a) => containsTerm(a, w)))) score = 30;
+    else if (q.length >= 3 && words.every((w) => containsTerm(context, w))) score = 12;
     if (!score) continue;
+    // «Esatta»: la voce si chiama proprio così. «Larga»: inizia solo con le stesse lettere («ana» in «analitico»).
+    const exact = score === 100 || score === 75;
+    const loose =
+      (score === 80 && !startsWithTerm(title, q)) ||
+      (score === 55 && !title.split(" ").some((w) => startsWithTerm(w, q)));
     if (item.kind === "guida") score += 25; // la guida è più ricca della voce di glossario: a parità vince
     if (item.kind === "pagina") score -= 2;
     // A parità, i titoli brevi (sigle) vincono: chi scrive «tsh» vuole TSH, non «Anticorpi anti-TSH».
     score -= Math.min(title.length, 60) / 100;
-    scored.push({ item, score });
+    scored.push({ item, score, exact, loose });
   }
+  // Una sigla corta che esiste («ANA», «PCR») non si porta dietro le parole che iniziano allo stesso modo.
+  const siglaEsatta = q.length <= 3 && scored.some((x) => x.exact);
   return scored
+    .filter((x) => !(siglaEsatta && x.loose))
     .sort((a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title, "it"))
     .slice(0, limit)
     .map((s) => s.item);

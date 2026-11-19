@@ -69,7 +69,7 @@ test.describe("ciclo 5 · colpo d'occhio e percorso", () => {
     await page.getByRole("button", { name: /Paga .* e ricevi il report/ }).click();
     await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
 
-    const cards = page.getByTestId("valori-colpo-occhio").getByRole("listitem");
+    const cards = page.getByTestId("valori-colpo-occhio").locator(":scope > li"); // quarto giro: in una scheda ora può esserci l'elenco delle volte precedenti
     await expect(cards).toHaveCount(5, { timeout: 20_000 });
     const first = cards.first();
     await expect(first).toContainText("Colesterolo LDL");
@@ -108,6 +108,8 @@ test.describe("ciclo 5 · colpo d'occhio e percorso", () => {
     await page.goto(page.url().split("?")[0]);
     await expect(page.getByTestId("colpo-occhio")).toBeVisible({ timeout: 20_000 });
     const screens = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    expect(screens).toBeLessThan(6);
+    // Quarto giro, punto 6: l'account demo ha anche il referto di maggio, quindi la scheda aperta mostra «Nei tuoi referti
+    // precedenti» (circa 180 px in più). Il limite passa da 6 a 6,5 schermate.
+    expect(screens).toBeLessThan(6.5);
   });
 });

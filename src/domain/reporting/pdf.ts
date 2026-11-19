@@ -114,9 +114,9 @@ function formatDateIt(iso: string): string {
 
 /** Pillola di testo (es. stato DEMO) con sfondo. */
 function pill(page: PDFPage, x: number, y: number, label: string, font: PDFFont, bg: ReturnType<typeof rgb>, fg: ReturnType<typeof rgb>) {
-  const size = 9;
+  const size = 10.5; // quarto giro, punto 5: nessuna scritta sotto i 10,5 punti
   const w = font.widthOfTextAtSize(label, size) + 16;
-  page.drawRectangle({ x, y: y - 6, width: w, height: 18, color: bg, borderWidth: 0 });
+  page.drawRectangle({ x, y: y - 6.5, width: w, height: 20, color: bg, borderWidth: 0 });
   page.drawText(label, { x: x + 8, y, size, font, color: fg });
   return w;
 }
@@ -131,6 +131,7 @@ export async function renderReportPdf(args: {
   pdf.setTitle(toWinAnsi(`Cura Privata — Capisci il tuo referto — ${doc.isSynthetic ? "ESEMPIO DEMO" : "Report"}`));
   pdf.setAuthor("Cura Privata");
   pdf.setSubject("Spiegazione informativa, non clinica");
+  pdf.setKeywords([toWinAnsi(args.explanation.modelAndPromptVersion)]);
   pdf.setProducer("Cura Privata");
   pdf.setCreationDate(new Date(generatedAt));
 
@@ -175,7 +176,7 @@ export async function renderReportPdf(args: {
   ctx.page.drawText("Privata", { x: M + 32 + serif.widthOfTextAtSize("Cura ", 15), y: A4.h - M - 20, size: 15, font: serif, color: MINT });
   if (ctx.demo) {
     const demoLabel = toWinAnsi("ESEMPIO DIMOSTRATIVO · DATI SINTETICI");
-    pill(ctx.page, A4.w - M - (sansBold.widthOfTextAtSize(demoLabel, 9) + 16), A4.h - M - 19, demoLabel, sansBold, CREAM, INK);
+    pill(ctx.page, A4.w - M - (sansBold.widthOfTextAtSize(demoLabel, 10.5) + 16), A4.h - M - 19, demoLabel, sansBold, CREAM, INK);
   }
   // Titolo su una riga: «in parole semplici» ha la traccia di menta, la firma visiva del sito.
   const t1 = "Il tuo referto, ";
@@ -196,10 +197,11 @@ export async function renderReportPdf(args: {
   meta.forEach(([k, v], i) => {
     const x = M + fractions.slice(0, i).reduce((a, f) => a + f * CONTENT_W, 0);
     const colW = fractions[i] * CONTENT_W;
-    ctx.page.drawText(toWinAnsi(k.toUpperCase()), { x, y: mY - 8, size: 8.5, font: sansBold, color: MIST, opacity: 0.85 });
+    // Etichette in tondo (non in maiuscolo): a 10,5 punti stanno nella colonna e si leggono meglio.
+    ctx.page.drawText(toWinAnsi(k), { x, y: mY - 8, size: 10.5, font: sansBold, color: MIST, opacity: 0.9 });
     wrap(v, sans, 10.5, colW - 10)
       .slice(0, 2)
-      .forEach((l, li) => ctx.page.drawText(l, { x, y: mY - 23 - li * 13, size: 10.5, font: sans, color: WHITE }));
+      .forEach((l, li) => ctx.page.drawText(l, { x, y: mY - 24 - li * 13, size: 10.5, font: sans, color: WHITE }));
   });
   ctx.y = A4.h - coverH - 22;
 
@@ -220,7 +222,7 @@ export async function renderReportPdf(args: {
     const boxH = 36 + headline.length * 19 + (watchLines.length ? 6 + watchLines.length * 16 : 0) + 10 + noteLines.length * 14;
     ctx.page.drawRectangle({ x: M, y: ctx.y - boxH, width: CONTENT_W, height: boxH, color: MIST, borderColor: LINE, borderWidth: 0.6 });
     ctx.page.drawRectangle({ x: M, y: ctx.y - boxH, width: 4, height: boxH, color: TEAL });
-    ctx.page.drawText("A COLPO D'OCCHIO", { x: M + 22, y: ctx.y - 21, size: 9, font: sansBold, color: SAGE_DEEP });
+    ctx.page.drawText("A COLPO D'OCCHIO", { x: M + 22, y: ctx.y - 21, size: 10.5, font: sansBold, color: SAGE_DEEP });
     let sy = ctx.y - 43;
     for (const l of headline) {
       ctx.page.drawText(l, { x: M + 22, y: sy, size: 14, font: sansBold, color: INK });
@@ -300,15 +302,15 @@ export async function renderReportPdf(args: {
   heading(ctx, 2, "Domande da portare al medico");
   exp.questionsForDoctor.forEach((q, i) => {
     ensure(ctx, 30);
-    ctx.page.drawCircle({ x: M + 8, y: ctx.y - 7.5, size: 8, color: TEAL });
+    ctx.page.drawCircle({ x: M + 8, y: ctx.y - 7.5, size: 8.5, color: TEAL });
     const num = String(i + 1);
-    ctx.page.drawText(num, { x: M + 8 - sansBold.widthOfTextAtSize(num, 10) / 2, y: ctx.y - 11, size: 10, font: sansBold, color: WHITE });
+    ctx.page.drawText(num, { x: M + 8 - sansBold.widthOfTextAtSize(num, 10.5) / 2, y: ctx.y - 11.2, size: 10.5, font: sansBold, color: WHITE });
     text(ctx, q, { indent: 26, gap: 3, lh: 15 });
   });
   // Se in fondo alla prima pagina resta posto, qualche riga per gli appunti presi in visita.
   if (pdf.getPageCount() === 1 && ctx.y - (M + 16) >= 70) {
     ctx.y -= 10;
-    ctx.page.drawText("APPUNTI DELLA VISITA", { x: M, y: ctx.y - 9, size: 9, font: sansBold, color: MUTED });
+    ctx.page.drawText("APPUNTI DELLA VISITA", { x: M, y: ctx.y - 9, size: 10.5, font: sansBold, color: MUTED });
     ctx.y -= 12;
     const rows = Math.min(6, Math.floor((ctx.y - (M + 16)) / 24));
     for (let r = 0; r < rows; r++) {
@@ -370,15 +372,15 @@ export async function renderReportPdf(args: {
     }
     p.drawLine({ start: { x: M, y: M }, end: { x: A4.w - M, y: M }, thickness: 0.5, color: LINE });
     const label = `Pagina ${i + 1} di ${pages.length}`;
-    const labelW = sans.widthOfTextAtSize(label, 9);
-    // La sigla tecnica della versione va a capo, se serve: il piè di pagina non scende sotto i 9 punti.
-    wrap(`Generato il ${formatDateIt(generatedAt)} · Strumento informativo, non una diagnosi${ctx.demo ? " · DEMO" : ""} · ${exp.modelAndPromptVersion}`, sans, 9, CONTENT_W - labelW - 16)
+    const labelW = sans.widthOfTextAtSize(label, 10.5);
+    // Quarto giro, punto 5: piè di pagina a 10,5 punti e senza la sigla tecnica della versione (sta nei metadati del file).
+    wrap(`Generato il ${formatDateIt(generatedAt)} · Strumento informativo, non una diagnosi${ctx.demo ? " · DEMO" : ""}`, sans, 10.5, CONTENT_W - labelW - 16)
       .slice(0, 2)
-      .forEach((l, li) => p.drawText(l, { x: M, y: M - 15 - li * 11.5, size: 9, font: sans, color: MUTED }));
-    p.drawText(label, { x: A4.w - M - labelW, y: M - 15, size: 9, font: sans, color: MUTED });
+      .forEach((l, li) => p.drawText(l, { x: M, y: M - 16 - li * 13, size: 10.5, font: sans, color: MUTED }));
+    p.drawText(label, { x: A4.w - M - labelW, y: M - 16, size: 10.5, font: sans, color: MUTED });
     if (i > 0) {
       drawMark(p, M - 2, A4.h - M + 10, 0.32);
-      p.drawText("Cura Privata · Capisci il tuo referto", { x: M + 20, y: A4.h - M + 2, size: 10, font: serif, color: MUTED });
+      p.drawText("Cura Privata · Capisci il tuo referto", { x: M + 20, y: A4.h - M + 2, size: 10.5, font: serif, color: MUTED });
       ctx.y = Math.min(ctx.y, A4.h - M);
     }
   });

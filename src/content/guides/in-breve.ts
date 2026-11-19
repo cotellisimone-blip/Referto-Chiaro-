@@ -296,4 +296,23 @@ export const IN_BREVE: Record<string, InBreve> = {
     what: "La colonscopia permette di osservare direttamente la superficie interna del retto e del colon.",
     when: "Con sintomi intestinali, per controlli nel tempo o nell'ambito dei programmi di screening.",
   },
+  // Quarto giro, punto 4.
+  "marcatori-tumorali": {
+    when: "Soprattutto per seguire nel tempo una malattia già nota e i controlli dopo le cure.",
+  },
+  "fattore-reumatoide-e-ana": {
+    when: "Con dolori o gonfiore alle articolazioni, stanchezza che dura, febbre o eruzioni della pelle.",
+  },
+  "helicobacter-pylori": {
+    when: "Con bruciore o dolore nella parte alta della pancia, con ulcere e per controllo dopo una cura.",
+  },
+  "calprotectina-fecale": {
+    when: "Con diarrea o dolore alla pancia che durano, e per seguire una malattia infiammatoria già nota.",
+  },
+  "radiografia-del-torace": {
+    when: "Con tosse che dura, febbre e fatica a respirare, dolore al torace, o prima di un intervento.",
+  },
+  "ecografia-della-tiroide": {
+    when: "Quando alla visita si sente un nodulo o una tiroide ingrossata, o per seguire noduli già noti.",
+  },
 };

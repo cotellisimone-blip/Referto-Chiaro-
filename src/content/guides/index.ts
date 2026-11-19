@@ -14,6 +14,7 @@ import { GUIDE_IMMAGINI } from "./categorie/immagini";
 import { GUIDE_CUORE_E_FUNZIONALI } from "./categorie/cuore-e-funzionali";
 import { GUIDE_ENDOSCOPIE } from "./categorie/endoscopie";
 import { GUIDE_SCREENING_E_ALTRI } from "./categorie/screening-e-altri";
+import { GUIDE_CERCATI_GIRO_4 } from "./categorie/cercati-giro-4";
 
 /** Tutte le guide, in ordine di categoria. Ogni file di categoria è indipendente. */
 export const GUIDES: Guide[] = [
@@ -32,6 +33,7 @@ export const GUIDES: Guide[] = [
   ...GUIDE_CUORE_E_FUNZIONALI,
   ...GUIDE_ENDOSCOPIE,
   ...GUIDE_SCREENING_E_ALTRI,
+  ...GUIDE_CERCATI_GIRO_4,
 ];
 
 export function getGuide(slug: string): Guide | null {

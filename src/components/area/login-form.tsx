@@ -62,7 +62,7 @@ export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; ve
           <h2 id="demo-titolo" className="form-card-title mt-3">
             Entra con l&apos;account demo
           </h2>
-          <p className="form-card-text">Un account condiviso, con un referto inventato già caricato: provi l&apos;area personale dall&apos;inizio alla fine.</p>
+          <p className="form-card-text">Un account condiviso, con due referti inventati già caricati: provi l&apos;area personale dall&apos;inizio alla fine, anche «Nel tempo».</p>
           <button type="button" className="btn btn-primary btn-lg mt-6 w-full max-sm:px-4" onClick={enterDemo} disabled={demoBusy}>
             {demoBusy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <FlaskConical aria-hidden className="h-5 w-5" />}
             Entra con l&apos;account demo

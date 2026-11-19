@@ -58,7 +58,7 @@ test("punto 7 · «In breve» non ha frasi tagliate", async ({ page }) => {
 
 test("punto 8 · gli esami sono contati senza le guide pratiche e le unità hanno l'esponente", async ({ page }) => {
   await gotoReady(page, "/guide");
-  await expect(page.getByText(/^95 esami spiegati/)).toBeVisible();
+  await expect(page.getByText(/^101 esami spiegati/)).toBeVisible();
   await gotoReady(page, "/guide/globuli-rossi");
   const testo = await page.locator("main").innerText();
   expect(testo).toContain("10⁶/µL");
