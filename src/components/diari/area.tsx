@@ -605,7 +605,7 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
 
       {d.slug === "sonno" ? (
         <>
-          <div className="dra-nums">
+          <div className="dra-nums is-time">
             <label className="dra-num dra-num-small">
               <span>
                 A letto <small>luce spenta</small>
