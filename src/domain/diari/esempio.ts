@@ -2,7 +2,7 @@ import { addDays, type NuovaVoce } from "./voci";
 
 /**
  * Voci di esempio per l'account dimostrativo (21/11/2026): sei giorni di pressione, due settimane di glicemia, un
- * mese di diario del mal di testa. Numeri inventati, plausibili, senza storia clinica: servono a vedere medie,
+ * mese di diario del mal di testa; dal 22/11 anche sonno, peso e respiro. Numeri inventati, plausibili, senza storia clinica: servono a vedere medie,
  * grafico e foglio per il medico. Le date partono da `oggi` all'indietro.
  */
 export function vociEsempio(oggi: string): NuovaVoce[] {
@@ -49,5 +49,27 @@ export function vociEsempio(oggi: string): NuovaVoce[] {
     if (e) out.push({ diario: "cefalea", profileId: null, at: `${day}T${e.h}`, note: e.n, dati: { tipo: "episodio", intensita: e.i, durataOre: e.ore, sintomi: e.s, farmaco: e.f } });
     else if (d % 9 !== 0) out.push({ diario: "cefalea", profileId: null, at: `${day}T21:00`, note: null, dati: { tipo: "nessuno", intensita: null, durataOre: null, sintomi: [], farmaco: null } });
   }
+  // 22/11/2026: dodici notti, venti giorni di peso, dieci giorni di picco di flusso.
+  const S: [string, string, number, number, "male" | "cosi" | "bene", string | null][] = [
+    ["23:40", "06:50", 45, 3, "male", "Caffè dopo cena"], ["23:15", "06:45", 30, 2, "cosi", null], ["22:50", "06:40", 20, 1, "bene", null],
+    ["00:10", "07:00", 60, 3, "male", "Pensieri di lavoro"], ["23:20", "06:50", 25, 2, "cosi", null], ["23:00", "07:30", 15, 1, "bene", "Domenica"],
+    ["23:30", "06:45", 35, 2, "cosi", null], ["23:10", "06:40", 20, 1, "bene", null], ["23:45", "06:50", 40, 4, "male", "Pisolino nel pomeriggio"],
+    ["23:00", "06:45", 20, 2, "cosi", null], ["22:55", "06:40", 15, 1, "bene", null], ["23:15", "06:50", 25, 2, "cosi", null],
+  ];
+  S.forEach(([letto, piedi, add, ris, q, n], i) =>
+    out.push({ diario: "sonno", profileId: null, at: `${addDays(oggi, -(S.length - i))}T07:15`, note: n, dati: { aLetto: letto, inPiedi: piedi, addormentarsiMin: add, risvegli: ris, qualita: q } }),
+  );
+  const W = [74.2, 74.0, 74.1, 73.8, 73.9, 73.6, 73.7, 73.5, 73.6, 73.3, 73.4, 73.2, 73.4, 73.1, 73.0, 73.2, 72.9, 72.8, 72.9, 72.7];
+  W.forEach((kg, i) => out.push({ diario: "peso", profileId: null, at: `${addDays(oggi, -(W.length - i))}T07:20`, note: i === 0 ? "Bilancia nuova" : null, dati: { kg } }));
+  const R: [number, number, number][] = [
+    [410, 440, 0], [400, 430, 1], [380, 420, 2], [390, 430, 1], [420, 450, 0], [430, 450, 0], [420, 440, 0], [440, 460, 0], [430, 450, 0], [440, 460, 0],
+  ];
+  R.forEach(([m, sera, spray], i) => {
+    const day = addDays(oggi, -(R.length - i));
+    out.push(
+      { diario: "respiro", profileId: null, at: `${day}T07:40`, note: i === 2 ? "Raffreddore" : null, dati: { pef: m, momento: "mattina", spray: spray || null } },
+      { diario: "respiro", profileId: null, at: `${day}T20:30`, note: null, dati: { pef: sera, momento: "sera", spray: null } },
+    );
+  });
   return out;
 }

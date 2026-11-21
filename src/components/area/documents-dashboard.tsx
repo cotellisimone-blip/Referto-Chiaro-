@@ -15,6 +15,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { IllustrationDossier } from "@/components/brand/illustrations";
+import { DiariCruscotto } from "@/components/diari/cruscotto";
 import { api, formatDateTime } from "./api";
 import { StatusChip } from "./status-chip";
 import {
@@ -224,26 +225,30 @@ export function DocumentsDashboard() {
     );
 
   if (data.documents.length === 0) {
+    // 22/11/2026: anche senza referti, i diari restano in vista: si possono usare da soli.
     return (
-      <div className="card grain grid gap-8 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_0.7fr] lg:items-center">
-        <div>
-          <p className="eyebrow">Il tuo archivio</p>
-          <h1 className="area-title mt-3">Nessun referto, per ora.</h1>
-          <p className="area-lead">
-            Aggiungi un referto di esempio e segui il percorso completo:
-            lettura, controllo dei valori, spiegazione e PDF.
-          </p>
-          <Link
-            href="/area-personale/nuovo"
-            className="btn btn-primary btn-lg mt-6"
-          >
-            <FilePlus2 aria-hidden className="h-5 w-5" /> Aggiungi un referto
-          </Link>
+      <>
+        <div className="card grain grid gap-8 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_0.7fr] lg:items-center">
+          <div>
+            <p className="eyebrow">Il tuo archivio</p>
+            <h1 className="area-title mt-3">Nessun referto, per ora.</h1>
+            <p className="area-lead">
+              Aggiungi un referto di esempio e segui il percorso completo:
+              lettura, controllo dei valori, spiegazione e PDF.
+            </p>
+            <Link
+              href="/area-personale/nuovo"
+              className="btn btn-primary btn-lg mt-6"
+            >
+              <FilePlus2 aria-hidden className="h-5 w-5" /> Aggiungi un referto
+            </Link>
+          </div>
+          <div className="mx-auto w-full max-w-[300px]">
+            <IllustrationDossier />
+          </div>
         </div>
-        <div className="mx-auto w-full max-w-[300px]">
-          <IllustrationDossier />
-        </div>
-      </div>
+        <DiariCruscotto />
+      </>
     );
   }
 
@@ -465,6 +470,9 @@ export function DocumentsDashboard() {
         </div>
       </section>
 
+      {/* 22/11/2026: i diari della salute, nella pagina personale (scelta di Simone: non nella home pubblica). */}
+      <DiariCruscotto />
+
       {/* Elenco referti */}
       <h2 id="referti" className="area-h2 mt-12 scroll-mt-28">
         Tutti i referti
@@ -501,7 +509,8 @@ export function DocumentsDashboard() {
               </p>
               {d.twinOf ? (
                 <p className="twin-note mt-3" data-testid="doppione">
-                  Uguale a un referto che hai già: nei numeri nel tempo conta una volta sola.
+                  Uguale a un referto che hai già: nei numeri nel tempo conta
+                  una volta sola.
                 </p>
               ) : null}
               <div

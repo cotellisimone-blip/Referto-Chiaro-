@@ -37,7 +37,7 @@ export function DiariIndice() {
                 Misura bene a casa. <em><span>Il medico legge tutto in un minuto.</span></em>
               </h1>
               <p className="ht-lead">
-                Pressione, glicemia, mal di testa: per ognuno una guida in cinque passi per misurare bene, un diario da stampare e uno da compilare dal telefono. Le medie le
+                Pressione, glicemia, mal di testa, sonno, peso e respiro: per ognuno una guida in cinque passi per misurare bene, un diario da stampare e uno da compilare dal telefono. Le medie le
                 facciamo noi, il foglio per la visita anche.
               </p>
             </div>
@@ -49,7 +49,7 @@ export function DiariIndice() {
         <div className="ht-wrap">
           <div className="ht-sec-h">
             <p className="ht-kicker">Scegli il diario</p>
-            <h2 id="dr-scegli">Tre diari, per cominciare</h2>
+            <h2 id="dr-scegli">Sei diari, per cominciare</h2>
           </div>
           <ul className="dr-diari">
             {DIARI.map((d) => (

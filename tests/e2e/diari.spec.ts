@@ -12,10 +12,10 @@ async function entra(ctx: BrowserContext, tag: string) {
 const senzaScorrimentoLaterale = async (page: import("@playwright/test").Page) =>
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 
-test("pagine pubbliche: tre diari, cinque passi, il posto del video, le fonti", async ({ page }) => {
+test("pagine pubbliche: sei diari, cinque passi, il posto del video, le fonti", async ({ page }) => {
   await page.goto("/diari");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Misura bene a casa");
-  for (const s of ["pressione", "glicemia", "cefalea"]) await expect(page.getByTestId(`diario-${s}`)).toBeVisible();
+  for (const s of ["pressione", "glicemia", "cefalea", "sonno", "peso", "respiro"]) await expect(page.getByTestId(`diario-${s}`)).toBeVisible();
   await page.getByTestId("diario-pressione").click();
   await expect(page).toHaveURL(/\/diari\/pressione$/);
   await expect(page.locator(".dr-passo")).toHaveCount(5);
@@ -92,4 +92,47 @@ test("account demo: l'esempio riempie i tre diari, le schede mostrano le medie",
   await expect(page.getByTestId("card-pressione")).toContainText("/");
   await expect(page.getByTestId("card-cefalea")).toContainText("Giorni con mal di testa");
   await senzaScorrimentoLaterale(page);
+});
+
+test("sonno, peso e respiro: una voce ciascuno, in pochi tocchi", async ({ page, context }) => {
+  await entra(context, "n");
+  await page.goto("/area-personale/diari/sonno");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Sonno");
+  // Prima che la pagina sia pronta un campo riempito può tornare al valore iniziale: si aspetta il riepilogo.
+  await expect(page.getByTestId("riepilogo")).toBeVisible();
+  await page.getByTestId("a-letto").fill("23:30");
+  await page.getByTestId("in-piedi").fill("07:00");
+  await page.getByTestId("addormentarsi").fill("20");
+  await page.getByRole("group", { name: "Risvegli" }).getByRole("button", { name: "2" }).click();
+  await page.getByTestId("salva-voce").click();
+  await expect(page.getByTestId("nuova-voce").getByRole("alert")).toContainText("com'è andata");
+  await page.getByTestId("q-bene").click();
+  await page.getByTestId("salva-voce").click();
+  await expect(page.getByTestId("voce-salvata")).toContainText("7 h 30 min");
+  await expect(page.getByTestId("riepilogo")).toContainText("7 h 30 min");
+
+  await page.goto("/area-personale/diari/peso");
+  await expect(page.getByTestId("riepilogo")).toBeVisible();
+  await page.getByTestId("kg").fill("72,4");
+  await page.getByTestId("salva-voce").click();
+  await expect(page.getByTestId("voce-salvata")).toContainText("72,4 kg");
+
+  await page.goto("/area-personale/diari/respiro");
+  await expect(page.getByTestId("riepilogo")).toBeVisible();
+  await page.getByTestId("pef").fill("420");
+  await page.getByTestId("spray").fill("1");
+  await page.getByTestId("salva-voce").click();
+  await expect(page.getByTestId("voce-salvata")).toContainText("420 L/min");
+  await expect(page.getByTestId("riepilogo")).toContainText("Spray al bisogno");
+  const dl = page.waitForEvent("download");
+  await page.getByTestId("foglio-medico").click();
+  expect((await dl).suggestedFilename()).toMatch(/^foglio-per-il-medico-respiro-/);
+  await senzaScorrimentoLaterale(page);
+  await expectAccessible(page);
+
+  // La pagina personale mostra i sei diari, con l'ultima voce.
+  await page.goto("/area-personale");
+  const cr = page.getByTestId("diari-cruscotto");
+  await expect(cr.getByRole("link", { name: /Sonno/ })).toContainText("Ultima voce: oggi");
+  await expect(cr.getByRole("link", { name: /Glicemia/ })).toContainText("Comincia");
 });

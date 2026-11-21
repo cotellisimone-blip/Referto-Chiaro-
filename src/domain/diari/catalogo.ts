@@ -1,5 +1,5 @@
 /**
- * Diari della salute (21/11/2026): pressione, glicemia, mal di testa.
+ * Diari della salute (21/11/2026): pressione, glicemia, mal di testa. 22/11/2026: sonno, peso, respiro (picco di flusso).
  *
  * I moduli sono nostri. Seguono le indicazioni delle società scientifiche, che citiamo come fonte, ma non copiano i
  * loro diari (protetti da diritti). Il sito registra e riassume: non giudica i numeri, non dice mai di cambiare una
@@ -8,7 +8,7 @@
  * I testi sulla salute sono BOZZE: li rivede un medico prima della pubblicazione, e la pagina lo dice.
  */
 
-export type DiarioSlug = "pressione" | "glicemia" | "cefalea";
+export type DiarioSlug = "pressione" | "glicemia" | "cefalea" | "sonno" | "peso" | "respiro";
 
 export interface Passo {
   /** Chiave del disegno (src/components/diari/disegni.tsx). */
@@ -35,7 +35,7 @@ export interface Diario {
   perChi: string;
   /** Quando si compila, in una riga (la frequenza la decide il medico, salvo il protocollo standard della pressione). */
   quando: string;
-  tono: "mi" | "in" | "sc";
+  tono: "mi" | "in" | "sc" | "vi" | "al" | "es";
   icona: string;
   passi: Passo[];
   /** Che cosa contiene il diario (le colonne). */
@@ -278,6 +278,230 @@ export const DIARI: Diario[] = [
       },
     ],
     promemoria: { orari: ["21:00"], giorni: 30, testo: "Diario del mal di testa: oggi com'è andata?" },
+  },
+  {
+    slug: "sonno",
+    nome: "Sonno",
+    titolo: "Il diario del",
+    em: "sonno.",
+    lead: "Per chi dorme male da settimane. Ogni mattina, appena sveglio, un minuto: a che ora sei andato a letto, quando ti sei svegliato, com'è andata. Dopo due settimane il medico vede le tue notti, non solo il ricordo dell'ultima.",
+    perChi: "Per chi fa fatica ad addormentarsi, si sveglia spesso o si sente stanco al mattino, e ne vuole parlare con il medico.",
+    quando: "Ogni mattina, entro un'ora dal risveglio, per almeno 2 settimane prima della visita.",
+    tono: "vi",
+    icona: "luna",
+    passi: [
+      {
+        art: "s-mattino",
+        titolo: "Al mattino, appena sveglio",
+        testo: "Entro un'ora dal risveglio, quando la notte è ancora fresca nella memoria. Bastano un minuto e il telefono, o il foglio sul comodino.",
+      },
+      {
+        art: "s-orari",
+        titolo: "A letto e in piedi: due orari",
+        testo: "L'ora in cui hai spento la luce per dormire e quella in cui ti sei alzato. Non serve la precisione al minuto: va bene una stima.",
+      },
+      {
+        art: "s-addormentarsi",
+        titolo: "Quanto ci hai messo ad addormentarti",
+        testo: "Una stima in minuti, senza guardare l'orologio durante la notte: controllare l'ora rende più difficile riaddormentarsi.",
+      },
+      {
+        art: "s-risvegli",
+        titolo: "Quante volte ti sei svegliato",
+        testo: "Conta i risvegli che ricordi e scegli com'è andata: male, così così, bene. Pisolini, caffè o alcol della sera vanno nella nota.",
+      },
+      {
+        art: "s-settimane",
+        titolo: "Due settimane, anche le notti buone",
+        testo: "Le notti buone dicono al medico quanto quelle difficili. Il sito calcola le medie e prepara il foglio per la visita.",
+      },
+    ],
+    colonne: ["Notte (data del mattino)", "Ora in cui hai spento la luce", "Minuti per addormentarti", "Risvegli", "Ora in cui ti sei alzato", "Com'è andata", "Note: pisolini, caffè, alcol, farmaci"],
+    calcoli: [
+      "Il tempo medio passato a letto, notte per notte.",
+      "In media quanti minuti per addormentarti e quanti risvegli.",
+      "Quante notti sono andate bene, così così o male.",
+    ],
+    faq: [
+      {
+        d: "Non ricordo bene l'ora: scrivo lo stesso?",
+        r: "Sì. Il diario del sonno si basa su stime: conta di più compilarlo ogni mattina che essere precisi al minuto.",
+      },
+      {
+        d: "Ho un orologio che misura il sonno: serve il diario?",
+        r: "Può servire lo stesso, perché dice come hai vissuto tu la notte. Porta al medico tutti e due, se vuoi.",
+      },
+      {
+        d: "Prendo qualcosa per dormire: lo scrivo?",
+        r: "Sì, nella nota: il nome e l'ora. Le decisioni sui farmaci restano al tuo medico.",
+      },
+    ],
+    fonti: [
+      {
+        ente: "Carney CE e altri (gruppo di consenso)",
+        titolo: "The Consensus Sleep Diary: standardizing prospective sleep self-monitoring, Sleep 2012",
+        url: "https://academic.oup.com/sleep/article/35/2/287/2558991",
+      },
+      {
+        ente: "European Sleep Research Society (ESRS)",
+        titolo: "European Insomnia Guideline 2023, J Sleep Res 2023",
+        url: "https://onlinelibrary.wiley.com/doi/10.1111/jsr.14035",
+      },
+      {
+        ente: "Associazione Italiana di Medicina del Sonno (AIMS)",
+        titolo: "Materiali per i pazienti sul sonno e l'insonnia",
+        url: "https://www.sonnomed.it",
+      },
+    ],
+    promemoria: { orari: ["08:00"], giorni: 14, testo: "Diario del sonno: com'è andata la notte?" },
+  },
+  {
+    slug: "peso",
+    nome: "Peso",
+    titolo: "Il diario del",
+    em: "peso.",
+    lead: "Per chi deve pesarsi spesso su indicazione del medico. Conta la regolarità: stessa ora, stessa bilancia, stessi vestiti. Tu scrivi il numero, noi teniamo il conto e il grafico.",
+    perChi: "Per chi deve tenere d'occhio il peso su indicazione del medico: per il cuore, i reni, un percorso per dimagrire o dopo una malattia.",
+    quando: "Di solito ogni mattina, o quando te lo indica il medico: se ti ha dato regole precise, segui le sue.",
+    tono: "al",
+    icona: "bilancia",
+    passi: [
+      {
+        art: "w-mattino",
+        titolo: "Al mattino, dopo il bagno",
+        testo: "Appena alzato, dopo essere andato in bagno e prima di colazione. Sempre alla stessa ora, così i numeri si possono confrontare.",
+      },
+      {
+        art: "w-vestiti",
+        titolo: "Senza scarpe, con poco addosso",
+        testo: "Sempre gli stessi vestiti leggeri, o niente. Un maglione e le pantofole possono valere quasi un chilo.",
+      },
+      {
+        art: "w-bilancia",
+        titolo: "La stessa bilancia, su un pavimento duro",
+        testo: "Niente tappeti né moquette. Usa sempre la stessa bilancia: due bilance diverse danno numeri diversi.",
+      },
+      {
+        art: "w-fermo",
+        titolo: "Fermo, piedi al centro",
+        testo: "Aspetta che il numero si fermi. Se la bilancia mostra i decimali, scrivili: per alcune cure contano anche poche centinaia di grammi.",
+      },
+      {
+        art: "w-scrivi",
+        titolo: "Scrivi subito, anche i giorni uguali",
+        testo: "Il medico guarda come cambia il peso giorno dopo giorno. Il sito mette in fila i numeri e calcola le differenze, senza giudicarle.",
+      },
+    ],
+    colonne: ["Giorno", "Ora", "Peso in kg", "Note: gonfiore, fiato corto, cambi nella cura"],
+    calcoli: [
+      "Il primo e l'ultimo peso del periodo, e la differenza tra i due.",
+      "Il peso medio del periodo e quanti giorni hai segnato.",
+      "La differenza rispetto alla misura di tre giorni prima.",
+    ],
+    faq: [
+      {
+        d: "Il peso cambia da un giorno all'altro: perché?",
+        r: "Il peso oscilla anche per l'acqua e i pasti. Il diario serve proprio a far vedere al medico l'andamento: è lui a dirti che cosa guardare.",
+      },
+      {
+        d: "Il medico mi ha detto di chiamarlo se il peso sale in fretta: il sito mi avvisa?",
+        r: "No: il sito non conosce le tue indicazioni e non dà allarmi. Mostra le differenze tra i giorni, così le vedi subito; le regole restano quelle del tuo medico.",
+      },
+    ],
+    fonti: [
+      {
+        ente: "European Society of Cardiology (ESC)",
+        titolo: "2021 ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure, Eur Heart J 2021 (autocura e peso quotidiano)",
+        url: "https://academic.oup.com/eurheartj/article/42/36/3599/6358045",
+      },
+      {
+        ente: "Heart Failure Association dell'ESC",
+        titolo: "heartfailurematters.org: materiali per i pazienti sul controllo del peso",
+        url: "https://www.heartfailurematters.org",
+      },
+      {
+        ente: "Società Italiana dell'Obesità (SIO)",
+        titolo: "Materiali per i pazienti sul controllo del peso",
+        url: "https://www.sio-obesita.org",
+      },
+    ],
+    promemoria: { orari: ["07:30"], giorni: 30, testo: "Peso: dopo il bagno, prima di colazione." },
+  },
+  {
+    slug: "respiro",
+    nome: "Respiro",
+    titolo: "Il diario del",
+    em: "respiro.",
+    lead: "Per chi ha l'asma e usa il misuratore di picco di flusso. Tre soffi, scrivi il migliore, mattina e sera: in pochi giorni il medico vede come cambia il tuo respiro, anche quando stai bene.",
+    perChi: "Per chi ha l'asma e ha ricevuto dal medico un misuratore di picco di flusso (il tubo in cui si soffia).",
+    quando: "Di solito mattina e sera, per 2 settimane o nei periodi che indica il medico. Se hai un piano d'azione scritto, segui quello.",
+    tono: "es",
+    icona: "respiro",
+    passi: [
+      {
+        art: "r-piedi",
+        titolo: "In piedi, indicatore a zero",
+        testo: "Porta l'indicatore del misuratore a zero e tienilo in modo da non bloccarlo con le dita. Stai in piedi, o seduto ben dritto.",
+      },
+      {
+        art: "r-inspira",
+        titolo: "Un respiro profondo",
+        testo: "Riempi i polmoni il più possibile, poi chiudi bene le labbra intorno al boccaglio, senza mettere la lingua davanti.",
+      },
+      {
+        art: "r-soffia",
+        titolo: "Soffia forte e veloce",
+        testo: "Un colpo secco, il più forte e veloce che puoi, come per spegnere le candeline. Non serve soffiare a lungo.",
+      },
+      {
+        art: "r-tre",
+        titolo: "Tre volte, scrivi il migliore",
+        testo: "Rimetti l'indicatore a zero tra un soffio e l'altro. Scrivi solo il valore più alto dei tre, in litri al minuto.",
+      },
+      {
+        art: "r-momento",
+        titolo: "Mattina e sera, prima dei farmaci",
+        testo: "Di solito prima dei farmaci, se il medico non ti ha indicato altro. Se usi lo spray al bisogno, scrivi quante volte: al medico serve quanto il soffio.",
+      },
+    ],
+    colonne: ["Giorno", "Mattina: migliore dei 3 soffi (L/min)", "Sera: migliore dei 3 soffi (L/min)", "Spray al bisogno: quante volte", "Note: tosse, notte disturbata, raffreddore"],
+    calcoli: [
+      "La media del mattino e quella della sera.",
+      "Il valore più alto e il più basso del periodo.",
+      "In quanti giorni hai usato lo spray al bisogno, e quante volte in tutto.",
+    ],
+    faq: [
+      {
+        d: "Quale valore è giusto per me?",
+        r: "Dipende da te: età, altezza, il tuo miglior valore personale. Te lo dice il medico; il diario serve a fargli vedere i tuoi numeri.",
+      },
+      {
+        d: "Ho fiato corto e il valore è basso: che cosa faccio?",
+        r: "Segui il piano d'azione che ti ha dato il medico. Se fai fatica a respirare o a parlare, chiama subito il 112.",
+      },
+      {
+        d: "Il mio misuratore usa un'altra scala: va bene?",
+        r: "Usa sempre lo stesso misuratore e scrivi il numero come lo leggi. Se cambi apparecchio, scrivilo nella nota.",
+      },
+    ],
+    fonti: [
+      {
+        ente: "Global Initiative for Asthma (GINA)",
+        titolo: "Global Strategy for Asthma Management and Prevention, aggiornamento 2024",
+        url: "https://ginasthma.org",
+      },
+      {
+        ente: "Società Italiana di Pneumologia (SIP/IRS)",
+        titolo: "Materiali per i pazienti sull'asma e sul controllo a casa",
+        url: "https://www.sipirs.it",
+      },
+      {
+        ente: "NHS (Servizio sanitario inglese)",
+        titolo: "Peak flow test: come si fa la misura del picco di flusso",
+        url: "https://www.nhs.uk/conditions/peak-flow-test/",
+      },
+    ],
+    promemoria: { orari: ["07:30", "20:30"], giorni: 14, testo: "Picco di flusso: tre soffi, scrivi il migliore." },
   },
 ];
 

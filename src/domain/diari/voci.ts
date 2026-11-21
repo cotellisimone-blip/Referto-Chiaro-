@@ -28,6 +28,12 @@ export const INTENSITA_AIUTO: Record<Intensita, string> = {
 export const SINTOMI = { nausea: "Nausea", luce: "Fastidio per la luce", rumori: "Fastidio per i rumori", vista: "Disturbi della vista prima" } as const;
 export type Sintomo = keyof typeof SINTOMI;
 
+export const QUALITA_SONNO = { male: "Male", cosi: "Così così", bene: "Bene" } as const;
+export type QualitaSonno = keyof typeof QUALITA_SONNO;
+
+export const MOMENTI_RESPIRO = { mattina: "Mattina", sera: "Sera", altro: "Altro momento" } as const;
+export type MomentoRespiro = keyof typeof MOMENTI_RESPIRO;
+
 export interface DatiPressione {
   sys: number;
   dia: number;
@@ -45,10 +51,31 @@ export interface DatiCefalea {
   farmaco: string | null;
 }
 
+/** Una notte: `at` è il mattino in cui si compila; gli orari sono «HH:MM». */
+export interface DatiSonno {
+  aLetto: string;
+  inPiedi: string;
+  addormentarsiMin: number | null;
+  risvegli: number | null;
+  qualita: QualitaSonno;
+}
+export interface DatiPeso {
+  kg: number;
+}
+export interface DatiRespiro {
+  pef: number;
+  momento: MomentoRespiro;
+  /** Quante volte lo spray al bisogno dall'ultima voce (facoltativo). */
+  spray: number | null;
+}
+
 export type VoceDiario =
   | { id: string; profileId: string | null; diario: "pressione"; at: string; dati: DatiPressione; note: string | null; createdAt: string }
   | { id: string; profileId: string | null; diario: "glicemia"; at: string; dati: DatiGlicemia; note: string | null; createdAt: string }
-  | { id: string; profileId: string | null; diario: "cefalea"; at: string; dati: DatiCefalea; note: string | null; createdAt: string };
+  | { id: string; profileId: string | null; diario: "cefalea"; at: string; dati: DatiCefalea; note: string | null; createdAt: string }
+  | { id: string; profileId: string | null; diario: "sonno"; at: string; dati: DatiSonno; note: string | null; createdAt: string }
+  | { id: string; profileId: string | null; diario: "peso"; at: string; dati: DatiPeso; note: string | null; createdAt: string }
+  | { id: string; profileId: string | null; diario: "respiro"; at: string; dati: DatiRespiro; note: string | null; createdAt: string };
 
 /** «2026-11-21T07:32»: data e ora locali di chi misura (il mattino resta mattino anche in viaggio). */
 export const AT_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
@@ -66,7 +93,19 @@ export const LIMITI = {
   bpm: [25, 240],
   mgdl: [15, 700],
   durataOre: [0, 168],
+  addormentarsiMin: [0, 600],
+  risvegli: [0, 30],
+  kg: [20, 350],
+  pef: [50, 900],
+  spray: [0, 30],
 } as const;
+
+export const ORA_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+/** Minuti tra due orari, passando la mezzanotte se serve: 23:30 → 07:00 fa 450. */
+export function minutiTra(da: string, a: string): number {
+  const m = (h: string) => Number(h.slice(0, 2)) * 60 + Number(h.slice(3));
+  return (m(a) - m(da) + 1440) % 1440;
+}
 const msgNumero = "Controlla il numero: sembra un errore di battitura.";
 
 export const VoceInputSchema = z.discriminatedUnion("diario", [
@@ -112,6 +151,49 @@ export const VoceInputSchema = z.discriminatedUnion("diario", [
         .refine((d) => d.tipo === "nessuno" || d.intensita, "Scegli quanto era forte."),
     })
     .strict(),
+  z
+    .object({
+      diario: z.literal("sonno"),
+      ...base,
+      dati: z
+        .object({
+          aLetto: z.string().regex(ORA_RE, "Ora non valida."),
+          inPiedi: z.string().regex(ORA_RE, "Ora non valida."),
+          addormentarsiMin: z.number().int().min(LIMITI.addormentarsiMin[0]).max(LIMITI.addormentarsiMin[1], msgNumero).nullable().optional(),
+          risvegli: z.number().int().min(LIMITI.risvegli[0]).max(LIMITI.risvegli[1], msgNumero).nullable().optional(),
+          qualita: z.enum(Object.keys(QUALITA_SONNO) as [QualitaSonno, ...QualitaSonno[]]),
+        })
+        .strict()
+        .refine((d) => {
+          const t = minutiTra(d.aLetto, d.inPiedi);
+          return t >= 60 && t <= 18 * 60;
+        }, "Controlla i due orari: tra l'ora in cui sei andato a letto e quella in cui ti sei alzato ci sono meno di un'ora o più di 18."),
+    })
+    .strict(),
+  z
+    .object({
+      diario: z.literal("peso"),
+      ...base,
+      dati: z
+        .object({
+          kg: z.number().min(LIMITI.kg[0], msgNumero).max(LIMITI.kg[1], msgNumero),
+        })
+        .strict(),
+    })
+    .strict(),
+  z
+    .object({
+      diario: z.literal("respiro"),
+      ...base,
+      dati: z
+        .object({
+          pef: z.number().int().min(LIMITI.pef[0], msgNumero).max(LIMITI.pef[1], msgNumero),
+          momento: z.enum(Object.keys(MOMENTI_RESPIRO) as [MomentoRespiro, ...MomentoRespiro[]]),
+          spray: z.number().int().min(LIMITI.spray[0]).max(LIMITI.spray[1], msgNumero).nullable().optional(),
+        })
+        .strict(),
+    })
+    .strict(),
 ]);
 export type VoceInput = z.infer<typeof VoceInputSchema>;
 
@@ -123,6 +205,16 @@ export function normalizza(input: VoceInput): NuovaVoce {
   const profileId = input.profileId ?? null;
   if (input.diario === "pressione") return { diario: "pressione", at: input.at, profileId, note, dati: { sys: input.dati.sys, dia: input.dati.dia, bpm: input.dati.bpm ?? null } };
   if (input.diario === "glicemia") return { diario: "glicemia", at: input.at, profileId, note, dati: { mgdl: input.dati.mgdl, momento: input.dati.momento } };
+  if (input.diario === "sonno")
+    return {
+      diario: "sonno",
+      at: input.at,
+      profileId,
+      note,
+      dati: { aLetto: input.dati.aLetto, inPiedi: input.dati.inPiedi, addormentarsiMin: input.dati.addormentarsiMin ?? null, risvegli: input.dati.risvegli ?? null, qualita: input.dati.qualita },
+    };
+  if (input.diario === "peso") return { diario: "peso", at: input.at, profileId, note, dati: { kg: Math.round(input.dati.kg * 10) / 10 } };
+  if (input.diario === "respiro") return { diario: "respiro", at: input.at, profileId, note, dati: { pef: input.dati.pef, momento: input.dati.momento, spray: input.dati.spray ?? null } };
   const d = input.dati;
   const dati: DatiCefalea =
     d.tipo === "nessuno"
@@ -308,10 +400,152 @@ export function riepilogoCefalea(all: VoceDiario[], giorni = 30, oggi = nowAt().
   };
 }
 
+export interface RiepilogoSonno {
+  dal: string | null;
+  al: string | null;
+  notti: number;
+  /** Minuti medi a letto, dall'ora in cui si spegne la luce a quella in cui ci si alza. */
+  aLettoMin: number | null;
+  addormentarsiMin: number | null;
+  risvegli: number | null;
+  perQualita: Record<QualitaSonno, number>;
+  /** Orari medi (in «HH:MM») di quando si va a letto e ci si alza. */
+  oraLetto: string | null;
+  oraInPiedi: string | null;
+}
+
+/** Media di orari attorno alla mezzanotte: 23:30 e 00:30 fanno 00:00, non 12:00. */
+function oraMedia(ore: string[], perno: number): string | null {
+  if (!ore.length) return null;
+  const m = ore.map((h) => (Number(h.slice(0, 2)) * 60 + Number(h.slice(3)) - perno + 1440) % 1440);
+  const avg = (Math.round(m.reduce((a, b) => a + b, 0) / m.length) + perno) % 1440;
+  return `${String(Math.floor(avg / 60)).padStart(2, "0")}:${String(avg % 60).padStart(2, "0")}`;
+}
+
+export function riepilogoSonno(all: VoceDiario[], giorni = 14, oggi = nowAt().slice(0, 10)): RiepilogoSonno {
+  const xs = ordina(periodo(all.filter((x): x is Voce<"sonno"> => x.diario === "sonno"), giorni, oggi));
+  const perQualita: Record<QualitaSonno, number> = { male: 0, cosi: 0, bene: 0 };
+  for (const x of xs) perQualita[x.dati.qualita]++;
+  const nn = <T,>(v: (T | null)[]) => v.filter((n): n is T => n !== null);
+  return {
+    dal: xs[0] ? dayOf(xs[0].at) : null,
+    al: xs.length ? dayOf(xs[xs.length - 1].at) : null,
+    notti: xs.length,
+    aLettoMin: media(xs.map((x) => minutiTra(x.dati.aLetto, x.dati.inPiedi))),
+    addormentarsiMin: media(nn(xs.map((x) => x.dati.addormentarsiMin))),
+    risvegli: (() => {
+      const r = nn(xs.map((x) => x.dati.risvegli));
+      return r.length ? Math.round((r.reduce((a, b) => a + b, 0) / r.length) * 10) / 10 : null;
+    })(),
+    perQualita,
+    // Il perno a mezzogiorno per l'ora di andare a letto, a mezzanotte per quella di alzarsi.
+    oraLetto: oraMedia(xs.map((x) => x.dati.aLetto), 720),
+    oraInPiedi: oraMedia(xs.map((x) => x.dati.inPiedi), 0),
+  };
+}
+
+/** «7 h 30 min» */
+export function oreMinuti(min: number): string {
+  const h = Math.floor(min / 60);
+  const m = Math.round(min % 60);
+  return m ? `${h} h ${m} min` : `${h} h`;
+}
+
+export interface RiepilogoPeso {
+  dal: string | null;
+  al: string | null;
+  misure: number;
+  giorni: number;
+  primo: number | null;
+  ultimo: number | null;
+  /** Ultimo meno primo, in kg con un decimale. */
+  differenza: number | null;
+  media: number | null;
+  /** Ultimo meno l'ultima misura di tre giorni prima (se c'è). */
+  in3Giorni: number | null;
+}
+
+const kg1 = (n: number) => Math.round(n * 10) / 10;
+
+export function riepilogoPeso(all: VoceDiario[], giorni = 30, oggi = nowAt().slice(0, 10)): RiepilogoPeso {
+  const xs = ordina(periodo(all.filter((x): x is Voce<"peso"> => x.diario === "peso"), giorni, oggi));
+  const first = xs[0];
+  const last = xs[xs.length - 1];
+  let in3: number | null = null;
+  if (last) {
+    const giorno = addDays(dayOf(last.at), -3);
+    const prima = xs.filter((x) => dayOf(x.at) === giorno);
+    if (prima.length) in3 = kg1(last.dati.kg - prima[prima.length - 1].dati.kg);
+  }
+  return {
+    dal: first ? dayOf(first.at) : null,
+    al: last ? dayOf(last.at) : null,
+    misure: xs.length,
+    giorni: new Set(xs.map((x) => dayOf(x.at))).size,
+    primo: first?.dati.kg ?? null,
+    ultimo: last?.dati.kg ?? null,
+    differenza: first && last ? kg1(last.dati.kg - first.dati.kg) : null,
+    media: xs.length ? kg1(xs.reduce((a, x) => a + x.dati.kg, 0) / xs.length) : null,
+    in3Giorni: in3,
+  };
+}
+
+/** «72,4 kg», «+0,6 kg», «−1,2 kg» */
+export function kgTesto(n: number, segno = false): string {
+  const s = Math.abs(n).toFixed(1).replace(".", ",");
+  if (!segno) return `${n < 0 ? "−" : ""}${s} kg`;
+  return `${n > 0 ? "+" : n < 0 ? "−" : "±"}${s} kg`;
+}
+
+export interface RiepilogoRespiro {
+  dal: string | null;
+  al: string | null;
+  misure: number;
+  mattina: { media: number; n: number } | null;
+  sera: { media: number; n: number } | null;
+  max: number | null;
+  min: number | null;
+  giorniConSpray: number;
+  sprayTotale: number;
+}
+
+export function riepilogoRespiro(all: VoceDiario[], giorni = 14, oggi = nowAt().slice(0, 10)): RiepilogoRespiro {
+  const xs = ordina(periodo(all.filter((x): x is Voce<"respiro"> => x.diario === "respiro"), giorni, oggi));
+  const di = (m: MomentoRespiro) => {
+    const v = xs.filter((x) => x.dati.momento === m).map((x) => x.dati.pef);
+    return v.length ? { media: media(v)!, n: v.length } : null;
+  };
+  const conSpray = xs.filter((x) => (x.dati.spray ?? 0) > 0);
+  const pef = xs.map((x) => x.dati.pef);
+  return {
+    dal: xs[0] ? dayOf(xs[0].at) : null,
+    al: xs.length ? dayOf(xs[xs.length - 1].at) : null,
+    misure: xs.length,
+    mattina: di("mattina"),
+    sera: di("sera"),
+    max: pef.length ? Math.max(...pef) : null,
+    min: pef.length ? Math.min(...pef) : null,
+    giorniConSpray: new Set(conSpray.map((x) => dayOf(x.at))).size,
+    sprayTotale: conSpray.reduce((a, x) => a + (x.dati.spray ?? 0), 0),
+  };
+}
+
 /** La voce in una riga, per gli elenchi e il foglio: «128/82 · 66 battiti», «104 mg/dL · a digiuno», «Forte · 4 ore». */
 export function rigaVoce(v: VoceDiario): string {
   if (v.diario === "pressione") return `${v.dati.sys}/${v.dati.dia}${v.dati.bpm ? ` · ${v.dati.bpm} battiti` : ""}`;
   if (v.diario === "glicemia") return `${v.dati.mgdl} mg/dL · ${MOMENTI_GLICEMIA[v.dati.momento].toLowerCase()}`;
+  if (v.diario === "sonno") {
+    const p = [`A letto ${v.dati.aLetto}, in piedi ${v.dati.inPiedi}`, QUALITA_SONNO[v.dati.qualita].toLowerCase()];
+    if (v.dati.addormentarsiMin !== null) p.push(`${v.dati.addormentarsiMin} min per addormentarsi`);
+    if (v.dati.risvegli !== null) p.push(v.dati.risvegli === 1 ? "1 risveglio" : `${v.dati.risvegli} risvegli`);
+    return p.join(" · ");
+  }
+  if (v.diario === "peso") return kgTesto(v.dati.kg);
+  if (v.diario === "respiro") {
+    const p = [`${v.dati.pef} L/min`, MOMENTI_RESPIRO[v.dati.momento].toLowerCase()];
+    if (v.dati.spray) p.push(`spray al bisogno ${v.dati.spray} ${v.dati.spray === 1 ? "volta" : "volte"}`);
+    return p.join(" · ");
+  }
   if (v.dati.tipo === "nessuno") return "Niente mal di testa";
   const parts: string[] = [INTENSITA[v.dati.intensita ?? "lieve"]];
   if (v.dati.durataOre !== null) parts.push(durataTesto(v.dati.durataOre));

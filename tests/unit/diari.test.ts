@@ -9,9 +9,13 @@ import {
   fascia,
   isPlausibleAt,
   normalizza,
+  minutiTra,
   riepilogoCefalea,
   riepilogoGlicemia,
+  riepilogoPeso,
   riepilogoPressione,
+  riepilogoRespiro,
+  riepilogoSonno,
   rigaVoce,
   type VoceDiario,
 } from "@/domain/diari/voci";
@@ -36,8 +40,8 @@ const VIETATE = [
 ];
 
 describe("diari: catalogo", () => {
-  it("tre diari, ognuno con cinque passi, fonti e promemoria", () => {
-    expect(DIARI.map((d) => d.slug)).toEqual(["pressione", "glicemia", "cefalea"]);
+  it("sei diari, ognuno con cinque passi, fonti e promemoria", () => {
+    expect(DIARI.map((d) => d.slug)).toEqual(["pressione", "glicemia", "cefalea", "sonno", "peso", "respiro"]);
     for (const d of DIARI) {
       expect(d.passi).toHaveLength(5);
       expect(d.fonti.length).toBeGreaterThanOrEqual(2);
@@ -148,6 +152,55 @@ describe("diari: riepiloghi", () => {
       expect(t.length).toBeGreaterThan(3);
       for (const re of VIETATE) expect(re.test(t)).toBe(false);
     }
+  });
+});
+
+describe("diari: sonno, peso, respiro (22/11/2026)", () => {
+  it("le voci nuove: valori veri accettati, errori di battitura e orari impossibili scartati", () => {
+    const ok = (dati: unknown, diario: string) => VoceInputSchema.safeParse({ diario, at: "2026-11-21T07:30", dati }).success;
+    expect(ok({ aLetto: "23:30", inPiedi: "07:00", qualita: "bene" }, "sonno")).toBe(true);
+    expect(ok({ aLetto: "23:30", inPiedi: "07:00", addormentarsiMin: 20, risvegli: 2, qualita: "cosi" }, "sonno")).toBe(true);
+    expect(ok({ aLetto: "23:30", inPiedi: "23:50", qualita: "bene" }, "sonno")).toBe(false);
+    expect(ok({ aLetto: "25:00", inPiedi: "07:00", qualita: "bene" }, "sonno")).toBe(false);
+    expect(ok({ aLetto: "23:30", inPiedi: "07:00" }, "sonno")).toBe(false);
+    expect(ok({ kg: 72.4 }, "peso")).toBe(true);
+    expect(ok({ kg: 724 }, "peso")).toBe(false);
+    expect(ok({ pef: 420, momento: "mattina" }, "respiro")).toBe(true);
+    expect(ok({ pef: 4200, momento: "mattina" }, "respiro")).toBe(false);
+    expect(ok({ pef: 420, momento: "mattina", spray: 2 }, "respiro")).toBe(true);
+    expect(minutiTra("23:30", "07:00")).toBe(450);
+    expect(minutiTra("01:00", "08:30")).toBe(450);
+  });
+
+  it("sonno: tempo a letto, minuti per addormentarsi, risvegli e notti per com'è andata", () => {
+    const r = riepilogoSonno(conId(vociEsempio(OGGI)), 14, OGGI);
+    expect(r.notti).toBe(12);
+    expect(r.perQualita.bene + r.perQualita.cosi + r.perQualita.male).toBe(12);
+    expect(r.aLettoMin).toBeGreaterThan(6 * 60);
+    expect(r.aLettoMin).toBeLessThan(9 * 60);
+    // La media degli orari attraversa la mezzanotte senza finire a mezzogiorno.
+    expect(r.oraLetto).toMatch(/^(2[23]|00):/);
+    expect(r.oraInPiedi).toMatch(/^0[67]:/);
+  });
+
+  it("peso: primo, ultimo, differenza e confronto con tre giorni prima", () => {
+    const r = riepilogoPeso(conId(vociEsempio(OGGI)), 30, OGGI);
+    expect(r.misure).toBe(20);
+    expect(r.primo).toBe(74.2);
+    expect(r.ultimo).toBe(72.7);
+    expect(r.differenza).toBe(-1.5);
+    expect(r.in3Giorni).toBe(-0.2);
+  });
+
+  it("respiro: medie del mattino e della sera, giorni con lo spray al bisogno", () => {
+    const r = riepilogoRespiro(conId(vociEsempio(OGGI)), 14, OGGI);
+    expect(r.misure).toBe(20);
+    expect(r.mattina?.n).toBe(10);
+    expect(r.sera?.n).toBe(10);
+    expect(r.giorniConSpray).toBe(3);
+    expect(r.sprayTotale).toBe(4);
+    expect(r.max).toBe(460);
+    expect(r.min).toBe(380);
   });
 });
 

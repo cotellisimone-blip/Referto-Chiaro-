@@ -5,17 +5,24 @@ import type { Diario } from "./catalogo";
 import {
   INTENSITA,
   MOMENTI_GLICEMIA,
+  QUALITA_SONNO,
   SINTOMI,
   dataIt,
   dayOf,
   durataTesto,
   fascia,
   giornoBreve,
+  kgTesto,
+  minutiTra,
+  oreMinuti,
   ordina,
   periodo,
   riepilogoCefalea,
   riepilogoGlicemia,
+  riepilogoPeso,
   riepilogoPressione,
+  riepilogoRespiro,
+  riepilogoSonno,
   type VoceDiario,
 } from "./voci";
 
@@ -189,6 +196,42 @@ function colonneVuote(d: Diario): { cols: Col[]; rows: number } {
         { t: "Note", w: 22, sub: "pasti, movimento, malesseri" },
       ],
     };
+  if (d.slug === "sonno")
+    return {
+      rows: 14,
+      cols: [
+        { t: "Mattino del", w: 11, sub: "data" },
+        { t: "A letto", w: 9, sub: "luce spenta" },
+        { t: "Per addormentarti", w: 11, sub: "minuti" },
+        { t: "Risvegli", w: 9, sub: "quante volte" },
+        { t: "In piedi", w: 9, sub: "ora" },
+        { t: "Com'è andata", w: 13, sub: "male · così così · bene" },
+        { t: "Note", w: 28, sub: "pisolini, caffè, alcol, farmaci" },
+      ],
+    };
+  if (d.slug === "peso")
+    return {
+      rows: 31,
+      cols: [
+        { t: "Giorno", w: 10 },
+        { t: "Ora", w: 9 },
+        { t: "Peso", w: 12, sub: "kg" },
+        { t: "Note", w: 59, sub: "gonfiore, fiato corto, cambi nella cura" },
+      ],
+    };
+  if (d.slug === "respiro")
+    return {
+      rows: 14,
+      cols: [
+        { t: "Giorno", w: 10, sub: "data" },
+        { t: "Mattina", w: 9, sub: "ora" },
+        { t: "Migliore dei 3", w: 12, sub: "L/min" },
+        { t: "Sera", w: 9, sub: "ora" },
+        { t: "Migliore dei 3", w: 12, sub: "L/min" },
+        { t: "Spray al bisogno", w: 12, sub: "quante volte" },
+        { t: "Note", w: 26, sub: "tosse, notte, raffreddore" },
+      ],
+    };
   return {
     rows: 31,
     cols: [
@@ -237,11 +280,11 @@ export async function renderDiarioVuoto(d: Diario, opts: { fonts?: DiarioFonts |
 
   // Griglia
   const { cols, rows } = colonneVuote(d);
-  etichetta(c, d.slug === "cefalea" ? "Mese di ____________" : d.slug === "pressione" ? "I 7 giorni prima della visita" : "Due settimane", M, y);
+  etichetta(c, d.slug === "cefalea" || d.slug === "peso" ? "Mese di ____________" : d.slug === "pressione" ? "I 7 giorni prima della visita" : "Due settimane", M, y);
   y -= 14;
   const avail = y - 60 - 26;
   const rowH = Math.min(40, Math.floor(avail / rows));
-  const empty = Array.from({ length: rows }, (_, i) => cols.map((_, j) => (j === 0 && d.slug === "cefalea" ? String(i + 1) : "")));
+  const empty = Array.from({ length: rows }, (_, i) => cols.map((_, j) => (j === 0 && (d.slug === "cefalea" || d.slug === "peso") ? String(i + 1) : "")));
   tabella(c, cols, empty, y, rowH);
 
   piede(c, `Diario di Cura Privata, costruito seguendo le indicazioni di: ${d.fonti.map((f) => f.ente).join("; ")}. Informativo, non diagnostico: le decisioni sulla cura spettano al medico. In emergenza chiama il 112. Bozza da far rivedere a un medico.`);
@@ -277,6 +320,30 @@ export async function renderFoglioMedico(
     const r = riepilogoGlicemia(voci, opts.giorni, opts.oggi);
     for (const s of r.perMomento.slice(0, 4)) boxes.push({ t: MOMENTI_GLICEMIA[s.momento], v: `${s.media}`, s: `media di ${s.n} · da ${s.min} a ${s.max} mg/dL` });
     if (!boxes.length) boxes.push({ t: "Misure", v: "0", s: "nessuna misura nel periodo" });
+  } else if (d.slug === "sonno") {
+    const r = riepilogoSonno(voci, opts.giorni, opts.oggi);
+    boxes.push(
+      { t: "Tempo a letto, media", v: r.aLettoMin !== null ? oreMinuti(r.aLettoMin) : "—", s: r.oraLetto ? `${r.notti} notti · in media dalle ${r.oraLetto} alle ${r.oraInPiedi}` : "nessuna notte" },
+      { t: "Per addormentarsi, media", v: r.addormentarsiMin !== null ? `${r.addormentarsiMin} min` : "—", s: "stima della persona" },
+      { t: "Risvegli, media", v: r.risvegli !== null ? String(r.risvegli).replace(".", ",") : "—", s: "per notte" },
+      { t: "Com'è andata", v: `${r.perQualita.bene} bene`, s: `così così ${r.perQualita.cosi} · male ${r.perQualita.male}` },
+    );
+  } else if (d.slug === "peso") {
+    const r = riepilogoPeso(voci, opts.giorni, opts.oggi);
+    boxes.push(
+      { t: "Ultimo peso", v: r.ultimo !== null ? kgTesto(r.ultimo) : "—", s: r.al ? giornoBreve(r.al) : "nessuna misura" },
+      { t: "Dal primo all'ultimo", v: r.differenza !== null && r.misure > 1 ? kgTesto(r.differenza, true) : "—", s: r.dal ? `primo: ${r.primo !== null ? kgTesto(r.primo) : ""}, ${giornoBreve(r.dal)}` : "" },
+      { t: "In 3 giorni", v: r.in3Giorni !== null ? kgTesto(r.in3Giorni, true) : "—", s: "ultima misura rispetto a 3 giorni prima" },
+      { t: "Media del periodo", v: r.media !== null ? kgTesto(r.media) : "—", s: `${r.misure} misure in ${r.giorni} giorni` },
+    );
+  } else if (d.slug === "respiro") {
+    const r = riepilogoRespiro(voci, opts.giorni, opts.oggi);
+    boxes.push(
+      { t: "Media del mattino", v: r.mattina ? `${r.mattina.media}` : "—", s: r.mattina ? `${r.mattina.n} misure · L/min` : "nessuna misura" },
+      { t: "Media della sera", v: r.sera ? `${r.sera.media}` : "—", s: r.sera ? `${r.sera.n} misure · L/min` : "nessuna misura" },
+      { t: "Più alto · più basso", v: r.max !== null ? `${r.max} · ${r.min}` : "—", s: "L/min, nel periodo" },
+      { t: "Spray al bisogno", v: `${r.giorniConSpray} giorni`, s: `${r.sprayTotale} volte in tutto` },
+    );
   } else {
     const r = riepilogoCefalea(voci, opts.giorni, opts.oggi);
     boxes.push(
@@ -316,7 +383,7 @@ export async function renderFoglioMedico(
   }
 
   // Le misure una per una
-  etichetta(c, d.slug === "pressione" ? "Le misure, giorno per giorno" : d.slug === "glicemia" ? "Le misure, una per una" : "Gli episodi", M, y);
+  etichetta(c, { pressione: "Le misure, giorno per giorno", glicemia: "Le misure, una per una", cefalea: "Gli episodi", sonno: "Le notti, una per una", peso: "Le misure, una per una", respiro: "Le misure, giorno per giorno" }[d.slug], M, y);
   y -= 14;
   const footY = 60;
   let cols: Col[];
@@ -346,6 +413,61 @@ export async function renderFoglioMedico(
       { t: "Note", w: 46 },
     ];
     rows = xs.map((x) => (x.diario === "glicemia" ? [giornoBreve(dayOf(x.at)), x.at.slice(11), MOMENTI_GLICEMIA[x.dati.momento], String(x.dati.mgdl), x.note ?? ""] : []));
+  } else if (d.slug === "sonno") {
+    cols = [
+      { t: "Mattino del", w: 13 },
+      { t: "A letto", w: 9 },
+      { t: "In piedi", w: 9 },
+      { t: "Tempo a letto", w: 12 },
+      { t: "Per addormentarsi", w: 12 },
+      { t: "Risvegli", w: 9 },
+      { t: "Com'è andata", w: 11 },
+      { t: "Note", w: 25 },
+    ];
+    rows = xs.map((x) =>
+      x.diario === "sonno"
+        ? [
+            giornoBreve(dayOf(x.at)),
+            x.dati.aLetto,
+            x.dati.inPiedi,
+            oreMinuti(minutiTra(x.dati.aLetto, x.dati.inPiedi)),
+            x.dati.addormentarsiMin !== null ? `${x.dati.addormentarsiMin} min` : "",
+            x.dati.risvegli !== null ? String(x.dati.risvegli) : "",
+            QUALITA_SONNO[x.dati.qualita],
+            x.note ?? "",
+          ]
+        : [],
+    );
+  } else if (d.slug === "peso") {
+    cols = [
+      { t: "Giorno", w: 14 },
+      { t: "Ora", w: 8 },
+      { t: "Peso", w: 12 },
+      { t: "Rispetto alla misura prima", w: 18 },
+      { t: "Note", w: 48 },
+    ];
+    rows = xs.map((x, i) => {
+      if (x.diario !== "peso") return [];
+      const p = xs[i - 1];
+      const diff = p && p.diario === "peso" ? kgTesto(Math.round((x.dati.kg - p.dati.kg) * 10) / 10, true) : "";
+      return [giornoBreve(dayOf(x.at)), x.at.slice(11), kgTesto(x.dati.kg), diff, x.note ?? ""];
+    });
+  } else if (d.slug === "respiro") {
+    const days = [...new Set(xs.map((x) => dayOf(x.at)))];
+    cols = [
+      { t: "Giorno", w: 13 },
+      { t: "Mattina", w: 18, sub: "L/min · ora" },
+      { t: "Sera", w: 18, sub: "L/min · ora" },
+      { t: "Altro momento", w: 15 },
+      { t: "Spray al bisogno", w: 12 },
+      { t: "Note", w: 24 },
+    ];
+    rows = days.map((day) => {
+      const v = xs.filter((x): x is Extract<VoceDiario, { diario: "respiro" }> => x.diario === "respiro" && dayOf(x.at) === day);
+      const cell = (m: string) => v.filter((x) => x.dati.momento === m).map((x) => `${x.dati.pef} (${x.at.slice(11)})`).join("  ");
+      const spray = v.reduce((a, x) => a + (x.dati.spray ?? 0), 0);
+      return [giornoBreve(day), cell("mattina"), cell("sera"), cell("altro"), spray ? `${spray} ${spray === 1 ? "volta" : "volte"}` : "", v.map((x) => x.note).filter(Boolean).join("; ")];
+    });
   } else {
     cols = [
       { t: "Giorno", w: 13 },
@@ -364,7 +486,7 @@ export async function renderFoglioMedico(
           : [],
       );
   }
-  const rowH = d.slug === "pressione" ? 22 : 17;
+  const rowH = d.slug === "pressione" || d.slug === "respiro" ? 22 : 17;
   const room = Math.max(1, Math.floor((y - footY - 26 - 60) / rowH));
   let hidden = 0;
   if (rows.length > room) {

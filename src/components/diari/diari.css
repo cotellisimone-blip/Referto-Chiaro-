@@ -76,7 +76,7 @@
 
 /* ---- Area personale ---- */
 .dra{--dra-ac:var(--color-teal);display:block}
-.dra-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-top:1.25rem;scrollbar-width:thin}
+.dra-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:1.25rem}
 .dra-tab{flex:none;display:inline-flex;align-items:center;gap:.5rem;min-height:48px;padding:.4rem 1rem;border-radius:999px;font-weight:800;font-size:1rem;text-decoration:none;color:var(--color-ink);border:1.5px solid var(--color-line);background:var(--color-paper)}
 .dra-tab[aria-current="page"]{background:var(--color-strong);color:var(--color-on-strong);border-color:var(--color-strong)}
 .dra-tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
@@ -165,3 +165,11 @@
 .dra-limiti p{margin:0}
 .dra-limiti p+p{margin-top:.4rem}
 @media (prefers-reduced-motion:reduce){.dr-diario,.dr-diario .ht-voce-go svg{transition:none}}
+
+/* 22/11/2026: i diari nella pagina personale (cruscotto) e i numeri dei risvegli */
+.dra-mini{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;list-style:none;margin:0;padding:0}
+@media (min-width:640px){.dra-mini{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1100px){.dra-mini{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.dra-mini-item{display:flex;align-items:center;gap:.85rem;min-height:72px;padding:.6rem .9rem;border-radius:18px;border:1.5px solid var(--color-line);background:var(--color-paper);text-decoration:none;color:var(--color-ink)}
+.dra-mini-item:hover{border-color:var(--color-teal)}
+.dra-chip-n{min-width:56px;align-items:center;font-size:1.125rem}

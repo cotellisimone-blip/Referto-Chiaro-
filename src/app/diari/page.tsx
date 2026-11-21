@@ -3,7 +3,7 @@ import { DiariIndice } from "@/components/diari/pubblico";
 import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
-  title: "Diari della salute: pressione, glicemia, cefalea",
+  title: "Diari della salute per misurare bene a casa",
   description: "Come misurare bene a casa in cinque passi, il diario da stampare gratis e quello da compilare dal telefono, con le medie e il foglio per il medico.",
   alternates: { canonical: "/diari" },
 };

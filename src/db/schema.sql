@@ -490,7 +490,7 @@ CREATE TABLE IF NOT EXISTS diary_entries (
   id uuid PRIMARY KEY,
   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   profile_id uuid REFERENCES family_profiles(id) ON DELETE CASCADE,
-  diary text NOT NULL CHECK (diary IN ('pressione', 'glicemia', 'cefalea')),
+  diary text NOT NULL CHECK (diary IN ('pressione', 'glicemia', 'cefalea', 'sonno', 'peso', 'respiro')),
   at text NOT NULL CHECK (at ~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$'),
   data jsonb NOT NULL,
   note text CHECK (note IS NULL OR char_length(note) <= 200),
@@ -502,3 +502,11 @@ ALTER TABLE diary_entries ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS diary_entries_owner ON diary_entries;
 CREATE POLICY diary_entries_owner ON diary_entries USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid) WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
 INSERT INTO schema_migrations(version) VALUES (11) ON CONFLICT DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Schema v12 (22/11/2026): tre diari in più (sonno, peso, respiro). Il vincolo si ricrea: chi ha già la v11
+-- lo ha con i soli tre diari di partenza. Rieseguibile: prima si toglie, poi si rimette.
+-- ---------------------------------------------------------------------------
+ALTER TABLE diary_entries DROP CONSTRAINT IF EXISTS diary_entries_diary_check;
+ALTER TABLE diary_entries ADD CONSTRAINT diary_entries_diary_check CHECK (diary IN ('pressione', 'glicemia', 'cefalea', 'sonno', 'peso', 'respiro'));
+INSERT INTO schema_migrations(version) VALUES (12) ON CONFLICT DO NOTHING;

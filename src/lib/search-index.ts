@@ -31,7 +31,7 @@ const PAGE_CONTEXT: Record<string, string> = {
   "/strumenti/preparati-alla-visita": "Gratis: cosa portare e cosa chiedere, in 2 minuti",
   "/famiglia": "I referti di tutta la famiglia, i numeri nel tempo, i promemoria",
   "/strumenti/domande-per-il-medico": "Prepara la lista delle domande per la visita",
-  "/diari": "Gratis: pressione, glicemia, mal di testa. Come misurare bene e il diario da stampare",
+  "/diari": "Gratis: pressione, glicemia, mal di testa, sonno, peso, respiro. Come misurare bene e il diario da stampare",
 };
 
 /** Parole con cui si cerca una pagina senza conoscerne il nome. */
@@ -48,7 +48,7 @@ const PAGE_ALIASES: Record<string, string[]> = {
   "/referti/esempio": ["esempio", "prova", "demo", "pdf", "report"],
   "/contatti": ["assistenza", "aiuto", "email", "telefono", "scrivere"],
   "/strumenti": ["strumenti", "strumenti gratuiti", "gratis"],
-  "/diari": ["diario", "diari", "pressione", "misurare la pressione", "pressione a casa", "ipertensione", "glicemia a casa", "glucometro", "diabete", "mal di testa", "cefalea", "emicrania", "diario pressorio"],
+  "/diari": ["diario", "diari", "pressione", "misurare la pressione", "pressione a casa", "ipertensione", "glicemia a casa", "glucometro", "diabete", "mal di testa", "cefalea", "emicrania", "diario pressorio", "diario del sonno", "sonno", "insonnia", "dormire male", "peso", "pesarsi", "bilancia", "picco di flusso", "peak flow", "asma", "respiro"],
   "/glossario": ["glossario", "sigle", "parole", "dizionario", "significato"],
 };
 

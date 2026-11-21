@@ -14,20 +14,31 @@ import {
   INTENSITA,
   INTENSITA_AIUTO,
   MOMENTI_GLICEMIA,
+  MOMENTI_RESPIRO,
+  ORA_RE,
+  QUALITA_SONNO,
   SINTOMI,
   buildDiarioIcs,
   dayOf,
   durataTesto,
   fascia,
   giornoBreve,
+  kgTesto,
+  minutiTra,
   nowAt,
+  oreMinuti,
   periodo,
   riepilogoCefalea,
   riepilogoGlicemia,
+  riepilogoPeso,
   riepilogoPressione,
+  riepilogoRespiro,
+  riepilogoSonno,
   rigaVoce,
   type Intensita,
   type MomentoGlicemia,
+  type MomentoRespiro,
+  type QualitaSonno,
   type Sintomo,
   type VoceDiario,
 } from "@/domain/diari/voci";
@@ -41,7 +52,14 @@ import "./diari.css";
  * foglio per il medico. Non giudica i numeri: nessun colore «alto» o «basso», nessuna soglia, nessun consiglio.
  */
 
-const PERIODI: Record<DiarioSlug, number[]> = { pressione: [7, 14, 30], glicemia: [14, 30, 90], cefalea: [30, 60, 90] };
+const PERIODI: Record<DiarioSlug, number[]> = {
+  pressione: [7, 14, 30],
+  glicemia: [14, 30, 90],
+  cefalea: [30, 60, 90],
+  sonno: [14, 30, 60],
+  peso: [7, 30, 90],
+  respiro: [14, 30, 60],
+};
 
 function usePersona(base: string) {
   const params = useSearchParams();
@@ -121,7 +139,7 @@ export function DiariHome() {
       <DiariSimboli />
       <p className="eyebrow">Diari della salute</p>
       <h1 className="area-title mt-3">{who ? `I diari di ${who}.` : "I tuoi diari della salute."}</h1>
-      <p className="area-lead">Pressione, glicemia, mal di testa. Scrivi una misura in pochi secondi: le medie e il foglio per il medico li prepariamo noi.</p>
+      <p className="area-lead">Pressione, glicemia, mal di testa, sonno, peso e respiro. Scrivi una misura in pochi secondi: le medie e il foglio per il medico li prepariamo noi.</p>
       {persone ? (
         <div className="mt-6">
           <PersonaSwitcher persone={persone} current={persona} onChange={choose} label="Di chi è il diario?" />
@@ -178,6 +196,27 @@ function CardDiario({ d, voci, href }: { d: Diario; voci: VoceDiario[]; href: st
     if (dig) {
       big = `${dig.media}`;
       small = `Media a digiuno (mg/dL), ${dig.n} misure in 14 giorni`;
+    } else if (r.misure) {
+      big = `${r.misure}`;
+      small = "Misure negli ultimi 14 giorni";
+    }
+  } else if (d.slug === "sonno") {
+    const r = riepilogoSonno(voci, 14);
+    if (r.aLettoMin !== null) {
+      big = oreMinuti(r.aLettoMin);
+      small = `A letto in media, ${r.notti} ${r.notti === 1 ? "notte" : "notti"} in 14 giorni`;
+    }
+  } else if (d.slug === "peso") {
+    const r = riepilogoPeso(voci, 30);
+    if (r.ultimo !== null) {
+      big = kgTesto(r.ultimo);
+      small = r.differenza !== null && r.misure > 1 ? `Ultimo peso; ${kgTesto(r.differenza, true)} dal ${giornoBreve(r.dal!)}` : "Ultimo peso";
+    }
+  } else if (d.slug === "respiro") {
+    const r = riepilogoRespiro(voci, 14);
+    if (r.mattina) {
+      big = `${r.mattina.media}`;
+      small = `Media del mattino (L/min), ${r.mattina.n} misure in 14 giorni`;
     } else if (r.misure) {
       big = `${r.misure}`;
       small = "Misure negli ultimi 14 giorni";
@@ -311,7 +350,7 @@ export function DiarioArea({ slug }: { slug: DiarioSlug }) {
 
       <section aria-labelledby="dra-voci" className="mt-10">
         <h2 id="dra-voci" className="area-h2">
-          {slug === "cefalea" ? "Le voci del diario" : "Le misure"}
+          {slug === "cefalea" ? "Le voci del diario" : slug === "sonno" ? "Le notti" : "Le misure"}
         </h2>
         {voci && !lista.length ? <p className="empty-note mt-4">Ancora nessuna voce. Scrivi la prima qui sopra: ci vogliono pochi secondi.</p> : null}
         <ul className="dra-list" data-testid="voci-elenco">
@@ -384,6 +423,14 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
   const [durata, setDurata] = useState("");
   const [sintomi, setSintomi] = useState<Sintomo[]>([]);
   const [farmaco, setFarmaco] = useState("");
+  const [aLetto, setALetto] = useState("23:00");
+  const [inPiedi, setInPiedi] = useState(() => (Number(nowAt().slice(11, 13)) < 12 ? nowAt().slice(11, 16) : "07:00"));
+  const [risvegli, setRisvegli] = useState<number | null>(null);
+  const [qualita, setQualita] = useState<QualitaSonno | null>(null);
+  const [momentoR, setMomentoR] = useState<MomentoRespiro>(() => {
+    const h = Number(nowAt().slice(11, 13));
+    return h < 12 ? "mattina" : h >= 17 ? "sera" : "altro";
+  });
   const [note, setNote] = useState("");
   const [noteOpen, setNoteOpen] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -418,6 +465,8 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
       setFarmaco("");
       setIntensita(null);
       setEpisodio(false);
+      setRisvegli(null);
+      setQualita(null);
       setManual(false);
       setAt(nowAt());
       onSaved();
@@ -447,6 +496,29 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
       if (!momento) return setErr("Scegli il momento: serve al medico per leggere il numero.");
       return save({ diario: "glicemia", profileId, at, note: nota, dati: { mgdl: Number(a), momento } }, `Salvata: ${a} mg/dL, ${MOMENTI_GLICEMIA[momento].toLowerCase()}.`);
     }
+    if (d.slug === "sonno") {
+      if (!ORA_RE.test(aLetto) || !ORA_RE.test(inPiedi)) return setErr("Scrivi i due orari: quando sei andato a letto e quando ti sei alzato.");
+      const t = minutiTra(aLetto, inPiedi);
+      if (t < 60 || t > 18 * 60) return setErr("Controlla i due orari: tra l'ora di andare a letto e quella di alzarti ci sono meno di un'ora o più di 18.");
+      if (!qualita) return setErr("Scegli com'è andata la notte.");
+      const add = a ? Number(a) : null;
+      return save(
+        { diario: "sonno", profileId, at, note: nota, dati: { aLetto, inPiedi, addormentarsiMin: add, risvegli, qualita } },
+        `Salvata la notte: ${oreMinuti(t)} a letto, ${QUALITA_SONNO[qualita].toLowerCase()}.`,
+      );
+    }
+    if (d.slug === "peso") {
+      const kg = Number(a.replace(",", "."));
+      if (!a || Number.isNaN(kg)) return setErr("Scrivi il peso in kg, per esempio 72,4.");
+      return save({ diario: "peso", profileId, at, note: nota, dati: { kg } }, `Salvato: ${kgTesto(Math.round(kg * 10) / 10)}.`);
+    }
+    if (d.slug === "respiro") {
+      if (!a) return setErr("Scrivi il migliore dei tre soffi.");
+      return save(
+        { diario: "respiro", profileId, at, note: nota, dati: { pef: Number(a), momento: momentoR, spray: c ? Number(c) : null } },
+        `Salvato: ${a} L/min, ${MOMENTI_RESPIRO[momentoR].toLowerCase()}.`,
+      );
+    }
     if (!intensita) return setErr("Scegli quanto era forte.");
     const ore = durata ? Number(durata.replace(",", ".")) : null;
     if (ore !== null && Number.isNaN(ore)) return setErr("La durata è un numero di ore, per esempio 2 o 1,5.");
@@ -465,7 +537,7 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
     <form className="dra-entry" onSubmit={submit} noValidate aria-labelledby="dra-entry-t" data-testid="nuova-voce">
       <div className="dra-entry-h">
         <h2 id="dra-entry-t" className="dra-entry-t">
-          {d.slug === "pressione" ? "Nuova misura" : d.slug === "glicemia" ? "Nuova glicemia" : "Com’è andata?"}
+          {{ pressione: "Nuova misura", glicemia: "Nuova glicemia", cefalea: "Com’è andata?", sonno: "Com’è andata la notte?", peso: "Peso di oggi", respiro: "Nuovo soffio" }[d.slug]}
         </h2>
         {d.slug !== "cefalea" || episodio ? <Quando at={at} setAt={setAtManual} /> : null}
       </div>
@@ -531,6 +603,89 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
         </>
       ) : null}
 
+      {d.slug === "sonno" ? (
+        <>
+          <div className="dra-nums">
+            <label className="dra-num dra-num-small">
+              <span>
+                A letto <small>luce spenta</small>
+              </span>
+              <input ref={first} type="time" value={aLetto} onChange={(e) => setALetto(e.target.value)} data-testid="a-letto" />
+            </label>
+            <label className="dra-num dra-num-small">
+              <span>
+                In piedi <small>alzato</small>
+              </span>
+              <input type="time" value={inPiedi} onChange={(e) => setInPiedi(e.target.value)} data-testid="in-piedi" />
+            </label>
+          </div>
+          <div className="dra-nums is-one">
+            <label className="dra-num dra-num-small">
+              <span>
+                Minuti per addormentarti <small>una stima va bene</small>
+              </span>
+              <input inputMode="numeric" pattern="[0-9]*" autoComplete="off" value={a} onChange={(e) => setA(soloCifre(e.target.value))} data-testid="addormentarsi" />
+            </label>
+          </div>
+          <p className="dra-label">Quante volte ti sei svegliato?</p>
+          <div className="dra-chips" role="group" aria-label="Risvegli">
+            {[0, 1, 2, 3, 4, 5].map((n) => (
+              <button key={n} type="button" className="dra-chip dra-chip-n" aria-pressed={risvegli === n} onClick={() => setRisvegli(risvegli === n ? null : n)}>
+                {n === 5 ? "5 o più" : n}
+              </button>
+            ))}
+          </div>
+          <p className="dra-label">Com’è andata?</p>
+          <div className="dra-chips dra-chips-3" role="group" aria-label="Com’è andata la notte">
+            {(Object.keys(QUALITA_SONNO) as QualitaSonno[]).map((k) => (
+              <button key={k} type="button" className="dra-chip" aria-pressed={qualita === k} onClick={() => setQualita(k)} data-testid={`q-${k}`}>
+                {QUALITA_SONNO[k]}
+              </button>
+            ))}
+          </div>
+        </>
+      ) : null}
+
+      {d.slug === "peso" ? (
+        <div className="dra-nums is-one">
+          <label className="dra-num">
+            <span>
+              Peso <small>in kg, con la virgola se c’è</small>
+            </span>
+            <input ref={first} inputMode="decimal" autoComplete="off" value={a} onChange={(e) => setA(e.target.value.replace(/[^\d,.]/g, "").slice(0, 5))} data-testid="kg" />
+          </label>
+        </div>
+      ) : null}
+
+      {d.slug === "respiro" ? (
+        <>
+          <div className="dra-nums is-one">
+            <label className="dra-num">
+              <span>
+                Il migliore dei 3 soffi <small>in L/min</small>
+              </span>
+              <input ref={first} inputMode="numeric" pattern="[0-9]*" autoComplete="off" value={a} onChange={(e) => setA(soloCifre(e.target.value))} data-testid="pef" />
+            </label>
+          </div>
+          <p className="dra-label">Quando?</p>
+          <div className="dra-chips dra-chips-3" role="group" aria-label="Momento della misura">
+            {(Object.keys(MOMENTI_RESPIRO) as MomentoRespiro[]).map((m) => (
+              <button key={m} type="button" className="dra-chip" aria-pressed={momentoR === m} onClick={() => setMomentoR(m)}>
+                {MOMENTI_RESPIRO[m]}
+              </button>
+            ))}
+          </div>
+          <div className="dra-nums is-one">
+            <label className="dra-num dra-num-small">
+              <span>
+                Spray al bisogno <small>quante volte, se l’hai usato</small>
+              </span>
+              <input inputMode="numeric" pattern="[0-9]*" autoComplete="off" value={c} onChange={(e) => setC(soloCifre(e.target.value).slice(0, 2))} data-testid="spray" />
+            </label>
+          </div>
+        </>
+      ) : null}
+
       {d.slug === "cefalea" && !episodio ? (
         <div className="dra-row">
           <button type="button" className="btn btn-primary dra-nulla" onClick={() => setEpisodio(true)} data-testid="ho-mal-di-testa">
@@ -585,7 +740,7 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
           {noteOpen ? (
             <label className="dra-label">
               Nota <span className="font-semibold text-muted">(facoltativa)</span>
-              <input className="dra-text" maxLength={200} value={note} onChange={(e) => setNote(e.target.value)} placeholder={d.slug === "cefalea" ? "Sonno, ciclo, stress, cibo…" : "Un malessere, un pasto diverso…"} />
+              <input className="dra-text" maxLength={200} value={note} onChange={(e) => setNote(e.target.value)} placeholder={{ cefalea: "Sonno, ciclo, stress, cibo…", sonno: "Pisolino, caffè, alcol, farmaci…", peso: "Gonfiore, fiato corto, cambi nella cura…", respiro: "Tosse, notte disturbata, raffreddore…", pressione: "Un malessere, un pasto diverso…", glicemia: "Un malessere, un pasto diverso…" }[d.slug]} />
             </label>
           ) : (
             <button type="button" className="dra-more" onClick={() => setNoteOpen(true)}>
@@ -628,6 +783,30 @@ function Riepilogo({ d, voci, giorni, oggi }: { d: Diario; voci: VoceDiario[]; g
     const r = riepilogoGlicemia(voci, giorni, oggi);
     for (const s of r.perMomento) items.push({ t: MOMENTI_GLICEMIA[s.momento], v: String(s.media), s: `media di ${s.n} · da ${s.min} a ${s.max}` });
     if (!items.length) items.push({ t: "Misure", v: "0", s: "nel periodo" });
+  } else if (d.slug === "sonno") {
+    const r = riepilogoSonno(voci, giorni, oggi);
+    items.push(
+      { t: "Tempo a letto", v: r.aLettoMin !== null ? oreMinuti(r.aLettoMin) : "—", s: r.notti ? `media di ${r.notti} ${r.notti === 1 ? "notte" : "notti"}${r.oraLetto ? ` · dalle ${r.oraLetto} alle ${r.oraInPiedi}` : ""}` : "Nessuna notte" },
+      { t: "Per addormentarti", v: r.addormentarsiMin !== null ? `${r.addormentarsiMin} min` : "—", s: "in media" },
+      { t: "Risvegli", v: r.risvegli !== null ? String(r.risvegli).replace(".", ",") : "—", s: "in media per notte" },
+      { t: "Com’è andata", v: `${r.perQualita.bene}`, s: `notti bene · così così ${r.perQualita.cosi} · male ${r.perQualita.male}` },
+    );
+  } else if (d.slug === "peso") {
+    const r = riepilogoPeso(voci, giorni, oggi);
+    items.push(
+      { t: "Ultimo peso", v: r.ultimo !== null ? kgTesto(r.ultimo) : "—", s: r.al ? giornoBreve(r.al) : "Nessuna misura" },
+      { t: "Dal primo all’ultimo", v: r.differenza !== null && r.misure > 1 ? kgTesto(r.differenza, true) : "—", s: r.dal && r.misure > 1 ? `dal ${giornoBreve(r.dal)}` : "servono 2 misure" },
+      { t: "In 3 giorni", v: r.in3Giorni !== null ? kgTesto(r.in3Giorni, true) : "—", s: "rispetto a 3 giorni prima" },
+      { t: "Media", v: r.media !== null ? kgTesto(r.media) : "—", s: `${r.misure} misure in ${r.giorni} ${r.giorni === 1 ? "giorno" : "giorni"}` },
+    );
+  } else if (d.slug === "respiro") {
+    const r = riepilogoRespiro(voci, giorni, oggi);
+    items.push(
+      { t: "Mattina", v: r.mattina ? String(r.mattina.media) : "—", s: r.mattina ? `media di ${r.mattina.n} · L/min` : "Nessuna misura" },
+      { t: "Sera", v: r.sera ? String(r.sera.media) : "—", s: r.sera ? `media di ${r.sera.n} · L/min` : "Nessuna misura" },
+      { t: "Più alto e più basso", v: r.max !== null ? `${r.max}` : "—", s: r.min !== null ? `il più basso: ${r.min}` : "nel periodo" },
+      { t: "Spray al bisogno", v: String(r.giorniConSpray), s: `giorni con spray · ${r.sprayTotale} volte in tutto` },
+    );
   } else {
     const r = riepilogoCefalea(voci, giorni, oggi);
     items.push(
@@ -687,77 +866,149 @@ function Grafico({ d, voci, giorni, oggi }: { d: Diario; voci: VoceDiario[]; gio
   // Disegno stretto: sul telefono le scritte restano leggibili (circa 14 px a 360 px di larghezza).
   const W = 380;
   const H = 210;
-  const L = 40;
+  const L = 44;
   const R = 12;
   const T = 14;
   const B = 30;
   const xs = voci.slice(-60);
-  const vals = d.slug === "pressione" ? xs.flatMap((v) => (v.diario === "pressione" ? [v.dati.sys, v.dati.dia] : [])) : xs.map((v) => (v.diario === "glicemia" ? v.dati.mgdl : 0));
-  const lo = Math.floor((Math.min(...vals) - 8) / 10) * 10;
-  const hi = Math.ceil((Math.max(...vals) + 8) / 10) * 10;
+  const g = GRAFICI[d.slug as Exclude<DiarioSlug, "cefalea">];
+  const vals = xs.flatMap((v) => g.serie.map((f) => f.v(v)).filter((n): n is number => n !== null));
+  if (!vals.length) return null;
+  const lo = Math.floor((Math.min(...vals) - g.pad) / g.step) * g.step;
+  const hi = Math.ceil((Math.max(...vals) + g.pad) / g.step) * g.step;
   const x = (i: number) => L + (xs.length === 1 ? (W - L - R) / 2 : (i * (W - L - R)) / (xs.length - 1));
   const y = (v: number) => T + ((hi - v) * (H - T - B)) / (hi - lo || 1);
-  const ticks = [lo, Math.round((lo + hi) / 2 / 5) * 5, hi];
+  const mid = Math.round((lo + hi) / 2 / (g.step / 2)) * (g.step / 2);
+  const ticks = [...new Set([lo, mid, hi])];
+  const fmt = (n: number) => String(Math.round(n * 10) / 10).replace(".", ",");
   const days: { i: number; day: string }[] = [];
   xs.forEach((v, i) => {
     if (!days.length || days[days.length - 1].day !== dayOf(v.at)) days.push({ i, day: dayOf(v.at) });
   });
   const step = Math.ceil(days.length / 5);
-  const line = (f: (v: VoceDiario) => number) => xs.map((v, i) => `${x(i).toFixed(1)},${y(f(v)).toFixed(1)}`).join(" ");
-  const label =
-    d.slug === "pressione"
-      ? `Andamento della pressione: ${xs.length} misure, massima da ${Math.min(...xs.map((v) => (v.diario === "pressione" ? v.dati.sys : 0)))} a ${Math.max(...xs.map((v) => (v.diario === "pressione" ? v.dati.sys : 0)))}`
-      : `Andamento della glicemia: ${xs.length} misure, da ${Math.min(...vals)} a ${Math.max(...vals)} mg/dL`;
+  const line = (f: (v: VoceDiario) => number | null) =>
+    xs
+      .map((v, i) => [i, f(v)] as const)
+      .filter((p): p is readonly [number, number] => p[1] !== null)
+      .map(([i, n]) => `${x(i).toFixed(1)},${y(n).toFixed(1)}`)
+      .join(" ");
   return (
     <figure className="dra-chart m-0">
-      <figcaption className="font-bold">Andamento{xs.length < voci.length ? ` (ultime ${xs.length} misure)` : ""}</figcaption>
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label}>
+      <figcaption className="font-bold">Andamento{xs.length < voci.length ? ` (ultime ${xs.length} voci)` : ""}</figcaption>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${g.label}: ${xs.length} voci, da ${fmt(Math.min(...vals))} a ${fmt(Math.max(...vals))} ${g.unit}`}>
         {ticks.map((t) => (
           <g key={t}>
             <line className="ax" x1={L} x2={W - R} y1={y(t)} y2={y(t)} />
             <text className="lb" x={L - 8} y={y(t) + 4} textAnchor="end">
-              {t}
+              {fmt(t)}
             </text>
           </g>
         ))}
         {days
           .filter((_, k) => k % step === 0)
-          .map((g) => (
-            <text key={g.day} className="lb" x={x(g.i)} y={H - 8} textAnchor="start">
-              {giornoBreve(g.day).split(" ").slice(1).join(" ")}
+          .map((gg) => (
+            <text key={gg.day} className="lb" x={x(gg.i)} y={H - 8} textAnchor="start">
+              {giornoBreve(gg.day).split(" ").slice(1).join(" ")}
             </text>
           ))}
-        {d.slug === "pressione" ? (
-          <>
-            <polyline className="l1" points={line((v) => (v.diario === "pressione" ? v.dati.sys : 0))} />
-            <polyline className="l2" points={line((v) => (v.diario === "pressione" ? v.dati.dia : 0))} />
-            {xs.map((v, i) => (v.diario === "pressione" ? <circle key={`a${v.id}`} className="p1" cx={x(i)} cy={y(v.dati.sys)} r={3} /> : null))}
-            {xs.map((v, i) => (v.diario === "pressione" ? <circle key={`b${v.id}`} className="p2" cx={x(i)} cy={y(v.dati.dia)} r={3} /> : null))}
-          </>
-        ) : (
-          <>
-            <polyline className="l1" points={line((v) => (v.diario === "glicemia" ? v.dati.mgdl : 0))} opacity={0.35} />
-            {xs.map((v, i) => (v.diario === "glicemia" ? <circle key={v.id} className="p1" cx={x(i)} cy={y(v.dati.mgdl)} r={4.5} /> : null))}
-          </>
+        {g.serie.map((f, k) => (f.line ? <polyline key={`l${k}`} className={`l${f.cls}`} points={line(f.v)} opacity={f.faint ? 0.35 : 1} /> : null))}
+        {g.serie.map((f, k) =>
+          xs.map((v, i) => {
+            const n = f.v(v);
+            return n === null ? null : <circle key={`${k}${v.id}`} className={`p${f.dot ? f.dot(v) : f.cls}`} cx={x(i)} cy={y(n)} r={f.r} />;
+          }),
         )}
       </svg>
-      {d.slug === "pressione" ? (
+      {g.legend.length ? (
         <ul className="dra-legend">
-          <li>
-            <i style={{ background: "var(--color-teal-deep)" }} />
-            Massima
-          </li>
-          <li>
-            <i style={{ background: "var(--color-amber)" }} />
-            Minima
-          </li>
+          {g.legend.map(([t, c]) => (
+            <li key={t}>
+              <i style={{ background: c }} />
+              {t}
+            </li>
+          ))}
         </ul>
       ) : (
-        <p className="mt-1 text-[0.9375rem] text-muted">Ogni punto è una misura; il momento è scritto nell’elenco qui sotto.</p>
+        <p className="mt-1 text-[0.9375rem] text-muted">{g.nota}</p>
       )}
     </figure>
   );
 }
+
+interface Serie {
+  cls: "1" | "2";
+  v: (x: VoceDiario) => number | null;
+  line: boolean;
+  faint?: boolean;
+  r: number;
+  /** Colore del punto voce per voce (per esempio mattina o sera). */
+  dot?: (x: VoceDiario) => "1" | "2";
+}
+const C1 = "var(--color-teal-deep)";
+const C2 = "var(--color-amber)";
+const GRAFICI: Record<Exclude<DiarioSlug, "cefalea">, { serie: Serie[]; pad: number; step: number; label: string; unit: string; legend: [string, string][]; nota?: string }> = {
+  pressione: {
+    serie: [
+      { cls: "1", v: (v) => (v.diario === "pressione" ? v.dati.sys : null), line: true, r: 3 },
+      { cls: "2", v: (v) => (v.diario === "pressione" ? v.dati.dia : null), line: true, r: 3 },
+    ],
+    pad: 8,
+    step: 10,
+    label: "Andamento della pressione",
+    unit: "mmHg",
+    legend: [
+      ["Massima", C1],
+      ["Minima", C2],
+    ],
+  },
+  glicemia: {
+    serie: [{ cls: "1", v: (v) => (v.diario === "glicemia" ? v.dati.mgdl : null), line: true, faint: true, r: 4.5 }],
+    pad: 8,
+    step: 10,
+    label: "Andamento della glicemia",
+    unit: "mg/dL",
+    legend: [],
+    nota: "Ogni punto è una misura; il momento è scritto nell’elenco qui sotto.",
+  },
+  sonno: {
+    serie: [{ cls: "1", v: (v) => (v.diario === "sonno" ? Math.round((minutiTra(v.dati.aLetto, v.dati.inPiedi) / 60) * 10) / 10 : null), line: true, faint: true, r: 4.5 }],
+    pad: 0.4,
+    step: 1,
+    label: "Ore a letto, notte per notte",
+    unit: "ore",
+    legend: [],
+    nota: "Ogni punto è una notte: le ore passate a letto, dalla luce spenta a quando ti sei alzato.",
+  },
+  peso: {
+    serie: [{ cls: "1", v: (v) => (v.diario === "peso" ? v.dati.kg : null), line: true, r: 3.5 }],
+    pad: 0.3,
+    step: 1,
+    label: "Andamento del peso",
+    unit: "kg",
+    legend: [],
+    nota: "Ogni punto è una misura, in kg.",
+  },
+  respiro: {
+    serie: [
+      {
+        cls: "1",
+        v: (v) => (v.diario === "respiro" ? v.dati.pef : null),
+        line: true,
+        faint: true,
+        r: 4.5,
+        dot: (v) => (v.diario === "respiro" && v.dati.momento === "sera" ? "2" : "1"),
+      },
+    ],
+    pad: 15,
+    step: 50,
+    label: "Andamento del picco di flusso",
+    unit: "L/min",
+    legend: [
+      ["Mattina (e altri momenti)", C1],
+      ["Sera", C2],
+    ],
+  },
+};
 
 // ---- Promemoria nel calendario ----
 
