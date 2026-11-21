@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, BookOpen, ClipboardList, Compass, MessageCircleQuestionMark, SpellCheck, type LucideIcon } from "lucide-react";
+import { ArrowRight, BookOpen, ClipboardList, Compass, MessageCircleQuestionMark, NotebookPen, SpellCheck, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { EXAM_GUIDE_COUNT } from "@/content/guides";
@@ -22,6 +22,7 @@ export default function StrumentiPage() {
   const tools: { href: string; icon: LucideIcon; t: string; d: string }[] = [
     { href: "/strumenti/preparati-alla-visita", icon: ClipboardList, t: "Preparati alla visita", d: "Cosa portare e cosa chiedere, in 2 minuti." },
     { href: "/strumenti/domande-per-il-medico", icon: MessageCircleQuestionMark, t: "Domande per il medico", d: "La tua lista di domande, pronta da stampare." },
+    { href: "/diari", icon: NotebookPen, t: "Diari della salute", d: "Pressione, glicemia, mal di testa: come misurare bene e il diario da stampare." },
     ...(puntoDiPartenzaEnabled()
       ? [{ href: "/punto-di-partenza", icon: Compass, t: "Punto di partenza", d: "Non hai esami? 10 aree da conoscere e una scheda da portare al medico." }]
       : []),

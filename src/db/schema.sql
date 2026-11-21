@@ -479,3 +479,26 @@ INSERT INTO schema_migrations(version) VALUES (9) ON CONFLICT DO NOTHING;
 -- non lo cambia; da quel momento title_custom = true e non lo tocchiamo più.
 ALTER TABLE documents ADD COLUMN IF NOT EXISTS title_custom boolean NOT NULL DEFAULT false;
 INSERT INTO schema_migrations(version) VALUES (10) ON CONFLICT DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Schema v11 (21/11/2026): diari della salute (pressione, glicemia, mal di testa).
+--  * diary_entries: una misura o un episodio, scritti dalla persona per sé o per un familiare (profile_id).
+--    `at` è data e ora locali di chi misura («2026-11-21T07:30»): il mattino resta mattino.
+--    `data` contiene i numeri (validati dall'API con zod); il sito li riassume e non li valuta.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS diary_entries (
+  id uuid PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  profile_id uuid REFERENCES family_profiles(id) ON DELETE CASCADE,
+  diary text NOT NULL CHECK (diary IN ('pressione', 'glicemia', 'cefalea')),
+  at text NOT NULL CHECK (at ~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$'),
+  data jsonb NOT NULL,
+  note text CHECK (note IS NULL OR char_length(note) <= 200),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS diary_entries_user_idx ON diary_entries(user_id, diary, at);
+GRANT SELECT, INSERT, UPDATE, DELETE ON diary_entries TO app_rls;
+ALTER TABLE diary_entries ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS diary_entries_owner ON diary_entries;
+CREATE POLICY diary_entries_owner ON diary_entries USING (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid) WITH CHECK (user_id = NULLIF(current_setting('app.user_id', true), '')::uuid);
+INSERT INTO schema_migrations(version) VALUES (11) ON CONFLICT DO NOTHING;

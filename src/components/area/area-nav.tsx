@@ -10,6 +10,7 @@ import {
   FolderOpen,
   LineChart,
   LogOut,
+  NotebookPen,
   Receipt,
   Settings,
   Stethoscope,
@@ -39,6 +40,14 @@ const ITEMS_ALL = [
     label: "Nel tempo",
     short: "Numeri",
     icon: LineChart,
+    exact: false,
+  },
+  // 21/11/2026: diari della salute (pressione, glicemia, mal di testa).
+  {
+    href: "/area-personale/diari",
+    label: "Diari della salute",
+    short: "Diari",
+    icon: NotebookPen,
     exact: false,
   },
   {
@@ -95,7 +104,9 @@ const ITEMS_ALL = [
 
 export const AREA_ITEMS = MEDICI ? ITEMS_ALL : ITEMS_ALL.filter((i) => !isDoctorPath(i.href));
 /** Quinta voce della barra in basso su telefono: le richieste al medico oppure, senza medici, i promemoria. */
-const LAST_TAB = MEDICI ? ITEMS_ALL[4] : ITEMS_ALL[3];
+const byHref = (h: string) => ITEMS_ALL.find((i) => i.href === h)!;
+// 21/11/2026: le voci si cercano per indirizzo, non per posizione (i diari si sono aggiunti in mezzo).
+const LAST_TAB = MEDICI ? byHref("/richieste") : byHref("/area-personale/promemoria");
 
 /**
  * Navigazione dell'area personale Cura Privata.
@@ -220,7 +231,7 @@ export function AreaNav({
               icon: FilePlus2,
               exact: true,
             },
-            AREA_ITEMS[2],
+            byHref("/area-personale/famiglia"),
             LAST_TAB,
           ].map(({ href, label, short, icon: Icon, exact }) => {
             const active = isActive(href, exact);

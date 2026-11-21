@@ -71,7 +71,9 @@ describe("punto 1: la ricerca capisce come si scrive davvero", () => {
 describe("punto 1 · niente risultati a caso", () => {
   test("«mal di testa» non diventa «testosterone»: nessun risultato, e la ricerca propone le tre sezioni", () => {
     const index = buildSearchIndex();
-    for (const q of ["mal di testa", "dolore al ginocchio", "pizza margherita"]) expect(searchSite(index, q, 6).items, q).toEqual([]);
+    for (const q of ["dolore al ginocchio", "pizza margherita"]) expect(searchSite(index, q, 6).items, q).toEqual([]);
+    // 21/11/2026: con i diari della salute «mal di testa» trova il diario, e solo quello (mai «testosterone»).
+    expect(searchSite(index, "mal di testa", 6).items.map((i) => i.href)).toEqual(["/diari"]);
   });
 });
 

@@ -115,7 +115,7 @@ export function needsEmail(
   return n >= 0 && n <= 3;
 }
 
-const icsEscape = (s: string) =>
+export const icsEscape = (s: string) =>
   s
     .replace(/\\/g, "\\\\")
     .replace(/;/g, "\\;")
@@ -123,7 +123,7 @@ const icsEscape = (s: string) =>
     .replace(/\r?\n/g, "\\n");
 
 /** Righe di un file .ics lunghe al massimo 75 ottetti, come chiede lo standard. */
-function fold(line: string): string {
+export function fold(line: string): string {
   const out: string[] = [];
   let cur = "";
   for (const ch of line) {

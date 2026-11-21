@@ -53,6 +53,7 @@ const FOOTER_NAV_ALL = {
     { href: "/prevenzione/esami-di-base", label: "Esami di base" },
     { href: "/prevenzione/screening", label: "Screening gratuiti" },
     { href: "/vicino-a-te", label: "Vicino a te" },
+    { href: "/diari", label: "Diari della salute" },
     { href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita" },
     { href: "/guide", label: "Guide agli esami" },
     { href: "/integratori", label: "Guide agli integratori" },
