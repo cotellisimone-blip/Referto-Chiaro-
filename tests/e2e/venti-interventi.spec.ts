@@ -67,7 +67,7 @@ test("punto 8 · la ricerca trova gli integratori e, se non trova, propone le tr
   const campo = page.getByRole("dialog").locator("input[type=search]");
   await campo.fill("omega");
   await expect(page.getByRole("dialog").locator('a[href^="/integratori/"]').first()).toBeVisible();
-  await campo.fill("mal di testa");
+  await campo.fill("dolore al ginocchio");
   const sezioni = page.getByTestId("search-sezioni");
   await expect(sezioni).toBeVisible();
   expect(await sezioni.locator("a").evaluateAll((as) => as.map((a) => a.getAttribute("href")))).toEqual(["/prevenzione", "/lettura-referti", "/medici"]);

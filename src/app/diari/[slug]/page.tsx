@@ -8,7 +8,7 @@ export function generateStaticParams() {
   return DIARI.map((d) => ({ slug: d.slug }));
 }
 
-const titolo = (nome: string) => `Diario: ${nome.toLowerCase()}. Come misurare bene e diario da stampare`;
+const titolo = (nome: string) => `Diario ${nome.toLowerCase()}: guida e foglio da stampare`;
 
 export async function generateMetadata({ params }: PageProps<"/diari/[slug]">): Promise<Metadata> {
   const { slug } = await params;

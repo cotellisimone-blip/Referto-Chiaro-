@@ -23,8 +23,11 @@ test("punto 1 · la ricerca capisce «glicemia alta» e un errore di battitura, 
   await expect(page.locator('a[data-result][href^="/guide/emocromo"]').first()).toBeVisible();
   await expect(page.getByTestId("search-hint")).toContainText("emocromo");
   // Una ricerca fuori tema non trova risultati a caso: propone le tre sezioni.
-  await campo.fill("mal di testa");
+  await campo.fill("dolore al ginocchio");
   await expect(page.getByTestId("search-sezioni")).toBeVisible();
+  // 21/11/2026: «mal di testa» ora porta ai diari della salute.
+  await campo.fill("mal di testa");
+  await expect(page.locator('a[data-result][href="/diari"]').first()).toBeVisible();
 });
 
 test("punto 2 · chi arriva all'accesso da «Carica un referto» legge perché è lì", async ({ page }) => {
