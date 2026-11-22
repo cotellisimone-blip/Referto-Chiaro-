@@ -50,7 +50,9 @@ describe("punto 1: la ricerca capisce come si scrive davvero", () => {
   });
 
   test("dice quale strada ha preso", () => {
-    expect(searchSite(index, "glicemia alta")).toMatchObject({ mode: "senza-aggettivi", used: "glicemia" });
+    expect(searchSite(index, "creatinina alta")).toMatchObject({ mode: "senza-aggettivi", used: "creatinina" });
+    // 22/11/2026: «glicemia alta» è anche una pagina Malattie: prima la malattia, subito dopo la guida all'esame.
+    expect(searchSite(index, "glicemia alta").items.slice(0, 2).map((i) => i.href)).toEqual(["/malattie/diabete", "/guide/glicemia"]);
     expect(searchSite(index, "emocrmo")).toMatchObject({ mode: "simile", used: "emocromo" });
   });
 
@@ -73,7 +75,11 @@ describe("punto 1 · niente risultati a caso", () => {
     const index = buildSearchIndex();
     for (const q of ["dolore al ginocchio", "pizza margherita"]) expect(searchSite(index, q, 6).items, q).toEqual([]);
     // 21/11/2026: con i diari della salute «mal di testa» trova il diario, e solo quello (mai «testosterone»).
-    expect(searchSite(index, "mal di testa", 6).items.map((i) => i.href)).toEqual(["/diari"]);
+    // 22/11/2026: prima la pagina «Mal di testa» della sezione Malattie, poi il diario.
+    const mdt = searchSite(index, "mal di testa", 6).items.map((i) => i.href);
+    expect(mdt[0]).toBe("/malattie/mal-di-testa");
+    expect(mdt).toContain("/diari");
+    expect(mdt.some((h) => h.includes("testosterone"))).toBe(false);
   });
 });
 

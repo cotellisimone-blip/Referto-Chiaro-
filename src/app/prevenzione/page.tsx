@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Jar } from "@/components/wow/jar";
 import Link from "next/link";
 import { CategoryBadge } from "@/components/wow/category-art";
-import { ArrowRight, ChartLine, FileText, MessageCircleQuestionMark, SpellCheck, Users } from "lucide-react";
+import { Activity, ArrowRight, ChartLine, FileText, MessageCircleQuestionMark, SpellCheck, Users } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { PrevenzioneCards } from "@/components/sezioni/prevenzione-cards";
@@ -148,6 +148,10 @@ export default function PrevenzionePage() {
           <div className="ds-sec-end">
             <Link href="/guide" className="tm-btn tm-btn-ink">
               Tutte le guide <ArrowRight aria-hidden className="tm-ic" />
+            </Link>
+            {/* 22/11/2026: dalla Prevenzione alla sezione «Malattie». */}
+            <Link href="/malattie" className="tm-btn tm-btn-line">
+              <Activity aria-hidden className="tm-ic" /> Malattie spiegate
             </Link>
             <Link href="/glossario" className="tm-btn tm-btn-line">
               <SpellCheck aria-hidden className="tm-ic" /> Glossario

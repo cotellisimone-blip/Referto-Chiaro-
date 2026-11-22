@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { HomeSimboli, Ic } from "@/components/home-b/simboli";
 import { DIARI, DIARI_BOZZA, DIARI_LIMITI, getDiario, type DiarioSlug } from "@/domain/diari/catalogo";
+import { malattiaPerDiario } from "@/content/malattie";
 import { DiariSimboli, Disegno } from "./disegni";
 import { ScaricaVuoto } from "./scarica-vuoto";
 import "@/components/temi/temi.css";
@@ -119,6 +120,7 @@ export function DiariIndice() {
 export function DiarioPubblico({ slug }: { slug: DiarioSlug }) {
   const d = getDiario(slug)!;
   const altri = DIARI.filter((x) => x.slug !== slug);
+  const malattia = malattiaPerDiario(slug);
   return (
     <div className={`ht ht-${d.tono}`}>
       <HomeSimboli />
@@ -157,6 +159,11 @@ export function DiarioPubblico({ slug }: { slug: DiarioSlug }) {
                   <dd>{d.quando}</dd>
                 </div>
               </dl>
+              {malattia ? (
+                <p className="dr-malattia">
+                  Se vuoi capire la malattia: <Link href={`/malattie/${malattia.slug}`}>{malattia.nome}, spiegata bene</Link>
+                </p>
+              ) : null}
               <p className="ht-bozza" data-bozza="medico">
                 {DIARI_BOZZA}
               </p>

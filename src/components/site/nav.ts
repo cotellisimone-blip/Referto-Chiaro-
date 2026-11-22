@@ -5,7 +5,7 @@ import { isDoctorPath, mediciEnabled } from "@/lib/medici";
  * «Parla con un medico» diventa «Videoconsulto». «Guide» si vede dai 1280 px in su (sotto resta nel menu, nel fondo
  * pagina e nella ricerca), così la testata non va a capo a 1024 px.
  */
-export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users" | "tools" | "chart" | "laptop" | "pill" | "heart";
+export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users" | "tools" | "chart" | "laptop" | "pill" | "heart" | "activity";
 type NavItem = { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; icon: NavIcon; wideOnly?: "xl" | "2xl"; menuOnly?: boolean };
 /**
  * 15/11/2026 sera: tre sezioni (Prevenzione, Lettura referti, Medici), poi guide, integratori e prezzi; guide e
@@ -17,8 +17,11 @@ type NavItem = { href: string; label: string; tone: "capisci" | "medico" | "pare
 const MAIN_NAV_DUE_SEZIONI: readonly NavItem[] = [
   { href: "/prevenzione", label: "Prevenzione", tone: null, icon: "heart" },
   { href: "/lettura-referti", label: "Lettura referti", tone: "capisci", icon: "file" },
+  // 22/11/2026: la sezione «Malattie» (dieci aree). Nella testata dai 1280 px, sempre nel menu del telefono. Per farle
+  // posto «Guide» passa ai 1536 px: sotto le guide si raggiungono da Malattie, Prevenzione, ricerca, menu e fondo pagina.
+  { href: "/malattie", label: "Malattie", tone: null, icon: "activity", wideOnly: "xl" },
   { href: "/medici", label: "Medici", tone: "medico", icon: "stethoscope" },
-  { href: "/guide", label: "Guide", tone: null, icon: "book", wideOnly: "xl" },
+  { href: "/guide", label: "Guide", tone: null, icon: "book", wideOnly: "2xl" },
   { href: "/integratori", label: "Integratori", tone: null, icon: "pill", wideOnly: "xl" },
   { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro" },
   // 18/11/2026 (secondo giro, punto 15): la pagina esisteva ma nessun collegamento ci portava. Nel menu del telefono
@@ -53,6 +56,7 @@ const FOOTER_NAV_ALL = {
     { href: "/prevenzione/esami-di-base", label: "Esami di base" },
     { href: "/prevenzione/screening", label: "Screening gratuiti" },
     { href: "/vicino-a-te", label: "Vicino a te" },
+    { href: "/malattie", label: "Malattie spiegate" },
     { href: "/diari", label: "Diari della salute" },
     { href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita" },
     { href: "/guide", label: "Guide agli esami" },

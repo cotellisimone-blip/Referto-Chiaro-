@@ -109,3 +109,11 @@ export function metaDescription(text: string, max = DESCRIPTION_MAX): string {
  */
 export const PAGES_UPDATED = "2026-11-18";
 export const GLOSSARY_UPDATED = "2026-11-07";
+
+/**
+ * 22/11/2026, pagine per malattia: entrano negli indici solo quando un medico identificato le ha rivedute
+ * (`revisione.stato === "rivista"`, con nome, Ordine e data) e l'interruttore generale è acceso.
+ */
+export function malattiaIndexable(m: { revisione: { stato: string } }, env: Record<string, string | undefined> = process.env): boolean {
+  return indexingEnabled(env) && m.revisione.stato === "rivista";
+}

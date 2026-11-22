@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
-import { ArrowRight, BookOpenText, FileText, HeartPulse, Pill, Search, SpellCheck, Stethoscope, X } from "lucide-react";
+import { Activity, ArrowRight, BookOpenText, FileText, HeartPulse, Pill, Search, SpellCheck, Stethoscope, X } from "lucide-react";
 import { searchSite, type SearchItem, type SearchKind } from "@/lib/search-core";
 
 export const SEARCH_OPEN_EVENT = "cp-search-open";
@@ -17,6 +17,7 @@ export function openSiteSearch(prefill = "") {
 const SUGGESTIONS = ["Emocromo", "TSH", "Glicemia", "Colesterolo LDL", "Ferritina", "Creatinina", "Vitamina D", "PCR", "Intervallo di riferimento"];
 
 const KIND: Record<SearchKind, { label: string; Icon: typeof FileText }> = {
+  malattia: { label: "Malattie", Icon: Activity },
   guida: { label: "Guide agli esami", Icon: BookOpenText },
   integratore: { label: "Guide agli integratori", Icon: Pill },
   termine: { label: "Glossario", Icon: SpellCheck },
@@ -115,7 +116,10 @@ export function SiteSearch() {
   const results = useMemo(() => outcome?.items ?? [], [outcome]);
   const grouped = useMemo(() => {
     const g: { kind: SearchKind; items: SearchItem[] }[] = [];
-    for (const kind of ["guida", "integratore", "termine", "pagina"] as SearchKind[]) {
+    // 22/11/2026: i gruppi seguono il primo risultato. «pressione alta» mette prima le malattie, «ferritina» le guide.
+    const order: SearchKind[] = [];
+    for (const r of results) if (!order.includes(r.kind)) order.push(r.kind);
+    for (const kind of order) {
       const items = results.filter((r) => r.kind === kind);
       if (items.length) g.push({ kind, items });
     }

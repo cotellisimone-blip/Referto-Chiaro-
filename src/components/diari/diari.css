@@ -175,3 +175,7 @@
 .dra-chip-n{min-width:56px;align-items:center;font-size:1.125rem}
 .dra-num input[type="time"]{font-size:1.375rem;padding:.25rem .5rem;min-width:0}
 @media (max-width:479px){.dra-nums.is-time{grid-template-columns:minmax(0,1fr)}}
+
+/* 22/11/2026: rimando alla pagina di malattia, sotto «Per chi / Quando». */
+.dr-malattia{margin:1rem 0 0;max-width:40rem;font-size:1.0625rem;font-weight:700;color:var(--ink)}
+.dr-malattia a{display:inline-flex;align-items:center;min-height:44px;color:var(--ta);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:.2em}

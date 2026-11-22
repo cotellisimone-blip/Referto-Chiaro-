@@ -2,6 +2,7 @@ import { GUIDES } from "@/content/guides";
 import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { GLOSSARY } from "@/content/glossario";
 import { INTEGRATORI, INTEGRATORI_GROUPS } from "@/content/integratori";
+import { MALATTIE } from "@/content/malattie";
 import { MAIN_NAV, FOOTER_NAV, LEGAL_NAV, EXTRA_PAGES } from "@/components/site/nav";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { isDoctorPath, mediciEnabled } from "@/lib/medici";
@@ -31,6 +32,7 @@ const PAGE_CONTEXT: Record<string, string> = {
   "/strumenti/preparati-alla-visita": "Gratis: cosa portare e cosa chiedere, in 2 minuti",
   "/famiglia": "I referti di tutta la famiglia, i numeri nel tempo, i promemoria",
   "/strumenti/domande-per-il-medico": "Prepara la lista delle domande per la visita",
+  "/malattie": "Dieci aree spiegate bene: pressione, diabete, mal di testa, sonno, peso, asma, colesterolo, tiroide, anemia, fegato",
   "/diari": "Gratis: pressione, glicemia, mal di testa, sonno, peso, respiro. Come misurare bene e il diario da stampare",
 };
 
@@ -50,6 +52,7 @@ const PAGE_ALIASES: Record<string, string[]> = {
   "/strumenti": ["strumenti", "strumenti gratuiti", "gratis"],
   "/diari": ["diario", "diari", "pressione", "misurare la pressione", "pressione a casa", "ipertensione", "glicemia a casa", "glucometro", "diabete", "mal di testa", "cefalea", "emicrania", "diario pressorio", "diario del sonno", "sonno", "insonnia", "dormire male", "peso", "pesarsi", "bilancia", "picco di flusso", "peak flow", "asma", "respiro"],
   "/glossario": ["glossario", "sigle", "parole", "dizionario", "significato"],
+  "/malattie": ["malattie", "malattia", "disturbi", "patologie", "spiegazione malattie"],
 };
 
 /**
@@ -112,6 +115,14 @@ export function buildSearchIndex(): SearchItem[] {
     context: `${INTEGRATORI_GROUPS[i.group]} · ${shorten(i.oneLine, 90)}`,
     aliases: i.aka,
   }));
+  // 22/11/2026: le pagine per malattia, con i nomi di tutti i giorni e le frasi che la gente scrive davvero.
+  const malattie: SearchItem[] = MALATTIE.map((m) => ({
+    kind: "malattia",
+    title: m.nome,
+    href: `/malattie/${m.slug}`,
+    context: `${m.area} · ${shorten(m.riga, 90)}`,
+    aliases: [m.nomeMedico, ...m.altriNomi, ...m.ricerche],
+  }));
   const seen = new Set<string>();
   const pages: SearchItem[] = [];
   const add = (href: string, label: string, section: string) => {
@@ -127,7 +138,7 @@ export function buildSearchIndex(): SearchItem[] {
   for (const l of [...EXTRA_PAGES, ...LEGAL_NAV]) add(l.href, l.label, "Cura Privata");
   add("/strumenti", "Strumenti gratuiti", "Gratis");
   add("/glossario", "Glossario", "Gratis");
-  return [...guides, ...supplements, ...terms, ...pages];
+  return [...malattie, ...guides, ...supplements, ...terms, ...pages];
 }
 
 function shorten(s: string, max: number) {

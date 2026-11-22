@@ -1,0 +1,121 @@
+import type { Malattia } from "../schema";
+
+export const PESO: Malattia = {
+  slug: "peso",
+  area: "Peso",
+  nome: "Sovrappeso e obesità",
+  nomeMedico: "Sovrappeso e obesità",
+  altriNomi: ["obesità", "sovrappeso", "eccesso di peso", "BMI alto"],
+  tono: "al",
+  icona: "bilancia",
+  riga: "Il BMI, la circonferenza della vita e perché il peso conta per cuore, diabete, fegato e sonno. Senza colpe.",
+  seoTitle: "Sovrappeso e obesità: BMI, vita e salute",
+  metaDescription: "Sovrappeso e obesità: come si calcola il BMI, perché conta la circonferenza della vita, quali condizioni sono collegate e quando parlarne.",
+  titolo: "Sovrappeso e obesità:",
+  em: "il peso, senza colpe.",
+  inBreve: [
+    "L'obesità è riconosciuta come una malattia cronica: non è una questione di forza di volontà. Contano geni, ambiente, sonno, stress, farmaci e abitudini.",
+    "Per misurarla si usano il BMI (peso diviso altezza al quadrato) e la circonferenza della vita, che dice quanto grasso c'è sulla pancia.",
+    "Anche un calo del 5–10% del peso, mantenuto nel tempo, migliora pressione, glicemia, colesterolo e fegato. I percorsi efficaci si costruiscono con il medico.",
+  ],
+  cheCose: [
+    "Il corpo accumula grasso quando, per molto tempo, entra più energia di quanta ne usi. Ma dietro questo semplice conto ci sono molte cose che non dipendono solo dalla persona: la familiarità, gli ormoni, il sonno corto, lo stress, alcuni farmaci, il lavoro sedentario, il cibo che si trova intorno a noi. Per questo le società scientifiche parlano di obesità come di una malattia cronica, da curare e non da colpevolizzare.",
+    "Non tutto il grasso pesa allo stesso modo. Quello che si accumula sulla pancia, intorno agli organi (grasso viscerale), è il più legato a diabete di tipo 2, pressione alta, colesterolo, fegato grasso e apnee notturne. Ecco perché, oltre al peso, si misura la vita.",
+    "Il BMI è un numero utile ma imperfetto: non distingue muscolo e grasso, e nelle persone anziane o molto muscolose può ingannare. Il medico lo legge insieme alla circonferenza della vita, alla storia del peso e agli esami.",
+  ],
+  inNumeri: {
+    titolo: "Le classi del BMI e la circonferenza della vita",
+    intro: "Le classi dell'Organizzazione mondiale della sanità per gli adulti. BMI = peso in chili diviso l'altezza in metri al quadrato: per esempio 80 kg e 1,70 m danno 80 ÷ 2,89 = 27,7.",
+    colonne: ["Classe", "BMI (kg/m²)"],
+    righe: [
+      { etichetta: "Sottopeso", valore: "sotto 18,5" },
+      { etichetta: "Peso adeguato", valore: "da 18,5 a 24,9" },
+      { etichetta: "Sovrappeso", valore: "da 25 a 29,9" },
+      { etichetta: "Obesità di classe 1", valore: "da 30 a 34,9" },
+      { etichetta: "Obesità di classe 2", valore: "da 35 a 39,9" },
+      { etichetta: "Obesità di classe 3", valore: "40 o più" },
+    ],
+    nota: "Circonferenza della vita, misurata a metà tra l'ultima costola e l'osso del bacino: per l'OMS il rischio per la salute sale sopra 94 cm negli uomini e 80 cm nelle donne, e sale molto sopra 102 e 88 cm. Le soglie aiutano a capire, non a giudicare: che cosa valgono per te lo dice il medico.",
+  },
+  comeSiManifesta: {
+    testo: [
+      "Il peso in più spesso non dà disturbi propri, ma si fa sentire attraverso altre condizioni. Alcuni segnali sono comuni e vale la pena riferirli al medico.",
+    ],
+    segni: [
+      "Fiato corto per sforzi che prima si facevano bene, come una rampa di scale.",
+      "Dolore alle ginocchia, alle anche o alla schiena.",
+      "Russare forte, pause del respiro di notte, sonno durante il giorno.",
+      "Pressione, glicemia o colesterolo che salgono negli esami.",
+      "Bruciore di stomaco e reflusso, soprattutto da sdraiati.",
+    ],
+  },
+  quandoChiamare: {
+    subito: [
+      "Fiato corto improvviso e forte, dolore al petto o sudore freddo.",
+      "In chi ha uno scompenso cardiaco: fiato corto anche a riposo o da sdraiati, con gonfiore che sale dalle gambe.",
+    ],
+    presto: [
+      "In chi ha uno scompenso cardiaco: un aumento di peso di 2 chili o più in 2–3 giorni, o caviglie più gonfie del solito (lo indicano le associazioni di cardiologia).",
+      "Un calo di peso che non stai cercando, di più del 5% in sei mesi.",
+      "Sonno durante il giorno tanto da addormentarti guidando.",
+    ],
+  },
+  esami: [
+    { guida: "glicemia", perche: "Il peso in più sulla pancia è il primo fattore legato al diabete di tipo 2." },
+    { guida: "emoglobina-glicata", perche: "Racconta la glicemia media degli ultimi mesi: utile per scoprire il prediabete." },
+    { guida: "colesterolo-ldl", perche: "Insieme a trigliceridi e HDL descrive i grassi nel sangue, che il peso può alzare." },
+    { guida: "transaminasi-alt-ast", perche: "Possono salire con il fegato grasso, molto frequente con il sovrappeso." },
+    { guida: "tsh", perche: "La tiroide che lavora poco può contribuire all'aumento di peso: il medico a volte la controlla." },
+  ],
+  ogniGiorno: [
+    "Le linee guida indicano un percorso fatto di più parti insieme: un'alimentazione che si riesce a mantenere, movimento regolare (almeno 150 minuti alla settimana di attività moderata, più un po' di forza), sonno sufficiente e, quando serve, un supporto psicologico. Le diete drastiche fanno perdere peso in fretta, ma di solito non durano.",
+    "Per alcune persone, con il medico, esistono anche farmaci per l'obesità e la chirurgia bariatrica. Se e quando hanno senso si valuta caso per caso, in un centro specializzato.",
+    "Pesarsi con regolarità, sempre nelle stesse condizioni (al mattino, dopo il bagno, prima di colazione), aiuta a vedere l'andamento senza farsi ingannare dalle oscillazioni di un giorno.",
+  ],
+  diario: { slug: "peso", testo: "Una pesata al mattino, nelle stesse condizioni: il diario mostra l'andamento, il calo o l'aumento in una settimana e prepara il foglio per il medico." },
+  domande: [
+    "Il mio peso e la mia circonferenza della vita, nel mio caso, che cosa comportano?",
+    "Quali esami servono per controllare glicemia, colesterolo e fegato?",
+    "Qual è un obiettivo realistico di peso per i prossimi sei mesi?",
+    "Posso essere seguito da un dietista o da un centro per l'obesità del servizio pubblico?",
+    "Qualcuno dei farmaci che prendo può far aumentare il peso?",
+  ],
+  faq: [
+    {
+      d: "Come si calcola il BMI?",
+      r: "Si divide il peso in chili per l'altezza in metri moltiplicata per se stessa. Per esempio, 70 kg e 1,65 m: 1,65 × 1,65 = 2,72, e 70 ÷ 2,72 = 25,7. È un numero indicativo: il medico lo legge insieme alla circonferenza della vita e alla tua storia.",
+    },
+    {
+      d: "Il BMI vale anche per gli anziani?",
+      r: "Il BMI si calcola allo stesso modo, ma dopo i 65–70 anni perde precisione: con l'età si perde muscolo e l'altezza cala. In questa fascia il medico guarda soprattutto i cambiamenti di peso e la forza.",
+    },
+    {
+      d: "Quanto peso bisogna perdere per avere benefici?",
+      r: "Gli studi mostrano benefici su pressione, glicemia, colesterolo e fegato già con un calo del 5–10% del peso di partenza, se mantenuto nel tempo. Non serve arrivare al «peso forma» per stare meglio.",
+    },
+  ],
+  glossario: ["glicemia", "trigliceridi", "colesterolo", "transaminasi", "tsh", "lipidi"],
+  correlate: ["diabete", "fegato-grasso", "pressione-alta", "sonno"],
+  ricerche: [
+    "obesità",
+    "sovrappeso",
+    "bmi",
+    "calcolo bmi",
+    "indice di massa corporea",
+    "peso ideale",
+    "peso forma",
+    "circonferenza vita",
+    "grasso addominale",
+    "pancia",
+    "dimagrire",
+    "perdere peso",
+  ],
+  fonti: [
+    { ente: "ISSalute (Istituto superiore di sanità)", titolo: "Obesità: come affrontarla", url: "https://www.issalute.it/index.php/la-salute-dalla-a-alla-z-menu/o/obesita" },
+    { ente: "ISSalute", titolo: "Sindrome metabolica", url: "https://www.issalute.it/index.php/la-salute-dalla-a-alla-z-menu/s/sindrome-metabolica" },
+    { ente: "SIO", titolo: "Società italiana dell'obesità", url: "https://www.sio-obesita.org" },
+    { ente: "Heart Failure Association (ESC)", titolo: "Heart Failure Matters: il peso nello scompenso cardiaco", url: "https://www.heartfailurematters.org" },
+  ],
+  aggiornato: "2026-11-22",
+  revisione: { stato: "bozza" },
+};

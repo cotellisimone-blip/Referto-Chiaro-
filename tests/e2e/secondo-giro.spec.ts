@@ -16,8 +16,12 @@ test("punto 1 · la ricerca capisce «glicemia alta» e un errore di battitura, 
   await gotoReady(page, "/");
   await page.getByRole("button", { name: isMobile ? "Cerca nel sito" : "Apri la ricerca" }).first().click();
   const campo = page.getByRole("dialog").locator("input[type=search]");
-  await campo.fill("glicemia alta");
+  await campo.fill("creatinina alta");
   await expect(page.getByTestId("search-hint")).toBeVisible();
+  await expect(page.locator('a[data-result][href="/guide/creatinina"]').first()).toBeVisible();
+  // 22/11/2026: «glicemia alta» è anche una pagina Malattie: si vedono la malattia e la guida all'esame.
+  await campo.fill("glicemia alta");
+  await expect(page.locator('a[data-result][href="/malattie/diabete"]').first()).toBeVisible();
   await expect(page.locator('a[data-result][href="/guide/glicemia"]').first()).toBeVisible();
   await campo.fill("emocrmo");
   await expect(page.locator('a[data-result][href^="/guide/emocromo"]').first()).toBeVisible();
@@ -28,6 +32,7 @@ test("punto 1 · la ricerca capisce «glicemia alta» e un errore di battitura, 
   // 21/11/2026: «mal di testa» ora porta ai diari della salute.
   await campo.fill("mal di testa");
   await expect(page.locator('a[data-result][href="/diari"]').first()).toBeVisible();
+  await expect(page.locator('a[data-result][href="/malattie/mal-di-testa"]').first()).toBeVisible();
 });
 
 test("punto 2 · chi arriva all'accesso da «Carica un referto» legge perché è lì", async ({ page }) => {

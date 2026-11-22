@@ -1,0 +1,127 @@
+import type { Malattia } from "../schema";
+
+export const PRESSIONE_ALTA: Malattia = {
+  slug: "pressione-alta",
+  area: "Pressione e cuore",
+  nome: "Pressione alta",
+  nomeMedico: "Ipertensione arteriosa",
+  altriNomi: ["ipertensione", "ipertensione arteriosa", "pressione arteriosa elevata"],
+  tono: "mi",
+  icona: "cuore",
+  riga: "Spesso non dà disturbi: si scopre misurando. Che cosa vogliono dire i due numeri e come si tiene d'occhio.",
+  seoTitle: "Pressione alta: valori, sintomi e controlli",
+  metaDescription: "Pressione alta (ipertensione): che cosa dicono i due numeri, le soglie delle linee guida, quando chiamare il 112 e come misurarla a casa.",
+  titolo: "Pressione alta:",
+  em: "che cosa dicono i due numeri.",
+  inBreve: [
+    "La pressione alta (ipertensione) è una pressione del sangue nelle arterie che resta sopra le soglie delle linee guida per lungo tempo, non in una misura sola.",
+    "Di solito non dà disturbi. Per questo si chiama «killer silenzioso»: si scopre misurando, dal medico, in farmacia o a casa.",
+    "Tenerla sotto controllo nel tempo riduce il rischio di infarto, ictus e danni ai reni. Le misure fatte bene a casa aiutano molto il medico.",
+  ],
+  cheCose: [
+    "Il cuore spinge il sangue nelle arterie a ogni battito. Il numero più alto, la massima o sistolica, è la pressione nel momento della spinta. Il numero più basso, la minima o diastolica, è la pressione tra un battito e l'altro, quando il cuore si riempie. Si scrivono insieme, per esempio 135/85, e si misurano in millimetri di mercurio (mmHg).",
+    "La pressione cambia di continuo: sale con lo sforzo, l'emozione, il freddo, il caffè, il dolore, e scende a riposo e durante il sonno. Per questo una misura sola non basta per parlare di ipertensione. Il medico guarda la media di più misure, prese in giorni diversi, a riposo e nel modo giusto.",
+    "Nella grande maggioranza delle persone non c'è una causa unica: si parla di ipertensione «essenziale», legata a età, familiarità, peso, sale, sedentarietà e alcol. In una minoranza la pressione alta dipende da un'altra condizione, per esempio dei reni o delle ghiandole surrenali: è il medico a decidere se cercarla.",
+  ],
+  inNumeri: {
+    titolo: "Le soglie usate dalle linee guida",
+    intro: "Le classi della Società europea dell'ipertensione (ESH 2023), seguite anche dalla Società italiana dell'ipertensione arteriosa (SIIA). Valgono per misure prese dal medico, a riposo, in più visite.",
+    colonne: ["Classe", "Massima / minima (mmHg)"],
+    righe: [
+      { etichetta: "Ottimale", valore: "sotto 120 e sotto 80" },
+      { etichetta: "Normale (termine ESH)", valore: "120–129 e/o 80–84" },
+      { etichetta: "Normale alta", valore: "130–139 e/o 85–89" },
+      { etichetta: "Ipertensione di grado 1", valore: "140–159 e/o 90–99" },
+      { etichetta: "Ipertensione di grado 2", valore: "160–179 e/o 100–109" },
+      { etichetta: "Ipertensione di grado 3", valore: "180 o più e/o 110 o più" },
+    ],
+    nota: "A casa le soglie sono più basse: la media delle misure domestiche si confronta con 135/85. La Società europea di cardiologia (ESC 2024) usa tre gruppi invece di sei. I numeri servono a capire il referto: che cosa valgono per te lo dice il medico, che conosce il resto della tua salute.",
+  },
+  comeSiManifesta: {
+    testo: [
+      "Nella maggior parte delle persone la pressione alta non dà nessun disturbo per anni. Il mal di testa o il naso che sanguina, spesso collegati alla pressione nel parlare comune, non sono segnali affidabili: molte persone con pressione alta non li hanno mai.",
+    ],
+    segni: [
+      "Nessun disturbo: è la situazione più frequente.",
+      "Valori alti trovati per caso in farmacia, al lavoro o durante una visita per altro.",
+      "Mal di testa al mattino, capogiri o fiato corto, soprattutto quando i valori sono molto alti.",
+      "Disturbi alla vista o palpitazioni, meno frequenti, che vanno sempre riferiti al medico.",
+    ],
+  },
+  quandoChiamare: {
+    subito: [
+      "Pressione molto alta (180/110 o più) insieme a dolore al petto, fiato corto o sudore freddo.",
+      "Debolezza o formicolio di un braccio, di una gamba o di metà del viso, bocca storta, difficoltà a parlare o a capire.",
+      "Perdita improvvisa della vista, mal di testa improvviso e fortissimo, confusione o convulsioni.",
+    ],
+    presto: [
+      "Misure ripetute di 180/110 o più, anche senza disturbi: chiama il tuo medico in giornata o la guardia medica (116117).",
+      "Valori che cambiano molto rispetto al solito, o capogiri quando ti alzi in piedi.",
+      "Gonfiore alle caviglie nuovo, fiato corto quando ti sdrai, urine molto scure o scarse.",
+    ],
+  },
+  esami: [
+    { guida: "holter-pressorio", perche: "Misura la pressione per 24 ore, anche di notte: aiuta a distinguere la pressione alta vera da quella «da camice bianco»." },
+    { guida: "elettrocardiogramma-ecg", perche: "Mostra il ritmo del cuore e se la pressione alta nel tempo ha ispessito il muscolo cardiaco." },
+    { guida: "creatinina", perche: "Insieme al filtrato dice come lavorano i reni, che la pressione alta può affaticare." },
+    { guida: "microalbuminuria", perche: "Piccole quantità di albumina nelle urine sono uno dei primi segni che la pressione pesa sui reni." },
+    { guida: "colesterolo-ldl", perche: "Il colesterolo entra nel calcolo del rischio del cuore e delle arterie, insieme alla pressione." },
+    { guida: "glicemia", perche: "Pressione alta e diabete si presentano spesso insieme: il medico li guarda nello stesso quadro." },
+  ],
+  ogniGiorno: [
+    "Le linee guida indicano alcune abitudini che abbassano la pressione in modo misurabile: meno sale (l'Organizzazione mondiale della sanità indica meno di 5 grammi al giorno, circa un cucchiaino raso, contando anche quello già presente in pane, salumi e formaggi), più frutta e verdura, movimento regolare, un peso più vicino al proprio peso forma, poco alcol e niente fumo.",
+    "Le abitudini non sostituiscono una cura prescritta: la affiancano. Se prendi già farmaci per la pressione, ogni cambiamento della cura si decide con il medico.",
+    "Misurare a casa nel modo giusto, con un apparecchio validato e il bracciale della misura adatta, dà al medico informazioni che in ambulatorio non può avere.",
+  ],
+  diario: { slug: "pressione", testo: "Sette giorni di misure prima della visita, due al mattino e due alla sera: il diario fa le medie e prepara il foglio per il medico." },
+  domande: [
+    "La mia pressione, misurata a casa, va confrontata con quali valori?",
+    "Ho bisogno di un Holter pressorio per confermare le misure?",
+    "Ogni quanto è utile misurarla, e in quali giorni?",
+    "Quali esami del sangue e delle urine servono per controllare cuore e reni?",
+    "Come incidono il sale, il peso e il movimento nel mio caso?",
+    "Il mio apparecchio per la pressione va bene, e il bracciale è della misura giusta?",
+  ],
+  faq: [
+    {
+      d: "La minima alta è pericolosa?",
+      r: "Le linee guida considerano insieme massima e minima: basta che una delle due superi la soglia per parlare di pressione alta. Una minima alta è più frequente nei giovani adulti, una massima alta dopo i 60 anni. Che cosa significa per te lo valuta il medico, guardando le misure ripetute e il resto della tua salute.",
+    },
+    {
+      d: "I valori della pressione cambiano con l'età?",
+      r: "Con gli anni la pressione tende a salire, ma le soglie delle linee guida restano le stesse per tutti gli adulti. Per le persone molto anziane o fragili il medico può scegliere obiettivi diversi, caso per caso.",
+    },
+    {
+      d: "In farmacia mi hanno trovato 150/95: ho la pressione alta?",
+      r: "Una misura sola non basta. La pressione sale con l'emozione, la fretta, il caffè o la sigaretta. È un buon motivo per misurarla di nuovo a riposo, in giorni diversi, e portare le misure al medico: il diario della pressione serve proprio a questo.",
+    },
+    {
+      d: "Che cos'è l'ipertensione da camice bianco?",
+      r: "È la pressione che sale solo davanti al medico o in ambulatorio, per tensione, e a casa resta più bassa. Il contrario, pressione bassa dal medico e alta a casa, si chiama ipertensione mascherata. Le misure a casa e l'Holter servono a distinguerle.",
+    },
+  ],
+  glossario: ["referto", "valore-critico", "creatinina", "microalbuminuria", "egfr", "colesterolo-ldl", "potassio", "sodio"],
+  correlate: ["colesterolo-alto", "diabete", "peso"],
+  ricerche: [
+    "pressione alta",
+    "ipertensione",
+    "minima alta",
+    "massima alta",
+    "pressione 140 90",
+    "pressione 150 su 90",
+    "valori pressione",
+    "valori della pressione per età",
+    "pressione arteriosa",
+    "sistolica",
+    "diastolica",
+    "pressione sanguigna",
+  ],
+  fonti: [
+    { ente: "ISSalute (Istituto superiore di sanità)", titolo: "Ipertensione arteriosa (pressione alta)", url: "https://www.issalute.it/index.php/la-salute-dalla-a-alla-z-menu/i/ipertensione-arteriosa-o-pressione-alta" },
+    { ente: "ISSalute", titolo: "Sale: indispensabile ma non troppo", url: "https://www.issalute.it/index.php/la-salute-dalla-a-alla-z-menu/s/sale" },
+    { ente: "SIIA", titolo: "Società italiana dell'ipertensione arteriosa (linee guida ESH 2023)", url: "https://siia.it" },
+    { ente: "ISS, Progetto Cuore", titolo: "Carta del rischio cardiovascolare", url: "https://www.cuore.iss.it/valutazione/carte" },
+  ],
+  aggiornato: "2026-11-22",
+  revisione: { stato: "bozza" },
+};

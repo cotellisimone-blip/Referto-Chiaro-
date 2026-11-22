@@ -119,7 +119,8 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     const menu = (await page.locator("header").getByRole("link").allInnerTexts()).map((t) => t.trim());
     if (!isMobile) {
       // 15/11/2026 sera, tre sezioni: le tre sezioni, le guide, gli integratori, i prezzi e «Carica un referto».
-      for (const n of ["Prevenzione", "Lettura referti", "Medici", "Guide", "Integratori", "Prezzi", "Carica un referto"]) expect(menu, n).toContain(n);
+      // 22/11/2026: entra «Malattie»; «Guide» resta nella testata dai 1536 px (sotto: menu, fondo pagina, ricerca, Malattie).
+      for (const n of ["Prevenzione", "Lettura referti", "Malattie", "Medici", "Integratori", "Prezzi", "Carica un referto"]) expect(menu, n).toContain(n);
       for (const n of ["Videoconsulto", "Secondo parere"]) expect(menu, n).not.toContain(n);
     }
     await expect(page.locator('main a[href="/lettura-referti"]').first()).toBeAttached();

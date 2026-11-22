@@ -1,0 +1,120 @@
+import type { Malattia } from "../schema";
+
+export const ANEMIA: Malattia = {
+  slug: "anemia",
+  area: "Anemia",
+  nome: "Anemia",
+  nomeMedico: "Anemia",
+  altriNomi: ["anemia sideropenica", "anemia da carenza di ferro", "carenza di ferro", "anemia da carenza di vitamina B12"],
+  tono: "mi",
+  icona: "sangue",
+  riga: "Poca emoglobina nel sangue. Le cause più comuni, dal ferro alla vitamina B12, e perché va cercato il motivo.",
+  seoTitle: "Anemia: sintomi, cause e esami del sangue",
+  metaDescription: "Anemia: le soglie di emoglobina, i sintomi, le cause più comuni (ferro, vitamina B12, talassemia) e perché il medico cerca sempre il motivo.",
+  titolo: "Anemia:",
+  em: "il sintomo che chiede un perché.",
+  inBreve: [
+    "Si parla di anemia quando nel sangue c'è meno emoglobina del previsto. L'emoglobina è la proteina dei globuli rossi che porta l'ossigeno.",
+    "Può dare stanchezza, pallore e fiato corto, oppure nessun disturbo. Si scopre con l'emocromo.",
+    "L'anemia non è una malattia in sé ma il segno di qualcos'altro: per questo il medico ne cerca sempre la causa, prima di curarla.",
+  ],
+  cheCose: [
+    "Il midollo osseo produce di continuo globuli rossi, e per farlo ha bisogno di ferro, vitamina B12 e folati. Se ne manca uno, se si perde sangue o se i globuli rossi vengono distrutti troppo in fretta, l'emoglobina scende.",
+    "La causa più frequente è la carenza di ferro. Nelle donne in età fertile dipende spesso da mestruazioni abbondanti o dalla gravidanza. Negli uomini e nelle donne dopo la menopausa la carenza di ferro va sempre spiegata, perché può nascere da piccole perdite di sangue dall'intestino che non si vedono: per questo il medico può proporre esami dell'intestino.",
+    "Altre cause comuni sono la carenza di vitamina B12 (per esempio in chi non mangia cibi di origine animale, in chi ha una gastrite atrofica o prende da anni alcuni farmaci per lo stomaco o il diabete), le malattie croniche e infiammatorie, i reni che lavorano poco. In Italia è frequente anche il tratto talassemico, una condizione ereditaria che dà globuli rossi piccoli e spesso nessun disturbo.",
+  ],
+  inNumeri: {
+    titolo: "Le soglie dell'emoglobina",
+    intro: "Le soglie dell'Organizzazione mondiale della sanità per parlare di anemia negli adulti. Il referto riporta anche l'intervallo del laboratorio, che può essere un po' diverso.",
+    colonne: ["Persona", "Emoglobina sotto"],
+    righe: [
+      { etichetta: "Uomo adulto", valore: "13 g/dl" },
+      { etichetta: "Donna adulta, non in gravidanza", valore: "12 g/dl" },
+      { etichetta: "Donna in gravidanza", valore: "11 g/dl" },
+    ],
+    nota: "Il valore va letto insieme agli altri numeri dell'emocromo (per esempio l'MCV, la dimensione dei globuli rossi) e alla ferritina: insieme raccontano il possibile perché. Che cosa significano per te lo dice il medico.",
+  },
+  comeSiManifesta: {
+    testo: [
+      "Quando l'anemia arriva piano, il corpo si adatta e i disturbi possono essere lievi anche con valori bassi. Quando arriva in fretta, si sente di più.",
+    ],
+    segni: [
+      "Stanchezza, debolezza, meno resistenza allo sforzo.",
+      "Pallore della pelle, dell'interno delle palpebre e delle unghie.",
+      "Fiato corto e cuore che batte forte per sforzi leggeri.",
+      "Mal di testa, capogiri, mani e piedi freddi.",
+      "Con la carenza di ferro: unghie fragili, capelli che cadono, voglia di masticare ghiaccio.",
+      "Con la carenza di vitamina B12: formicolii a mani e piedi, lingua liscia e arrossata.",
+    ],
+  },
+  quandoChiamare: {
+    subito: [
+      "Feci nere come catrame o vomito con sangue o materiale scuro.",
+      "Svenimento, dolore al petto, fiato corto a riposo.",
+      "Sangue abbondante dal retto o perdite vaginali molto abbondanti con capogiri.",
+    ],
+    presto: [
+      "Sangue nelle feci, anche poco, o un cambiamento delle abitudini dell'intestino che dura settimane.",
+      "Mestruazioni molto abbondanti, che costringono a cambiare l'assorbente ogni ora o poco più.",
+      "Calo di peso senza motivo, febbricola, sudori notturni.",
+      "Formicolii, perdita di sensibilità o di equilibrio comparsi da poco.",
+    ],
+  },
+  esami: [
+    { guida: "emocromo", perche: "L'esame che scopre l'anemia e ne descrive il tipo, attraverso emoglobina e indici dei globuli rossi." },
+    { guida: "ferritina", perche: "Le riserve di ferro: il primo esame per capire se manca il ferro." },
+    { guida: "sideremia", perche: "Il ferro che circola nel sangue in quel momento; si legge insieme a ferritina e transferrina." },
+    { guida: "transferrina-e-saturazione", perche: "Quanto ferro sta viaggiando verso il midollo: completa il quadro del ferro." },
+    { guida: "vitamina-b12", perche: "La sua carenza dà un'anemia con globuli rossi grandi e, a volte, disturbi dei nervi." },
+    { guida: "folati", perche: "Si cercano insieme alla vitamina B12 quando i globuli rossi sono grandi." },
+    { guida: "sangue-occulto-nelle-feci", perche: "Cerca tracce di sangue non visibili nelle feci, una possibile causa della carenza di ferro." },
+  ],
+  ogniGiorno: [
+    "Il ferro si trova nella carne, nel pesce, nei legumi e nelle verdure a foglia verde. Quello di origine vegetale si assorbe meglio insieme a cibi ricchi di vitamina C, e peggio con tè e caffè ai pasti.",
+    "Integratori di ferro o di vitamine presi da soli, senza conoscere la causa dell'anemia, possono nascondere il motivo per cui l'emoglobina è scesa. È una domanda da fare al medico prima di iniziare.",
+    "Dopo una cura, il medico di solito ricontrolla l'emocromo e la ferritina per vedere se le riserve si sono ricostruite.",
+  ],
+  domande: [
+    "Qual è la causa della mia anemia, o quali esami servono per trovarla?",
+    "Servono esami dell'intestino o dello stomaco?",
+    "Le mie mestruazioni abbondanti possono spiegare la carenza di ferro? Ne parlo con il ginecologo?",
+    "Potrei avere un tratto talassemico? Serve un esame per saperlo?",
+    "Dopo quanto tempo ricontrollare l'emocromo?",
+  ],
+  faq: [
+    {
+      d: "Ferritina bassa ed emoglobina nell'intervallo: è anemia?",
+      r: "No, ma può essere il passo prima: le riserve di ferro sono scarse e il corpo sta ancora riuscendo a produrre emoglobina. Anche così può dare stanchezza. Il medico valuta il perché, esattamente come per l'anemia.",
+    },
+    {
+      d: "Anemia e stanchezza: è sempre colpa del ferro?",
+      r: "No. La stanchezza ha moltissime cause, e anche l'anemia ne ha diverse oltre al ferro: vitamina B12, folati, malattie croniche, reni, tratto talassemico. L'emocromo con i suoi indici e la ferritina aiutano il medico a orientarsi.",
+    },
+    {
+      d: "Il tratto talassemico è una malattia?",
+      r: "Il tratto talassemico (talassemia minor) è una condizione ereditaria molto comune in Italia: dà globuli rossi piccoli e a volte un'emoglobina un po' bassa, di solito senza disturbi e senza cure. È importante saperlo, per non confonderlo con una carenza di ferro e per la pianificazione di una gravidanza.",
+    },
+  ],
+  glossario: ["anemia", "emoglobina", "emocromo", "ematocrito", "mcv", "ferritina", "sideremia", "transferrina", "vitamina-b12", "reticolociti"],
+  correlate: ["tiroide", "fegato-grasso"],
+  ricerche: [
+    "anemia",
+    "anemia sintomi",
+    "anemia sideropenica",
+    "carenza di ferro",
+    "emoglobina bassa",
+    "globuli rossi bassi",
+    "anemia stanchezza",
+    "anemia da carenza di vitamina b12",
+    "talassemia",
+    "anemia mediterranea",
+  ],
+  fonti: [
+    { ente: "ISSalute (Istituto superiore di sanità)", titolo: "Anemia da carenza di ferro", url: "https://www.issalute.it/index.php/saluteaz-saz/a/494-anemia-da-carenza-di-ferro" },
+    { ente: "ISSalute", titolo: "Anemia da carenza di vitamina B12 e folati", url: "https://www.issalute.it/index.php/la-salute-dalla-a-alla-z-menu/a/anemia-da-carenza-di-vitamina-b12-e-folati" },
+    { ente: "ISSalute", titolo: "Talassemia", url: "https://www.issalute.it/index.php/la-salute-dalla-a-alla-z-menu/t/talassemia" },
+    { ente: "NHS", titolo: "Iron deficiency anaemia", url: "https://www.nhs.uk/conditions/iron-deficiency-anaemia/" },
+  ],
+  aggiornato: "2026-11-22",
+  revisione: { stato: "bozza" },
+};

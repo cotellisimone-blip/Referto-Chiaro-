@@ -9,6 +9,7 @@ import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { getGuide } from "@/content/guides";
 import { getGlossaryEntry } from "@/content/glossario";
 import { integratoriForGuide } from "@/content/integratori";
+import { malattiePerGuida } from "@/content/malattie";
 import { FaqList } from "@/components/ui/faq-list";
 import { ReviewNotice } from "./review-notice";
 import { Breadcrumbs } from "./breadcrumbs";
@@ -66,6 +67,10 @@ export function GuideArticle({ guide }: { guide: Guide }) {
     { id: "faq-titolo", label: "Domande frequenti" },
   ];
   const supplements = integratoriForGuide(guide.slug);
+  // 22/11/2026: la guida spiega l'esame, la pagina di malattia la condizione. Al massimo due rimandi, i più vicini.
+  const malattie = malattiePerGuida(guide.slug)
+    .sort((a, b) => a.esami.findIndex((e) => e.guida === guide.slug) - b.esami.findIndex((e) => e.guida === guide.slug))
+    .slice(0, 2);
   // Il percorso non ripete due volte la stessa parola («Emocromo › Emocromo completo»): se l'esame porta già il nome
   // del suo argomento, l'argomento non compare.
   const sameWord = guide.examName.toLowerCase().startsWith(cat.title.toLowerCase());
@@ -223,6 +228,21 @@ export function GuideArticle({ guide }: { guide: Guide }) {
             <div className="hidden lg:block">
               <TableOfContents items={toc} />
             </div>
+            {malattie.length ? (
+              <div className="side-card" data-testid="guida-malattie">
+                <p className="side-card-title">Se vuoi capire la malattia</p>
+                <p className="mt-1.5 text-base text-ink-soft">Che cos’è, quando chiamare il medico, le domande da fare.</p>
+                <ul className="link-list mt-1">
+                  {malattie.map((m) => (
+                    <li key={m.slug}>
+                      <Link prefetch={false} href={`/malattie/${m.slug}`} className="link">
+                        {m.nome}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
             <div className="side-card">
               <p className="side-card-title">Hai una visita in programma?</p>
               <p className="mt-1.5 text-base text-ink-soft">In 2 minuti: cosa portare e cosa chiedere. Gratis.</p>

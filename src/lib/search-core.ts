@@ -5,7 +5,8 @@
  * alla prima apertura della ricerca.
  */
 /** 17/11/2026 (20 interventi, punto 8): entrano le schede degli integratori. */
-export type SearchKind = "guida" | "integratore" | "termine" | "pagina";
+/** 22/11/2026: entrano le pagine per malattia. */
+export type SearchKind = "malattia" | "guida" | "integratore" | "termine" | "pagina";
 
 export interface SearchItem {
   kind: SearchKind;
@@ -104,10 +105,17 @@ export interface SearchOutcome {
  */
 export function searchSite(index: SearchItem[], query: string, limit = 12): SearchOutcome {
   const exact = searchIndex(index, query, limit);
-  if (exact.length) return { items: exact, mode: "esatta" };
   const q = normalizeQuery(query);
   const kept = q.split(" ").filter((w) => w && !QUALIFIERS.has(w));
   const stripped = kept.join(" ");
+  // 22/11/2026: «glicemia alta» è anche una pagina della sezione Malattie. Se la ricerca esatta trova solo malattie,
+  // si aggiungono dietro le guide della parola senza aggettivi: chi lo scrive trova la malattia e l'esame.
+  if (exact.length && exact.every((i) => i.kind === "malattia") && stripped && stripped !== q) {
+    const seen = new Set(exact.map((i) => i.href));
+    const more = searchIndex(index, stripped, limit).filter((i) => !seen.has(i.href));
+    return { items: [...exact, ...more].slice(0, limit), mode: "esatta" };
+  }
+  if (exact.length) return { items: exact, mode: "esatta" };
   if (stripped && stripped !== q) {
     const again = searchIndex(index, stripped, limit);
     if (again.length) return { items: again, mode: "senza-aggettivi", used: stripped };
@@ -146,7 +154,7 @@ export function searchSite(index: SearchItem[], query: string, limit = 12): Sear
       matched = matched ? `${matched} ${hit}` : hit;
     }
     if (total < 0) continue;
-    let score = total + (item.kind === "guida" ? 5 : item.kind === "pagina" ? -1 : 0);
+    let score = total + (item.kind === "guida" || item.kind === "malattia" ? 5 : item.kind === "pagina" ? -1 : 0);
     if (normalizeQuery(item.title).split(" ").some((t) => matched.split(" ").includes(t))) score += 4; // la parola è nel titolo, non solo in un sinonimo
     score -= Math.min(item.title.length, 60) / 100;
     scored.push({ item, score });
@@ -173,7 +181,7 @@ function searchPartial(index: SearchItem[], words: string[], limit: number): Sea
     const hits = ws.filter((w) => texts.some((t) => containsTerm(t, w))).length;
     // Almeno una parola nel titolo: «fattore reumatoide» non deve portare a Fibrinogeno solo perché un sinonimo è «fattore I».
     if (!hits || !ws.some((w) => containsTerm(title, w))) continue;
-    const score = hits * 10 + (item.kind === "guida" ? 5 : item.kind === "pagina" ? -1 : 0) - Math.min(item.title.length, 60) / 100;
+    const score = hits * 10 + (item.kind === "guida" || item.kind === "malattia" ? 5 : item.kind === "pagina" ? -1 : 0) - Math.min(item.title.length, 60) / 100;
     scored.push({ item, score });
   }
   return scored
@@ -211,6 +219,9 @@ export function searchIndex(index: SearchItem[], query: string, limit = 12): Sea
       (score === 80 && !startsWithTerm(title, q)) ||
       (score === 55 && !title.split(" ").some((w) => startsWithTerm(w, q)));
     if (item.kind === "guida") score += 25; // la guida è più ricca della voce di glossario: a parità vince
+    // 22/11/2026: la pagina di malattia pesa come una guida. Chi scrive il nome di una malattia trova la sua pagina
+    // (titolo o sinonimo esatto), chi scrive il nome di un esame trova la guida: una domanda, una pagina.
+    if (item.kind === "malattia") score += 26;
     if (item.kind === "pagina") score -= 2;
     // A parità, i titoli brevi (sigle) vincono: chi scrive «tsh» vuole TSH, non «Anticorpi anti-TSH».
     score -= Math.min(title.length, 60) / 100;
