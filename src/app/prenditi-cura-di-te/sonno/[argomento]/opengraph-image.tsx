@@ -6,11 +6,11 @@ export const size = OG_SIZE;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return [...SONNO_PAGINE.map((p) => p.slug), ...AUTOVALUTAZIONI.map((a) => a.slug)].map((argomento) => ({ slug: "sonno", argomento }));
+  return [...SONNO_PAGINE.map((p) => p.slug), ...AUTOVALUTAZIONI.map((a) => a.slug)].map((argomento) => ({ argomento }));
 }
 
 /** 22/11/2026: l'immagine di condivisione delle pagine della sezione sonno. */
-export default async function OpenGraphImage({ params }: { params: Promise<{ slug: string; argomento: string }> }) {
+export default async function OpenGraphImage({ params }: { params: Promise<{ argomento: string }> }) {
   const { argomento } = await params;
   const p = getSonnoPagina(argomento);
   const a = p ? undefined : getAutovalutazione(argomento);

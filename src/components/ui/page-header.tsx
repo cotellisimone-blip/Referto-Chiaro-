@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { Wave } from "./wave";
 import { enfasi } from "./titolo";
-import { PercorsoSezioni } from "@/components/sezioni/parts";
+import { PASSO_NOME, PASSO_TONO, PercorsoSezioni, type Passo } from "@/components/sezioni/parts";
 
 export type HeaderArt = "translate" | "magnify" | "dossier" | "dialogue" | "shield" | "faq" | "search" | "questions" | "structures" | "none";
 
@@ -40,7 +40,6 @@ const ART: Record<Exclude<HeaderArt, "none">, [LucideIcon, LucideIcon, LucideIco
   structures: [Building2, FileText, Share2],
 };
 
-const SEZIONE = { 1: "Prevenzione", 2: "Lettura referti", 3: "Medici" } as const;
 
 /** Tre tessere di vetro sul filo tratteggiato: il disegno delle aperture, solo decorativo e solo su schermi larghi. */
 export function HeroTiles({ icons: [Main, Second, Third] }: { icons: [LucideIcon, LucideIcon, LucideIcon] }) {
@@ -86,8 +85,8 @@ export function PageHeader({
   /** Un «pezzo di prodotto» disegnato in HTML al posto dell'illustrazione: si vede solo sugli schermi larghi. */
   visual?: ReactNode;
   compact?: boolean;
-  /** La sezione a cui appartiene la pagina (1 Prevenzione, 2 Lettura referti, 3 Medici): barra 1 → 2 → 3 e numero in cima. */
-  section?: 1 | 2 | 3;
+  /** Il passo del percorso a cui appartiene la pagina (22/11/2026: cinque passi): barra 1 → 5 e numero in cima. */
+  section?: Passo;
 }) {
   const icons = art === "none" ? null : ART[art];
   return (
@@ -97,8 +96,8 @@ export function PageHeader({
           {section ? (
             <div className="tm ds ds-bare">
               <PercorsoSezioni current={section} />
-              <p className={`ds-sec-tag ds-sec-tag-${section}`}>
-                <span>{section}</span> {SEZIONE[section]}
+              <p className={`ds-sec-tag ds-sec-tag-${PASSO_TONO[section]}`}>
+                <span>{section}</span> {PASSO_NOME[section]}
                 {eyebrow ? ` · ${eyebrow}` : ""}
               </p>
             </div>

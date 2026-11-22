@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CountUp } from "@/components/wow/count-up";
 import { ArrowRight, ArrowUp, Check, FileText, HeartPulse, Home, Stethoscope, Video } from "lucide-react";
 import { PRESTAZIONI, prestazionePrice, type PrestazioneKind } from "@/domain/prestazioni/listino";
-import { secondoParereEnabled } from "@/lib/medici";
+import { domicilioEnabled, secondoParereEnabled } from "@/lib/medici";
 
 /**
  * Pezzi comuni della home e delle pagine delle tre sezioni (15/11/2026 sera, divisione voluta da Simone):
@@ -14,6 +14,7 @@ import { secondoParereEnabled } from "@/lib/medici";
 export const PREVENZIONE_HREF = "/prevenzione";
 export const REFERTI_HREF = "/lettura-referti";
 export const MEDICI_HREF = "/medici";
+export const CURA_HREF = "/prenditi-cura-di-te";
 
 /** Etichetta dei medici: «Versione di prova» con i medici accesi, «In arrivo» (o «Medici in arrivo») spenti. */
 export function StatoDomicilio({ attivo, dark = false, medici = false }: { attivo: boolean; dark?: boolean; medici?: boolean }) {
@@ -81,9 +82,9 @@ export function Porte({ attivo, entry, prices }: { attivo: boolean; entry: strin
             Medici <StatoDomicilio attivo={attivo} dark />
           </span>
           <span className="ds-door-t">Un medico, quando serve</span>
-          <span className="ds-door-d">In video, a casa tua o per un secondo parere di uno specialista.</span>
+          <span className="ds-door-d">{domicilioEnabled() ? "In video, a casa tua o per un secondo parere di uno specialista." : "In video, o per un secondo parere di uno specialista."}</span>
           <span className="ds-door-f">
-            <span>{attivo && prices ? `Video ${prestazionePrice("video")} · casa ${prestazionePrice("domicilio")}` : "Lista d’attesa aperta"}</span>
+            <span>{attivo && prices ? (domicilioEnabled() ? `Video ${prestazionePrice("video")} · casa ${prestazionePrice("domicilio")}` : `Video ${prestazionePrice("video")} · parere ${prestazionePrice("parere")}`) : "Lista d’attesa aperta"}</span>
             <ArrowRight aria-hidden className="tm-ic" />
           </span>
         </Link>
@@ -171,6 +172,30 @@ export function MiniVisita({ attivo = true }: { attivo?: boolean }) {
         </p>
       </div>
     );
+  // 22/11/2026: con la visita a domicilio spenta, l'esempio è un videoconsulto.
+  if (!domicilioEnabled())
+    return (
+      <div className="ds-mini ds-mini-3" aria-hidden>
+        <p className="ds-mini-k">
+          <span className="ds-mini-n">4</span> Videoconsulto · esempio
+        </p>
+        <div className="ds-mini-doc">
+          <span className="ds-av ds-av-teal">MG</span>
+          <span>
+            <b>Il tuo medico</b>
+            <small>Medico di medicina generale</small>
+          </span>
+        </div>
+        <p className="ds-mini-when">
+          <b>Domani, 18:30</b>
+          <span>In video, dal telefono</span>
+        </p>
+        <p className="ds-mini-ok">
+          <Check className="tm-ic" />
+          Referti già letti dal medico
+        </p>
+      </div>
+    );
   return (
     <div className="ds-mini ds-mini-3" aria-hidden>
       <p className="ds-mini-k">
@@ -205,11 +230,11 @@ const SVC_TEXT: Record<PrestazioneKind, { t: string; d: string }> = {
 /** I tre servizi con un medico, con prezzo (se i prezzi sono pubblici) e collegamento. */
 export function ServiziMedico({ prices, attivo, dark = false, onSection = false }: { prices: boolean; attivo: boolean; dark?: boolean; onSection?: boolean }) {
   return (
-    <ul className={`ds-svcs${dark ? " ds-svcs-dark" : ""}`}>
-      {(["domicilio", "video", "parere"] as const).map((k) => {
+    <ul className={`ds-svcs${dark ? " ds-svcs-dark" : ""}${domicilioEnabled() ? "" : " ds-svcs-2"}`}>
+      {(domicilioEnabled() ? (["domicilio", "video", "parere"] as const) : (["video", "parere"] as const)).map((k) => {
         const I = SVC_ICON[k];
         return (
-          <li key={k} className={k === "domicilio" ? "ds-svc ds-svc-main" : "ds-svc"}>
+          <li key={k} className={k === "domicilio" || (k === "video" && !domicilioEnabled()) ? "ds-svc ds-svc-main" : "ds-svc"}>
             <Link href={!attivo ? `${MEDICI_HREF}#avvisami` : k === "domicilio" ? (onSection ? PRESTAZIONI.domicilio.startHref : MEDICI_HREF) : PRESTAZIONI[k].href} className="ds-svc-a">
               <span className="ds-svc-ic" aria-hidden>
                 <I className="tm-ic" />
@@ -229,26 +254,36 @@ export function ServiziMedico({ prices, attivo, dark = false, onSection = false 
   );
 }
 
+export type Passo = 1 | 2 | 3 | 4 | 5;
+/** Il colore di ogni passo riprende quello delle tre sezioni di prima: 1–2 inchiostro e menta, 3 menta, 4 pesca, 5 menta. */
+export const PASSO_TONO: Record<Passo, 1 | 2 | 3> = { 1: 1, 2: 1, 3: 2, 4: 3, 5: 1 };
+export const PASSO_NOME: Record<Passo, string> = { 1: "Inizia da te", 2: "I controlli per te", 3: "Capisci i referti", 4: "Parla con un medico", 5: "Prenditi cura di te" };
+
 /**
- * Proposta 16/11/2026: il percorso tra le tre sezioni, in testa a ogni pagina di sezione. Dice dove sei e che cosa
- * viene dopo: 1 Prevenzione → 2 Lettura referti → 3 Medici.
+ * Proposta 16/11/2026, rifatta il 22/11/2026: il percorso in cinque passi (lo stesso del menu), in testa alle pagine
+ * dei passi. Dice dove sei e che cosa viene dopo. Senza `current` non evidenzia nessun passo (pagine di servizio).
  */
-export function PercorsoSezioni({ current }: { current: 1 | 2 | 3 }) {
+export function PercorsoSezioni({ current }: { current?: Passo | null }) {
   const steps = [
-    { n: 1, href: PREVENZIONE_HREF, t: "Prevenzione", d: "prima degli esami" },
-    { n: 2, href: REFERTI_HREF, t: "Lettura referti", d: "quando hai il referto" },
-    { n: 3, href: MEDICI_HREF, t: "Medici", d: "se serve una persona" },
+    { n: 1, href: "/punto-di-partenza", t: "Inizia da te", s: "Inizia" },
+    { n: 2, href: PREVENZIONE_HREF, t: "I controlli per te", s: "Esami" },
+    { n: 3, href: REFERTI_HREF, t: "Capisci i referti", s: "Referti" },
+    { n: 4, href: MEDICI_HREF, t: "Parla con un medico", s: "Medico" },
+    { n: 5, href: CURA_HREF, t: "Prenditi cura di te", s: "Cura di te" },
   ] as const;
+  const c = current ?? 0;
   return (
-    <nav className={`ds-path ds-path-on-${current}`} aria-label="Le tre sezioni">
+    <nav className={`ds-path ds-path5 ds-path-on-${c}`} aria-label="Il percorso in cinque passi">
       <ol>
         {steps.map((s) => (
-          <li key={s.n} className={s.n === current ? "is-on" : s.n < current ? "is-done" : undefined}>
-            <Link prefetch={false} href={s.href} aria-current={s.n === current ? "page" : undefined}>
+          <li key={s.n} className={s.n === c ? "is-on" : s.n < c ? "is-done" : undefined}>
+            <Link prefetch={false} href={s.href} aria-current={s.n === c ? "page" : undefined}>
               <span className="ds-path-n">{s.n}</span>
               <span>
-                <b>{s.t}</b>
-                <small>{s.d}</small>
+                <b className="ds-path-l">{s.t}</b>
+                <b className="ds-path-s" aria-hidden>
+                  {s.s}
+                </b>
               </span>
             </Link>
           </li>

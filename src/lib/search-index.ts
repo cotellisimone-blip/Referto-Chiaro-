@@ -2,11 +2,11 @@ import { GUIDES } from "@/content/guides";
 import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { GLOSSARY } from "@/content/glossario";
 import { INTEGRATORI, INTEGRATORI_GROUPS } from "@/content/integratori";
-import { MALATTIE } from "@/content/malattie";
+import { MALATTIE, malattiaHref } from "@/content/malattie";
 import { AUTOVALUTAZIONI, SONNO_PAGINE } from "@/content/sonno";
 import { MAIN_NAV, FOOTER_NAV, LEGAL_NAV, EXTRA_PAGES } from "@/components/site/nav";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
-import { isDoctorPath, mediciEnabled } from "@/lib/medici";
+import { DOMICILIO_PATHS, domicilioEnabled, isDoctorPath, mediciEnabled } from "@/lib/medici";
 
 /**
  * Indice compatto per la ricerca del sito: guide, schede degli integratori, voci di glossario e pagine.
@@ -18,9 +18,11 @@ export { normalizeQuery, searchIndex, searchSite } from "./search-core";
 import type { SearchItem } from "./search-core";
 
 const PAGE_CONTEXT: Record<string, string> = {
-  "/prevenzione": "Sezione 1, gratis: quali controlli conoscere, guide agli esami e agli integratori, promemoria",
-  "/lettura-referti": "Sezione 2: il tuo referto spiegato riga per riga, in parole semplici",
-  "/medici": mediciEnabled() ? "Sezione 3: videoconsulto, visita a casa e secondo parere" : "Sezione 3, in arrivo: videoconsulto, visita a casa e secondo parere. Lista d'attesa",
+  "/punto-di-partenza": "Passo 1, gratis: poche domande e la tua mappa da portare al medico",
+  "/prevenzione": "Passo 2, gratis: esami di base, screening per età, guide agli esami, promemoria",
+  "/prenditi-cura-di-te": "Passo 5, gratis: sonno, alimentazione, intestino e microbiota, integratori e probiotici",
+  "/lettura-referti": "Passo 3: il tuo referto spiegato riga per riga, in parole semplici",
+  "/medici": mediciEnabled() ? "Passo 4: videoconsulto e secondo parere" : "Passo 4, in arrivo: videoconsulto e secondo parere. Lista d'attesa",
   "/guide": "Che cosa misura un esame e come si legge, con le fonti",
   "/integratori": "Che cosa sono, quale esame li riguarda e che cosa chiedere al medico",
   "/referti/esempio": "Guarda un referto di esempio, inventato",
@@ -29,7 +31,6 @@ const PAGE_CONTEXT: Record<string, string> = {
   "/servizi/visita-a-domicilio": "Un medico di medicina generale a casa tua, a Brescia città",
   "/prezzi": "Quanto costa far spiegare un referto e che cosa è gratis",
   "/inizia": "Ti aiutiamo a scegliere da dove cominciare",
-  "/punto-di-partenza": "Gratis: 10 aree da conoscere e una scheda da portare al medico",
   "/strumenti/preparati-alla-visita": "Gratis: cosa portare e cosa chiedere, in 2 minuti",
   "/famiglia": "I referti di tutta la famiglia, i numeri nel tempo, i promemoria",
   "/strumenti/domande-per-il-medico": "Prepara la lista delle domande per la visita",
@@ -41,9 +42,10 @@ const PAGE_CONTEXT: Record<string, string> = {
 const PAGE_ALIASES: Record<string, string[]> = {
   "/famiglia": ["famiglia", "genitore", "mamma", "papà", "andamento", "nel tempo", "storico", "promemoria", "archivio"],
   "/punto-di-partenza": ["check-up", "checkup", "controlli", "da dove partire", "esami da fare", "scheda per il medico"],
-  "/prevenzione": ["prevenzione", "prevenire", "controlli periodici", "esami da fare"],
+  "/prevenzione": ["prevenzione", "prevenire", "controlli periodici", "esami da fare", "controlli per te", "esami per età"],
+  "/prenditi-cura-di-te": ["prenditi cura di te", "cura di sé", "benessere", "stile di vita", "abitudini", "sonno", "dormire meglio", "alimentazione", "dieta", "intestino", "microbiota", "probiotici", "integratori", "nutraceutica", "stress", "movimento"],
   "/lettura-referti": ["referto", "referti", "analisi", "esami del sangue", "caricare", "carica", "capisci il tuo referto", "spiegazione"],
-  "/medici": ["medico", "medici", "visita a domicilio", "visita a casa", "videoconsulto", "secondo parere", "dottore", "dottoressa", "visita", "specialista"],
+  "/medici": ["medico", "medici", "videoconsulto", "secondo parere", "dottore", "dottoressa", "visita", "specialista"],
   "/integratori": ["integratori", "integratore", "vitamine", "supplementi"],
   "/prezzi": ["costo", "costa", "quanto costa", "tariffe", "pagare", "prezzo", "listino", "pagamento", "abbonamento", "gratis"],
   "/accedi": ["accedi", "accesso", "entra", "login", "account", "registrazione", "registrarsi", "password"],
@@ -120,17 +122,17 @@ export function buildSearchIndex(): SearchItem[] {
   const malattie: SearchItem[] = MALATTIE.map((m) => ({
     kind: "malattia",
     title: m.nome,
-    href: `/malattie/${m.slug}`,
+    href: malattiaHref(m.slug),
     context: `${m.area} · ${shorten(m.riga, 90)}`,
     aliases: [m.nomeMedico, ...m.altriNomi, ...m.ricerche],
   }));
   // 22/11/2026: la sezione sonno, pagina per pagina, con le frasi di chi dorme male.
   const sonno: SearchItem[] = [
-    ...SONNO_PAGINE.map((p) => ({ kind: "malattia" as const, title: p.porta, href: `/malattie/sonno/${p.slug}`, context: `Sonno · ${shorten(p.riga, 90)}`, aliases: p.ricerche })),
+    ...SONNO_PAGINE.map((p) => ({ kind: "malattia" as const, title: p.porta, href: `/prenditi-cura-di-te/sonno/${p.slug}`, context: `Sonno · ${shorten(p.riga, 90)}`, aliases: p.ricerche })),
     ...AUTOVALUTAZIONI.map((a) => ({
       kind: "malattia" as const,
       title: `Autovalutazione: ${a.porta.toLowerCase()}`,
-      href: `/malattie/sonno/${a.slug}`,
+      href: `/prenditi-cura-di-te/sonno/${a.slug}`,
       context: `Sonno · ${a.domande.length} domande scritte da noi, con le fonti`,
       aliases: ["test", "questionario", "autovalutazione", `test ${a.porta.toLowerCase()}`],
     })),
@@ -141,6 +143,7 @@ export function buildSearchIndex(): SearchItem[] {
     if (seen.has(href)) return;
     if (href === "/punto-di-partenza" && !puntoDiPartenzaEnabled()) return;
     if (!mediciEnabled() && isDoctorPath(href)) return;
+    if (!domicilioEnabled() && (DOMICILIO_PATHS as readonly string[]).includes(href)) return;
     seen.add(href);
     pages.push({ kind: "pagina", title: label, href, context: PAGE_CONTEXT[href] ?? section, aliases: PAGE_ALIASES[href] ?? [] });
   };

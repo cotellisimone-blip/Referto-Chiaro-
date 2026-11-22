@@ -59,8 +59,8 @@ describe("sezione sonno: le pagine (22/11/2026)", () => {
     const guide = new Set(GUIDES.map((g) => g.slug));
     const esiste = (href: string) => {
       const path = href.split(/[?#]/)[0];
-      if (path.startsWith("/malattie/sonno/")) {
-        const s = path.slice("/malattie/sonno/".length);
+      if (path.startsWith("/prenditi-cura-di-te/sonno/")) {
+        const s = path.slice("/prenditi-cura-di-te/sonno/".length);
         return Boolean(getSonnoPagina(s)) || AUTOVALUTAZIONI.some((a) => a.slug === s);
       }
       if (path.startsWith("/guide/")) return guide.has(path.slice(7));
@@ -128,11 +128,11 @@ describe("sezione sonno: le pagine (22/11/2026)", () => {
   });
 
   it("la ricerca trova le pagine del sonno con le parole di tutti i giorni", () => {
-    expect(searchSite("russo")[0]?.href).toBe("/malattie/sonno/russo-e-sono-stanco");
-    expect(searchSite("gambe senza riposo")[0]?.href).toBe("/malattie/sonno/gambe-senza-riposo");
-    expect(searchSite("polisonnografia")[0]?.href).toBe("/malattie/sonno/esame-del-sonno");
-    expect(searchSite("melatonina").some((r) => r.href === "/malattie/sonno/farmaci-e-melatonina")).toBe(true);
-    expect(searchSite("insonnia")[0]?.href).toBe("/malattie/sonno");
+    expect(searchSite("russo")[0]?.href).toBe("/prenditi-cura-di-te/sonno/russo-e-sono-stanco");
+    expect(searchSite("gambe senza riposo")[0]?.href).toBe("/prenditi-cura-di-te/sonno/gambe-senza-riposo");
+    expect(searchSite("polisonnografia")[0]?.href).toBe("/prenditi-cura-di-te/sonno/esame-del-sonno");
+    expect(searchSite("melatonina").some((r) => r.href === "/prenditi-cura-di-te/sonno/farmaci-e-melatonina")).toBe(true);
+    expect(searchSite("insonnia")[0]?.href).toBe("/prenditi-cura-di-te/sonno");
   });
 });
 

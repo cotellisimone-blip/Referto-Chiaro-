@@ -16,7 +16,7 @@ export default function GlossarioPage() {
   return (
     <>
       <PageLd path="/glossario" meta={metadata} name="Glossario" trail={[{ name: "Lettura referti", path: "/lettura-referti" }]} />
-      <PageHeader section={2} art="search" eyebrow="Glossario" title="Le parole dei referti." lead={`${GLOSSARY.length} termini e sigle, spiegati in parole comuni. Definizioni generali: che cosa significhi un valore per te lo dice il medico.`} />
+      <PageHeader section={3} art="search" eyebrow="Glossario" title="Le parole dei referti." lead={`${GLOSSARY.length} termini e sigle, spiegati in parole comuni. Definizioni generali: che cosa significhi un valore per te lo dice il medico.`} />
       <GlossaryFinder groups={groups} />
     </>
   );

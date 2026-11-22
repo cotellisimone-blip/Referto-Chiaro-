@@ -2,7 +2,7 @@ import { z } from "zod";
 import { RevisioneSchema } from "@/content/malattie/schema";
 
 /**
- * Sezione sonno (22/11/2026), sotto /malattie/sonno/{argomento}: la pagina «Insonnia» resta il capo dell'area e porta
+ * Sezione sonno (22/11/2026), sotto /prenditi-cura-di-te/sonno/{argomento}: la pagina «Insonnia» resta il capo dell'area e porta
  * qui. Tre famiglie di pagine:
  * - PROBLEMA: si entra da ciò che si vive («non mi addormento», «russo e sono stanco»…);
  * - SPIEGAZIONE: come funziona il sonno, la terapia cognitivo-comportamentale, i farmaci, le apnee, l'esame del sonno,

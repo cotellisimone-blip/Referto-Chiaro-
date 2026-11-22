@@ -29,7 +29,7 @@ export default function DomandePerIlMedicoPage() {
   return (
     <>
       <PageLd path="/strumenti/domande-per-il-medico" meta={metadata} name="Domande per il medico" trail={[{ name: "Strumenti gratuiti", path: "/strumenti" }]} />
-      <PageHeader section={1}
+      <PageHeader section={4}
         art="questions"
         eyebrow="Strumento gratuito"
         title="Le domande giuste, prima di entrare in visita."

@@ -2,7 +2,7 @@ import type { Malattia } from "../schema";
 
 /**
  * Area sonno: pagina principale sull'insonnia e capo della sezione sonno (22/11/2026), che vive sotto
- * /malattie/sonno/{argomento} (src/content/sonno): le porte per problema compaiono in cima a questa pagina.
+ * /prenditi-cura-di-te/sonno/{argomento} (src/content/sonno): le porte per problema compaiono in cima a questa pagina.
  */
 export const SONNO: Malattia = {
   slug: "sonno",

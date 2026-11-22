@@ -1,28 +1,30 @@
 import type { Metadata } from "next";
-import { Jar } from "@/components/wow/jar";
 import Link from "next/link";
 import { CategoryBadge } from "@/components/wow/category-art";
-import { Activity, ArrowRight, ChartLine, FileText, MessageCircleQuestionMark, SpellCheck, Users } from "lucide-react";
+import { Activity, ArrowRight, BellRing, ChartLine, FileText, MapPin, SpellCheck, Users } from "lucide-react";
 import { Photo } from "@/components/ui/photo";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { PrevenzioneCards } from "@/components/sezioni/prevenzione-cards";
 import { MiniPrevenzione, REFERTI_HREF, PercorsoSezioni } from "@/components/sezioni/parts";
 import { EXAM_GUIDE_COUNT, GUIDE_CATEGORIES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
-import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS } from "@/content/integratori";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
-  title: "Prevenzione: esami, guide e integratori",
-  description: "Prevenzione, spiegata semplice: quali controlli conoscere, le guide agli esami e agli integratori, i promemoria. Gratis, senza registrarti.",
+  title: "I controlli per te: esami di base, screening e guide",
+  description: "Gli esami da conoscere, per la tua età: esami di base, screening gratuiti del Servizio sanitario, guide agli esami e promemoria. Gratis, senza registrarti.",
   alternates: { canonical: "/prevenzione" },
 };
 
 /**
- * Sezione 1 «Prevenzione» (15/11/2026 sera, Simone: «una sezione dedicata alla medicina preventiva, con esami da fare
+ * 22/11/2026: passo 2 del percorso, «I controlli per te» (l'indirizzo resta /prevenzione). Gli integratori sono passati
+ * al passo 5, il Punto di Partenza è il passo 1. Mai «fai questo esame»: che cosa esiste, che cosa dicono le linee guida
+ * per età, e che la scelta la fa il medico.
+ *
+ * Prima: sezione 1 «Prevenzione» (15/11/2026 sera, Simone: «una sezione dedicata alla medicina preventiva, con esami da fare
  * e integrazione nutraceutica»). Tutto gratuito e senza indicazioni personali: aree da conoscere, guide, integratori
  * (mai dosi), promemoria. Il ponte porta alla sezione 2, quando un referto c'è già.
  */
@@ -31,31 +33,36 @@ export default function PrevenzionePage() {
   const cats = Object.entries(GUIDE_CATEGORIES).map(([id, c]) => ({ id, ...c }));
   return (
     <div className="tm ds">
-      <PageLd path="/prevenzione" meta={metadata} name="Prevenzione" />
+      <PageLd path="/prevenzione" meta={metadata} name="I controlli per te" />
       <section className="ds-ph ds-ph-1" aria-labelledby="pv-titolo">
         <div className="tm-wrap">
-          <PercorsoSezioni current={1} />
+          <PercorsoSezioni current={2} />
         </div>
         <div className="tm-wrap ds-ph-g">
           <div>
             <p className="ds-sec-tag ds-sec-tag-1">
-              <span>1</span> Sezione Prevenzione
+              <span>2</span> I controlli per te
             </p>
             <h1 id="pv-titolo">
-              La prevenzione, <em>spiegata semplice.</em>
+              Gli esami da conoscere, <em>per la tua età.</em>
             </h1>
-            <p className="tm-lead">Quali aree della salute conoscere, che cosa misurano gli esami, che cosa sapere sugli integratori. Gratis, senza registrarti.</p>
+            <p className="tm-lead">Gli esami di base, gli screening gratuiti del Servizio sanitario, che cosa misura ogni esame. Da portare al medico: la scelta la fa lui. Gratis, senza registrarti.</p>
             <div className="tm-ctas">
-              {pdp ? (
-                <Link href="/punto-di-partenza" className="tm-btn tm-btn-ink" data-track="cta-prevenzione">
-                  Fai il primo controllo, gratis
-                </Link>
-              ) : null}
-              <Link href="/guide" className={pdp ? "tm-btn tm-btn-line" : "tm-btn tm-btn-ink"}>
-                Guide agli esami
+              <Link href="/prevenzione/esami-di-base" className="tm-btn tm-btn-ink" data-track="cta-prevenzione">
+                Gli esami di base
+              </Link>
+              <Link href="/prevenzione/screening" className="tm-btn tm-btn-line">
+                Screening per età
               </Link>
             </div>
-            <p className="tm-fine">Sono informazioni generali: che cosa fare nel tuo caso lo decide il tuo medico. Per un’urgenza chiama il 112.</p>
+            <p className="tm-fine">
+              {pdp ? (
+                <>
+                  Non sai da dove partire? <Link href="/punto-di-partenza">Passo 1: la tua mappa in poche domande</Link>.{" "}
+                </>
+              ) : null}
+              Sono informazioni generali: che cosa fare nel tuo caso lo decide il tuo medico. Per un’urgenza chiama il 112.
+            </p>
           </div>
           <div className="ds-ph-art">
             {SHOW_ILLUSTRATIVE_PHOTOS ? (
@@ -75,49 +82,12 @@ export default function PrevenzionePage() {
             <div>
               <p className="tm-kicker">Che cosa trovi</p>
               <h2 id="pv-cosa">
-                Quattro strumenti, <em>tutti gratuiti.</em>
+                Tre strumenti, <em>tutti gratuiti.</em>
               </h2>
             </div>
-            <p>Nessuno ti dice che cosa prendere o quale esame fare: ti aiutano ad arrivare dal medico con le domande giuste.</p>
+            <p>Nessuno ti dice quale esame fare: ti aiutano ad arrivare dal medico con le domande giuste. Se vuoi una prescrizione, c’è il passo 4.</p>
           </div>
           <PrevenzioneCards />
-        </div>
-      </section>
-
-      <section className="ds-sec-light ds-sec-alt" aria-labelledby="pv-int">
-        <div className="tm-wrap">
-          <div className="tm-sec-h">
-            <div>
-              <p className="tm-kicker">Integratori e nutraceutica</p>
-              <h2 id="pv-int">
-                Integratori: <em>prima capire,</em> poi chiedere.
-              </h2>
-            </div>
-            <p>Che cosa sono, perché se ne parla, quale esame del referto li riguarda e che cosa chiedere al medico. Mai quanto prenderne: quello lo decide lui.</p>
-          </div>
-          <ul className="ds-ints ds-ints-rows">
-            {INTEGRATORI.map((i) => {
-              const [c, d] = INTEGRATORI_COLORS[i.slug] ?? ["#F6B98E", "#A4471F"];
-              return (
-                <li key={i.slug}>
-                  <Link href={`/integratori/${i.slug}`} className="ds-int">
-                    <Jar c={c} d={d} />
-                    <span className="ds-int-g">{INTEGRATORI_GROUPS[i.group]}</span>
-                    <span className="ds-int-t">{i.name}</span>
-                    <span className="ds-int-d">{i.oneLine}</span>
-                    <span className="ds-int-go">
-                      Leggi <ArrowRight aria-hidden className="tm-ic" />
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-          <div className="ds-sec-end">
-            <Link href="/integratori" className="tm-btn tm-btn-line">
-              Tutte le guide agli integratori <ArrowRight aria-hidden className="tm-ic" />
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -174,11 +144,12 @@ export default function PrevenzionePage() {
             </div>
             <p>Segna quando rifare un esame, tieni insieme i referti di casa e arriva dal medico con una lista pronta.</p>
           </div>
-          <ul className="ds-cards ds-cards-3">
+          <ul className="ds-cards">
             {[
+              { href: "/famiglia", icon: BellRing, t: "Promemoria dei controlli", d: "Segna quando rifare un esame, per te e per i tuoi cari: te lo ricordiamo noi." },
               { href: "/famiglia", icon: ChartLine, t: "Nel tempo", d: "Lo stesso esame, referto dopo referto, su un grafico." },
               { href: "/famiglia", icon: Users, t: "Per la famiglia", d: "I controlli dei tuoi cari, ognuno al suo posto." },
-              { href: "/strumenti/domande-per-il-medico", icon: MessageCircleQuestionMark, t: "Domande per il medico", d: "La tua lista, pronta da stampare. Gratis." },
+              { href: "/vicino-a-te", icon: MapPin, t: "Vicino a te", d: "Medico di famiglia, CUP, screening e guardia medica pubblica." },
             ].map(({ href, icon: I, t, d }) => (
               <li key={t}>
                 <Link href={href} className="ds-card ds-card-small">
@@ -205,7 +176,7 @@ export default function PrevenzionePage() {
             </span>
             <span>
               <span className="ds-sec-tag ds-sec-tag-2">
-                <span>2</span> Sezione Lettura referti
+                <span>3</span> Capisci i referti
               </span>
               <span id="pv-ponte" className="ds-bridge-t">
                 Hai già fatto gli esami? Leggi il referto in parole semplici.

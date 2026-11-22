@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { CON_UN_MEDICO_HREF, DOCTOR_PATHS, PARERE_HREF, PARERE_PATHS } from "./src/lib/medici";
+import { CON_UN_MEDICO_HREF, DOCTOR_PATHS, DOMICILIO_PATHS, PARERE_HREF, PARERE_PATHS } from "./src/lib/medici";
 
 /**
  * Intestazioni di sicurezza su tutte le rotte.
@@ -50,6 +50,8 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_ENABLE_MEDICI: process.env.ENABLE_MEDICI === "true" ? "true" : "false",
     // 19/11/2026: il secondo parere ha il suo interruttore (serve uno specialista), vedi src/lib/medici.ts.
     NEXT_PUBLIC_ENABLE_SECONDO_PARERE: process.env.ENABLE_MEDICI === "true" && process.env.ENABLE_SECONDO_PARERE === "true" ? "true" : "false",
+    // 22/11/2026: la visita a domicilio ha il suo interruttore, spento per decisione di Simone (vedi src/lib/medici.ts).
+    NEXT_PUBLIC_ENABLE_DOMICILIO: process.env.ENABLE_MEDICI === "true" && process.env.ENABLE_DOMICILIO === "true" ? "true" : "false",
     NEXT_PUBLIC_VETRINA: process.env.SITE_PROFILE?.trim().toLowerCase() === "vetrina" ? "true" : "false",
   },
   /** Vecchi indirizzi di Referto Chiaro → nuova mappa del sito Cura Privata (redirect permanenti interni). */
@@ -76,13 +78,23 @@ const nextConfig: NextConfig = {
       ["/referti", "/lettura-referti"],
       ["/servizi/prevenzione", "/prevenzione"],
       ["/con-un-medico", "/medici"],
+      // 22/11/2026: il sonno esce da Malattie ed entra nel passo 5, «Prenditi cura di te».
+      ["/malattie/sonno", "/prenditi-cura-di-te/sonno"],
     ];
     return [
       ...moved.map(([source, destination]) => ({ source, destination, permanent: true })),
       // 14/11/2026: i tre modelli di home del 13/11 erano bozze da scegliere; scelta fatta, portano alla home.
       { source: "/modelli-home", destination: "/", permanent: false },
       { source: "/modelli-home/:path*", destination: "/", permanent: false },
+      { source: "/malattie/sonno/:argomento", destination: "/prenditi-cura-di-te/sonno/:argomento", permanent: true },
       { source: "/area", destination: "/area-personale", permanent: true },
+      // 22/11/2026: visita a domicilio spenta (interruttore ENABLE_DOMICILIO): i suoi indirizzi portano alla pagina Medici.
+      ...(process.env.ENABLE_MEDICI === "true" && process.env.ENABLE_DOMICILIO !== "true"
+        ? DOMICILIO_PATHS.flatMap((p) => [
+            { source: p, destination: CON_UN_MEDICO_HREF, permanent: false },
+            { source: `${p}/:path*`, destination: CON_UN_MEDICO_HREF, permanent: false },
+          ])
+        : []),
       { source: "/area/:path*", destination: "/area-personale/:path*", permanent: true },
       // 13/11/2026: con i medici spenti (ENABLE_MEDICI diverso da "true") le loro pagine portano al blocco «Presto anche
       // con un medico» della sezione Medici. Redirect temporanei: riaccendendo l'interruttore tornano le pagine di prima.

@@ -110,7 +110,7 @@ export const COME_FUNZIONA: SonnoPagina = {
         {
           p: "L'efficienza del sonno è la parte del tempo a letto passata dormendo: 6 ore di sonno su 8 a letto fanno il 75%. Nelle ricerche sull'insonnia valori sotto l'85% sono considerati bassi, ma il numero da solo non dice se c'è un disturbo: va letto con il medico, insieme a come stai di giorno.",
         },
-        { vai: { href: "/malattie/sonno/percorso-due-settimane", titolo: "Calcolali sulle tue notti", testo: "Due settimane di diario: il sito fa i conti e prepara il foglio per il medico." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/percorso-due-settimane", titolo: "Calcolali sulle tue notti", testo: "Due settimane di diario: il sito fa i conti e prepara il foglio per il medico." } },
       ],
     },
   ],
@@ -223,7 +223,7 @@ export const CBT_I: SonnoPagina = {
         {
           p: "In Italia la CBT-I la offrono psicologi e psicoterapeuti formati in medicina del sonno, alcuni centri di medicina del sonno ospedalieri e universitari, e alcuni servizi pubblici di psicologia. Il medico di famiglia può indicare le strutture della zona. L'Associazione italiana di medicina del sonno (AIMS) pubblica l'elenco dei centri del sonno accreditati.",
         },
-        { vai: { href: "/malattie/sonno/percorso-due-settimane", titolo: "Prepara il diario di due settimane", testo: "È quello che il professionista ti chiederà al primo incontro." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/percorso-due-settimane", titolo: "Prepara il diario di due settimane", testo: "È quello che il professionista ti chiederà al primo incontro." } },
       ],
     },
   ],
@@ -584,7 +584,7 @@ export const ESAME_DEL_SONNO: SonnoPagina = {
         {
           p: "Il tracciato viene letto e «siglato» a mano da un tecnico o da un medico del sonno, evento per evento, seguendo le regole internazionali. Poi lo specialista ti spiega il risultato e, se ci sono apnee, le possibilità di cura. Se il risultato non torna con i sintomi, può proporre un secondo esame o la polisonnografia completa.",
         },
-        { vai: { href: "/malattie/sonno/apnee-notturne", titolo: "Le cure delle apnee", testo: "CPAP, bite, terapia posizionale, calo di peso, chirurgia: che cosa sono." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/apnee-notturne", titolo: "Le cure delle apnee", testo: "CPAP, bite, terapia posizionale, calo di peso, chirurgia: che cosa sono." } },
       ],
     },
   ],
@@ -681,7 +681,7 @@ export const QUANDO_DAL_MEDICO: SonnoPagina = {
           ],
           stile: "numeri",
         },
-        { vai: { href: "/malattie/sonno/percorso-due-settimane", titolo: "Il percorso di due settimane", testo: "Autovalutazione, diario, foglio per il medico: tutto in un posto." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/percorso-due-settimane", titolo: "Il percorso di due settimane", testo: "Autovalutazione, diario, foglio per il medico: tutto in un posto." } },
         { vai: { href: "/strumenti/preparati-alla-visita", titolo: "Preparati alla visita", testo: "Che cosa portare e che cosa chiedere, in due minuti." } },
       ],
     },

@@ -9,7 +9,7 @@ import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { getGuide } from "@/content/guides";
 import { getGlossaryEntry } from "@/content/glossario";
 import { integratoriForGuide } from "@/content/integratori";
-import { malattiePerGuida } from "@/content/malattie";
+import { malattiaHref, malattiePerGuida } from "@/content/malattie";
 import { FaqList } from "@/components/ui/faq-list";
 import { ReviewNotice } from "./review-notice";
 import { Breadcrumbs } from "./breadcrumbs";
@@ -86,7 +86,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
         {/* 17/11/2026 (20 interventi, punti 7 e 11): la barra delle sezioni è larga quanto la pagina; su computer «In breve»
             sta accanto al titolo (prima la metà destra della prima schermata era vuota). */}
         <div className="tm ds ds-bare no-print">
-          <PercorsoSezioni current={1} />
+          <PercorsoSezioni current={2} />
         </div>
         <Breadcrumbs items={crumbs} />
         <div className="guide-top">
@@ -235,7 +235,7 @@ export function GuideArticle({ guide }: { guide: Guide }) {
                 <ul className="link-list mt-1">
                   {malattie.map((m) => (
                     <li key={m.slug}>
-                      <Link prefetch={false} href={`/malattie/${m.slug}`} className="link">
+                      <Link prefetch={false} href={malattiaHref(m.slug)} className="link">
                         {m.nome}
                       </Link>
                     </li>

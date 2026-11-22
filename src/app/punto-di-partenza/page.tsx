@@ -79,7 +79,7 @@ export default function PuntoDiPartenzaPage() {
             <div className="tm ds ds-bare">
               <PercorsoSezioni current={1} />
               <p className="ds-sec-tag ds-sec-tag-1">
-                <span>1</span> Prevenzione · gratis
+                <span>1</span> Inizia da te · gratis
               </p>
             </div>
             <h1 id="pdp-titolo" className="display-xl mt-4">

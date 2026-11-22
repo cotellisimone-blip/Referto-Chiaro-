@@ -38,7 +38,7 @@ import { PageLd, capisciServiceLd } from "@/components/site/page-ld";
 export const metadata: Metadata = {
   title: pageTitle("Quanto costa farsi spiegare un referto"),
   description: mediciEnabled()
-    ? "I servizi di Cura Privata a confronto: referto spiegato, visita a domicilio, videoconsulto e secondo parere. Che cosa includono, tempi e prezzo."
+    ? "I servizi di Cura Privata a confronto: referto spiegato, videoconsulto e secondo parere. Che cosa includono, tempi e prezzo."
     : "Quanto costa Cura Privata: il primo referto spiegato, i successivi e che cosa è gratis. Che cosa include, tempi e prezzo, prima di pagare.",
   alternates: { canonical: "/prezzi" },
 };
@@ -59,8 +59,8 @@ const PAY_FAQ = [
     "Solo alla fine del percorso di richiesta, dopo aver visto prezzo e tempi. Con un medico paghi solo dopo che ha confermato. Nessun abbonamento e nessun rinnovo automatico.",
   ],
   [
-    "Posso annullare una visita o un videoconsulto?",
-    `${cancelTerms("domicilio")} Per il videoconsulto il termine è di 1 ora.`,
+    "Posso annullare un videoconsulto?",
+    cancelTerms("video"),
   ],
   [
     "E se il medico non può accettare il mio caso?",
@@ -97,9 +97,9 @@ export default function PrezziPage() {
       >
         <div className="container-rc page-hero-inner page-hero-overlap">
           <div className="tm ds ds-bare">
-            <PercorsoSezioni current={2} />
+            <PercorsoSezioni />
             <p className="ds-sec-tag ds-sec-tag-2">
-              <span>2</span> Lettura referti · Prezzi
+              <span>€</span> Prezzi
             </p>
           </div>
           <h1 id="prezzi-titolo" className="page-title mt-4 max-w-[16ch]">
@@ -107,7 +107,7 @@ export default function PrezziPage() {
           </h1>
           <p className="lead mt-5 max-w-[40rem]">
             {medici
-              ? "Il referto spiegato, oppure un medico: a casa, in video o per un secondo parere. "
+              ? "Il referto spiegato, oppure un medico: in video o per un secondo parere. "
               : "Il referto spiegato, valore per valore. Il tuo spazio, con i numeri nel tempo e i promemoria, è gratis. "}
             Nessun abbonamento. In questa versione dimostrativa nessun
             pagamento è reale.

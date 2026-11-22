@@ -5,7 +5,7 @@ import { SonnoSimboli } from "./simboli";
 import "./sonno.css";
 
 /**
- * Le porte della sezione sonno (22/11/2026), in cima alla pagina «Insonnia» (/malattie/sonno): si entra da quello che
+ * Le porte della sezione sonno (22/11/2026), in cima alla pagina «Insonnia» (/prenditi-cura-di-te/sonno): si entra da quello che
  * si vive, poi il percorso di due settimane, poi le pagine per capire e le autovalutazioni.
  */
 export function SonnoPorte() {

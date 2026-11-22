@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { OFFER_ICON } from "@/components/offerta/service-triad";
 import { offerItems, type OfferKey } from "@/domain/prestazioni/offerta-completa";
-import { mediciEnabled } from "@/lib/medici";
+import { domicilioEnabled, mediciEnabled } from "@/lib/medici";
 import { PageLd } from "@/components/site/page-ld";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) la pagina racconta il referto, il tempo e la visita dal proprio medico. */
@@ -16,7 +16,7 @@ const MEDICI = mediciEnabled();
 export const metadata: Metadata = {
   title: pageTitle("Come farsi spiegare un referto, passo per passo"),
   description: MEDICI
-    ? "Come funziona Cura Privata: il referto spiegato in automatico e, quando serve, un medico a casa, in video o per un secondo parere. Scegli tu fin dove arrivare."
+    ? "Come funziona Cura Privata: il referto spiegato in automatico e, quando serve, un medico in video o per un secondo parere. Scegli tu fin dove arrivare."
     : "Come funziona Cura Privata: carichi il referto, controlli i valori letti e leggi la spiegazione in parole semplici, con le domande per il tuo medico.",
   alternates: { canonical: "/come-funziona" },
 };
@@ -35,6 +35,8 @@ type HowCard = { key: string; tone: string; href: string; name: string; Icon: Lu
 function howCards(): HowCard[] {
   const services: HowCard[] = offerItems()
     .filter((s) => MEDICI || !s.kind)
+    // 22/11/2026: la visita a domicilio solo con il suo interruttore acceso.
+    .filter((s) => s.key !== "domicilio" || domicilioEnabled())
     .map((s) => ({ key: s.key, tone: s.tone, href: s.href, name: s.name, Icon: OFFER_ICON[s.icon], ...HOW[s.key], go: "Scopri il servizio" }));
   if (MEDICI) return services;
   return [

@@ -35,7 +35,7 @@ const TUTTE = [
 ];
 
 test("la pagina dell'insonnia apre la sezione: cinque porte, il percorso, le pagine per capire", async ({ page }) => {
-  await page.goto("/malattie/sonno");
+  await page.goto("/prenditi-cura-di-te/sonno");
   await expect(page.locator("#sonno-porte .sn-porta")).toHaveCount(5);
   await expect(page.getByTestId("porta-percorso")).toBeVisible();
   await senzaScorrimentoLaterale(page);
@@ -47,14 +47,14 @@ test("la pagina dell'insonnia apre la sezione: cinque porte, il percorso, le pag
 
 test("tutte le sedici pagine si aprono, in bozza, senza scorrimento laterale; le altre aree non hanno figlie", async ({ page }) => {
   for (const s of TUTTE) {
-    const r = await page.goto(`/malattie/sonno/${s}`);
+    const r = await page.goto(`/prenditi-cura-di-te/sonno/${s}`);
     expect(r?.status(), s).toBe(200);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.locator('[data-bozza="medico"]')).toBeVisible();
     await senzaScorrimentoLaterale(page);
   }
   // Con lo streaming la pagina figlia sbagliata può rispondere 200: conta che mostri «non esiste» e resti fuori da Google.
-  for (const u of ["/malattie/diabete/esame-del-sonno", "/malattie/sonno/non-esiste", "/malattie/non-esiste"]) {
+  for (const u of ["/malattie/diabete/esame-del-sonno", "/prenditi-cura-di-te/sonno/non-esiste", "/malattie/non-esiste"]) {
     await page.goto(u);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Questa pagina non esiste.");
     expect(await page.locator('meta[name="robots"]').first().getAttribute("content")).toContain("noindex");
@@ -62,20 +62,20 @@ test("tutte le sedici pagine si aprono, in bozza, senza scorrimento laterale; le
 });
 
 test("pagina tecnica: disegni, tabella del referto, 112, accessibile", async ({ page }) => {
-  await page.goto("/malattie/sonno/come-funziona-il-sonno");
+  await page.goto("/prenditi-cura-di-te/sonno/come-funziona-il-sonno");
   await expect(page.locator('[data-disegno="ipnogramma"] svg')).toBeVisible();
   await expect(page.locator('[data-disegno="due-processi"] svg')).toBeVisible();
   await expectAccessible(page);
-  await page.goto("/malattie/sonno/esame-del-sonno");
+  await page.goto("/prenditi-cura-di-te/sonno/esame-del-sonno");
   await expect(page.locator("#referto table")).toContainText("ODI");
   await expect(page.locator('#referto a[href="/lettura-referti"]')).toBeVisible();
   await expectAccessible(page);
-  await page.goto("/malattie/sonno/quando-andare-dal-medico");
+  await page.goto("/prenditi-cura-di-te/sonno/quando-andare-dal-medico");
   await expect(page.locator('a[href="tel:112"]').first()).toBeVisible();
 });
 
 test("autovalutazione: manca una risposta, poi il risultato, l'avviso della guida e il salvataggio sul dispositivo", async ({ page }) => {
-  await page.goto("/malattie/sonno/autovalutazione-sonnolenza");
+  await page.goto("/prenditi-cura-di-te/sonno/autovalutazione-sonnolenza");
   await expect(page.getByText("Domande scritte da noi")).toBeVisible();
   await page.getByTestId("vedi-risultato").click();
   await expect(page.getByText("Manca questa risposta.")).toBeVisible();
@@ -96,7 +96,7 @@ test("autovalutazione: manca una risposta, poi il risultato, l'avviso della guid
 
 test("percorso: diario con minuti svegli e risveglio, efficienza, foglio con l'autovalutazione", async ({ page, context }) => {
   await entra(context, "p");
-  await page.goto("/malattie/sonno/autovalutazione-gambe");
+  await page.goto("/prenditi-cura-di-te/sonno/autovalutazione-gambe");
   for (const id of ["bisogno", "fermo", "movimento", "sera", "sonno"]) await page.locator(`#sn-q-${id}`).getByText("Sì", { exact: true }).click();
   await page.getByTestId("vedi-risultato").click();
   await expect(page.getByTestId("esito")).toContainText("I quattro segni tipici ci sono tutti");
@@ -123,8 +123,8 @@ test("percorso: diario con minuti svegli e risveglio, efficienza, foglio con l'a
 });
 
 test("la ricerca porta alle pagine del sonno", async ({ page }) => {
-  await page.goto("/malattie/sonno");
+  await page.goto("/prenditi-cura-di-te/sonno");
   await page.getByRole("button", { name: /cerca/i }).first().click();
   await page.getByRole("dialog").locator("input[type=search]").fill("polisonnografia");
-  await expect(page.getByRole("dialog").getByRole("link").first()).toHaveAttribute("href", "/malattie/sonno/esame-del-sonno");
+  await expect(page.getByRole("dialog").getByRole("link").first()).toHaveAttribute("href", "/prenditi-cura-di-te/sonno/esame-del-sonno");
 });

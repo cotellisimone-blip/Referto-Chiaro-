@@ -16,7 +16,7 @@ export function IntegratoreArticle({ slug }: { slug: string }) {
     <div className="tm ds">
       <section className="ds-ph ds-ph-1 ds-ph-short" aria-labelledby="i-titolo">
         <div className="tm-wrap">
-          <PercorsoSezioni current={1} />
+          <PercorsoSezioni current={5} />
           <Link prefetch={false} href="/integratori" className="ds-crumb">
             <ArrowLeft aria-hidden className="tm-ic" /> Guide agli integratori
           </Link>

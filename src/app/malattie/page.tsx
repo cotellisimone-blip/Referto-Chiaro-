@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { MalattieIndice } from "@/components/malattie/indice";
-import { MALATTIE } from "@/content/malattie";
+import { MALATTIE, malattiaHref } from "@/content/malattie";
 import { absoluteUrl, jsonLd, SITE_URL, breadcrumbLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default function MalattiePage() {
       url: absoluteUrl("/malattie"),
       inLanguage: "it-IT",
       isPartOf: { "@type": "WebSite", name: "Cura Privata", url: SITE_URL },
-      hasPart: MALATTIE.map((m) => ({ "@type": "MedicalWebPage", name: m.nome, url: absoluteUrl(`/malattie/${m.slug}`) })),
+      hasPart: MALATTIE.map((m) => ({ "@type": "MedicalWebPage", name: m.nome, url: absoluteUrl(malattiaHref(m.slug)) })),
     },
     breadcrumbLd([{ name: "Malattie", path: "/malattie" }]),
   ];

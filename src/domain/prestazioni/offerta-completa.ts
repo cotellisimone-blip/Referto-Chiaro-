@@ -1,4 +1,4 @@
-import { mediciEnabled } from "@/lib/medici";
+import { domicilioEnabled, mediciEnabled } from "@/lib/medici";
 import { CORE_SERVICES, type CoreServiceId } from "@/domain/offerta";
 import { PRESTAZIONI, type PrestazioneKind } from "./listino";
 
@@ -39,7 +39,8 @@ const core = (id: CoreServiceId) => CORE_SERVICES.find((s) => s.id === id)!;
 
 /** 13/11/2026: l'offerta che si vende davvero adesso. Con i medici spenti (src/lib/medici.ts) resta solo il referto. */
 export function publicOfferItems(): OfferItem[] {
-  return mediciEnabled() ? offerItems() : offerItems().filter((i) => !i.kind);
+  // 22/11/2026: la visita a domicilio ha il suo interruttore, spento (src/lib/medici.ts).
+  return mediciEnabled() ? offerItems().filter((i) => i.key !== "domicilio" || domicilioEnabled()) : offerItems().filter((i) => !i.kind);
 }
 
 export function offerItems(): OfferItem[] {

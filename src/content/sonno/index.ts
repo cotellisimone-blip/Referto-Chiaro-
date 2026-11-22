@@ -15,7 +15,9 @@ export const SONNO_PERCORSO = PERCORSO;
 
 export const SONNO_PAGINE: SonnoPagina[] = [...SONNO_PROBLEMI, PERCORSO, ...SONNO_SPIEGAZIONI];
 
-export const sonnoHref = (slug: string) => `/malattie/sonno/${slug}`;
+/** 22/11/2026: il sonno è un'area di «Prenditi cura di te» (passo 5), non più di Malattie. */
+export const SONNO_BASE = "/prenditi-cura-di-te/sonno";
+export const sonnoHref = (slug: string) => `${SONNO_BASE}/${slug}`;
 
 export function getSonnoPagina(slug: string): SonnoPagina | null {
   return SONNO_PAGINE.find((p) => p.slug === slug) ?? null;

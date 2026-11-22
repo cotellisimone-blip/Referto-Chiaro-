@@ -22,7 +22,7 @@ export function Briciole({ ultima }: { ultima: string }) {
   return (
     <nav aria-label="Sei qui">
       <p className="ht-crumb">
-        <Link href="/">Home</Link> <span aria-hidden>/</span> <Link href="/malattie">Malattie</Link> <span aria-hidden>/</span> <Link href="/malattie/sonno">Sonno</Link> <span aria-hidden>/</span>{" "}
+        <Link href="/">Home</Link> <span aria-hidden>/</span> <Link href="/prenditi-cura-di-te">Prenditi cura di te</Link> <span aria-hidden>/</span> <Link href="/prenditi-cura-di-te/sonno">Sonno</Link> <span aria-hidden>/</span>{" "}
         <span>{ultima}</span>
       </p>
     </nav>
@@ -75,10 +75,10 @@ export function FineSonno() {
     <section className="ht-sec ht-end" aria-label="Da qui">
       <div className="ht-wrap">
         <div className="ht-azioni">
-          <Link href="/malattie/sonno#sonno-porte" className="ht-btn">
+          <Link href="/prenditi-cura-di-te/sonno#sonno-porte" className="ht-btn">
             Tutta la sezione sonno <Ic id="go" className="ht-ic" />
           </Link>
-          <Link href="/malattie/sonno/percorso-due-settimane" className="ht-btn ht-btn-line">
+          <Link href="/prenditi-cura-di-te/sonno/percorso-due-settimane" className="ht-btn ht-btn-line">
             Il percorso di due settimane
           </Link>
           <Link href="/area-personale/diari/sonno" className="ht-btn ht-btn-line">
@@ -325,7 +325,7 @@ export function SonnoPaginaView({ p }: { p: SonnoPagina }) {
               ))}
             </ol>
             <div className="ml-domande-azioni">
-              <Link href="/malattie/sonno/percorso-due-settimane" className="ht-btn">
+              <Link href="/prenditi-cura-di-te/sonno/percorso-due-settimane" className="ht-btn">
                 Porta anche il diario di due settimane <Ic id="go" className="ht-ic" />
               </Link>
               <Link href="/strumenti/preparati-alla-visita" className="ht-btn ht-btn-line">

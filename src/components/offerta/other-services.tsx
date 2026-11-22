@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, FileSearch, Home, Stethoscope, Video, type LucideIcon } from "lucide-react";
 import { coreService, priceDisplay, publicPricesEnabled } from "@/domain/offerta";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
-import { mediciEnabled } from "@/lib/medici";
+import { domicilioEnabled, mediciEnabled } from "@/lib/medici";
 import { PrestoMedico } from "@/components/site/presto-medico";
 
 export type ServiceKey = "capisci" | "domicilio" | "parla-con-un-medico" | "secondo-parere";
@@ -37,7 +37,7 @@ export function OtherServices({ exclude, titleId = "altri-titolo", title = "Se t
       </section>
     );
   }
-  const keys = ORDER.filter((k) => k !== exclude);
+  const keys = ORDER.filter((k) => k !== exclude && (k !== "domicilio" || domicilioEnabled()));
   return (
     <section aria-labelledby={titleId} className="section">
       <div className="container-rc">

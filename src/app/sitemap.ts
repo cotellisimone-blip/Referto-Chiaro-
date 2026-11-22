@@ -3,11 +3,11 @@ import { GUIDES } from "@/content/guides";
 import { GLOSSARY } from "@/content/glossario";
 import { AREAS } from "@/content/punto-di-partenza";
 import { INTEGRATORI } from "@/content/integratori";
-import { MALATTIE } from "@/content/malattie";
+import { MALATTIE, malattiaHref } from "@/content/malattie";
 import { AUTOVALUTAZIONI, SONNO_PAGINE } from "@/content/sonno";
 import { GLOSSARY_UPDATED, PAGES_UPDATED, absoluteUrl, glossaryIndexable, guideIndexable, indexingEnabled, integratoreIndexable, malattiaIndexable } from "@/lib/seo";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
-import { isDoctorPath, mediciEnabled } from "@/lib/medici";
+import { DOMICILIO_PATHS, domicilioEnabled, isDoctorPath, mediciEnabled } from "@/lib/medici";
 
 const pdpReviewed = () => AREAS.every((a) => a.reviewStatus === "revisionato");
 
@@ -15,7 +15,7 @@ const pdpReviewed = () => AREAS.every((a) => a.reviewStatus === "revisionato");
  * 17/11/2026 (20 interventi, punti 1 e 13): le tre sezioni per prime; fuori le pagine confluite (/referti, /servizi
  * senza medici, /servizi/prevenzione, /con-un-medico); dentro Strumenti e l'elenco degli integratori.
  */
-const PUBLIC = ["/", "/prevenzione", "/prevenzione/esami-di-base", "/prevenzione/intestino-e-microbiota", "/prevenzione/alimentazione", "/prevenzione/screening", "/vicino-a-te", "/scaffale", "/lettura-referti", "/medici", "/prezzi", "/guide", "/integratori", "/glossario", "/strumenti", "/strumenti/preparati-alla-visita", "/strumenti/domande-per-il-medico", "/malattie", "/diari", "/diari/pressione", "/diari/glicemia", "/diari/cefalea", "/diari/sonno", "/diari/peso", "/diari/respiro", "/punto-di-partenza", "/referti/esempio", "/famiglia", "/come-funziona", "/domande-frequenti", "/inizia", "/chi-siamo", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/stato-del-progetto", "/per-le-strutture", "/servizi", "/servizi/visita-a-domicilio", "/servizi/parla-con-un-medico", "/servizi/secondo-parere", "/per-i-medici"];
+const PUBLIC = ["/", "/prenditi-cura-di-te", "/prevenzione", "/prevenzione/esami-di-base", "/prevenzione/intestino-e-microbiota", "/prevenzione/alimentazione", "/prevenzione/screening", "/vicino-a-te", "/scaffale", "/lettura-referti", "/medici", "/prezzi", "/guide", "/integratori", "/glossario", "/strumenti", "/strumenti/preparati-alla-visita", "/strumenti/domande-per-il-medico", "/malattie", "/diari", "/diari/pressione", "/diari/glicemia", "/diari/cefalea", "/diari/sonno", "/diari/peso", "/diari/respiro", "/punto-di-partenza", "/referti/esempio", "/famiglia", "/come-funziona", "/domande-frequenti", "/inizia", "/chi-siamo", "/contatti", "/sicurezza-e-privacy", "/accessibilita", "/stato-del-progetto", "/per-le-strutture", "/servizi", "/servizi/visita-a-domicilio", "/servizi/parla-con-un-medico", "/servizi/secondo-parere", "/per-i-medici"];
 
 /**
  * Sitemap vuota finché l'indicizzazione è spenta: nessun URL viene proposto ai motori.
@@ -28,13 +28,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...PUBLIC.filter((p) => p !== "/punto-di-partenza" || (puntoDiPartenzaEnabled() && pdpReviewed()))
       // Senza medici le loro pagine e l'elenco «I servizi» reindirizzano: non vanno proposti ai motori.
-      .filter((p) => mediciEnabled() || (!isDoctorPath(p) && p !== "/servizi")).map((p) => ({ url: absoluteUrl(p), lastModified: pages, changeFrequency: "weekly" as const, priority: p === "/" ? 1 : 0.7 })),
+      .filter((p) => mediciEnabled() || (!isDoctorPath(p) && p !== "/servizi"))
+      // 22/11/2026: con la visita a domicilio spenta il suo indirizzo rimanda alla pagina Medici.
+      .filter((p) => domicilioEnabled() || !(DOMICILIO_PATHS as readonly string[]).includes(p)).map((p) => ({ url: absoluteUrl(p), lastModified: pages, changeFrequency: "weekly" as const, priority: p === "/" ? 1 : 0.7 })),
     ...GUIDES.filter((g) => guideIndexable(g)).map((g) => ({ url: absoluteUrl(`/guide/${g.slug}`), lastModified: new Date(g.lastUpdated), changeFrequency: "monthly" as const, priority: 0.6 })),
     ...INTEGRATORI.filter((i) => integratoreIndexable(i)).map((i) => ({ url: absoluteUrl(`/integratori/${i.slug}`), lastModified: new Date(i.lastUpdated), changeFrequency: "monthly" as const, priority: 0.6 })),
     // 22/11/2026: le pagine per malattia solo quando un medico le ha rivedute.
-    ...MALATTIE.filter((m) => malattiaIndexable(m)).map((m) => ({ url: absoluteUrl(`/malattie/${m.slug}`), lastModified: new Date(m.aggiornato), changeFrequency: "monthly" as const, priority: 0.7 })),
+    ...MALATTIE.filter((m) => malattiaIndexable(m)).map((m) => ({ url: absoluteUrl(malattiaHref(m.slug)), lastModified: new Date(m.aggiornato), changeFrequency: "monthly" as const, priority: 0.7 })),
     // 22/11/2026: la sezione sonno, con la stessa regola.
-    ...[...SONNO_PAGINE, ...AUTOVALUTAZIONI].filter((p) => malattiaIndexable(p)).map((p) => ({ url: absoluteUrl(`/malattie/sonno/${p.slug}`), lastModified: new Date(p.aggiornato), changeFrequency: "monthly" as const, priority: 0.6 })),
+    ...[...SONNO_PAGINE, ...AUTOVALUTAZIONI].filter((p) => malattiaIndexable(p)).map((p) => ({ url: absoluteUrl(`/prenditi-cura-di-te/sonno/${p.slug}`), lastModified: new Date(p.aggiornato), changeFrequency: "monthly" as const, priority: 0.6 })),
     ...(glossaryIndexable() ? GLOSSARY : []).map((e) => ({ url: absoluteUrl(`/glossario/${e.slug}`), lastModified: new Date(GLOSSARY_UPDATED), changeFrequency: "monthly" as const, priority: 0.4 })),
   ];
 }

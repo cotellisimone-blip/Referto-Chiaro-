@@ -27,7 +27,7 @@ export default function PreparatiAllaVisitaPage() {
   return (
     <>
       <PageLd path="/strumenti/preparati-alla-visita" meta={metadata} name="Preparati alla visita" trail={[{ name: "Strumenti gratuiti", path: "/strumenti" }]} />
-      <PageHeader section={1}
+      <PageHeader section={4}
         eyebrow="Strumento gratuito"
         title={
           <>

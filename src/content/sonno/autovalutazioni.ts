@@ -79,9 +79,9 @@ export const AV_INSONNIA: Autovalutazione = {
     },
   ],
   poi: [
-    { href: "/malattie/sonno/percorso-due-settimane", label: "Il percorso di due settimane" },
-    { href: "/malattie/sonno/terapia-cognitivo-comportamentale", label: "La terapia senza farmaci" },
-    { href: "/malattie/sonno/non-mi-addormento", label: "Non mi addormento" },
+    { href: "/prenditi-cura-di-te/sonno/percorso-due-settimane", label: "Il percorso di due settimane" },
+    { href: "/prenditi-cura-di-te/sonno/terapia-cognitivo-comportamentale", label: "La terapia senza farmaci" },
+    { href: "/prenditi-cura-di-te/sonno/non-mi-addormento", label: "Non mi addormento" },
   ],
   fonti: [
     { ente: "Bastien CH, Vallières A, Morin CM, Sleep Med 2001", titolo: "Validation of the Insomnia Severity Index as an outcome measure for insomnia research", url: "https://pubmed.ncbi.nlm.nih.gov/11438246/" },
@@ -135,9 +135,9 @@ export const AV_SONNOLENZA: Autovalutazione = {
     },
   ],
   poi: [
-    { href: "/malattie/sonno/russo-e-sono-stanco", label: "Russo e sono stanco" },
-    { href: "/malattie/sonno/autovalutazione-apnee", label: "Segnali delle apnee" },
-    { href: "/malattie/sonno/quando-andare-dal-medico", label: "Quando andare dal medico" },
+    { href: "/prenditi-cura-di-te/sonno/russo-e-sono-stanco", label: "Russo e sono stanco" },
+    { href: "/prenditi-cura-di-te/sonno/autovalutazione-apnee", label: "Segnali delle apnee" },
+    { href: "/prenditi-cura-di-te/sonno/quando-andare-dal-medico", label: "Quando andare dal medico" },
   ],
   fonti: [
     { ente: "Johns MW, Sleep 1991", titolo: "A new method for measuring daytime sleepiness: the Epworth sleepiness scale", url: "https://pubmed.ncbi.nlm.nih.gov/1798888/" },
@@ -187,9 +187,9 @@ export const AV_APNEE: Autovalutazione = {
     },
   ],
   poi: [
-    { href: "/malattie/sonno/apnee-notturne", label: "Le apnee notturne" },
-    { href: "/malattie/sonno/esame-del-sonno", label: "L'esame del sonno" },
-    { href: "/malattie/sonno/autovalutazione-sonnolenza", label: "Sonnolenza di giorno" },
+    { href: "/prenditi-cura-di-te/sonno/apnee-notturne", label: "Le apnee notturne" },
+    { href: "/prenditi-cura-di-te/sonno/esame-del-sonno", label: "L'esame del sonno" },
+    { href: "/prenditi-cura-di-te/sonno/autovalutazione-sonnolenza", label: "Sonnolenza di giorno" },
   ],
   fonti: [
     { ente: "Chung F e altri, Anesthesiology 2008", titolo: "STOP questionnaire: a tool to screen patients for obstructive sleep apnea", url: "https://pubmed.ncbi.nlm.nih.gov/18431116/" },
@@ -235,7 +235,7 @@ export const AV_GAMBE: Autovalutazione = {
     },
   ],
   poi: [
-    { href: "/malattie/sonno/gambe-senza-riposo", label: "Gambe senza riposo" },
+    { href: "/prenditi-cura-di-te/sonno/gambe-senza-riposo", label: "Gambe senza riposo" },
     { href: "/guide/ferritina", label: "La ferritina, spiegata" },
   ],
   fonti: [

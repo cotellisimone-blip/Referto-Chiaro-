@@ -22,7 +22,8 @@ export function getMalattia(slug: string): Malattia | null {
   return MALATTIE.find((m) => m.slug === slug) ?? null;
 }
 
-export const malattiaHref = (slug: MalattiaSlug) => `/malattie/${slug}`;
+/** 22/11/2026: il sonno vive in «Prenditi cura di te» (passo 5); in Malattie resta la sua scheda, che porta lì. */
+export const malattiaHref = (slug: MalattiaSlug) => (slug === "sonno" ? "/prenditi-cura-di-te/sonno" : `/malattie/${slug}`);
 
 /** Le pagine di malattia che parlano di una guida agli esami: servono al rimando «Se vuoi capire la malattia». */
 export function malattiePerGuida(guida: string): Malattia[] {

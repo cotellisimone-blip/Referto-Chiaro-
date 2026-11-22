@@ -29,10 +29,10 @@ export const PERCORSO: SonnoPagina = {
         {
           p: "Scegli quella che somiglia di più a quello che vivi. Sono domande scritte da noi, ispirate ai temi dei questionari usati dai medici del sonno, con le fonti: non sono quei questionari e non danno una diagnosi, ma aiutano a dare un nome alle cose e a scegliere le domande per la visita. Le risposte restano sul tuo telefono: se vuoi, aggiungi il risultato al foglio per il medico.",
         },
-        { vai: { href: "/malattie/sonno/autovalutazione-insonnia", titolo: "Quanto pesa l'insonnia", testo: "Sei domande su addormentarsi, risvegli, risveglio precoce e giornate." } },
-        { vai: { href: "/malattie/sonno/autovalutazione-sonnolenza", titolo: "Sonnolenza di giorno", testo: "Quanto ti capita di appisolarti nelle situazioni di tutti i giorni." } },
-        { vai: { href: "/malattie/sonno/autovalutazione-apnee", titolo: "Segnali delle apnee notturne", testo: "Russare, pause del respiro e i fattori che rendono le apnee più probabili." } },
-        { vai: { href: "/malattie/sonno/autovalutazione-gambe", titolo: "Gambe senza riposo", testo: "I quattro segni tipici, con domande semplici." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/autovalutazione-insonnia", titolo: "Quanto pesa l'insonnia", testo: "Sei domande su addormentarsi, risvegli, risveglio precoce e giornate." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/autovalutazione-sonnolenza", titolo: "Sonnolenza di giorno", testo: "Quanto ti capita di appisolarti nelle situazioni di tutti i giorni." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/autovalutazione-apnee", titolo: "Segnali delle apnee notturne", testo: "Russare, pause del respiro e i fattori che rendono le apnee più probabili." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/autovalutazione-gambe", titolo: "Gambe senza riposo", testo: "I quattro segni tipici, con domande semplici." } },
       ],
     },
     {
@@ -93,7 +93,7 @@ export const PERCORSO: SonnoPagina = {
             testo: "Non fa diagnosi, non sostituisce la visita, non imposta una terapia. In particolare non calcola orari di «restrizione del sonno»: quella parte della terapia cognitivo-comportamentale si fa con un professionista, che parte proprio dal tuo diario.",
           },
         },
-        { vai: { href: "/malattie/sonno/quando-andare-dal-medico", titolo: "Quando non aspettare due settimane", testo: "Sonno alla guida, pause del respiro, pensieri di farti del male: i segnali per muoversi subito." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/quando-andare-dal-medico", titolo: "Quando non aspettare due settimane", testo: "Sonno alla guida, pause del respiro, pensieri di farti del male: i segnali per muoversi subito." } },
       ],
     },
   ],

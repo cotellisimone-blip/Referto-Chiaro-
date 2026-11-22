@@ -34,6 +34,21 @@ export function secondoParereEnabled(): boolean {
   return process.env.ENABLE_SECONDO_PARERE === "true";
 }
 
+/**
+ * 22/11/2026 (Simone): la visita a domicilio esce dal sito per ora («complica troppo ed espone a dei rischi»). Il codice
+ * resta tutto, spento: ENABLE_DOMICILIO="true" (con i medici accesi) la riaccende. Spenta, i suoi indirizzi portano alla
+ * pagina Medici e nessun menu, prezzo o scelta la propone. Come gli altri, è fissato alla build.
+ */
+export function domicilioEnabled(): boolean {
+  if (!mediciEnabled()) return false;
+  const built = process.env.NEXT_PUBLIC_ENABLE_DOMICILIO;
+  if (built === "true" || built === "false") return built === "true";
+  return process.env.ENABLE_DOMICILIO === "true";
+}
+
+/** Indirizzi della visita a domicilio: con il suo interruttore spento portano alla pagina Medici. */
+export const DOMICILIO_PATHS = ["/servizi/visita-a-domicilio", "/richiedi/domicilio", "/prova/paziente/domicilio"] as const;
+
 /** Indirizzi del secondo parere che esistono solo con il suo interruttore acceso (spento portano alla sua pagina). */
 export const PARERE_PATHS = ["/richiedi/secondo-parere"] as const;
 export const PARERE_HREF = "/servizi/secondo-parere";

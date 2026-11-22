@@ -1,26 +1,25 @@
 import Link from "next/link";
-import { ArrowRight, BellRing, BookOpen, Compass, Pill } from "lucide-react";
-import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
+import { ArrowRight, BookOpen, CalendarCheck, ClipboardCheck } from "lucide-react";
 import { EXAM_GUIDE_COUNT } from "@/content/guides";
-import { INTEGRATORI } from "@/content/integratori";
 
-/** Le quattro cose della sezione 1 «Prevenzione», con un piccolo disegno ciascuna. Usate in home e in /prevenzione. */
+/**
+ * Le cose del passo 2 «I controlli per te» (22/11/2026: prima erano le quattro della sezione Prevenzione; il Punto di
+ * Partenza è diventato il passo 1, gli integratori il passo 5). Mai «fai questo esame»: che cosa esiste e che cosa
+ * dicono le linee guida, da discutere con il medico.
+ */
 export function PrevenzioneCards() {
   const items = [
-    ...(puntoDiPartenzaEnabled()
-      ? [{ href: "/punto-di-partenza", icon: Compass, k: "Gratis · 2 minuti", t: "Quali esami conoscere", d: "Il primo controllo: 10 aree della salute da conoscere e una scheda da portare al medico.", v: "pdp" }]
-      : []),
-    { href: "/guide", icon: BookOpen, k: "Gratis", t: "Guide agli esami", d: `${EXAM_GUIDE_COUNT} esami spiegati: a che cosa servono, come si fanno, come si leggono. Con le fonti.`, v: "gui" },
-    { href: "/integratori", icon: Pill, k: "Gratis · nuovo", t: "Guide agli integratori", d: `${INTEGRATORI.length} schede: vitamina D, ferro, omega-3 e altri. Che cosa sono e che cosa chiedere.`, v: "int" },
-    { href: "/famiglia", icon: BellRing, k: "Gratis", t: "Promemoria dei controlli", d: "Segna quando rifare un esame, per te e per i tuoi cari: te lo ricordiamo noi.", v: "pro" },
+    { href: "/prevenzione/esami-di-base", icon: ClipboardCheck, k: "Gratis", t: "Gli esami di base", d: "Sangue e urine: quali sono, che cosa misurano, quando parlarne con il medico.", v: "pdp", art: ["Emocromo", "Glicemia", "Colesterolo"] },
+    { href: "/prevenzione/screening", icon: CalendarCheck, k: "Gratis · per età", t: "Screening gratuiti", d: "Gli esami che il Servizio sanitario offre per età, e come prenotarli.", v: "pro", art: ["Mammografia", "Pap test e HPV", "Sangue occulto"] },
+    { href: "/guide", icon: BookOpen, k: "Gratis", t: "Guide agli esami", d: `${EXAM_GUIDE_COUNT} esami spiegati: a che cosa servono, come si fanno, come si leggono. Con le fonti.`, v: "gui", art: [] as string[] },
   ];
   return (
     <ul className={`ds-cards${items.length === 3 ? " ds-cards-3" : ""}`}>
-      {items.map(({ href, icon: Icon, k, t, d, v }) => (
+      {items.map(({ href, icon: Icon, k, t, d, v, art }) => (
         <li key={href}>
           <Link href={href} className={`ds-card ds-card-${v}`}>
             <span className="ds-card-art" aria-hidden>
-              <CardArt v={v} />
+              <CardArt v={v} items={art} />
             </span>
             <span className="ds-card-k">{k}</span>
             <span className="ds-card-t">
@@ -39,21 +38,13 @@ export function PrevenzioneCards() {
 }
 
 /** Piccoli disegni in testa alle schede: una lista, un foglio con la barra, delle guide, delle capsule. */
-function CardArt({ v }: { v: string }) {
-  if (v === "pdp")
+function CardArt({ v, items }: { v: string; items: string[] }) {
+  if (v === "pdp" || v === "pro")
     return (
-      <span className="ds-art ds-art-pdp">
-        <i>Cuore e pressione</i>
-        <i>Zuccheri</i>
-        <i>Vista</i>
-      </span>
-    );
-  if (v === "pro")
-    return (
-      <span className="ds-art ds-art-pdp ds-art-pro">
-        <i>Esami del sangue · marzo</i>
-        <i>Vista · giugno</i>
-        <i>Pressione · ottobre</i>
+      <span className={v === "pro" ? "ds-art ds-art-pdp ds-art-pro" : "ds-art ds-art-pdp"}>
+        {items.map((x) => (
+          <i key={x}>{x}</i>
+        ))}
       </span>
     );
   if (v === "ref")

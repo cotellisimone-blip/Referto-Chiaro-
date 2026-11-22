@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { HomeSimboli, Ic } from "@/components/home-b/simboli";
 import { DIARI, DIARI_BOZZA, DIARI_LIMITI, getDiario, type DiarioSlug } from "@/domain/diari/catalogo";
-import { malattiaPerDiario } from "@/content/malattie";
+import { malattiaHref, malattiaPerDiario } from "@/content/malattie";
 import { DiariSimboli, Disegno } from "./disegni";
 import { ScaricaVuoto } from "./scarica-vuoto";
 import "@/components/temi/temi.css";
@@ -161,7 +161,7 @@ export function DiarioPubblico({ slug }: { slug: DiarioSlug }) {
               </dl>
               {malattia ? (
                 <p className="dr-malattia">
-                  Se vuoi capire la malattia: <Link href={`/malattie/${malattia.slug}`}>{malattia.nome}, spiegata bene</Link>
+                  Se vuoi capire la malattia: <Link href={malattiaHref(malattia.slug)}>{malattia.nome}, spiegata bene</Link>
                 </p>
               ) : null}
               <p className="ht-bozza" data-bozza="medico">

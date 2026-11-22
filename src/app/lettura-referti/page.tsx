@@ -50,12 +50,12 @@ export default function LetturaRefertiPage() {
       <TrackView event="visita-capisci" />
       <section className="ds-ph ds-ph-2" aria-labelledby="lr-titolo">
         <div className="tm-wrap">
-          <PercorsoSezioni current={2} />
+          <PercorsoSezioni current={3} />
         </div>
         <div className="tm-wrap ds-ph-g">
           <div>
             <p className="ds-sec-tag ds-sec-tag-2">
-              <span>2</span> Sezione Lettura referti
+              <span>3</span> Capisci i referti
             </p>
             <h1 id="lr-titolo">
               Il tuo referto, <em>in parole semplici.</em>
@@ -278,10 +278,10 @@ export default function LetturaRefertiPage() {
             </span>
             <span>
               <span className="ds-sec-tag ds-sec-tag-3">
-                <span>3</span> Sezione Medici <StatoDomicilio attivo={attivo} dark />
+                <span>4</span> Parla con un medico <StatoDomicilio attivo={attivo} dark />
               </span>
               <span id="lr-ponte" className="ds-bridge-t">
-                Dopo il referto, se serve: un medico in video, a casa o per un secondo parere.
+                Dopo il referto, se serve: un medico in video o per un secondo parere.
               </span>
             </span>
             <ArrowRight aria-hidden className="tm-ic ds-bridge-go" />

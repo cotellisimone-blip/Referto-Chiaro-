@@ -37,6 +37,7 @@ import {
   type PrestazioniState,
 } from "@/domain/prestazioni/engine";
 import { PRESTAZIONI, PRESTAZIONI_ORDER, type PrestazioneKind } from "@/domain/prestazioni/listino";
+import { domicilioEnabled } from "@/lib/medici";
 import { act, usePrestazioni } from "./store";
 import { usePatientPaths } from "./paths";
 import { formatEuro } from "@/domain/offerta";
@@ -110,7 +111,7 @@ export function PatientHome() {
       <section aria-labelledby="nuova-titolo">
         <h2 id="nuova-titolo" className="area-h2">Nuova richiesta</h2>
         <div className="mt-5 grid gap-4 lg:grid-cols-3 lg:gap-5">
-          {PRESTAZIONI_ORDER.map((k) => (
+          {PRESTAZIONI_ORDER.filter((k) => k !== "domicilio" || domicilioEnabled()).map((k) => (
             <PrestazioneCard key={k} s={s} kind={k} now={now} startHref={paths.start(k)} />
           ))}
         </div>

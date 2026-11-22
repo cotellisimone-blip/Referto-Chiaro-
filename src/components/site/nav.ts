@@ -5,30 +5,39 @@ import { isDoctorPath, mediciEnabled } from "@/lib/medici";
  * «Parla con un medico» diventa «Videoconsulto». «Guide» si vede dai 1280 px in su (sotto resta nel menu, nel fondo
  * pagina e nella ricerca), così la testata non va a capo a 1024 px.
  */
-export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users" | "tools" | "chart" | "laptop" | "pill" | "heart" | "activity";
-type NavItem = { href: string; label: string; tone: "capisci" | "medico" | "parere" | null; icon: NavIcon; wideOnly?: "xl" | "2xl"; menuOnly?: boolean };
+export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book" | "users" | "tools" | "chart" | "laptop" | "pill" | "heart" | "activity" | "leaf" | "notebook" | "userCheck";
+
 /**
- * 15/11/2026 sera: tre sezioni (Prevenzione, Lettura referti, Medici), poi guide, integratori e prezzi; guide e
- * integratori si vedono dai 1280 px (sotto stanno nel menu e nel fondo pagina).
- * 15/11/2026, home «a due sezioni»: il menu è lo stesso con i medici accesi o spenti. Le due sezioni per prime
- * (Online, A domicilio), poi le guide agli esami, le guide agli integratori, i prezzi. Spenti, «A domicilio» porta a una
- * pagina «In arrivo» con la lista d'attesa; accesi, alla stessa pagina con medici e percorso di prova.
+ * 22/11/2026 (Simone, thread «Riorganizzare menu e percorso del paziente»): il menu segue il percorso del paziente in
+ * cinque passi, numerati, con il quinto («Prenditi cura di te») segnato come il cuore del sito. Sotto, ciò che si
+ * consulta (Malattie, Guide, Diari, Glossario), poi il referto da caricare e qualche pagina di servizio.
+ * Prima (15–22/11) il menu era una fila di otto voci: Prevenzione, Lettura referti, Malattie, Medici, Guide,
+ * Integratori, Prezzi, Strumenti gratuiti.
  */
-const MAIN_NAV_DUE_SEZIONI: readonly NavItem[] = [
-  { href: "/prevenzione", label: "Prevenzione", tone: null, icon: "heart" },
-  { href: "/lettura-referti", label: "Lettura referti", tone: "capisci", icon: "file" },
-  // 22/11/2026: la sezione «Malattie» (dieci aree). Nella testata dai 1280 px, sempre nel menu del telefono. Per farle
-  // posto «Guide» passa ai 1536 px: sotto le guide si raggiungono da Malattie, Prevenzione, ricerca, menu e fondo pagina.
-  { href: "/malattie", label: "Malattie", tone: null, icon: "activity", wideOnly: "xl" },
-  { href: "/medici", label: "Medici", tone: "medico", icon: "stethoscope" },
-  { href: "/guide", label: "Guide", tone: null, icon: "book", wideOnly: "2xl" },
-  { href: "/integratori", label: "Integratori", tone: null, icon: "pill", wideOnly: "xl" },
-  { href: "/prezzi", label: "Prezzi", tone: null, icon: "euro" },
-  // 18/11/2026 (secondo giro, punto 15): la pagina esisteva ma nessun collegamento ci portava. Nel menu del telefono
-  // (e, su computer, nel fondo pagina e in Prevenzione): la testata larga resta com'è, senza andare a capo.
-  { href: "/strumenti", label: "Strumenti gratuiti", tone: null, icon: "tools", menuOnly: true },
+export type PassoPercorso = { n: 1 | 2 | 3 | 4 | 5; href: string; label: string; short: string; desc: string; icon: NavIcon; cuore?: boolean };
+export const PERCORSO: readonly PassoPercorso[] = [
+  { n: 1, href: "/punto-di-partenza", label: "Inizia da te", short: "Inizia da te", desc: "Poche domande, gratis: la tua mappa", icon: "userCheck" },
+  { n: 2, href: "/prevenzione", label: "I controlli per te", short: "Esami", desc: "Gli esami da conoscere, per la tua età", icon: "heart" },
+  { n: 3, href: "/lettura-referti", label: "Capisci i referti", short: "Referti", desc: "Il referto spiegato riga per riga", icon: "file" },
+  { n: 4, href: "/medici", label: "Parla con un medico", short: "Medico", desc: "In video, o un secondo parere", icon: "stethoscope" },
+  { n: 5, href: "/prenditi-cura-di-te", label: "Prenditi cura di te", short: "Cura di te", desc: "Sonno, alimentazione, intestino, integratori", icon: "leaf", cuore: true },
 ];
-export const MAIN_NAV: readonly NavItem[] = MAIN_NAV_DUE_SEZIONI;
+/** Da consultare, gratis: non sono passi, ma ogni passo ci porta. */
+export const CONSULTA: readonly { href: string; label: string; desc: string; icon: NavIcon }[] = [
+  { href: "/malattie", label: "Malattie", desc: "10 aree spiegate", icon: "activity" },
+  { href: "/guide", label: "Guide agli esami", desc: "Che cosa misura ogni esame", icon: "book" },
+  { href: "/diari", label: "Diari della salute", desc: "Misura bene a casa", icon: "notebook" },
+  { href: "/glossario", label: "Glossario", desc: "Le parole dei referti", icon: "tools" },
+];
+/** In fondo al menu del telefono: le pagine di servizio. */
+export const MENU_FOOT: readonly { href: string; label: string }[] = [
+  { href: "/prezzi", label: "Prezzi" },
+  { href: "/come-funziona", label: "Come funziona" },
+  { href: "/domande-frequenti", label: "Domande frequenti" },
+  { href: "/chi-siamo", label: "Chi siamo" },
+];
+/** Per la ricerca del sito e per chi cercava l'elenco piatto: i cinque passi e ciò che si consulta. */
+export const MAIN_NAV: readonly { href: string; label: string }[] = [...PERCORSO.map((p) => ({ href: p.href, label: p.label })), ...CONSULTA.map((c) => ({ href: c.href, label: c.label }))];
 /**
  * Azione principale della testata: il referto, che è la cosa che si fa subito.
  * 17/11/2026 (20 interventi, punto 2): «Carica un referto» porta al caricamento (chi non è entrato passa dall'accesso e
@@ -40,27 +49,25 @@ export const HEADER_CTA = { href: CARICA_HREF, label: "Carica un referto", menu:
 
 /** Fondo pagina snello: tre colonne, una dozzina di voci. Le note legali stanno nella riga in basso. */
 const FOOTER_NAV_ALL = {
-  Servizi: [
-    { href: "/prevenzione", label: "Prevenzione" },
-    { href: "/lettura-referti", label: "Lettura referti" },
-    { href: "/medici", label: "Medici" },
-    { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio" },
-    { href: "/servizi/parla-con-un-medico", label: "Videoconsulto con un medico" },
-    { href: "/servizi/secondo-parere", label: "Secondo parere specialistico" },
+  "Il percorso": [
+    { href: "/punto-di-partenza", label: "1 · Inizia da te" },
+    { href: "/prevenzione", label: "2 · I controlli per te" },
+    { href: "/lettura-referti", label: "3 · Capisci i referti" },
+    { href: "/medici", label: "4 · Parla con un medico" },
+    { href: "/prenditi-cura-di-te", label: "5 · Prenditi cura di te" },
     { href: "/famiglia", label: "Famiglia e salute nel tempo" },
     { href: "/prezzi", label: "Prezzi" },
-    { href: "/inizia", label: "Ti aiutiamo a scegliere" },
   ],
   Gratis: [
-    { href: "/punto-di-partenza", label: "Punto di Partenza" },
     { href: "/prevenzione/esami-di-base", label: "Esami di base" },
     { href: "/prevenzione/screening", label: "Screening gratuiti" },
-    { href: "/vicino-a-te", label: "Vicino a te" },
-    { href: "/malattie", label: "Malattie spiegate" },
-    { href: "/diari", label: "Diari della salute" },
-    { href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita" },
-    { href: "/guide", label: "Guide agli esami" },
+    { href: "/prenditi-cura-di-te/sonno", label: "Sonno" },
+    { href: "/prevenzione/alimentazione", label: "Alimentazione" },
+    { href: "/prevenzione/intestino-e-microbiota", label: "Intestino e microbiota" },
     { href: "/integratori", label: "Guide agli integratori" },
+    { href: "/malattie", label: "Malattie spiegate" },
+    { href: "/guide", label: "Guide agli esami" },
+    { href: "/diari", label: "Diari della salute" },
     { href: "/glossario", label: "Glossario" },
     { href: "/strumenti", label: "Tutti gli strumenti gratuiti" },
   ],
@@ -97,10 +104,9 @@ export const LEGAL_NAV = [
 export const EXTRA_PAGES = [
   { href: "/referti/esempio", label: "Referto di esempio" },
   // 19/11/2026: le pagine delle tessere della home «chiara e scura».
-  { href: "/prevenzione/intestino-e-microbiota", label: "Intestino e microbiota: fibre, fermentati, probiotici" },
-  { href: "/prevenzione/alimentazione", label: "Alimentazione, peso e forma" },
+  { href: "/vicino-a-te", label: "Vicino a te: medico di famiglia, CUP, guardia medica" },
+  { href: "/strumenti/preparati-alla-visita", label: "Preparati alla visita" },
   { href: "/scaffale", label: "Lo Scaffale: i criteri per i partner" },
   { href: "/per-le-strutture", label: "Per le strutture" },
   { href: "/accedi", label: "Area personale" },
-  { href: "/servizi/visita-a-domicilio", label: "Visita a domicilio con medico generalista" },
 ] as const;

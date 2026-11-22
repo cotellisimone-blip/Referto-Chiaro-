@@ -11,7 +11,7 @@ import { MediciRete } from "@/components/sezioni/medici";
 import { MiniVisita, REFERTI_HREF, ServiziMedico, StatoDomicilio, PercorsoSezioni } from "@/components/sezioni/parts";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
 import { PRICE_NOTE, publicPricesEnabled } from "@/domain/offerta";
-import { mediciEnabled } from "@/lib/medici";
+import { domicilioEnabled, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
 import { readFlags } from "@/lib/feature-flags";
 import { nomiMedici } from "@/content/medici";
 import "@/components/home/tre-momenti.css";
@@ -19,10 +19,12 @@ import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
-  title: "Medici: in video, a casa o per un secondo parere",
-  description: mediciEnabled()
+  title: domicilioEnabled() ? "Medici: in video, a casa o per un secondo parere" : "Parla con un medico: in video o per un secondo parere",
+  description: domicilioEnabled()
     ? "Videoconsulto, visita a casa con un medico di medicina generale (si parte da Brescia città) e secondo parere di uno specialista. Per esigenze non urgenti."
-    : "In arrivo: videoconsulto, visita a casa (si parte da Brescia città) e secondo parere di uno specialista. Lascia l'email: ti avvisiamo quando parte.",
+    : mediciEnabled()
+      ? "Videoconsulto con un medico di medicina generale e secondo parere di uno specialista. Per esigenze non urgenti."
+      : "In arrivo: videoconsulto con un medico di medicina generale e secondo parere di uno specialista. Lascia l'email: ti avvisiamo quando parte.",
   alternates: { canonical: "/medici" },
 };
 
@@ -42,38 +44,43 @@ const NOT_FOR = [
 export default function MediciPage() {
   const attivo = mediciEnabled();
   const prices = publicPricesEnabled();
-  const info = PRESTAZIONI.domicilio;
+  // 22/11/2026: la visita a domicilio è spenta (Simone); la pagina presenta il videoconsulto e il secondo parere.
+  const dom = domicilioEnabled();
+  const info = dom ? PRESTAZIONI.domicilio : PRESTAZIONI.video;
+  const main = dom ? "domicilio" : "video";
   const demo = readFlags().demoMode;
   return (
     <div className="tm ds">
       <PageLd path="/medici" meta={metadata} name="Medici" />
       <section className="ds-ph ds-ph-3" aria-labelledby="dom-titolo">
         <div className="tm-wrap">
-          <PercorsoSezioni current={3} />
+          <PercorsoSezioni current={4} />
         </div>
         <div className="tm-wrap ds-ph-g">
           <div>
             <p className="ds-sec-tag ds-sec-tag-3">
-              <span>3</span> Sezione Medici <StatoDomicilio attivo={attivo} dark />
+              <span>4</span> Parla con un medico <StatoDomicilio attivo={attivo} dark />
             </p>
             <h1 id="dom-titolo">
               Un medico, <em>quando serve.</em>
             </h1>
             <p className="tm-lead">
-              {attivo
+              {dom
                 ? "In video, a casa tua o di un familiare, oppure un secondo parere di uno specialista. Per esigenze non urgenti; la visita a casa parte da Brescia città."
-                : "In video, a casa tua o di un familiare, oppure un secondo parere di uno specialista. Lo stiamo preparando: la visita a casa partirà da Brescia città."}
+                : attivo
+                  ? `Un medico di medicina generale in video, con i tuoi referti già letti. Oppure il secondo parere di uno specialista${secondoParereEnabled() ? "" : ", in arrivo"}. Per esigenze non urgenti.`
+                  : "Un medico di medicina generale in video, oppure il secondo parere di uno specialista. Lo stiamo preparando."}
             </p>
             <div className="ds-ph-buy">
               {attivo && prices ? (
                 <p className="ds-price">
-                  <b>{prestazionePrice("domicilio")}</b>
-                  <span>visita a casa, prezzo fisso</span>
+                  <b>{prestazionePrice(main)}</b>
+                  <span>{dom ? "visita a casa, prezzo fisso" : "videoconsulto, 20–25 minuti"}</span>
                 </p>
               ) : null}
               {attivo ? (
-                <Link href={info.startHref} className="tm-btn tm-btn-mint" data-track="cta-domicilio">
-                  Richiedi la visita <ArrowRight aria-hidden className="tm-ic" />
+                <Link href={info.startHref} className="tm-btn tm-btn-mint" data-track={dom ? "cta-domicilio" : "cta-video"}>
+                  {dom ? "Richiedi la visita" : "Prenota il videoconsulto"} <ArrowRight aria-hidden className="tm-ic" />
                 </Link>
               ) : (
                 <a href="#avvisami" className="tm-btn tm-btn-mint" data-track="cta-avvisami">
@@ -81,7 +88,7 @@ export default function MediciPage() {
                 </a>
               )}
             </div>
-            <p className="tm-fine">{attivo ? "Paghi solo dopo che il medico ha confermato l’orario." : "Non è ancora attivo: oggi non si prenota e non si paga nulla."} Per un’emergenza chiama il 112.</p>
+            <p className="tm-fine">{attivo ? (dom ? "Paghi solo dopo che il medico ha confermato l’orario." : "Il prezzo lo vedi prima di confermare.") : "Non è ancora attivo: oggi non si prenota e non si paga nulla."} Per un’emergenza chiama il 112.</p>
           </div>
           <div className="ds-ph-art">
             {SHOW_ILLUSTRATIVE_PHOTOS ? (
@@ -110,13 +117,23 @@ export default function MediciPage() {
         <div className="tm-wrap">
           <div className="tm-sec-h">
             <div>
-              <p className="tm-kicker">Tre modi</p>
+              <p className="tm-kicker">{dom ? "Tre modi" : "Due modi"}</p>
               <h2 id="dom-modi">
-                A casa, in video <em>o con uno specialista.</em>
+                {dom ? (
+                  <>
+                    A casa, in video <em>o con uno specialista.</em>
+                  </>
+                ) : (
+                  <>
+                    In video, <em>o con uno specialista.</em>
+                  </>
+                )}
               </h2>
             </div>
             <p>
-              {attivo
+              {!dom
+                ? "Il videoconsulto quando vuoi parlarne con un medico. Il secondo parere per un dubbio su una diagnosi o su esami già fatti."
+                : attivo
                 ? "Il medico a casa quando serve una visita di persona. Il videoconsulto quando basta parlarsi. Il secondo parere per un dubbio su esami già fatti."
                 : "Ci sarà il medico a casa quando serve una visita di persona, il videoconsulto quando basta parlarsi, il secondo parere per un dubbio su esami già fatti."}
             </p>
@@ -149,6 +166,8 @@ export default function MediciPage() {
         </div>
       </section>
 
+      {dom ? (
+        <>
       <section className="ds-sec-light" aria-labelledby="dom-come">
         <div className="tm-wrap">
           <div className="tm-sec-h">
@@ -252,7 +271,10 @@ export default function MediciPage() {
         </div>
       </section>
 
-      {attivo ? (
+        </>
+      ) : null}
+
+      {attivo && dom ? (
         <section id="copertura" className="ds-sec-light ds-sec-alt" aria-labelledby="dom-dove">
           <div className="tm-wrap ds-ph-g ds-g-even">
             <div>
@@ -270,7 +292,7 @@ export default function MediciPage() {
             </div>
           </div>
         </section>
-      ) : (
+      ) : attivo ? null : (
         <section id="avvisami" className="ds-sec-light ds-sec-alt" aria-labelledby="dom-avvisami">
           <div className="tm-wrap ds-ph-g ds-g-even">
             <div>
@@ -303,8 +325,8 @@ export default function MediciPage() {
           </div>
           {attivo ? (
             <div className="ds-sec-end">
-              <Link href={info.startHref} className="tm-btn tm-btn-ink" data-track="cta-domicilio">
-                Richiedi la visita <ArrowRight aria-hidden className="tm-ic" />
+              <Link href={info.startHref} className="tm-btn tm-btn-ink" data-track={dom ? "cta-domicilio" : "cta-video"}>
+                {dom ? "Richiedi la visita" : "Prenota il videoconsulto"} <ArrowRight aria-hidden className="tm-ic" />
               </Link>
               <Link href="/prova" className="tm-btn tm-btn-line">
                 Prova il percorso completo
@@ -322,7 +344,7 @@ export default function MediciPage() {
             </span>
             <span>
               <span className="ds-sec-tag ds-sec-tag-2">
-                <span>2</span> Sezione Lettura referti
+                <span>3</span> Capisci i referti
               </span>
               <span id="dom-ponte" className="ds-bridge-t">
                 Prima o dopo la visita: il tuo referto spiegato in parole semplici.

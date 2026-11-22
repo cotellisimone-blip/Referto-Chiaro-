@@ -417,7 +417,7 @@ function AutovalutazioniSalvate({ lista, con, setCon, onCancella }: { lista: Ris
     return (
       <p className="dra-autov-vuoto" data-testid="autov-vuoto">
         Vuoi aggiungere al foglio anche un’autovalutazione?{" "}
-        <Link href="/malattie/sonno/percorso-due-settimane#passo-1" className="link">
+        <Link href="/prenditi-cura-di-te/sonno/percorso-due-settimane#passo-1" className="link">
           Fanne una in due minuti
         </Link>
         : il risultato resta su questo dispositivo.

@@ -1,4 +1,4 @@
-import { mediciEnabled } from "@/lib/medici";
+import { domicilioEnabled, mediciEnabled } from "@/lib/medici";
 
 export interface FaqItem {
   q: string;
@@ -95,4 +95,5 @@ const SENZA_MEDICI: FaqItem[] = [
   },
 ];
 
-export const FAQ: FaqItem[] = mediciEnabled() ? FAQ_CON_MEDICI : SENZA_MEDICI;
+// 22/11/2026: con la visita a domicilio spenta, via la sua domanda.
+export const FAQ: FaqItem[] = mediciEnabled() ? FAQ_CON_MEDICI.filter((f) => domicilioEnabled() || f.q !== "Dove arriva la visita a domicilio?") : SENZA_MEDICI;

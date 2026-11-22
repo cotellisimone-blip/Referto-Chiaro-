@@ -14,7 +14,7 @@ export default function EsempioPage() {
   return (
     <>
       <PageLd path="/referti/esempio" meta={metadata} name="Referto di esempio" trail={[{ name: "Lettura referti", path: "/lettura-referti" }]} />
-      <PageHeader section={2}
+      <PageHeader section={3}
         art="translate"
         eyebrow="Demo con dati inventati"
         title="Esplora un referto di esempio."

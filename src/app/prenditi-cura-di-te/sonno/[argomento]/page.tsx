@@ -6,16 +6,14 @@ import { AUTOVALUTAZIONI, SONNO_PAGINE, getAutovalutazione, getSonnoPagina } fro
 import { NOINDEX_DRAFT, absoluteUrl, breadcrumbLd, indexingEnabled, jsonLd, malattiaIndexable, pageTitle } from "@/lib/seo";
 
 /**
- * Sezione sonno (22/11/2026): /malattie/sonno/{argomento}. Per ora solo l'area sonno ha pagine figlie; le altre aree
- * danno 404. Bozze: fuori da Google finché un medico non le firma, anche con l'indicizzazione accesa.
+ * Sezione sonno (22/11/2026): /prenditi-cura-di-te/sonno/{argomento} (22/11/2026: spostata da /malattie/sonno, il vecchio indirizzo rimanda qui). Bozze: fuori da Google finché un medico non le firma, anche con l'indicizzazione accesa.
  */
 
 export function generateStaticParams() {
-  return [...SONNO_PAGINE.map((p) => p.slug), ...AUTOVALUTAZIONI.map((a) => a.slug)].map((argomento) => ({ slug: "sonno", argomento }));
+  return [...SONNO_PAGINE.map((p) => p.slug), ...AUTOVALUTAZIONI.map((a) => a.slug)].map((argomento) => ({ argomento }));
 }
 
-function trova(slug: string, argomento: string) {
-  if (slug !== "sonno") return null;
+function trova(argomento: string) {
   const p = getSonnoPagina(argomento);
   if (p) return { tipo: "pagina" as const, p };
   const a = getAutovalutazione(argomento);
@@ -23,27 +21,27 @@ function trova(slug: string, argomento: string) {
   return null;
 }
 
-export async function generateMetadata({ params }: PageProps<"/malattie/[slug]/[argomento]">): Promise<Metadata> {
-  const { slug, argomento } = await params;
-  const x = trova(slug, argomento);
+export async function generateMetadata({ params }: PageProps<"/prenditi-cura-di-te/sonno/[argomento]">): Promise<Metadata> {
+  const { argomento } = await params;
+  const x = trova(argomento);
   // notFound() anche qui: i metadati si risolvono prima dello streaming, così l'indirizzo sbagliato risponde 404.
   if (!x) notFound();
   const v = x.tipo === "pagina" ? x.p : x.a;
   return {
     title: pageTitle(v.seoTitle),
     description: v.metaDescription,
-    alternates: { canonical: absoluteUrl(`/malattie/sonno/${argomento}`) },
+    alternates: { canonical: absoluteUrl(`/prenditi-cura-di-te/sonno/${argomento}`) },
     openGraph: { title: v.seoTitle, description: v.metaDescription, type: "article", locale: "it_IT" },
     ...(indexingEnabled() && !malattiaIndexable(v) ? { robots: NOINDEX_DRAFT } : {}),
   };
 }
 
-export default async function SonnoArgomentoPage({ params }: PageProps<"/malattie/[slug]/[argomento]">) {
-  const { slug, argomento } = await params;
-  const x = trova(slug, argomento);
+export default async function SonnoArgomentoPage({ params }: PageProps<"/prenditi-cura-di-te/sonno/[argomento]">) {
+  const { argomento } = await params;
+  const x = trova(argomento);
   if (!x) notFound();
   const v = x.tipo === "pagina" ? x.p : x.a;
-  const url = absoluteUrl(`/malattie/sonno/${argomento}`);
+  const url = absoluteUrl(`/prenditi-cura-di-te/sonno/${argomento}`);
   const rivista = v.revisione.stato === "rivista" ? v.revisione : null;
   const ld: object[] = [
     {
@@ -62,9 +60,9 @@ export default async function SonnoArgomentoPage({ params }: PageProps<"/malatti
       ...(rivista ? { lastReviewed: rivista.data, reviewedBy: { "@type": "Person", name: rivista.medico, jobTitle: rivista.qualifica, description: rivista.ordine } } : {}),
     },
     breadcrumbLd([
-      { name: "Malattie", path: "/malattie" },
-      { name: "Sonno", path: "/malattie/sonno" },
-      { name: v.porta, path: `/malattie/sonno/${argomento}` },
+      { name: "Prenditi cura di te", path: "/prenditi-cura-di-te" },
+      { name: "Sonno", path: "/prenditi-cura-di-te/sonno" },
+      { name: v.porta, path: `/prenditi-cura-di-te/sonno/${argomento}` },
     ]),
   ];
   if (x.tipo === "pagina" && x.p.faq.length)

@@ -7,6 +7,7 @@ import { MEDICI_PROVA, SERVIZIO_LABEL, type MedicoProva } from "@/content/medici
 import { MEDICI, datiMancanti, inizialiMedico, nomeMedico } from "@/content/medici";
 import { usePrestazioni } from "@/components/prestazioni/store";
 import { formatSlot } from "@/components/prestazioni/format";
+import { domicilioEnabled } from "@/lib/medici";
 
 const ICON = { domicilio: Home, video: Video, parere: Stethoscope } as const;
 
@@ -131,7 +132,7 @@ export function MediciRete({ book = true }: { book?: boolean }) {
               </div>
             </div>
             <ul className="ds-doc-svc" aria-label="Che cosa fa">
-              {m.servizi.map((k) => {
+              {m.servizi.filter((k) => k !== "domicilio" || domicilioEnabled()).map((k) => {
                 const I = ICON[k];
                 return (
                   <li key={k}>
@@ -164,9 +165,11 @@ export function MediciRete({ book = true }: { book?: boolean }) {
                 <Link href="/richiedi/videoconsulto" className="ds-doc-btn" data-track="medico-video">
                   Videoconsulto<span className="sr-only"> con {m.nome}</span>
                 </Link>
-                <Link href="/richiedi/domicilio" className="ds-doc-btn ds-doc-btn-2" data-track="medico-casa">
-                  A casa<span className="sr-only"> con {m.nome}</span>
-                </Link>
+                {domicilioEnabled() ? (
+                  <Link href="/richiedi/domicilio" className="ds-doc-btn ds-doc-btn-2" data-track="medico-casa">
+                    A casa<span className="sr-only"> con {m.nome}</span>
+                  </Link>
+                ) : null}
               </div>
             ) : null}
           </li>

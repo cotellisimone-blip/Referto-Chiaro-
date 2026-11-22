@@ -25,9 +25,9 @@ export default function IntegratoriPage() {
       <PageLd path="/integratori" meta={metadata} name="Guide agli integratori" trail={[{ name: "Prevenzione", path: "/prevenzione" }]} />
       <section className="ds-ph ds-ph-1 ds-ph-short" aria-labelledby="int-titolo">
         <div className="tm-wrap">
-          <PercorsoSezioni current={1} />
+          <PercorsoSezioni current={5} />
           <p className="ds-sec-tag ds-sec-tag-1">
-            <span>1</span> Guide agli integratori
+            <span>5</span> Prenditi cura di te · Integratori
           </p>
           <h1 id="int-titolo">
             Integratori: <em>prima capire,</em> poi chiedere.

@@ -1,4 +1,4 @@
-import { mediciEnabled } from "@/lib/medici";
+import { domicilioEnabled, mediciEnabled } from "@/lib/medici";
 import { PrestoMedico } from "@/components/site/presto-medico";
 import type { Metadata } from "next";
 import { NeedPicker } from "@/components/offerta/need-picker";
@@ -20,7 +20,8 @@ export default function IniziaPage() {
   const services = medici
     ? [
         ...pickerServices(),
-        { id: "domicilio" as const, name: dom.name, href: dom.href, startHref: PRESTAZIONI.domicilio.startHref, startLabel: "Richiedi la visita", price: publicPricesEnabled() ? prestazionePrice("domicilio") : null, timing: dom.timing, need: dom.need },
+        // 22/11/2026: la visita a domicilio solo con il suo interruttore acceso.
+        ...(domicilioEnabled() ? [{ id: "domicilio" as const, name: dom.name, href: dom.href, startHref: PRESTAZIONI.domicilio.startHref, startLabel: "Richiedi la visita", price: publicPricesEnabled() ? prestazionePrice("domicilio") : null, timing: dom.timing, need: dom.need }] : []),
       ]
     : pickerServices().filter((s) => s.id === "capisci");
   return (

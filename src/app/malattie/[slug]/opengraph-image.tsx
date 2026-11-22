@@ -6,7 +6,7 @@ export const size = OG_SIZE;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return MALATTIE.map((x) => ({ slug: x.slug }));
+  return MALATTIE.filter((x) => x.slug !== "sonno").map((x) => ({ slug: x.slug }));
 }
 
 /** 22/11/2026: l'immagine di condivisione di ogni pagina della sezione «Malattie», con il nome comune. */

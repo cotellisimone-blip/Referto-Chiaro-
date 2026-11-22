@@ -37,7 +37,7 @@ export default async function VocePage({ params }: { params: Promise<{ slug: str
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
         {/* 18/11/2026 (secondo giro, punto 10): la voce di glossario appartiene alla Lettura referti, come l'elenco. */}
         <div className="tm ds ds-bare no-print">
-          <PercorsoSezioni current={2} />
+          <PercorsoSezioni current={3} />
         </div>
         <Breadcrumbs items={[{ name: "Glossario", path: "/glossario" }, { name: e.term, path: `/glossario/${e.slug}` }]} />
         <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">

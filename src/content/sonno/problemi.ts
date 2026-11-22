@@ -82,7 +82,7 @@ export const NON_MI_ADDORMENTO: SonnoPagina = {
         {
           p: "Le regole di «igiene del sonno» (camera buia e fresca, niente schermi prima di dormire, caffè solo al mattino) sono utili come base, ma da sole, dicono le stesse linee guida, non bastano a curare un'insonnia che dura da mesi. I farmaci hanno un ruolo, di solito per periodi brevi e sempre decisi dal medico.",
         },
-        { vai: { href: "/malattie/sonno/terapia-cognitivo-comportamentale", titolo: "La terapia cognitivo-comportamentale, spiegata", testo: "Le cinque parti del percorso, che cosa aspettarsi, dove trovarla in Italia." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/terapia-cognitivo-comportamentale", titolo: "La terapia cognitivo-comportamentale, spiegata", testo: "Le cinque parti del percorso, che cosa aspettarsi, dove trovarla in Italia." } },
         {
           punti: [
             "Un orario fisso per alzarsi, tutti i giorni, anche nel fine settimana: è l'àncora dell'orologio interno.",
@@ -107,7 +107,7 @@ export const NON_MI_ADDORMENTO: SonnoPagina = {
         {
           p: "C'è anche chi non ha insonnia ma un orologio interno spostato in avanti: si addormenta facilmente, ma solo molto tardi (all'una, alle due), e al mattino fatica ad alzarsi. È frequente negli adolescenti e nei giovani adulti, si chiama ritardo di fase e si affronta in modo diverso, soprattutto con la luce al momento giusto.",
         },
-        { vai: { href: "/malattie/sonno/gambe-senza-riposo", titolo: "Bisogno di muovere le gambe la sera?", testo: "Potrebbe essere la sindrome delle gambe senza riposo: i quattro segni tipici." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/gambe-senza-riposo", titolo: "Bisogno di muovere le gambe la sera?", testo: "Potrebbe essere la sindrome delle gambe senza riposo: i quattro segni tipici." } },
       ],
     },
   ],
@@ -223,7 +223,7 @@ export const MI_SVEGLIO_DI_NOTTE: SonnoPagina = {
         {
           p: "Per i risvegli, al medico servono due informazioni che spesso si ricordano male: quanti minuti in tutto sei rimasto sveglio durante la notte, e a che ora ti sei svegliato l'ultima volta, se prima di alzarti. Il diario del sonno di Cura Privata ha due caselle apposta, facoltative: con queste il sito calcola il sonno stimato e l'efficienza del sonno, cioè quanta parte del tempo a letto passi dormendo.",
         },
-        { vai: { href: "/malattie/sonno/percorso-due-settimane", titolo: "Il percorso di due settimane", testo: "Autovalutazione, diario ogni mattina, foglio per il medico: come funziona." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/percorso-due-settimane", titolo: "Il percorso di due settimane", testo: "Autovalutazione, diario ogni mattina, foglio per il medico: come funziona." } },
       ],
     },
   ],
@@ -326,7 +326,7 @@ export const RUSSO_E_SONO_STANCO: SonnoPagina = {
         {
           p: "In Italia, come in tutta l'Unione europea, le apnee ostruttive moderate o gravi con sonnolenza importante contano per l'idoneità alla guida (direttiva 2014/85/UE): chi ha la diagnosi viene valutato e, con una cura efficace e i controlli, di norma può continuare a guidare.",
         },
-        { vai: { href: "/malattie/sonno/apnee-notturne", titolo: "Le apnee notturne, spiegate per bene", testo: "Che cosa sono, come si misurano, quali cure esistono." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/apnee-notturne", titolo: "Le apnee notturne, spiegate per bene", testo: "Che cosa sono, come si misurano, quali cure esistono." } },
       ],
     },
     {
@@ -342,7 +342,7 @@ export const RUSSO_E_SONO_STANCO: SonnoPagina = {
           ],
           stile: "numeri",
         },
-        { vai: { href: "/malattie/sonno/esame-del-sonno", titolo: "L'esame del sonno e il suo referto", testo: "Come si fa a casa o in ospedale, e come leggere IAH, ODI, saturazione." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/esame-del-sonno", titolo: "L'esame del sonno e il suo referto", testo: "Come si fa a casa o in ospedale, e come leggere IAH, ODI, saturazione." } },
       ],
     },
   ],
@@ -464,7 +464,7 @@ export const LAVORO_A_TURNI: SonnoPagina = {
         {
           p: "La melatonina e i farmaci che aiutano a restare svegli sono a volte usati nel lavoro a turni, ma le prove sono limitate e i tempi di assunzione contano molto: è un argomento da affrontare con il medico, che conosce le altre cure e i turni reali.",
         },
-        { vai: { href: "/malattie/sonno/farmaci-e-melatonina", titolo: "Farmaci per dormire e melatonina, spiegati", testo: "Che cosa sono, che cosa dicono le linee guida, perché decide il medico." } },
+        { vai: { href: "/prenditi-cura-di-te/sonno/farmaci-e-melatonina", titolo: "Farmaci per dormire e melatonina, spiegati", testo: "Che cosa sono, che cosa dicono le linee guida, perché decide il medico." } },
       ],
     },
   ],

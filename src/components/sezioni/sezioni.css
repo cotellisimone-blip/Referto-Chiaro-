@@ -785,3 +785,30 @@ html .tm .ds-art-pro{width:86%}
 :root[data-theme="dark"] .tm .ds-doc .ds-todo{background:#3A2C12;color:#FFE2A8;border-color:#E8B968}
 :root[data-theme="dark"] .tm .ds-doc-foot .ds-doc-btn-2{color:#7BE0D2;box-shadow:inset 0 0 0 1.5px #7BE0D2}
 :root[data-theme="dark"] .tm .ds-doc-foot .ds-doc-btn-2:hover{background:#7BE0D2;color:#061A22}
+
+/* 22/11/2026: la barra del percorso passa da tre sezioni a cinque passi (lo stesso ordine del menu). */
+.tm .ds-path5 ol{grid-template-columns:repeat(5,minmax(0,1fr))}
+.tm .ds-path5 a{padding:10px 12px;gap:10px}
+.tm .ds-path5 .ds-path-s{display:none}
+.tm .ds-path5 b{font-size:0.9062rem;line-height:1.25}
+@media (max-width:1100px){.tm .ds-path5 .ds-path-l{display:none}.tm .ds-path5 .ds-path-s{display:block}}
+@media (max-width:820px){
+  .tm .ds-path5 ol{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .tm .ds-path5 a{flex-direction:column;justify-content:center;gap:4px;padding:8px 2px;text-align:center}
+  .tm .ds-path5 b{font-size:0.75rem;line-height:1.15;overflow-wrap:normal}
+  .tm .ds-path5 .ds-path-n{width:26px;height:26px;font-size:0.875rem}
+}
+/* 22/11/2026: passo 5 «Prenditi cura di te». */
+.tm .ds-card-off{opacity:.78;border-style:dashed}
+.tm .ds-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:10px 0 8px}
+.tm .ds-days i{display:block;aspect-ratio:1;border-radius:6px;background:var(--t-line-2)}
+.tm .ds-days i.on{background:#00756F}
+.tm .ds-days i.half{background:#7BE0D2}
+.tm .ds-cura-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;counter-reset:cura}
+.tm .ds-cura-steps li{counter-increment:cura;display:grid;gap:6px;padding:20px;border-radius:20px;background:var(--t-card);border:1.5px solid var(--t-line-2)}
+.tm .ds-cura-steps li::before{content:counter(cura);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#00756F;color:#fff;font-family:var(--font-fraunces),Georgia,serif;font-style:italic;font-size:1.1rem}
+.tm .ds-cura-steps b{font-size:1.0625rem}
+.tm .ds-cura-steps span{color:var(--t-muted);font-size:0.9688rem}
+@media (max-width:820px){.tm .ds-cura-steps{grid-template-columns:minmax(0,1fr);gap:10px}}
+.tm .ds-svcs.ds-svcs-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:820px){.tm .ds-svcs.ds-svcs-2{grid-template-columns:minmax(0,1fr)}}

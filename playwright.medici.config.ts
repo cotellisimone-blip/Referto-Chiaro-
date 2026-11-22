@@ -10,7 +10,7 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = 3102;
 // 19/11/2026: al lancio il secondo parere resta «In arrivo» (ENABLE_SECONDO_PARERE spento, provato nei test unitari);
 // qui si accende anche lui, così il suo percorso resta provato per quando arriva lo specialista.
-const ENV = { ENABLE_MEDICI: "true", ENABLE_SECONDO_PARERE: "true", DEMO_MODE: "true", NEXT_DIST_DIR: ".next-medici" };
+const ENV = { ENABLE_MEDICI: "true", ENABLE_SECONDO_PARERE: "true", ENABLE_DOMICILIO: "true", DEMO_MODE: "true", NEXT_DIST_DIR: ".next-medici" };
 
 export default defineConfig({
   testDir: "tests/e2e-medici",

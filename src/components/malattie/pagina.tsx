@@ -53,7 +53,7 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
         <div className="ht-wrap">
           <nav aria-label="Sei qui">
             <p className="ht-crumb">
-              <Link href="/">Home</Link> <span aria-hidden>/</span> <Link href="/malattie">Malattie</Link> <span aria-hidden>/</span> <span>{m.area}</span>
+              <Link href="/">Home</Link> <span aria-hidden>/</span> {m.slug === "sonno" ? <Link href="/prenditi-cura-di-te">Prenditi cura di te</Link> : <Link href="/malattie">Malattie</Link>} <span aria-hidden>/</span> <span>{m.area}</span>
             </p>
           </nav>
           <div className="ht-hero-g">

@@ -18,7 +18,7 @@ export default function GuideHubPage() {
   return (
     <>
       <PageLd path="/guide" meta={metadata} name="Guide agli esami" trail={[{ name: "Prevenzione", path: "/prevenzione" }]} />
-      <PageHeader section={1}
+      <PageHeader section={2}
         art="magnify"
         eyebrow="Guide"
         title="Gli esami, spiegati uno per uno."
