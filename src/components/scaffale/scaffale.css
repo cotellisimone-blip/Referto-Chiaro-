@@ -1,6 +1,7 @@
 /* Lo Scaffale (22/11/2026): carte calde e tratteggiate come la tessera della home, sempre distinte dalle spiegazioni. */
 .scf{--scf-bg:#fff9ef;--scf-card:#fffdf8;--scf-line:#e6d6b3;--scf-ink:var(--color-ink);--scf-soft:var(--color-muted);--scf-accent:#7a5310;--scf-adv-bg:#fdebc8;
-  margin-top:1.75rem;padding:1.25rem;border:2px dashed var(--scf-line);border-radius:22px;background:var(--scf-bg);color:var(--scf-ink)}
+  /* position: il testo nascosto per i lettori di schermo resta dentro la carta, non allarga la pagina. */
+  position:relative;min-width:0;max-width:100%;margin-top:1.75rem;padding:1.25rem;border:2px dashed var(--scf-line);border-radius:22px;background:var(--scf-bg);color:var(--scf-ink)}
 :root[data-theme="dark"] .scf{--scf-bg:#1d1a12;--scf-card:#26221a;--scf-line:rgba(255,217,138,.38);--scf-accent:#ffd98a;--scf-adv-bg:#3a2c12}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .scf{--scf-bg:#1d1a12;--scf-card:#26221a;--scf-line:rgba(255,217,138,.38);--scf-accent:#ffd98a;--scf-adv-bg:#3a2c12}}
 .scf-head{max-width:44rem}
@@ -10,7 +11,7 @@
 .scf-t{margin:.45rem 0 .35rem;font-family:var(--font-fraunces),Georgia,serif;font-weight:400;font-size:clamp(1.35rem,4.6vw,1.75rem);line-height:1.2;text-wrap:balance}
 .scf-d{margin:0;font-size:1rem;line-height:1.5;color:var(--scf-soft)}
 .scf-list{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,15rem),1fr));gap:.8rem}
-.scf-card{display:flex;flex-direction:column;min-width:0;padding:1rem;border-radius:18px;background:var(--scf-card);border:1px solid var(--scf-line)}
+.scf-card{position:relative;display:flex;flex-direction:column;min-width:0;padding:1rem;border-radius:18px;background:var(--scf-card);border:1px solid var(--scf-line)}
 .scf-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem}
 .scf-tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.3rem}
 .scf-brand{margin:.6rem 0 0;font-size:.875rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--scf-soft)}
