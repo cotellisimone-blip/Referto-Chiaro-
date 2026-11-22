@@ -872,7 +872,7 @@ function Riepilogo({ d, voci, giorni, oggi }: { d: Diario; voci: VoceDiario[]; g
       { t: "Sonno stimato", v: r.sonnoMin !== null ? oreMinuti(r.sonnoMin) : "—", s: r.nottiComplete ? `media di ${r.nottiComplete} ${r.nottiComplete === 1 ? "notte completa" : "notti complete"}` : "servono i minuti per addormentarti e quelli svegli" },
       { t: "Efficienza del sonno", v: r.efficienza !== null ? `${r.efficienza}%` : "—", s: "parte del tempo a letto passata dormendo" },
       { t: "Orari da una notte all’altra", v: r.variabilitaLetto !== null ? `± ${r.variabilitaLetto} min` : "—", s: r.variabilitaInPiedi !== null ? `a letto · in piedi ± ${r.variabilitaInPiedi} min` : "servono almeno 4 notti" },
-      { t: "Fine settimana", v: r.scartoFineSettimana !== null ? scartoBreve(r.scartoFineSettimana) : "—", s: r.scartoFineSettimana !== null ? `metà della notte ${scartoTesto(r.scartoFineSettimana)} rispetto agli altri giorni` : "servono 2 notti del fine settimana" },
+      { t: "Fine settimana", v: r.scartoFineSettimana !== null ? scartoBreve(r.scartoFineSettimana) : "—", s: r.scartoFineSettimana !== null ? (Math.abs(r.scartoFineSettimana) < 5 ? "metà della notte alla stessa ora degli altri giorni" : `metà della notte ${scartoTesto(r.scartoFineSettimana)} rispetto agli altri giorni`) : "servono 2 notti del fine settimana" },
     );
   } else if (d.slug === "peso") {
     const r = riepilogoPeso(voci, giorni, oggi);

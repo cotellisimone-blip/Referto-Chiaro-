@@ -450,25 +450,25 @@ export async function renderFoglioMedico(
       { t: "In piedi", w: 7 },
       { t: "Tempo a letto", w: 10 },
       { t: "Per addorm.", w: 9 },
-      { t: "Risvegli", w: 8, sub: "volte · min" },
+      { t: "Risvegli", w: 9, sub: "volte · min" },
       { t: "Sveglio dalle", w: 8 },
-      { t: "Sonno stimato", w: 10, sub: "efficienza" },
+      { t: "Sonno stimato", w: 12, sub: "efficienza" },
       { t: "Com'è andata", w: 9 },
-      { t: "Note", w: 21 },
+      { t: "Note", w: 18 },
     ];
     rows = xs.map((x) => {
       if (x.diario !== "sonno") return [];
       const st = sonnoStimato(x.dati);
-      const ris = [x.dati.risvegli !== null ? String(x.dati.risvegli) : "", x.dati.svegliMin != null ? `${x.dati.svegliMin} min` : ""].filter(Boolean).join(" · ");
+      const ris = [x.dati.risvegli !== null ? String(x.dati.risvegli) : "", x.dati.svegliMin != null ? `${x.dati.svegliMin}'` : ""].filter(Boolean).join(" · ");
       return [
         giornoBreve(dayOf(x.at)),
         x.dati.aLetto,
         x.dati.inPiedi,
-        oreMinuti(minutiTra(x.dati.aLetto, x.dati.inPiedi)),
+        oreBrevi(minutiTra(x.dati.aLetto, x.dati.inPiedi)),
         x.dati.addormentarsiMin !== null ? `${x.dati.addormentarsiMin} min` : "",
         ris,
         x.dati.sveglia ?? "",
-        st !== null ? `${oreMinuti(st)} · ${efficienzaNotte(x.dati)}%` : "",
+        st !== null ? `${oreBrevi(st)} · ${efficienzaNotte(x.dati)}%` : "",
         QUALITA_SONNO[x.dati.qualita],
         x.note ?? "",
       ];
@@ -551,4 +551,11 @@ export function nomeFileVuoto(d: Pick<Diario, "slug">) {
 }
 export function nomeFileFoglio(d: Pick<Diario, "slug">, oggi: string) {
   return `foglio-per-il-medico-${d.slug}-${oggi}.pdf`;
+}
+
+/** «4h50», per le celle strette della tabella del sonno. */
+function oreBrevi(min: number): string {
+  const h = Math.floor(min / 60);
+  const m = Math.round(min % 60);
+  return `${h}h${String(m).padStart(2, "0")}`;
 }
