@@ -54,7 +54,7 @@ export function vociEsempio(oggi: string): NuovaVoce[] {
   const S: [string, string, number, number, "male" | "cosi" | "bene", string | null, number, string | null][] = [
     ["23:40", "06:50", 45, 3, "male", "Caffè dopo cena", 50, "05:20"], ["23:15", "06:45", 30, 2, "cosi", null, 25, null], ["22:50", "06:40", 20, 1, "bene", null, 10, null],
     ["00:10", "07:00", 60, 3, "male", "Pensieri di lavoro", 45, "05:40"], ["23:20", "06:50", 25, 2, "cosi", null, 20, null], ["23:00", "07:30", 15, 1, "bene", "Domenica", 5, null],
-    ["23:30", "06:45", 35, 2, "cosi", null, 25, null], ["23:10", "06:40", 20, 1, "bene", null, 10, null], ["23:45", "06:50", 40, 4, "male", "Pisolino nel pomeriggio", 60, null],
+    ["23:30", "06:45", 35, 2, "cosi", null, 25, null], ["23:10", "06:40", 20, 1, "bene", null, 10, null], ["23:45", "06:50", 40, 4, "male", "Pisolino alle 16", 60, null],
     ["23:00", "06:45", 20, 2, "cosi", null, 20, null], ["22:55", "06:40", 15, 1, "bene", null, 5, null], ["23:15", "06:50", 25, 2, "cosi", null, 15, null],
   ];
   S.forEach(([letto, piedi, add, ris, q, n, sv, sveglia], i) =>

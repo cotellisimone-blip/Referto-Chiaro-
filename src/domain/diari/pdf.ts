@@ -452,7 +452,7 @@ export async function renderFoglioMedico(
       { t: "Per addorm.", w: 9 },
       { t: "Risvegli", w: 9, sub: "volte · min" },
       { t: "Sveglio dalle", w: 8 },
-      { t: "Sonno stimato", w: 12, sub: "efficienza" },
+      { t: "Sonno stim.", w: 12, sub: "efficienza" },
       { t: "Com'è andata", w: 9 },
       { t: "Note", w: 18 },
     ];
