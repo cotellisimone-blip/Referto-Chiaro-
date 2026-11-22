@@ -19,7 +19,7 @@ import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
-  title: domicilioEnabled() ? "Medici: in video, a casa o per un secondo parere" : "Parla con un medico: in video o per un secondo parere",
+  title: domicilioEnabled() ? "Medici: in video, a casa o per un secondo parere" : "Un medico, in video o per un secondo parere",
   description: domicilioEnabled()
     ? "Videoconsulto, visita a casa con un medico di medicina generale (si parte da Brescia città) e secondo parere di uno specialista. Per esigenze non urgenti."
     : mediciEnabled()
@@ -59,7 +59,7 @@ export default function MediciPage() {
         <div className="tm-wrap ds-ph-g">
           <div>
             <p className="ds-sec-tag ds-sec-tag-3">
-              <span>4</span> Parla con un medico <StatoDomicilio attivo={attivo} dark />
+              <span>4</span> Un medico <StatoDomicilio attivo={attivo} dark />
             </p>
             <h1 id="dom-titolo">
               Un medico, <em>quando serve.</em>

@@ -28,14 +28,17 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     // Nessun «.it» accanto al logo finché il sito non gira su un dominio vero (PUBLIC_BASE_URL).
     await expect(page.locator("footer").getByText(".it", { exact: true })).toHaveCount(0);
     const menu = (await page.locator("header").getByRole("link").allInnerTexts()).map((t) => t.trim());
-    const order = ["Prevenzione", "Lettura referti", "Medici", "Guide", "Integratori", "Prezzi"].map((n) => menu.indexOf(n));
+    // 22/11/2026: la testata mostra i cinque passi del percorso, in ordine.
+    const voci = menu.map((t) => t.replace(/\s+/g, " "));
+    const order = ["Passo 1: Inizia", "Passo 2: Esami", "Passo 3: Referti", "Passo 4: Medico", "Passo 5: Cura di te"].map((n) => voci.findIndex((v) => v.includes(n)));
     if (!isMobile) {
       expect(order.every((i) => i >= 0)).toBe(true);
       expect(order).toEqual([...order].sort((a, b) => a - b));
     }
     await expect(page.locator('main a[href="/lettura-referti"]').first()).toBeAttached();
     // Su telefono stanno nelle colonne del piè di pagina che si aprono al tocco: si controlla il collegamento, non la voce in vista.
-    for (const href of ["/servizi/secondo-parere", "/servizi/parla-con-un-medico"]) await expect(page.locator(`a[href="${href}"]`).first()).toBeAttached();
+    // 22/11/2026: nel piè di pagina il medico è il passo 4 del percorso (/medici); il secondo parere resta raggiungibile dalla home.
+    for (const href of ["/servizi/secondo-parere", "/medici"]) await expect(page.locator(`a[href="${href}"]`).first()).toBeAttached();
     // Above the fold: almeno una porta d'ingresso ai servizi è visibile senza scorrere. 12/11/2026: su telefono la
     // prima è la prestazione in evidenza (la visita a domicilio), poi «Ho un referto».
     const first = page.getByRole("navigation", { name: "Il percorso, in quattro passi" });

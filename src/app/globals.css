@@ -895,7 +895,8 @@
   .hdr-desktop {
     display: none;
   }
-  @media (max-width: 1159.98px) {
+  /* 22/11/2026: con i cinque passi numerati la ricerca estesa entra dai 1280 px; sotto i 1160 px i passi si stringono. */
+  @media (max-width: 1279.98px) {
     .hdr-roomy {
       display: none !important;
     }
@@ -4725,7 +4726,8 @@ body:has([data-bottom-nav]) .site-footer .footer-legal { margin-top: 1.25rem; }
 
 /* ───────── 22/11/2026: menu in cinque passi (Simone, «Riorganizzare menu e percorso del paziente») ───────── */
 .nav-step { gap: 0.4rem; }
-.nav-step-n { width: 1.375rem; height: 1.375rem; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 0.75rem; font-weight: 800; border: 1.5px solid var(--color-teal); color: var(--color-teal); }
+@media (min-width: 1024px) and (max-width: 1159.98px) { .nav-link.nav-step { padding-inline: 0.3rem; font-size: 0.875rem; } .nav-step { gap: 0.25rem; } .site-header-row { gap: 0.5rem; } }
+.nav-step-n { width: 1.5rem; height: 1.5rem; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 0.875rem; font-weight: 800; border: 1.5px solid var(--color-teal); color: var(--color-teal); }
 .nav-step[aria-current="page"] .nav-step-n { background: var(--color-teal); color: var(--color-paper); }
 .nav-step-cuore .nav-step-n { border-color: var(--color-accent-medico); color: var(--color-accent-medico); }
 .nav-step-cuore[aria-current="page"] .nav-step-n { background: var(--color-accent-medico); color: var(--color-paper); }

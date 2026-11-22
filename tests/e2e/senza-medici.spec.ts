@@ -40,7 +40,10 @@ test("gli indirizzi dei servizi con un medico portano alla sezione Medici, «In 
   await expect(page).toHaveURL(/\/medici$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Un medico,\s*quando serve\./);
   const main = page.locator("main");
-  for (const name of ["Visita a casa", "Videoconsulto", "Secondo parere", "Non è ancora attivo"]) await expect(main).toContainText(name);
+  for (const name of ["Videoconsulto", "Secondo parere", "Non è ancora attivo"]) await expect(main).toContainText(name);
+  // 22/11/2026: la visita a domicilio è spenta (ENABLE_DOMICILIO): la sezione non la annuncia più.
+  await expect(main).not.toContainText("Visita a casa");
+  await expect(main).not.toContainText("a casa tua");
   await expect(main).not.toContainText("€");
   await expect(main.getByLabel("Indirizzo email")).toBeVisible();
   // Senza consenso non si iscrive; con il consenso l'interesse è registrato, la conferma è in vista e riceve il focus (punto 17).

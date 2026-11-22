@@ -3,12 +3,12 @@ import { gotoReady } from "../e2e/_lib/ready";
 
 /** Con i medici accesi il menu ha sette voci e la home apre con l'annuncio della prestazione in evidenza: devono stare nello schermo. */
 test.describe("testata e annuncio con i medici accesi", () => {
-  test("navigazione: i tre servizi nel menu, header senza a capo né overflow a 1024/1280/1440, anche con testo grande", async ({ page, isMobile }) => {
+  test("navigazione: i cinque passi nel menu, header senza a capo né overflow a 1024/1280/1440, anche con testo grande", async ({ page, isMobile }) => {
     test.skip(isMobile, "solo desktop");
     for (const width of [1024, 1280, 1440]) {
       await page.setViewportSize({ width, height: 800 });
       await gotoReady(page, "/");
-      await expect(page.getByRole("navigation", { name: /principale/i }).getByRole("link", { name: "Prevenzione" })).toBeVisible();
+      await expect(page.getByRole("navigation", { name: /principale/i }).getByRole("link", { name: "Passo 2: Esami" })).toBeVisible();
       for (const large of [false, true]) {
         if (large) await page.getByRole("button", { name: "Testo più grande" }).click();
         const box = await page.locator("header").first().boundingBox();

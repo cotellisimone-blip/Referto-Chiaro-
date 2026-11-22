@@ -155,20 +155,20 @@ export function MiniVisita({ attivo = true }: { attivo?: boolean }) {
     return (
       <div className="ds-mini ds-mini-3" aria-hidden>
         <p className="ds-mini-k">
-          <span className="ds-mini-n">3</span> Un medico · in arrivo
+          <span className="ds-mini-n">4</span> Un medico · in arrivo
         </p>
         <div className="ds-mini-doc">
           <span className="ds-av ds-av-teal">
-            <Home className="tm-ic" />
+            <Video className="tm-ic" />
           </span>
           <span>
-            <b>Il medico a casa tua</b>
+            <b>Un medico, in video</b>
             <small>Medico di medicina generale</small>
           </span>
         </div>
         <p className="ds-mini-when">
-          <b>Brescia città</b>
-          <span>per cominciare</span>
+          <b>Dal telefono</b>
+          <span>con i referti già letti</span>
         </p>
       </div>
     );
@@ -257,7 +257,7 @@ export function ServiziMedico({ prices, attivo, dark = false, onSection = false 
 export type Passo = 1 | 2 | 3 | 4 | 5;
 /** Il colore di ogni passo riprende quello delle tre sezioni di prima: 1–2 inchiostro e menta, 3 menta, 4 pesca, 5 menta. */
 export const PASSO_TONO: Record<Passo, 1 | 2 | 3> = { 1: 1, 2: 1, 3: 2, 4: 3, 5: 1 };
-export const PASSO_NOME: Record<Passo, string> = { 1: "Inizia da te", 2: "I controlli per te", 3: "Capisci i referti", 4: "Parla con un medico", 5: "Prenditi cura di te" };
+export const PASSO_NOME: Record<Passo, string> = { 1: "Inizia da te", 2: "I controlli per te", 3: "Capisci i referti", 4: "Un medico", 5: "Prenditi cura di te" };
 
 /**
  * Proposta 16/11/2026, rifatta il 22/11/2026: il percorso in cinque passi (lo stesso del menu), in testa alle pagine
@@ -268,7 +268,7 @@ export function PercorsoSezioni({ current }: { current?: Passo | null }) {
     { n: 1, href: "/punto-di-partenza", t: "Inizia da te", s: "Inizia" },
     { n: 2, href: PREVENZIONE_HREF, t: "I controlli per te", s: "Esami" },
     { n: 3, href: REFERTI_HREF, t: "Capisci i referti", s: "Referti" },
-    { n: 4, href: MEDICI_HREF, t: "Parla con un medico", s: "Medico" },
+    { n: 4, href: MEDICI_HREF, t: "Un medico", s: "Medico" },
     { n: 5, href: CURA_HREF, t: "Prenditi cura di te", s: "Cura di te" },
   ] as const;
   const c = current ?? 0;

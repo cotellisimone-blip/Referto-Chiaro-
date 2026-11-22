@@ -43,16 +43,16 @@ test("punto 5 · il «prima e dopo» da telefono parte leggibile, e le due scrit
   await expect(slider).toHaveValue("5");
 });
 
-test("punto 7 · barra delle tre sezioni: nessuna voce tagliata o spezzata, da 320 a 412 px", async ({ page, isMobile }) => {
+test("punto 7 · barra dei cinque passi: nessuna voce tagliata o spezzata, da 320 a 412 px", async ({ page, isMobile }) => {
   test.skip(!isMobile, "misura su telefono");
   for (const width of [320, 360, 390, 412]) {
     await page.setViewportSize({ width, height: 800 });
     for (const path of ["/prevenzione", "/lettura-referti", "/medici", "/guide/emocromo"]) {
       await page.goto(path);
-      const voci = await page.locator(".ds-path b").evaluateAll((els) =>
+      const voci = await page.locator(".ds-path b:visible").evaluateAll((els) =>
         els.map((e) => ({ t: e.textContent ?? "", righe: Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight)), taglio: e.scrollWidth - e.clientWidth })),
       );
-      expect(voci.map((v) => v.t), `${path} @${width}`).toEqual(["Prevenzione", "Lettura referti", "Medici"]);
+      expect(voci.map((v) => v.t), `${path} @${width}`).toEqual(["Inizia", "Esami", "Referti", "Medico", "Cura di te"]);
       for (const v of voci) {
         expect(v.righe, `${path} @${width}: «${v.t}» su ${v.righe} righe`).toBeLessThanOrEqual(v.t.includes(" ") ? 2 : 1);
         expect(v.taglio, `${path} @${width}: «${v.t}» tagliata`).toBeLessThanOrEqual(0);

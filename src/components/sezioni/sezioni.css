@@ -795,11 +795,15 @@ html .tm .ds-art-pro{width:86%}
 @media (max-width:820px){
   .tm .ds-path5 ol{grid-template-columns:repeat(5,minmax(0,1fr))}
   .tm .ds-path5 a{flex-direction:column;justify-content:center;gap:4px;padding:8px 2px;text-align:center}
-  .tm .ds-path5 b{font-size:0.75rem;line-height:1.15;overflow-wrap:normal}
+  .tm .ds-path5 b{font-size:0.875rem;line-height:1.15;overflow-wrap:normal}
   .tm .ds-path5 .ds-path-n{width:26px;height:26px;font-size:0.875rem}
+  /* `html` per vincere sulla griglia a tre colonne della barra di prima (sotto, «secondo giro, punto 3»). */
+  html .tm nav.ds-path.ds-path5 ol{grid-template-columns:repeat(5,minmax(0,1fr))}
+  html .tm nav.ds-path.ds-path5 a{padding:8px 1px;gap:4px}
+  html .tm nav.ds-path.ds-path5 .ds-path-n{display:grid;width:24px;height:24px}
 }
 /* 22/11/2026: passo 5 «Prenditi cura di te». */
-.tm .ds-card-off{opacity:.78;border-style:dashed}
+.tm .ds-card-off{border-style:dashed}
 .tm .ds-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:10px 0 8px}
 .tm .ds-days i{display:block;aspect-ratio:1;border-radius:6px;background:var(--t-line-2)}
 .tm .ds-days i.on{background:#00756F}

@@ -16,10 +16,10 @@ export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book
  */
 export type PassoPercorso = { n: 1 | 2 | 3 | 4 | 5; href: string; label: string; short: string; desc: string; icon: NavIcon; cuore?: boolean };
 export const PERCORSO: readonly PassoPercorso[] = [
-  { n: 1, href: "/punto-di-partenza", label: "Inizia da te", short: "Inizia da te", desc: "Poche domande, gratis: la tua mappa", icon: "userCheck" },
+  { n: 1, href: "/punto-di-partenza", label: "Inizia da te", short: "Inizia", desc: "Poche domande, gratis: la tua mappa", icon: "userCheck" },
   { n: 2, href: "/prevenzione", label: "I controlli per te", short: "Esami", desc: "Gli esami da conoscere, per la tua età", icon: "heart" },
   { n: 3, href: "/lettura-referti", label: "Capisci i referti", short: "Referti", desc: "Il referto spiegato riga per riga", icon: "file" },
-  { n: 4, href: "/medici", label: "Parla con un medico", short: "Medico", desc: "In video, o un secondo parere", icon: "stethoscope" },
+  { n: 4, href: "/medici", label: "Un medico", short: "Medico", desc: "In video, o un secondo parere", icon: "stethoscope" },
   { n: 5, href: "/prenditi-cura-di-te", label: "Prenditi cura di te", short: "Cura di te", desc: "Sonno, alimentazione, intestino, integratori", icon: "leaf", cuore: true },
 ];
 /** Da consultare, gratis: non sono passi, ma ogni passo ci porta. */
@@ -31,6 +31,7 @@ export const CONSULTA: readonly { href: string; label: string; desc: string; ico
 ];
 /** In fondo al menu del telefono: le pagine di servizio. */
 export const MENU_FOOT: readonly { href: string; label: string }[] = [
+  { href: "/strumenti", label: "Strumenti gratuiti" },
   { href: "/prezzi", label: "Prezzi" },
   { href: "/come-funziona", label: "Come funziona" },
   { href: "/domande-frequenti", label: "Domande frequenti" },
@@ -53,7 +54,7 @@ const FOOTER_NAV_ALL = {
     { href: "/punto-di-partenza", label: "1 · Inizia da te" },
     { href: "/prevenzione", label: "2 · I controlli per te" },
     { href: "/lettura-referti", label: "3 · Capisci i referti" },
-    { href: "/medici", label: "4 · Parla con un medico" },
+    { href: "/medici", label: "4 · Un medico" },
     { href: "/prenditi-cura-di-te", label: "5 · Prenditi cura di te" },
     { href: "/famiglia", label: "Famiglia e salute nel tempo" },
     { href: "/prezzi", label: "Prezzi" },

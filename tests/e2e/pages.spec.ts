@@ -120,7 +120,10 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     if (!isMobile) {
       // 15/11/2026 sera, tre sezioni: le tre sezioni, le guide, gli integratori, i prezzi e «Carica un referto».
       // 22/11/2026: entra «Malattie»; «Guide» resta nella testata dai 1536 px (sotto: menu, fondo pagina, ricerca, Malattie).
-      for (const n of ["Prevenzione", "Lettura referti", "Malattie", "Medici", "Integratori", "Prezzi", "Carica un referto"]) expect(menu, n).toContain(n);
+      // 22/11/2026: la testata mostra i cinque passi del percorso, numerati; le pagine da consultare stanno nel menu e nel fondo.
+      const voci = menu.map((t) => t.replace(/\s+/g, " "));
+      for (const n of ["Passo 1: Inizia", "Passo 2: Esami", "Passo 3: Referti", "Passo 4: Medico", "Passo 5: Cura di te"]) expect(voci.some((v) => v.includes(n)), n).toBe(true);
+      expect(menu, "Carica un referto").toContain("Carica un referto");
       for (const n of ["Videoconsulto", "Secondo parere"]) expect(menu, n).not.toContain(n);
     }
     await expect(page.locator('main a[href="/lettura-referti"]').first()).toBeAttached();

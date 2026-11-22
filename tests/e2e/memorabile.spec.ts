@@ -186,7 +186,10 @@ test.describe("home chiara e scura", () => {
 test.describe("sezioni e integratori", () => {
   test("Prevenzione, Lettura referti, Medici (spenta) e le schede degli integratori", async ({ page }) => {
     await page.goto("/prevenzione");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La prevenzione,\s*spiegata semplice\./);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Gli esami da conoscere,\s*per la tua età\./);
+    await expectAccessible(page);
+    // 22/11/2026: gli integratori sono passati al passo 5, «Prenditi cura di te».
+    await page.goto("/prenditi-cura-di-te");
     await expect(page.locator("main .ds-int")).toHaveCount(8);
     await expectAccessible(page);
     await page.goto("/lettura-referti");

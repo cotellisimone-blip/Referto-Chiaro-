@@ -20,8 +20,9 @@ test("home: il punto di partenza gratis è il primo passo, il primo referto il t
   await expect(page.locator("main #passo-1")).toContainText("Inizia, gratis");
   await expect(page.locator("main #passo-3")).toContainText("2,90");
   // 18/11/2026 (secondo giro, punto 9): su telefono le colonne del piè di pagina si aprono al tocco.
-  if (isMobile) await page.locator("footer details", { hasText: "Gratis" }).locator("summary").click();
-  await expect(page.locator("footer").getByRole("link", { name: "Punto di Partenza" }).locator("visible=true")).toBeVisible();
+  // 22/11/2026: nel piè di pagina il Punto di Partenza è il passo 1 del percorso, «Inizia da te».
+  if (isMobile) await page.locator("footer details", { hasText: "Il percorso" }).locator("summary").click();
+  await expect(page.locator("footer").getByRole("link", { name: "1 · Inizia da te" }).locator("visible=true")).toBeVisible();
   await noOverflow(page);
 });
 

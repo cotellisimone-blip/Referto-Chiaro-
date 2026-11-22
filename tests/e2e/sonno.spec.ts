@@ -41,7 +41,7 @@ test("la pagina dell'insonnia apre la sezione: cinque porte, il percorso, le pag
   await senzaScorrimentoLaterale(page);
   await expectAccessible(page);
   await page.getByTestId("porta-russo-e-sono-stanco").click();
-  await expect(page).toHaveURL(/\/malattie\/sonno\/russo-e-sono-stanco$/);
+  await expect(page).toHaveURL(/\/prenditi-cura-di-te\/sonno\/russo-e-sono-stanco$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Russo e sono stanco");
 });
 

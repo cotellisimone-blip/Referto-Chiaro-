@@ -14,7 +14,7 @@ import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
-  title: "I controlli per te: esami di base, screening e guide",
+  title: "I controlli per te: esami di base e screening",
   description: "Gli esami da conoscere, per la tua età: esami di base, screening gratuiti del Servizio sanitario, guide agli esami e promemoria. Gratis, senza registrarti.",
   alternates: { canonical: "/prevenzione" },
 };

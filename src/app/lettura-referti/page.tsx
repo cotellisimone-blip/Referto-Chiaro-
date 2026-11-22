@@ -278,7 +278,7 @@ export default function LetturaRefertiPage() {
             </span>
             <span>
               <span className="ds-sec-tag ds-sec-tag-3">
-                <span>4</span> Parla con un medico <StatoDomicilio attivo={attivo} dark />
+                <span>4</span> Un medico <StatoDomicilio attivo={attivo} dark />
               </span>
               <span id="lr-ponte" className="ds-bridge-t">
                 Dopo il referto, se serve: un medico in video o per un secondo parere.

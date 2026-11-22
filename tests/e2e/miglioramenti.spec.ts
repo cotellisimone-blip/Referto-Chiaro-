@@ -11,12 +11,13 @@ test("home: fascia «Perché fidarsi» con segnaposto finché mancano i dati del
   await expect(trust.locator('[data-segnaposto="titolare"]')).toHaveText("Nome, sede e P.IVA: da completare");
 });
 
-test("barra delle sezioni: indica la sezione corrente e porta alle altre", async ({ page }) => {
-  for (const [path, n] of [["/prevenzione", 1], ["/lettura-referti", 2], ["/medici", 3]] as const) {
+test("barra dei cinque passi: indica il passo corrente e porta agli altri", async ({ page }) => {
+  // 22/11/2026: il percorso è in cinque passi.
+  for (const [path, n] of [["/punto-di-partenza", 1], ["/prevenzione", 2], ["/lettura-referti", 3], ["/medici", 4], ["/prenditi-cura-di-te", 5]] as const) {
     await page.goto(path);
     const bar = page.locator("nav.ds-path:visible");
     await expect(bar).toHaveClass(new RegExp(`ds-path-on-${n}`));
-    await expect(bar.locator("a")).toHaveCount(3);
+    await expect(bar.locator("a")).toHaveCount(5);
     await expect(bar.locator('[aria-current="page"]')).toHaveCount(1);
   }
 });

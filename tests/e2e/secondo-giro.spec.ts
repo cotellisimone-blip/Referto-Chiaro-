@@ -115,12 +115,13 @@ test("punto 9 · piè di pagina su telefono: meno di una schermata, con le colon
   await expect(gratis.getByRole("link", { name: "Tutti gli strumenti gratuiti" })).toBeVisible();
 });
 
-test("punto 10 · Punto di Partenza e voci di glossario portano la barra 1 → 2 → 3 della loro sezione", async ({ page }) => {
+test("punto 10 · Punto di Partenza e voci di glossario portano la barra dei cinque passi al loro passo", async ({ page }) => {
+  // 22/11/2026: il percorso è in cinque passi. Punto di Partenza è il passo 1, il glossario sta con i referti (passo 3).
   await page.goto("/punto-di-partenza");
-  await expect(page.locator(".ds-path [aria-current]").first()).toContainText("Prevenzione");
-  await expect(page.locator(".ds-sec-tag").first()).toContainText("Prevenzione");
+  await expect(page.locator(".ds-path [aria-current]").first()).toContainText("Inizia");
+  await expect(page.locator(".ds-sec-tag").first()).toContainText("Inizia da te");
   await page.goto("/glossario/ferritina");
-  await expect(page.locator(".ds-path [aria-current]").first()).toContainText("Lettura referti");
+  await expect(page.locator(".ds-path [aria-current]").first()).toContainText("Referti");
 });
 
 test("punti 11 e 13 · Prevenzione e glossario più corti su telefono", async ({ page, isMobile }) => {

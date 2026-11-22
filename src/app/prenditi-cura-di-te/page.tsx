@@ -12,9 +12,9 @@ import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
-  title: "Prenditi cura di te: sonno, alimentazione, intestino, integratori",
+  title: "Prenditi cura di te: sonno, intestino, integratori",
   description:
-    "Le cose che puoi migliorare da oggi, qualunque sia la tua situazione: sonno, alimentazione, intestino e microbiota, integratori e probiotici. Percorsi guidati, diari e un foglio per il medico. Gratis.",
+    "Che cosa puoi migliorare da oggi: sonno, alimentazione, intestino e microbiota, integratori e probiotici. Percorsi guidati e diari, gratis.",
   alternates: { canonical: "/prenditi-cura-di-te" },
 };
 
