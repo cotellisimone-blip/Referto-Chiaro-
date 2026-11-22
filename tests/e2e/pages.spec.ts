@@ -128,7 +128,7 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     }
     await expect(page.locator('main a[href="/lettura-referti"]').first()).toBeAttached();
     // Above the fold: il percorso in quattro passi è visibile senza scorrere.
-    const first = page.getByRole("navigation", { name: "Il percorso, in quattro passi" });
+    const first = page.getByRole("navigation", { name: "Il percorso, in cinque passi" });
     const box = await first.boundingBox();
     expect((box?.y ?? 9999) + (box?.height ?? 0)).toBeLessThan(isMobile ? 844 : 900);
     await expect(page.getByText("Versione dimostrativa", { exact: false }).first()).toBeVisible();

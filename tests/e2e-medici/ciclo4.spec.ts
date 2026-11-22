@@ -36,10 +36,10 @@ test("un'offerta sola: ogni servizio compare una volta in Servizi e in Prezzi, n
   await expect(page.locator("main")).toContainText("Visita a domicilio con medico generalista");
 });
 
-test("dalla home alla visita conclusa da paziente: nessun ruolo, un comando per volta, riepilogo e prossimo passo", async ({ page, isMobile }) => {
-  await fresh(page, "/");
-  // 19/11/2026, home «chiara e scura»: dal riquadro del medico, «Prenota» la visita a casa.
-  await page.locator("#medico").getByRole("link", { name: "Prenota la visita a casa" }).click();
+test("dalla pagina della visita alla visita conclusa da paziente: nessun ruolo, un comando per volta, riepilogo e prossimo passo", async ({ page, isMobile }) => {
+  // 22/11/2026: la visita a domicilio non è più in home (si riaccende con ENABLE_DOMICILIO); si parte dalla sua pagina.
+  await fresh(page, "/servizi/visita-a-domicilio");
+  await page.locator("main").getByRole("link", { name: /Richiedi la visita/ }).first().click();
   await expect(page).toHaveURL(/\/richiedi\/domicilio$/);
   await expect(page.locator("[data-percorso-paziente]")).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Prova come" })).toHaveCount(0);

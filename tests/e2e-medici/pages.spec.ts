@@ -37,11 +37,13 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     }
     await expect(page.locator('main a[href="/lettura-referti"]').first()).toBeAttached();
     // Su telefono stanno nelle colonne del piè di pagina che si aprono al tocco: si controlla il collegamento, non la voce in vista.
-    // 22/11/2026: nel piè di pagina il medico è il passo 4 del percorso (/medici); il secondo parere resta raggiungibile dalla home.
-    for (const href of ["/servizi/secondo-parere", "/medici"]) await expect(page.locator(`a[href="${href}"]`).first()).toBeAttached();
+    // 22/11/2026: nel piè di pagina il medico è il passo 4 del percorso (/medici); il secondo parere è nel riquadro del medico,
+    // «Richiedi» quando è acceso (qui), «Avvisami» verso la sua pagina quando è in arrivo.
+    await expect(page.locator('a[href="/medici"]').first()).toBeAttached();
+    await expect(page.locator("#medico").getByRole("link", { name: "Richiedi il secondo parere" })).toHaveAttribute("href", "/richiedi/secondo-parere");
     // Above the fold: almeno una porta d'ingresso ai servizi è visibile senza scorrere. 12/11/2026: su telefono la
     // prima è la prestazione in evidenza (la visita a domicilio), poi «Ho un referto».
-    const first = page.getByRole("navigation", { name: "Il percorso, in quattro passi" });
+    const first = page.getByRole("navigation", { name: "Il percorso, in cinque passi" });
     const box = await first.boundingBox();
     expect((box?.y ?? 9999) + (box?.height ?? 0)).toBeLessThan(isMobile ? 844 : 900);
     await expect(page.getByText("Versione dimostrativa", { exact: false }).first()).toBeVisible();

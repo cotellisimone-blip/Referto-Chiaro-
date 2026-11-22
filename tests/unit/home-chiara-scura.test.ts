@@ -147,7 +147,8 @@ describe("le pagine delle tessere della home", () => {
 
   it("le quattro frasi prudenti approvate da Simone sono quelle sul sito", () => {
     const home = readFileSync("src/components/home-b/home-b.tsx", "utf8");
-    expect(home).toContain("Fai gli esami di base");
+    // 22/11/2026: la tessera del passo 2 diventa «Gli esami per te» (piano della home in cinque passi, approvato da Simone).
+    expect(home).toContain("Gli esami per te");
     expect(home).toContain("Senza ricetta*");
     expect(readFileSync(PAGINE[0], "utf8")).toContain("L’elenco degli");
     expect(home).toContain("Per preparare il tuo piano insieme al medico o al farmacista.");

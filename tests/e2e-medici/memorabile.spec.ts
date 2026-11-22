@@ -88,7 +88,7 @@ test.describe("i tre servizi e i percorsi pubblici", () => {
  * completare» nella pagina dei medici. Le fotografie sono di pazienti, sempre «Immagine illustrativa», mai di medici.
  */
 test.describe("home chiara e scura, con i medici accesi", () => {
-  test("il percorso in quattro passi, il medico a Brescia con i prezzi, chi sono i medici; corta e onesta", async ({ page, isMobile }) => {
+  test("il percorso in cinque passi, il medico a Brescia con i prezzi, chi sono i medici; corta e onesta", async ({ page, isMobile }) => {
     await page.goto("/");
     const main = page.locator("main");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La tua salute,\s*tutta in una pagina\./);
@@ -99,9 +99,10 @@ test.describe("home chiara e scura, con i medici accesi", () => {
     await expect(medico).toContainText("69 €");
     await expect(medico).toContainText("149 €");
     await expect(medico.getByRole("link", { name: "Prenota il videoconsulto" })).toHaveAttribute("href", "/richiedi/videoconsulto");
-    await expect(medico.getByRole("link", { name: "Prenota la visita a casa" })).toHaveAttribute("href", "/richiedi/domicilio");
+    // 22/11/2026: in home il passo 4 è il medico in video o il secondo parere; la visita a domicilio non c'è più.
+    await expect(medico.getByRole("link", { name: "Richiedi il secondo parere" })).toHaveAttribute("href", "/richiedi/secondo-parere");
+    await expect(medico).not.toContainText("A casa tua");
     await expect(medico.getByRole("link", { name: /Chi sono i medici: Sara, Elena e Riccardo/ })).toHaveAttribute("href", "/medici#i-medici");
-    await expect(medico.getByRole("link", { name: /Ti serve un secondo parere/ })).toHaveAttribute("href", "/servizi/secondo-parere");
     // Le fotografie del riquadro sono di pazienti, dichiarate: nessuna fotografia di medici.
     for (const f of await medico.locator("figure:has(img)").all()) await expect(f).toContainText("Immagine illustrativa");
     const text = (await main.innerText()).toLowerCase();
@@ -128,11 +129,11 @@ test.describe("home chiara e scura, con i medici accesi", () => {
     // 3. Emergenza: il 112 è in home
     await page.goto("/");
     await expect(page.locator("main")).toContainText("112");
-    // 4. Un medico a casa: dal primo schermo al riquadro del medico, poi «Prenota»
+    // 4. Un medico in video: dal primo schermo al riquadro del medico, poi «Prenota»
     await page.locator("main .hb-docq").click();
     await expect(page).toHaveURL(/#medico$/);
-    await page.locator("#medico").getByRole("link", { name: "Prenota la visita a casa" }).click();
-    await expect(page).toHaveURL(/\/richiedi\/domicilio$/);
+    await page.locator("#medico").getByRole("link", { name: "Prenota il videoconsulto" }).click();
+    await expect(page).toHaveURL(/\/richiedi\/videoconsulto$/);
     // 5. Chi sono i medici: la pagina dei medici con le tre schede vere
     await page.goto("/medici#i-medici");
     const schede = page.locator("#i-medici > li");

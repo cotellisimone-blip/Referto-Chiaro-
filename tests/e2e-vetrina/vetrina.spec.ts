@@ -80,7 +80,7 @@ test("senza medici: nessuna pagina li propone, i loro indirizzi portano alla lis
   await form.getByLabel(/email/i).first().fill(`presto-${Date.now()}-${Math.random().toString(36).slice(2, 6)}@esempio.test`);
   await form.getByLabel(/CAP/).fill("25122");
   await form.getByRole("checkbox").first().check();
-  await form.getByRole("button", { name: /Avvisami per la mia zona/ }).click();
+  await form.getByRole("button", { name: /Iscrivimi alla lista d'attesa/ }).click();
   await expect(form.getByText("Interesse registrato.")).toBeVisible();
 });
 

@@ -24,6 +24,19 @@ export function HomeSimboli() {
         <path d="M7 27a2 2 0 0 0 2 2h16" />
         <path d="M16 4v9l2.5-2 2.5 2V4" fill="currentColor" fillOpacity=".3" />
       </symbol>
+      {/* 22/11/2026: il sonno (passo 5) e il secondo parere (passo 4). */}
+      <symbol id="hb-i-so" viewBox="0 0 32 32">
+        <path d="M25 19.5A10 10 0 0 1 12.5 7a10 10 0 1 0 12.5 12.5z" fill="currentColor" fillOpacity=".18" />
+        <path d="M25 19.5A10 10 0 0 1 12.5 7a10 10 0 1 0 12.5 12.5z" />
+        <path d="M21 6.5v3M19.5 8h3" />
+      </symbol>
+      <symbol id="hb-i-pa" viewBox="0 0 32 32">
+        <path d="M7 4h13l5 5v19H7z" fill="currentColor" fillOpacity=".16" stroke="none" />
+        <path d="M7 4h13l5 5v19H7z" />
+        <path d="M11 13h10M11 17h7" />
+        <circle cx="21" cy="22" r="3.2" />
+        <path d="m23.3 24.3 2.4 2.4" />
+      </symbol>
       <symbol id="hb-i-me" viewBox="0 0 32 32">
         <path d="M9 4H7v7a6 6 0 0 0 12 0V4h-2" />
         <path d="M13 17v3a6 6 0 0 0 12 0v-2" />

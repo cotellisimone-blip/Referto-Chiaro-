@@ -48,11 +48,11 @@ test("gli indirizzi dei servizi con un medico portano alla sezione Medici, «In 
   await expect(main.getByLabel("Indirizzo email")).toBeVisible();
   // Senza consenso non si iscrive; con il consenso l'interesse è registrato, la conferma è in vista e riceve il focus (punto 17).
   await main.getByLabel("Indirizzo email").fill(`medico-${Date.now()}@esempio.test`);
-  await main.getByRole("button", { name: /Avvisami per la mia zona/ }).click();
+  await main.getByRole("button", { name: /Iscrivimi alla lista d'attesa/ }).click();
   await expect(main.getByRole("alert").filter({ hasText: "informativa privacy" })).toBeVisible();
   await main.getByLabel(/CAP/).fill("25122");
   await main.getByRole("checkbox").check();
-  await main.getByRole("button", { name: /Avvisami per la mia zona/ }).click();
+  await main.getByRole("button", { name: /Iscrivimi alla lista d'attesa/ }).click();
   const fatto = main.getByTestId("waitlist-done");
   await expect(fatto).toBeVisible();
   await expect(fatto).toBeInViewport();

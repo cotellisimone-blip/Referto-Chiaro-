@@ -22,12 +22,12 @@ test("barra dei cinque passi: indica il passo corrente e porta agli altri", asyn
   }
 });
 
-test("telefono: il percorso in quattro passi e il medico stanno nella prima schermata", async ({ page }) => {
+test("telefono: il percorso in cinque passi e il medico stanno nella prima schermata", async ({ page }) => {
   // 19/11/2026, home «chiara e scura»: al posto delle tre porte, i quattro passi e il riquadro del medico.
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  const filo = page.getByRole("navigation", { name: "Il percorso, in quattro passi" });
-  await expect(filo.getByRole("link")).toHaveCount(4);
+  const filo = page.getByRole("navigation", { name: "Il percorso, in cinque passi" });
+  await expect(filo.getByRole("link")).toHaveCount(5);
   const medico = await page.locator("main .hb-docq").boundingBox();
   expect(medico && medico.y + medico.height).toBeLessThanOrEqual(844);
 });

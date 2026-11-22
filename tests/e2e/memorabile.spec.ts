@@ -101,29 +101,34 @@ test.describe("home chiara e scura", () => {
     await page.goto("/");
     const main = page.locator("main");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La tua salute,\s*tutta in una pagina\./);
-    // Il percorso: quattro passi, ognuno porta alla sua tessera
-    const filo = main.getByRole("navigation", { name: "Il percorso, in quattro passi" });
-    await expect(filo.getByRole("link")).toHaveCount(4);
-    for (const n of [1, 2, 3, 4]) await expect(filo.getByRole("link").nth(n - 1)).toHaveAttribute("href", `#passo-${n}`);
+    // 22/11/2026: il percorso in cinque passi, come il menu; ognuno porta alla sua parte della home.
+    const filo = main.getByRole("navigation", { name: "Il percorso, in cinque passi" });
+    await expect(filo.getByRole("link")).toHaveCount(5);
+    for (const [i, href] of ["#passo-1", "#passo-2", "#passo-3", "#medico", "#esplora"].entries()) await expect(filo.getByRole("link").nth(i)).toHaveAttribute("href", href);
+    for (const t of ["Inizia da te", "Gli esami", "Il referto", "Il medico", "Cura di te"]) await expect(filo).toContainText(t);
     await expect(main.locator("#passo-1 a").first()).toHaveAttribute("href", "/punto-di-partenza");
     await expect(main.locator("#passo-2 a").first()).toHaveAttribute("href", "/prevenzione/esami-di-base");
     await expect(main.locator("#passo-2")).toContainText("Senza ricetta*");
     await expect(main.locator("#passo-3")).toContainText("2,90 €");
     await expect(main.locator("#passo-4 a").first()).toHaveAttribute("href", "/lettura-referti#guida-personale");
     await expect(main.locator("#passo-4")).toContainText("Inclusa nel report");
+    await expect(main.locator("#passo-4")).toContainText("Sonno");
     // Il medico, spento: «In arrivo», niente prezzi, la lista d'attesa
     const medico = main.locator("#medico");
     await expect(medico).toContainText("In arrivo");
     await expect(medico).not.toContainText("€");
-    await expect(medico.getByRole("button", { name: "Avvisami per la mia zona" })).toBeVisible();
+    await expect(medico.getByRole("button", { name: "Iscrivimi alla lista d'attesa" })).toBeVisible();
     await expect(page.locator('main a[href^="/servizi/"], main a[href^="/richiedi/"]')).toHaveCount(0);
     // I mondi da esplorare, vicino a casa e nel tempo, lo Scaffale «In arrivo» e segnato come pubblicità
-    for (const href of ["/integratori", "/prevenzione/intestino-e-microbiota", "/prevenzione/alimentazione", "/prevenzione/screening", "/vicino-a-te", "/famiglia", "/scaffale"]) await expect(main.locator(`a[href="${href}"]`).first()).toBeVisible();
+    for (const href of ["/integratori", "/prevenzione/intestino-e-microbiota", "/prevenzione/alimentazione", "/prenditi-cura-di-te/sonno", "/vicino-a-te", "/famiglia", "/scaffale"]) await expect(main.locator(`a[href="${href}"]`).first()).toBeVisible();
     await expect(main.locator("#scaffale")).toContainText("Pubblicità");
     await expect(main.locator("#scaffale")).toContainText("In arrivo");
     // Ogni fotografia è dichiarata
     for (const f of await main.locator("figure:has(img)").all()) await expect(f).toContainText("Immagine illustrativa");
     const text = (await main.innerText()).toLowerCase();
+    // 22/11/2026: la visita a domicilio non è più in home.
+    expect(text).not.toContain("a casa tua");
+    await expect(main.locator("#esplora")).toContainText("Passo 5 · Prenditi cura di te");
     for (const bad of ["rivisto da un medico", "revisione medica", "solo oggi", "ultimi posti", "scade tra", "nella norma", "esami consigliati", "pulizia intestinale"]) expect(text).not.toContain(bad);
     // Barra d'aiuto mobile: nascosta sull'apertura, visibile scorrendo
     if (isMobile) {

@@ -464,3 +464,21 @@ html.hb-anim .hb-w-map .hb-on{animation:hb-onda 2.6s ease-out infinite}
 /* «Esempio» e «Pubblicità» a 14 px coprirebbero il disegno: stanno sopra, nell'angolo, e il disegno scende. */
 .hb-w-and,.hb-w-scaf{display:flex;flex-direction:column}
 .hb-w-and .hb-tag,.hb-w-scaf .hb-tag{position:static;align-self:flex-end;margin:.35rem .35rem -.1rem}
+
+/* ================= 22/11/2026: la home segue il percorso in cinque passi (piano prima e dopo approvato da Simone) ================= */
+/* Il filo: cinque colonne; i centri (40, 120, 200, 280, 360 su 400) sono quelli della curva disegnata. */
+.hb-filo5 ol{grid-template-columns:repeat(5,minmax(0,1fr))}
+.hb-filo5 a{padding:0 .1rem}
+@media(max-width:439.98px){
+  .hb-filo5{padding-inline:.25rem}
+  .hb-filo5 .hb-st{width:44px;height:44px}
+  .hb-filo5 .hb-st svg{width:22px;height:22px}
+  .hb-filo5 .hb-via{top:-4px}
+  .hb-filo5 b{overflow-wrap:normal;hyphens:none}
+}
+/* La tessera del sonno: sette notti, le migliori più piene. */
+.hb-notti{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;align-items:end;height:34px}
+.hb-notti i{display:block;height:var(--h);border-radius:4px;background:color-mix(in srgb,var(--tv,var(--ta)) 40%,transparent)}
+.hb-notti i.hb-on{background:color-mix(in srgb,var(--tv,var(--ta)) 90%,transparent)}
+/* Il collegamento al passo 5 nella nota sotto i mondi. */
+.hb-foot-note a{font-weight:800;color:var(--accent);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;white-space:nowrap}

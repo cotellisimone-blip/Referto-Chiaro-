@@ -299,12 +299,13 @@ export default function MediciPage() {
               <CalendarioArrivo />
               <p className="tm-kicker mt-4">Lista d’attesa</p>
               <h2 id="dom-avvisami">
-                Avvisami quando parte <em>nella mia zona.</em>
+                Avvisami <em>quando parte.</em>
               </h2>
-              <p className="tm-lead">Il servizio non è ancora attivo. Lascia email e CAP: partiamo dalle zone in cui c’è più richiesta.</p>
+              <p className="tm-lead">Il servizio non è ancora attivo. Lascia la tua email: ti scriviamo quando si può prenotare il videoconsulto.</p>
             </div>
             <div className="ds-cov">
-              <WaitlistForm interest="domicilio" />
+              {/* 22/11/2026: senza visita a domicilio la zona non serve più: il CAP è facoltativo. */}
+              <WaitlistForm interest="visite" />
             </div>
           </div>
         </section>

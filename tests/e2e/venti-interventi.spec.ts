@@ -12,9 +12,9 @@ test("punto 2 · «Carica un referto» porta al caricamento: dalla testata, dall
     await gotoReady(page, path);
     await expect(page.locator(scope).getByRole("link", { name: /Carica un referto/ }).first(), `${path} ${scope}`).toHaveAttribute("href", "/area-personale/nuovo");
   }
-  // 19/11/2026, home «chiara e scura»: in home è il passo 3 del percorso, «Carica il referto», come nelle immagini approvate.
+  // 19/11/2026, home «chiara e scura»: in home è il passo 3 del percorso (dal 22/11 «Capisci il referto»).
   await gotoReady(page, "/");
-  await expect(page.locator("main #passo-3").getByRole("link", { name: /Carica il referto/ })).toHaveAttribute("href", "/area-personale/nuovo");
+  await expect(page.locator("main #passo-3").getByRole("link", { name: /Capisci il referto/ })).toHaveAttribute("href", "/area-personale/nuovo");
 });
 
 test("punto 4 · prezzi su computer: una scheda larga con «Che cosa include» in vista", async ({ page, isMobile }) => {
@@ -78,7 +78,7 @@ test("punto 9 · home da telefono: sotto le 9,5 schermate, senza ripetere il per
   await page.goto("/");
   // Erano 10,6 schermate da 844 px. 19/11/2026, home «chiara e scura»: il percorso in quattro passi c'è una volta sola.
   expect(await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight)).toBeLessThan(9.5);
-  await expect(page.getByRole("navigation", { name: "Il percorso, in quattro passi" })).toHaveCount(1);
+  await expect(page.getByRole("navigation", { name: "Il percorso, in cinque passi" })).toHaveCount(1);
   await expect(page.locator('main section[aria-label="Perché fidarsi"]')).toContainText("Mai diagnosi");
 });
 

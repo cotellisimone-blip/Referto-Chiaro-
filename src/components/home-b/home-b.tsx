@@ -4,7 +4,7 @@ import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { Photo } from "@/components/ui/photo";
 import { TrackView } from "@/components/site/track";
 import { WaitlistForm } from "@/components/site/waitlist-form";
-import { mediciEnabled, secondoParereEnabled } from "@/lib/medici";
+import { PARERE_HREF, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
 import { PRICE_NOTE, firstPromoEnabled, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled, serviceStart } from "@/domain/offerta";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
 import { HomeSimboli, Ic } from "./simboli";
@@ -24,6 +24,8 @@ export const HOME_B_LINKS = {
   vicino: "/vicino-a-te",
   neltempo: "/famiglia",
   scaffale: "/scaffale",
+  sonno: "/prenditi-cura-di-te/sonno",
+  curaDiTe: "/prenditi-cura-di-te",
 } as const;
 
 const v = (o: Record<string, string>) => o as CSSProperties;
@@ -54,7 +56,7 @@ export function HomeB() {
       <HomeSimboli />
       <HomeMoto />
 
-      {/* 1 · Prima schermata: il sole (o la luna), il titolo, il percorso in quattro passi, il medico */}
+      {/* 1 · Prima schermata: il sole (o la luna), il titolo, il percorso in cinque passi (come il menu, 22/11/2026), il medico */}
       <section className="hb-hero" aria-labelledby="hb-titolo">
         <span className="hb-astro" aria-hidden="true">
           <i style={v({ "--x": "-11%", "--y": "88%", "--s": "2px", "--d": "-1.2s" })} />
@@ -68,34 +70,35 @@ export function HomeB() {
             <h1 id="hb-titolo">
               La tua salute, <em>tutta in una pagina.</em>
             </h1>
-            <p className="hb-lead">Capiscila da solo. Fai gli esami del sangue e delle urine, caricali qui e ricevi la tua guida completa: integratori, intestino, alimentazione.</p>
+            <p className="hb-lead">Capiscila da solo, un passo alla volta: fatti conoscere, scopri quali esami conoscere, capisci i referti. Poi prenditi cura di te ogni giorno: sonno, alimentazione, intestino, integratori.</p>
           </div>
           <div className="hb-hero-r">
-            <nav className="hb-filo" aria-label="Il percorso, in quattro passi">
-              <p className="hb-filo-h">Il percorso, in quattro passi</p>
+            <nav className="hb-filo hb-filo5" aria-label="Il percorso, in cinque passi">
+              <p className="hb-filo-h">Il percorso, in cinque passi</p>
               <div className="hb-filo-r">
                 <svg className="hb-via" viewBox="0 0 400 52" preserveAspectRatio="none" aria-hidden="true" focusable="false">
                   <defs>
-                    <linearGradient id="hb-g-via" gradientUnits="userSpaceOnUse" x1="50" y1="0" x2="350" y2="0">
+                    <linearGradient id="hb-g-via" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="360" y2="0">
                       <stop offset="0" />
                       <stop offset=".5" />
                       <stop offset="1" />
                     </linearGradient>
                   </defs>
-                  <path className="hb-via-l" d="M50 26C83 4 117 4 150 26S217 48 250 26S317 4 350 26" />
-                  <path className="hb-via-p" pathLength={100} d="M50 26C83 4 117 4 150 26S217 48 250 26S317 4 350 26" />
+                  <path className="hb-via-l" d="M40 26C67 4 93 4 120 26S173 48 200 26S253 4 280 26S333 48 360 26" />
+                  <path className="hb-via-p" pathLength={100} d="M40 26C67 4 93 4 120 26S173 48 200 26S253 4 280 26S333 48 360 26" />
                 </svg>
                 <ol>
                   {(
                     [
-                      ["k-pr", "pr", "1", "Fatti conoscere", "3–5 minuti, gratis"],
-                      ["k-es", "es", "2", "Fai gli esami", "Sangue e urine"],
-                      ["k-re", "re", "3", "Carica il referto", "Spiegato in parole semplici"],
-                      ["k-gu", "gu", "4", "Ricevi la tua guida", "Integratori, intestino, alimentazione"],
+                      ["k-pr", "pr", "1", "Inizia da te", "3–5 minuti, gratis", "#passo-1"],
+                      ["k-es", "es", "2", "Gli esami", "Quali conoscere", "#passo-2"],
+                      ["k-re", "re", "3", "Il referto", "Spiegato semplice", "#passo-3"],
+                      ["k-me", "me", "4", "Il medico", "Video o secondo parere", "#medico"],
+                      ["k-gu", "so", "5", "Cura di te", "Sonno, cibo, intestino", "#esplora"],
                     ] as const
-                  ).map(([k, ic, n, b, s]) => (
+                  ).map(([k, ic, n, b, s, href]) => (
                     <li key={n} className={`hb-${k}`}>
-                      <a href={`#passo-${n}`}>
+                      <a href={href}>
                         <span className="hb-st">
                           <Ic id={ic} />
                         </span>
@@ -113,7 +116,7 @@ export function HomeB() {
                 <Ic id="me" />
               </span>
               <span>
-                <b>Un medico, in video o a casa tua</b>
+                <b>Un medico in video, o un secondo parere</b>
                 <small>
                   <i className="hb-lamp" />
                   {attivo ? (prices ? `Da ${prestazionePrice("video")} · scegli giorno e ora` : "Scegli giorno e ora") : "In arrivo · lascia la tua email"}
@@ -125,7 +128,7 @@ export function HomeB() {
         </div>
       </section>
 
-      {/* 2 · Il percorso: le quattro tessere, una per passo */}
+      {/* 2 · Il percorso: i passi 1–3; la guida personale arriva con il referto (passo 3) */}
       <section className="hb-sec" aria-label="Il percorso">
         <div className="hb-wrap">
           <div className="hb-grid hb-g-path">
@@ -172,8 +175,8 @@ export function HomeB() {
                 <span className="hb-wi">
                   <Ic id="es" />
                 </span>
-                <h3>Fai gli esami di base</h3>
-                <p>Sangue e urine, con l’elenco pronto.</p>
+                <h3>Gli esami per te</h3>
+                <p>Quelli di base e gli screening per la tua età.</p>
                 <span className="hb-mini hb-m-list" aria-hidden="true">
                   <i>Emocromo</i>
                   <i>Glicemia</i>
@@ -198,7 +201,7 @@ export function HomeB() {
                 <span className="hb-wi">
                   <Ic id="re" />
                 </span>
-                <h3>Carica il referto</h3>
+                <h3>Capisci il referto</h3>
                 <p>Lo capisci in parole semplici.</p>
                 <span className="hb-mini hb-m-doc" aria-hidden="true">
                   <span className="hb-val">
@@ -223,14 +226,14 @@ export function HomeB() {
             <div className="hb-cell hb-c4" id="passo-4">
               <Link className="hb-tile hb-t-wide hb-k-gu" href={HOME_B_LINKS.guidaPersonale} data-track="home-passo-4">
                 <span className="hb-num" aria-hidden="true">
-                  4
+                  3
                 </span>
                 <span className="hb-t-a">
                   <span className="hb-tile-top">
                     <span className="hb-wi">
                       <Ic id="gu" />
                     </span>
-                    <span className="hb-kicker">Dai tuoi esami</span>
+                    <span className="hb-kicker">Con il tuo referto</span>
                   </span>
                   <h3>Ricevi la tua guida personale</h3>
                   <p>Una guida completa, costruita sui tuoi esami. Per preparare il tuo piano insieme al medico o al farmacista.</p>
@@ -271,6 +274,15 @@ export function HomeB() {
                       <small>Colesterolo LDL sopra l’intervallo: che cosa dice la ricerca</small>
                     </span>
                   </span>
+                  <span className="hb-gp-r hb-k-sc">
+                    <span className="hb-wi">
+                      <Ic id="so" />
+                    </span>
+                    <span>
+                      <b>Sonno</b>
+                      <small>Ti svegli stanco: il percorso di due settimane e il diario</small>
+                    </span>
+                  </span>
                 </span>
               </Link>
             </div>
@@ -289,17 +301,18 @@ export function HomeB() {
         </div>
       </section>
 
-      {/* 3 · Il medico: in video o a casa. Acceso con i medici di Brescia, oppure «In arrivo» con la lista d'attesa. */}
+      {/* 3 · Passo 4, il medico: in video o un secondo parere (22/11/2026: la visita a domicilio è tolta dalla home). Acceso con
+          i medici di Brescia, oppure «In arrivo» con la lista d'attesa. */}
       <section className="hb-doc" id="medico" aria-labelledby="hb-medico-titolo">
         <div className="hb-wrap">
           <div className="hb-doc-p hb-k-me">
             <div className="hb-doc-head">
               <p className="hb-kicker">
                 <span className="hb-chip hb-doc-state">{attivo ? "Medici a Brescia" : "In arrivo"}</span>
-                <span>Un medico per te</span>
+                <span>Passo 4 · Un medico</span>
               </p>
               <h2 id="hb-medico-titolo">
-                Un medico, <em>in video o a casa tua.</em>
+                Un medico in video. <em>O un secondo parere.</em>
               </h2>
               <p className="hb-lead">Quando vuoi parlarne con una persona. Il medico ha già davanti i tuoi esami e la tua guida.</p>
             </div>
@@ -340,16 +353,22 @@ export function HomeB() {
                 </figure>
                 <div className="hb-in">
                   <span className="hb-wi">
-                    <Ic id="casa" />
+                    <Ic id="pa" />
                   </span>
-                  <h3>A casa tua</h3>
-                  <p>Il medico viene da te. Si parte da Brescia città.</p>
+                  <h3>Secondo parere</h3>
+                  <p>Uno specialista rilegge i tuoi esami e ti scrive.{parere ? "" : " In arrivo."}</p>
                   {attivo ? (
                     <>
-                      {prices ? <span className="hb-price">{prestazionePrice("domicilio")}</span> : null}
-                      <Link className="hb-btn" href={PRESTAZIONI.domicilio.startHref} data-track="home-prenota-casa">
-                        Prenota<span className="sr-only"> la visita a casa</span>
-                      </Link>
+                      {prices ? <span className="hb-price">{prestazionePrice("parere")}</span> : null}
+                      {parere ? (
+                        <Link className="hb-btn" href={PRESTAZIONI.parere.startHref} data-track="home-richiedi-parere">
+                          Richiedi<span className="sr-only"> il secondo parere</span>
+                        </Link>
+                      ) : (
+                        <Link className="hb-btn" href={PARERE_HREF} data-track="home-avvisami-parere">
+                          Avvisami<span className="sr-only"> quando parte il secondo parere</span>
+                        </Link>
+                      )}
                     </>
                   ) : null}
                 </div>
@@ -365,38 +384,30 @@ export function HomeB() {
             </div>
             {attivo ? (
               <p className="hb-doc-chi">
-                <Link href="/medici#i-medici">Chi sono i medici: Sara, Elena e Riccardo, medici di medicina generale a Brescia</Link>
+                <Link href="/medici#i-medici">Chi sono i medici: Sara, Elena e Riccardo, medici di medicina generale</Link>
               </p>
             ) : (
               <div className="hb-doc-wait" id="avvisami">
                 <p>
                   <b>Stiamo scegliendo i medici.</b> Lascia la tua email: ti scriviamo quando parte.
                 </p>
-                <WaitlistForm interest="domicilio" compact />
+                <WaitlistForm interest="visite" compact />
               </div>
             )}
             <p className="hb-doc-112">
               Per esigenze non urgenti. Per un’emergenza chiama il 112. Di notte e nei festivi c’è anche la guardia medica pubblica, gratuita: 116117.
-              {attivo ? (
-                <>
-                  {" "}
-                  <Link className="hb-doc-more" href={PRESTAZIONI.parere.href}>
-                    Ti serve un secondo parere?{parere ? "" : " In arrivo"}
-                  </Link>
-                </>
-              ) : null}
             </p>
           </div>
         </div>
       </section>
 
-      {/* 4 · Da esplorare: i quattro mondi della guida, gratis */}
+      {/* 4 · Passo 5, «Prenditi cura di te»: i quattro mondi, gratis (22/11/2026: il sonno al posto dello screening, che sta nel passo 2) */}
       <section className="hb-sec" id="esplora" aria-labelledby="hb-esplora-titolo">
         <div className="hb-wrap">
           <div className="hb-sec-h">
-            <p className="hb-kicker">Da esplorare, gratis</p>
+            <p className="hb-kicker">Passo 5 · Prenditi cura di te</p>
             <h2 id="hb-esplora-titolo">
-              La tua guida ti porta qui. <em>Oppure entra quando vuoi.</em>
+              Quello che puoi migliorare <em>da oggi, gratis.</em>
             </h2>
           </div>
           <div className="hb-grid hb-g-mondi">
@@ -471,24 +482,22 @@ export function HomeB() {
                 </span>
               </span>
             </Link>
-            <Link className="hb-tile hb-k-sc" href={HOME_B_LINKS.screening}>
-              <Ic id="sc" className="hb-art" />
+            <Link className="hb-tile hb-k-sc" href={HOME_B_LINKS.sonno}>
+              <Ic id="so" className="hb-art" />
               <span className="hb-wi">
-                <Ic id="sc" />
+                <Ic id="so" />
               </span>
-              <h3>Screening ed esami particolari</h3>
-              <p>Quali chiedere al medico, e quando</p>
-              <span className="hb-mini hb-w-eta" aria-hidden="true">
+              <h3>Sonno</h3>
+              <p>Addormentarsi, risvegli, russare: un percorso di due settimane</p>
+              <span className="hb-mini hb-w-eta hb-w-sonno" aria-hidden="true">
                 <span className="hb-et-c">
-                  <span>Per età</span>
-                  <b>50–69 anni</b>
+                  <span>Efficienza del sonno</span>
+                  <b>84%</b>
                 </span>
-                <span className="hb-et">
-                  <i>30</i>
-                  <i>40</i>
-                  <i className="hb-on">50</i>
-                  <i className="hb-on">60</i>
-                  <i>70</i>
+                <span className="hb-notti">
+                  {[62, 70, 58, 80, 76, 84, 88].map((h, i) => (
+                    <i key={i} className={h > 75 ? "hb-on" : undefined} style={v({ "--h": `${h}%` })} />
+                  ))}
                 </span>
               </span>
             </Link>
@@ -496,7 +505,8 @@ export function HomeB() {
           <p className="hb-foot-note">
             <Ic id="sh" className="hb-ic" />
             <span>
-              Presto, in fondo alle pagine, ci sarà <b>lo Scaffale</b>: i prodotti dei partner, sempre segnati come pubblicità.
+              Più avanti anche <b>Stress</b> e <b>Movimento</b>. E presto, in fondo alle pagine, <b>lo Scaffale</b>: integratori e probiotici dei partner, sempre segnati come pubblicità e separati dalle spiegazioni.{" "}
+              <Link href={HOME_B_LINKS.curaDiTe}>Tutto il passo 5</Link>
             </span>
           </p>
         </div>
