@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { Wave } from "@/components/ui/wave";
-import { FOOTER_NAV, LEGAL_NAV } from "./nav";
+import { FOOTER_NAV, LEGAL_NAV, PERCORSO } from "./nav";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { readTitolare } from "@/domain/titolare";
 import { PAYOFF } from "@/domain/offerta";
@@ -32,31 +32,20 @@ export function SiteFooter() {
       <Wave position="top" className="text-canvas" />
       <div className="scope-strong container-rc relative pb-8 pt-[clamp(4rem,10vw,8.5rem)]">
         <nav aria-label="Vai a una sezione" className="footer-doors">
-          <ul className="wow-fdoors">
-            <li>
-              <Link prefetch={false} href="/prevenzione">
-                <b aria-hidden>1</b>
-                <span>
-                  Prevenzione<small>prima degli esami</small>
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link prefetch={false} href="/lettura-referti">
-                <b aria-hidden>2</b>
-                <span>
-                  Lettura referti<small>quando hai il referto</small>
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link prefetch={false} href="/medici">
-                <b aria-hidden>3</b>
-                <span>
-                  Medici<small>se serve una persona</small>
-                </span>
-              </Link>
-            </li>
+          {/* 22/11/2026 (analisi di chiarezza): le porte seguono i cinque passi del percorso, come testata e menu.
+              Prima erano le tre sezioni del 15/11 (Prevenzione, Lettura referti, Medici), con numeri diversi dalla testata. */}
+          <ul className="wow-fdoors" data-passi={PERCORSO.length}>
+            {PERCORSO.map((p) => (
+              <li key={p.n}>
+                <Link prefetch={false} href={p.href}>
+                  <b aria-hidden>{p.n}</b>
+                  <span>
+                    {p.label}
+                    <small>{p.desc}</small>
+                  </span>
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
         <div className="grid grid-cols-2 gap-x-6 gap-y-9 md:gap-y-11 md:grid-cols-3 lg:grid-cols-[1.4fr_1.2fr_1fr_1fr] lg:gap-x-10">

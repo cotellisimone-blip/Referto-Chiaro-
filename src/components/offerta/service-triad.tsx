@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Clock3, FileText, Home, Stethoscope, Video } from "lucide-react";
 import { clsx } from "clsx";
 import { publicPricesEnabled } from "@/domain/offerta";
-import { offerItems, type OfferItem } from "@/domain/prestazioni/offerta-completa";
+import { offerItems, publicOfferItems, type OfferItem } from "@/domain/prestazioni/offerta-completa";
 import { prestazionePrice } from "@/domain/prestazioni/listino";
 import { PrestazioneAction } from "@/components/prestazioni/public";
 import { PriceTag } from "./price-tag";
@@ -69,7 +69,8 @@ export function DoctorServices({ headingLevel = 3 }: { headingLevel?: 2 | 3 }) {
   const prices = publicPricesEnabled();
   return (
     <ul className="svc-cards" aria-label="Servizi con un medico">
-      {offerItems()
+      {/* 22/11/2026: solo l'offerta in vendita (la visita a domicilio spenta non compare più). */}
+      {publicOfferItems()
         .filter((s) => s.kind)
         .map((s) => {
           const Icon = OFFER_ICON[s.icon];

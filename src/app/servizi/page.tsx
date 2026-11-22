@@ -11,7 +11,7 @@ import { FaqList } from "@/components/ui/faq-list";
 import { FAQ } from "@/content/faq";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { PRICE_NOTE, publicPricesEnabled } from "@/domain/offerta";
-import { mediciEnabled } from "@/lib/medici";
+import { domicilioEnabled, mediciEnabled } from "@/lib/medici";
 import { PrestoMedico } from "@/components/site/presto-medico";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) la pagina presenta il referto e gli strumenti gratuiti. */
@@ -20,7 +20,7 @@ const MEDICI = mediciEnabled();
 export const metadata: Metadata = {
   title: "I servizi",
   description: MEDICI
-    ? "Capisci il tuo referto, visita a domicilio, videoconsulto con un medico, secondo parere specialistico: i servizi di Cura Privata e gli strumenti gratuiti."
+    ? "Capisci il tuo referto, videoconsulto con un medico, secondo parere specialistico: i servizi di Cura Privata e gli strumenti gratuiti."
     : "Capisci il tuo referto, i numeri di tutta la famiglia nel tempo e gli strumenti gratuiti per arrivare preparato alla visita: che cosa offre Cura Privata.",
   alternates: { canonical: "/servizi" },
 };
@@ -57,7 +57,7 @@ export default function ServiziPage() {
             <h1 id="servizi-titolo" className="page-title mt-4 max-w-[17ch]">
               {MEDICI ? "Dal referto al medico, un passo alla volta." : "Dal referto alla visita, un passo alla volta."}
             </h1>
-            <p className="lead mt-5 max-w-[38rem]">{MEDICI ? "Parti dal tuo referto, spiegato in parole semplici. Quando serve una persona c'è un medico: a casa, in video o per un secondo parere." : "Parti dal tuo referto, spiegato in parole semplici. Poi lo ritrovi nel tuo spazio, in fila con gli altri, e arrivi dal tuo medico con le domande pronte."}</p>
+            <p className="lead mt-5 max-w-[38rem]">{MEDICI ? "Parti dal tuo referto, spiegato in parole semplici. Quando serve una persona c'è un medico: " + (domicilioEnabled() ? "a casa, in video o per un secondo parere." : "in video, e presto anche per un secondo parere.") : "Parti dal tuo referto, spiegato in parole semplici. Poi lo ritrovi nel tuo spazio, in fila con gli altri, e arrivi dal tuo medico con le domande pronte."}</p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
               <Link href="/inizia" className="btn btn-primary btn-lg">
                 Ti aiutiamo a scegliere <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />

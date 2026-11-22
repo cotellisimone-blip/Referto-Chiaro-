@@ -107,7 +107,7 @@ export default function MediciPage() {
           <div className="tm-wrap">
             <FlaskConical aria-hidden className="tm-ic" />
             <p>
-              <b>Versione dimostrativa.</b> I medici sono veri, ma qui fasce, pagamenti e visite sono simulati: nessuno verrà davvero e nessun addebito parte.
+              <b>Versione dimostrativa.</b> {dom ? "I medici sono veri, ma qui fasce, pagamenti e visite sono simulati: nessuno verrà davvero e nessun addebito parte." : "I medici sono veri, ma qui fasce, pagamenti e videoconsulti sono simulati: nessuna chiamata parte davvero e nessun addebito."}
             </p>
           </div>
         </div>

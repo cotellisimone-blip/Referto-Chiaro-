@@ -263,13 +263,14 @@ export default function PuntoDiPartenzaPage() {
       <section aria-label="Il passo dopo" className="no-print section">
         <div className="container-rc">
           <div className="cta-card">
-            <p className="display-md max-w-[40rem]">Prima capisci da dove parti. Poi, quando arrivano i risultati, ti aiutiamo a leggerli e a scegliere il passo successivo.</p>
+            {/* 22/11/2026: il passo dopo segue il percorso in cinque passi (prima: «Torna alla sezione Prevenzione»). */}
+            <p className="display-md max-w-[40rem]">Prima capisci da dove parti. Poi gli esami da conoscere per la tua età e, quando arrivano i risultati, il referto in parole semplici.</p>
             <div className="flex flex-col gap-3">
-              <Link href={capisci.href} className="btn btn-primary btn-lg">
-                Lettura referti: come funziona <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+              <Link href="/prevenzione" className="btn btn-primary btn-lg">
+                Passo 2: gli esami per te <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
-              <Link href="/prevenzione" className="btn btn-secondary btn-lg">
-                Torna alla sezione Prevenzione
+              <Link href={capisci.href} className="btn btn-secondary btn-lg">
+                Hai già un referto? Passo 3
               </Link>
             </div>
           </div>

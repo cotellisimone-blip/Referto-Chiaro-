@@ -16,7 +16,7 @@ import { OFFER_ICON, OfferPrice } from "@/components/offerta/service-triad";
 import { FaqList } from "@/components/ui/faq-list";
 import { Wave } from "@/components/ui/wave";
 import { publicOfferItems } from "@/domain/prestazioni/offerta-completa";
-import { mediciEnabled } from "@/lib/medici";
+import { PARERE_HREF, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
 import { PrestoMedico } from "@/components/site/presto-medico";
 import {
   PRESTAZIONI,
@@ -121,12 +121,16 @@ export default function PrezziPage() {
           <ul className="price-grid" data-solo={solo ? "true" : undefined}>
             {items.map((s) => {
               const Icon = OFFER_ICON[s.icon];
-              const start = s.kind
-                ? {
-                    href: PRESTAZIONI[s.kind].startHref,
-                    label: START_LABEL[s.kind],
-                  }
-                : serviceStart(s.coreId!);
+              // 22/11/2026: il secondo parere spento è «In arrivo»: niente «Richiedi», si chiede di essere avvisati.
+              const inArrivo = s.kind === "parere" && !secondoParereEnabled();
+              const start = inArrivo
+                ? { href: PARERE_HREF, label: "Avvisami quando parte" }
+                : s.kind
+                  ? {
+                      href: PRESTAZIONI[s.kind].startHref,
+                      label: START_LABEL[s.kind],
+                    }
+                  : serviceStart(s.coreId!);
               return (
                 <li key={s.key} className={`tone-${s.tone}`}>
                   <article
@@ -148,7 +152,7 @@ export default function PrezziPage() {
                     </div>
                     <p className="svc-meta price-card-time">
                       <Clock3 aria-hidden />
-                      {s.timing}
+                      {inArrivo ? "In arrivo: stiamo cercando lo specialista. Lascia l'email e ti avvisiamo." : s.timing}
                     </p>
                     {solo ? (
                       <div className="price-solo-incl">

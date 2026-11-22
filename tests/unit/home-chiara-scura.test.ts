@@ -33,7 +33,8 @@ describe("i medici di Cura Privata", () => {
       expect(m.cognome).toBeNull();
       expect(m.ordine).toBeNull();
       expect(m.zona).toBeNull();
-      expect(datiMancanti(m)).toEqual(["titolo e cognome", "iscrizione all’Ordine", "zona e giorni"]);
+      // 22/11/2026: con la visita a domicilio spenta (valore di base) la zona non serve, mancano i giorni del videoconsulto.
+      expect(datiMancanti(m)).toEqual(["titolo e cognome", "iscrizione all’Ordine", "giorni e orari del videoconsulto"]);
       expect(nomeMedico(m)).toBe(m.nome);
       expect(inizialiMedico(m)).toBe(m.nome[0]);
     }

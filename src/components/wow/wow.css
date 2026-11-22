@@ -146,8 +146,37 @@
   color: #0b1e26;
 }
 .wow-fdoors li:nth-child(3) b {
+  background: #b9d3f0;
+  color: #0b1e26;
+}
+.wow-fdoors li:nth-child(4) b {
   background: #f6b98e;
   color: #2b1608;
+}
+.wow-fdoors li:nth-child(5) b {
+  background: #bfe8a8;
+  color: #10240a;
+}
+/* 22/11/2026: cinque porte, come i cinque passi. Sotto i 1100 px vanno su due righe (3 + 2) per non stringere i testi. */
+.wow-fdoors[data-passi="5"] {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.wow-fdoors[data-passi="5"] li {
+  display: flex;
+}
+.wow-fdoors[data-passi="5"] a {
+  flex: 1;
+}
+@media (max-width: 1100px) {
+  .wow-fdoors[data-passi="5"] {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .wow-fdoors[data-passi="5"] li {
+    grid-column: span 2;
+  }
+  .wow-fdoors[data-passi="5"] li:nth-child(4) {
+    grid-column: 2 / span 2;
+  }
 }
 .wow-fdoors small {
   display: block;

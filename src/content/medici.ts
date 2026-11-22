@@ -1,3 +1,4 @@
+import { domicilioEnabled } from "@/lib/medici";
 /**
  * I medici di Cura Privata (19/11/2026, Simone: «ne abbiamo 3, Sara e Elena e Riccardo, tutti a Brescia, tutti medici
  * generali»). Persone VERE: qui si scrive solo quello che Simone ha detto. Tutto il resto resta `null` e sul sito
@@ -46,7 +47,8 @@ export function datiMancanti(m: Medico): string[] {
   const out: string[] = [];
   if (!m.titolo || !m.cognome) out.push("titolo e cognome");
   if (!m.ordine) out.push("iscrizione all’Ordine");
-  if (!m.zona) out.push("zona e giorni");
+  // 22/11/2026: senza visita a domicilio la zona non serve: mancano solo i giorni del videoconsulto.
+  if (!m.zona) out.push(domicilioEnabled() ? "zona e giorni" : "giorni e orari del videoconsulto");
   return out;
 }
 

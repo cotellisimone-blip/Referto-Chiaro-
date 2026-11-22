@@ -8,6 +8,7 @@ import { ArrowRight, CircleCheck, Home, MapPin, Stethoscope, Video } from "lucid
 import { availability, checkCoverage, featuredKind, type PrestazioniState } from "@/domain/prestazioni/engine";
 import { PRESTAZIONI, type PrestazioneKind } from "@/domain/prestazioni/listino";
 import { usePrestazioni } from "./store";
+import { PARERE_HREF, secondoParereEnabled } from "@/lib/medici";
 import { Price, ZoneWaitlist, formatSlot } from "./ui";
 
 /**
@@ -27,6 +28,20 @@ export function PrestazioneAction({ kind }: { kind: PrestazioneKind }) {
   const info = PRESTAZIONI[kind];
   const av = s && now ? availability(s, kind, now) : null;
   const open = !av || av.state === "aperto";
+  // 22/11/2026: il secondo parere spento non si «richiede»: è in arrivo e si chiede di essere avvisati (come in home).
+  if (kind === "parere" && !secondoParereEnabled()) {
+    return (
+      <div className="relative z-10 mt-auto pt-5" data-disponibilita="in-arrivo">
+        <p className="flex flex-wrap items-center gap-2 text-[0.9375rem] text-ink-soft">
+          <span className="chip bg-cream text-warn">In arrivo</span>
+          <span>stiamo cercando lo specialista</span>
+        </p>
+        <Link href={PARERE_HREF} className="btn btn-secondary mt-3 w-full">
+          Avvisami quando parte <ArrowRight aria-hidden className="h-4 w-4" />
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="relative z-10 mt-auto pt-5" data-disponibilita={av?.state ?? "aperto"}>
       <p className="flex flex-wrap items-center gap-2 text-[0.9375rem] text-ink-soft">

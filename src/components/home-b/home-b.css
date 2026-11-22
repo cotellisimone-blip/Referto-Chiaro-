@@ -482,3 +482,12 @@ html.hb-anim .hb-w-map .hb-on{animation:hb-onda 2.6s ease-out infinite}
 .hb-notti i.hb-on{background:color-mix(in srgb,var(--tv,var(--ta)) 90%,transparent)}
 /* Il collegamento al passo 5 nella nota sotto i mondi. */
 .hb-foot-note a{font-weight:800;color:var(--accent);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;white-space:nowrap}
+/* 22/11/2026 (analisi di chiarezza): sul telefono l'onda del piè di pagina copriva la riga «Chi c’è dietro»; e nella
+   tessera Alimentazione «Proteine» andava a capo a metà parola. */
+@media (max-width:767px){.hb-trust-chi{padding-bottom:2.75rem}}
+@media (max-width:480px){
+  .hb-w-piatto{gap:.4rem;padding:.45rem}
+  .hb-w-piatto svg{width:36px;height:36px}
+  .hb-lg i{overflow-wrap:normal;gap:.3rem}
+  .hb-lg i::before{width:7px;height:7px}
+}
