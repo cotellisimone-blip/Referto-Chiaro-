@@ -179,3 +179,10 @@
 /* 22/11/2026: rimando alla pagina di malattia, sotto «Per chi / Quando». */
 .dr-malattia{margin:1rem 0 0;max-width:40rem;font-size:1.0625rem;font-weight:700;color:var(--ink)}
 .dr-malattia a{display:inline-flex;align-items:center;min-height:44px;color:var(--ta);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:.2em}
+
+/* 22/11/2026, sezione sonno: autovalutazioni salvate sul dispositivo, da aggiungere al foglio per il medico */
+.dra-autov{margin-top:1rem;padding:.9rem 1rem 1rem;border-radius:18px;background:var(--color-mist)}
+.dra-autov-l{display:flex;gap:.7rem;align-items:flex-start;min-height:44px;font-size:1.0625rem;font-weight:700;color:var(--color-ink);cursor:pointer}
+.dra-autov-l input{flex:none;width:22px;height:22px;margin-top:.15rem;accent-color:var(--color-teal)}
+.dra-autov ul{margin:.4rem 0 .5rem;padding-left:1.2rem;font-size:1rem;line-height:1.5;color:var(--color-ink)}
+.dra-autov-vuoto{margin-top:1rem;font-size:1rem;line-height:1.5;color:var(--color-muted)}

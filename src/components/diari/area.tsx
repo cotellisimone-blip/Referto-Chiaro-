@@ -34,6 +34,8 @@ import {
   riepilogoPressione,
   riepilogoRespiro,
   riepilogoSonno,
+  scartoBreve,
+  scartoTesto,
   rigaVoce,
   type Intensita,
   type MomentoGlicemia,
@@ -44,6 +46,7 @@ import {
 } from "@/domain/diari/voci";
 import { DiariSimboli } from "./disegni";
 import { caricaFont, salvaFile } from "./file";
+import { cancellaRisultati, leggiRisultati, rigaPerIlMedico, type RisultatoSalvato } from "@/domain/sonno/autovalutazione";
 import "./diari.css";
 
 /**
@@ -272,13 +275,23 @@ export function DiarioArea({ slug }: { slug: DiarioSlug }) {
   const q = persona === SELF_ID ? "" : `?persona=${persona}`;
   const oggi = nowAt().slice(0, 10);
   const nel = useMemo(() => (voci ? periodo(voci, giorni, oggi) : []), [voci, giorni, oggi]);
+  // 22/11/2026, sezione sonno: le autovalutazioni salvate su questo dispositivo, da aggiungere al foglio se la persona vuole.
+  const [autov, setAutov] = useState<RisultatoSalvato[]>([]);
+  const [conAutov, setConAutov] = useState(true);
+  useEffect(() => {
+    if (slug !== "sonno") return;
+    // Letto dopo il primo disegno: localStorage non esiste sul server.
+    const t = setTimeout(() => setAutov(leggiRisultati()), 0);
+    return () => clearTimeout(t);
+  }, [slug]);
 
   async function foglio() {
     if (!voci) return;
     setBusy("pdf");
     try {
       const { renderFoglioMedico, nomeFileFoglio } = await import("@/domain/diari/pdf");
-      const bytes = await renderFoglioMedico(d, voci, { persona: who ?? "Titolare dell'account", giorni, oggi, fonts: await caricaFont() });
+      const autovalutazioni = slug === "sonno" && conAutov && persona === SELF_ID ? autov.map(rigaPerIlMedico) : undefined;
+      const bytes = await renderFoglioMedico(d, voci, { persona: who ?? "Titolare dell'account", giorni, oggi, fonts: await caricaFont(), autovalutazioni });
       await salvaFile(nomeFileFoglio(d, oggi), new Blob([bytes as BlobPart], { type: "application/pdf" }));
     } finally {
       setBusy(null);
@@ -347,6 +360,17 @@ export function DiarioArea({ slug }: { slug: DiarioSlug }) {
         </button>
       </div>
       {ric ? <Promemoria d={d} onBusy={(b) => setBusy(b ? "ics" : null)} /> : null}
+      {slug === "sonno" && persona === SELF_ID ? (
+        <AutovalutazioniSalvate
+          lista={autov}
+          con={conAutov}
+          setCon={setConAutov}
+          onCancella={() => {
+            cancellaRisultati();
+            setAutov([]);
+          }}
+        />
+      ) : null}
 
       <section aria-labelledby="dra-voci" className="mt-10">
         <h2 id="dra-voci" className="area-h2">
@@ -382,6 +406,37 @@ export function DiarioArea({ slug }: { slug: DiarioSlug }) {
         </Link>
       </p>
       <Limiti />
+    </div>
+  );
+}
+
+// ---- Autovalutazioni del sonno salvate sul dispositivo (22/11/2026) ----
+
+function AutovalutazioniSalvate({ lista, con, setCon, onCancella }: { lista: RisultatoSalvato[]; con: boolean; setCon: (v: boolean) => void; onCancella: () => void }) {
+  if (!lista.length)
+    return (
+      <p className="dra-autov-vuoto" data-testid="autov-vuoto">
+        Vuoi aggiungere al foglio anche un’autovalutazione?{" "}
+        <Link href="/malattie/sonno/percorso-due-settimane#passo-1" className="link">
+          Fanne una in due minuti
+        </Link>
+        : il risultato resta su questo dispositivo.
+      </p>
+    );
+  return (
+    <div className="dra-autov" data-testid="autov-salvate">
+      <label className="dra-autov-l">
+        <input type="checkbox" checked={con} onChange={(e) => setCon(e.target.checked)} />
+        <span>Aggiungi al foglio le autovalutazioni fatte su questo dispositivo</span>
+      </label>
+      <ul>
+        {lista.map((x) => (
+          <li key={x.slug}>{rigaPerIlMedico(x)}</li>
+        ))}
+      </ul>
+      <ConfirmButton className="btn btn-ghost btn-sm" question="Togliere le autovalutazioni da questo dispositivo?" yes="Sì, togli" onConfirm={onCancella}>
+        Togli dal dispositivo
+      </ConfirmButton>
     </div>
   );
 }
@@ -427,6 +482,8 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
   const [inPiedi, setInPiedi] = useState(() => (Number(nowAt().slice(11, 13)) < 12 ? nowAt().slice(11, 16) : "07:00"));
   const [risvegli, setRisvegli] = useState<number | null>(null);
   const [qualita, setQualita] = useState<QualitaSonno | null>(null);
+  const [svegli, setSvegli] = useState("");
+  const [sveglia, setSveglia] = useState("");
   const [momentoR, setMomentoR] = useState<MomentoRespiro>(() => {
     const h = Number(nowAt().slice(11, 13));
     return h < 12 ? "mattina" : h >= 17 ? "sera" : "altro";
@@ -467,6 +524,8 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
       setEpisodio(false);
       setRisvegli(null);
       setQualita(null);
+      setSvegli("");
+      setSveglia("");
       setManual(false);
       setAt(nowAt());
       onSaved();
@@ -502,8 +561,12 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
       if (t < 60 || t > 18 * 60) return setErr("Controlla i due orari: tra l'ora di andare a letto e quella di alzarti ci sono meno di un'ora o più di 18.");
       if (!qualita) return setErr("Scegli com'è andata la notte.");
       const add = a ? Number(a) : null;
+      if (sveglia && !ORA_RE.test(sveglia)) return setErr("L'ora del risveglio non è valida.");
+      if (sveglia && minutiTra(aLetto, sveglia) > t) return setErr("L'ora del risveglio deve stare tra quella in cui sei andato a letto e quella in cui ti sei alzato.");
+      const sv = svegli ? Number(svegli) : null;
+      if (add !== null && sv !== null && add + sv >= t) return setErr("Minuti per addormentarti e minuti svegli insieme superano il tempo a letto: controlla i numeri.");
       return save(
-        { diario: "sonno", profileId, at, note: nota, dati: { aLetto, inPiedi, addormentarsiMin: add, risvegli, qualita } },
+        { diario: "sonno", profileId, at, note: nota, dati: { aLetto, inPiedi, addormentarsiMin: add, risvegli, qualita, svegliMin: sv, sveglia: sveglia || null } },
         `Salvata la notte: ${oreMinuti(t)} a letto, ${QUALITA_SONNO[qualita].toLowerCase()}.`,
       );
     }
@@ -625,6 +688,21 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
                 Minuti per addormentarti <small>una stima va bene</small>
               </span>
               <input inputMode="numeric" pattern="[0-9]*" autoComplete="off" value={a} onChange={(e) => setA(soloCifre(e.target.value))} data-testid="addormentarsi" />
+            </label>
+          </div>
+          {/* 22/11/2026, sezione sonno: i due numeri che servono per l'efficienza del sonno. Facoltativi. */}
+          <div className="dra-nums is-time">
+            <label className="dra-num dra-num-small">
+              <span>
+                Minuti svegli di notte <small>in tutto, una stima</small>
+              </span>
+              <input inputMode="numeric" pattern="[0-9]*" autoComplete="off" value={svegli} onChange={(e) => setSvegli(soloCifre(e.target.value))} data-testid="svegli-min" />
+            </label>
+            <label className="dra-num dra-num-small">
+              <span>
+                Sveglio dalle <small>se prima di alzarti</small>
+              </span>
+              <input type="time" value={sveglia} onChange={(e) => setSveglia(e.target.value)} data-testid="sveglia" />
             </label>
           </div>
           <p className="dra-label">Quante volte ti sei svegliato?</p>
@@ -790,6 +868,11 @@ function Riepilogo({ d, voci, giorni, oggi }: { d: Diario; voci: VoceDiario[]; g
       { t: "Per addormentarti", v: r.addormentarsiMin !== null ? `${r.addormentarsiMin} min` : "—", s: "in media" },
       { t: "Risvegli", v: r.risvegli !== null ? String(r.risvegli).replace(".", ",") : "—", s: "in media per notte" },
       { t: "Com’è andata", v: `${r.perQualita.bene}`, s: `notti bene · così così ${r.perQualita.cosi} · male ${r.perQualita.male}` },
+      // 22/11/2026, sezione sonno: i calcoli del diario del sonno, descritti e non giudicati.
+      { t: "Sonno stimato", v: r.sonnoMin !== null ? oreMinuti(r.sonnoMin) : "—", s: r.nottiComplete ? `media di ${r.nottiComplete} ${r.nottiComplete === 1 ? "notte completa" : "notti complete"}` : "servono i minuti per addormentarti e quelli svegli" },
+      { t: "Efficienza del sonno", v: r.efficienza !== null ? `${r.efficienza}%` : "—", s: "parte del tempo a letto passata dormendo" },
+      { t: "Orari da una notte all’altra", v: r.variabilitaLetto !== null ? `± ${r.variabilitaLetto} min` : "—", s: r.variabilitaInPiedi !== null ? `a letto · in piedi ± ${r.variabilitaInPiedi} min` : "servono almeno 4 notti" },
+      { t: "Fine settimana", v: r.scartoFineSettimana !== null ? scartoBreve(r.scartoFineSettimana) : "—", s: r.scartoFineSettimana !== null ? `metà della notte ${scartoTesto(r.scartoFineSettimana)} rispetto agli altri giorni` : "servono 2 notti del fine settimana" },
     );
   } else if (d.slug === "peso") {
     const r = riepilogoPeso(voci, giorni, oggi);

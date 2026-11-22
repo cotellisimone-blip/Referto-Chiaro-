@@ -50,14 +50,15 @@ export function vociEsempio(oggi: string): NuovaVoce[] {
     else if (d % 9 !== 0) out.push({ diario: "cefalea", profileId: null, at: `${day}T21:00`, note: null, dati: { tipo: "nessuno", intensita: null, durataOre: null, sintomi: [], farmaco: null } });
   }
   // 22/11/2026: dodici notti, venti giorni di peso, dieci giorni di picco di flusso.
-  const S: [string, string, number, number, "male" | "cosi" | "bene", string | null][] = [
-    ["23:40", "06:50", 45, 3, "male", "Caffè dopo cena"], ["23:15", "06:45", 30, 2, "cosi", null], ["22:50", "06:40", 20, 1, "bene", null],
-    ["00:10", "07:00", 60, 3, "male", "Pensieri di lavoro"], ["23:20", "06:50", 25, 2, "cosi", null], ["23:00", "07:30", 15, 1, "bene", "Domenica"],
-    ["23:30", "06:45", 35, 2, "cosi", null], ["23:10", "06:40", 20, 1, "bene", null], ["23:45", "06:50", 40, 4, "male", "Pisolino nel pomeriggio"],
-    ["23:00", "06:45", 20, 2, "cosi", null], ["22:55", "06:40", 15, 1, "bene", null], ["23:15", "06:50", 25, 2, "cosi", null],
+  // 22/11/2026 sezione sonno: anche i minuti svegli di notte e, in due notti, il risveglio prima della sveglia.
+  const S: [string, string, number, number, "male" | "cosi" | "bene", string | null, number, string | null][] = [
+    ["23:40", "06:50", 45, 3, "male", "Caffè dopo cena", 50, "05:20"], ["23:15", "06:45", 30, 2, "cosi", null, 25, null], ["22:50", "06:40", 20, 1, "bene", null, 10, null],
+    ["00:10", "07:00", 60, 3, "male", "Pensieri di lavoro", 45, "05:40"], ["23:20", "06:50", 25, 2, "cosi", null, 20, null], ["23:00", "07:30", 15, 1, "bene", "Domenica", 5, null],
+    ["23:30", "06:45", 35, 2, "cosi", null, 25, null], ["23:10", "06:40", 20, 1, "bene", null, 10, null], ["23:45", "06:50", 40, 4, "male", "Pisolino nel pomeriggio", 60, null],
+    ["23:00", "06:45", 20, 2, "cosi", null, 20, null], ["22:55", "06:40", 15, 1, "bene", null, 5, null], ["23:15", "06:50", 25, 2, "cosi", null, 15, null],
   ];
-  S.forEach(([letto, piedi, add, ris, q, n], i) =>
-    out.push({ diario: "sonno", profileId: null, at: `${addDays(oggi, -(S.length - i))}T07:15`, note: n, dati: { aLetto: letto, inPiedi: piedi, addormentarsiMin: add, risvegli: ris, qualita: q } }),
+  S.forEach(([letto, piedi, add, ris, q, n, sv, sveglia], i) =>
+    out.push({ diario: "sonno", profileId: null, at: `${addDays(oggi, -(S.length - i))}T07:15`, note: n, dati: { aLetto: letto, inPiedi: piedi, addormentarsiMin: add, risvegli: ris, qualita: q, svegliMin: sv, sveglia } }),
   );
   const W = [74.2, 74.0, 74.1, 73.8, 73.9, 73.6, 73.7, 73.5, 73.6, 73.3, 73.4, 73.2, 73.4, 73.1, 73.0, 73.2, 72.9, 72.8, 72.9, 72.7];
   W.forEach((kg, i) => out.push({ diario: "peso", profileId: null, at: `${addDays(oggi, -(W.length - i))}T07:20`, note: i === 0 ? "Bilancia nuova" : null, dati: { kg } }));

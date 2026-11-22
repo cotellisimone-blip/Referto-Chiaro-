@@ -58,6 +58,10 @@ export interface DatiSonno {
   addormentarsiMin: number | null;
   risvegli: number | null;
   qualita: QualitaSonno;
+  /** 22/11/2026, sezione sonno: minuti svegli durante la notte, in tutto (facoltativo, una stima). */
+  svegliMin?: number | null;
+  /** 22/11/2026: ora del risveglio definitivo, se diversa da quella in cui ci si alza (facoltativo). */
+  sveglia?: string | null;
 }
 export interface DatiPeso {
   kg: number;
@@ -95,6 +99,7 @@ export const LIMITI = {
   durataOre: [0, 168],
   addormentarsiMin: [0, 600],
   risvegli: [0, 30],
+  svegliMin: [0, 720],
   kg: [20, 350],
   pef: [50, 900],
   spray: [0, 30],
@@ -162,12 +167,19 @@ export const VoceInputSchema = z.discriminatedUnion("diario", [
           addormentarsiMin: z.number().int().min(LIMITI.addormentarsiMin[0]).max(LIMITI.addormentarsiMin[1], msgNumero).nullable().optional(),
           risvegli: z.number().int().min(LIMITI.risvegli[0]).max(LIMITI.risvegli[1], msgNumero).nullable().optional(),
           qualita: z.enum(Object.keys(QUALITA_SONNO) as [QualitaSonno, ...QualitaSonno[]]),
+          svegliMin: z.number().int().min(LIMITI.svegliMin[0]).max(LIMITI.svegliMin[1], msgNumero).nullable().optional(),
+          sveglia: z.string().regex(ORA_RE, "Ora non valida.").nullable().optional(),
         })
         .strict()
         .refine((d) => {
           const t = minutiTra(d.aLetto, d.inPiedi);
           return t >= 60 && t <= 18 * 60;
-        }, "Controlla i due orari: tra l'ora in cui sei andato a letto e quella in cui ti sei alzato ci sono meno di un'ora o più di 18."),
+        }, "Controlla i due orari: tra l'ora in cui sei andato a letto e quella in cui ti sei alzato ci sono meno di un'ora o più di 18.")
+        .refine((d) => !d.sveglia || minutiTra(d.aLetto, d.sveglia) <= minutiTra(d.aLetto, d.inPiedi), "L'ora del risveglio deve stare tra quella in cui sei andato a letto e quella in cui ti sei alzato.")
+        .refine(
+          (d) => sonnoStimato(d) !== null || d.addormentarsiMin == null || d.svegliMin == null,
+          "Minuti per addormentarti e minuti svegli insieme superano il tempo a letto: controlla i numeri.",
+        ),
     })
     .strict(),
   z
@@ -211,7 +223,15 @@ export function normalizza(input: VoceInput): NuovaVoce {
       at: input.at,
       profileId,
       note,
-      dati: { aLetto: input.dati.aLetto, inPiedi: input.dati.inPiedi, addormentarsiMin: input.dati.addormentarsiMin ?? null, risvegli: input.dati.risvegli ?? null, qualita: input.dati.qualita },
+      dati: {
+        aLetto: input.dati.aLetto,
+        inPiedi: input.dati.inPiedi,
+        addormentarsiMin: input.dati.addormentarsiMin ?? null,
+        risvegli: input.dati.risvegli ?? null,
+        qualita: input.dati.qualita,
+        svegliMin: input.dati.svegliMin ?? null,
+        sveglia: input.dati.sveglia ?? null,
+      },
     };
   if (input.diario === "peso") return { diario: "peso", at: input.at, profileId, note, dati: { kg: Math.round(input.dati.kg * 10) / 10 } };
   if (input.diario === "respiro") return { diario: "respiro", at: input.at, profileId, note, dati: { pef: input.dati.pef, momento: input.dati.momento, spray: input.dati.spray ?? null } };
@@ -412,7 +432,57 @@ export interface RiepilogoSonno {
   /** Orari medi (in «HH:MM») di quando si va a letto e ci si alza. */
   oraLetto: string | null;
   oraInPiedi: string | null;
+  /**
+   * 22/11/2026, sezione sonno. Calcoli del Consensus Sleep Diary (Carney 2012), sulle sole notti con i numeri che
+   * servono: sonno stimato = tempo a letto − minuti per addormentarsi − minuti svegli − tempo tra il risveglio e l'alzarsi;
+   * efficienza = sonno stimato / tempo a letto. Sono descrizioni: il sito non dice se un numero va bene o no.
+   */
+  sonnoMin: number | null;
+  efficienza: number | null;
+  /** Notti su cui sono calcolati sonno ed efficienza. */
+  nottiComplete: number;
+  svegliMin: number | null;
+  /** Quanto cambiano gli orari da una notte all'altra: deviazione standard in minuti (con almeno 4 notti). */
+  variabilitaLetto: number | null;
+  variabilitaInPiedi: number | null;
+  /** Metà del tempo a letto nelle notti del fine settimana meno quella delle altre notti, in minuti (+ = più tardi). */
+  scartoFineSettimana: number | null;
+  /** Notti con più di 30 minuti per addormentarsi, e con più di 30 minuti svegli durante la notte. */
+  nottiAddormentarsiOltre30: number;
+  nottiSvegliOltre30: number;
 }
+
+/**
+ * Sonno stimato di una notte, in minuti, oppure null se mancano i numeri o non tornano. Il risveglio definitivo, se
+ * scritto, conta come fine del sonno.
+ */
+export function sonnoStimato(d: { aLetto: string; inPiedi: string; addormentarsiMin?: number | null; svegliMin?: number | null; sveglia?: string | null }): number | null {
+  if (d.addormentarsiMin == null || d.svegliMin == null) return null;
+  const letto = minutiTra(d.aLetto, d.inPiedi);
+  const coda = d.sveglia ? minutiTra(d.sveglia, d.inPiedi) : 0;
+  const s = letto - d.addormentarsiMin - d.svegliMin - (coda > letto ? 0 : coda);
+  return s > 0 ? s : null;
+}
+
+/** Efficienza del sonno di una notte, in percentuale intera. */
+export function efficienzaNotte(d: DatiSonno): number | null {
+  const s = sonnoStimato(d);
+  return s === null ? null : Math.round((s / minutiTra(d.aLetto, d.inPiedi)) * 100);
+}
+
+/** Deviazione standard di orari attorno a un perno (minuti), con almeno 4 valori. */
+function variabilita(ore: string[], perno: number): number | null {
+  if (ore.length < 4) return null;
+  const m = ore.map((h) => (Number(h.slice(0, 2)) * 60 + Number(h.slice(3)) - perno + 1440) % 1440);
+  const avg = m.reduce((a, b) => a + b, 0) / m.length;
+  return Math.round(Math.sqrt(m.reduce((a, b) => a + (b - avg) ** 2, 0) / m.length));
+}
+
+/** Il «mattino» è sabato o domenica: la notte prima è del fine settimana. */
+const mattinoFestivo = (day: string) => {
+  const g = new Date(`${day}T12:00:00Z`).getUTCDay();
+  return g === 0 || g === 6;
+};
 
 /** Media di orari attorno alla mezzanotte: 23:30 e 00:30 fanno 00:00, non 12:00. */
 function oraMedia(ore: string[], perno: number): string | null {
@@ -441,13 +511,50 @@ export function riepilogoSonno(all: VoceDiario[], giorni = 14, oggi = nowAt().sl
     // Il perno a mezzogiorno per l'ora di andare a letto, a mezzanotte per quella di alzarsi.
     oraLetto: oraMedia(xs.map((x) => x.dati.aLetto), 720),
     oraInPiedi: oraMedia(xs.map((x) => x.dati.inPiedi), 0),
+    ...calcoliSonno(xs),
   };
+}
+
+function calcoliSonno(xs: Voce<"sonno">[]) {
+  const complete = xs.filter((x) => sonnoStimato(x.dati) !== null);
+  const sonno = complete.map((x) => sonnoStimato(x.dati)!);
+  const lettoComplete = complete.map((x) => minutiTra(x.dati.aLetto, x.dati.inPiedi));
+  const sv = xs.map((x) => x.dati.svegliMin).filter((n): n is number => n != null);
+  // Punto di mezzo del tempo a letto, in minuti dalle 12:00 del giorno prima (così le notti si confrontano).
+  const mezzo = (x: Voce<"sonno">) => ((Number(x.dati.aLetto.slice(0, 2)) * 60 + Number(x.dati.aLetto.slice(3)) - 720 + 1440) % 1440) + minutiTra(x.dati.aLetto, x.dati.inPiedi) / 2;
+  const fs = xs.filter((x) => mattinoFestivo(dayOf(x.at))).map(mezzo);
+  const fer = xs.filter((x) => !mattinoFestivo(dayOf(x.at))).map(mezzo);
+  const avg = (v: number[]) => v.reduce((a, b) => a + b, 0) / v.length;
+  return {
+    sonnoMin: media(sonno),
+    efficienza: complete.length ? Math.round((sonno.reduce((a, b) => a + b, 0) / lettoComplete.reduce((a, b) => a + b, 0)) * 100) : null,
+    nottiComplete: complete.length,
+    svegliMin: media(sv),
+    variabilitaLetto: variabilita(xs.map((x) => x.dati.aLetto), 720),
+    variabilitaInPiedi: variabilita(xs.map((x) => x.dati.inPiedi), 0),
+    scartoFineSettimana: fs.length >= 2 && fer.length >= 3 ? Math.round(avg(fs) - avg(fer)) : null,
+    nottiAddormentarsiOltre30: xs.filter((x) => (x.dati.addormentarsiMin ?? 0) > 30).length,
+    nottiSvegliOltre30: xs.filter((x) => (x.dati.svegliMin ?? 0) > 30).length,
+  };
+}
+
+/** «+1 h 10 min», «−25 min», «uguale». */
+export function scartoBreve(min: number): string {
+  if (Math.abs(min) < 5) return "uguale";
+  return `${min > 0 ? "+" : "−"}${oreMinuti(Math.abs(min))}`;
+}
+
+/** «più tardi di 1 h 10 min», «più presto di 25 min», «circa uguale». */
+export function scartoTesto(min: number): string {
+  if (Math.abs(min) < 5) return "circa uguale";
+  return `${min > 0 ? "più tardi" : "più presto"} di ${oreMinuti(Math.abs(min))}`;
 }
 
 /** «7 h 30 min» */
 export function oreMinuti(min: number): string {
   const h = Math.floor(min / 60);
   const m = Math.round(min % 60);
+  if (!h) return `${m} min`;
   return m ? `${h} h ${m} min` : `${h} h`;
 }
 
@@ -538,6 +645,8 @@ export function rigaVoce(v: VoceDiario): string {
     const p = [`A letto ${v.dati.aLetto}, in piedi ${v.dati.inPiedi}`, QUALITA_SONNO[v.dati.qualita].toLowerCase()];
     if (v.dati.addormentarsiMin !== null) p.push(`${v.dati.addormentarsiMin} min per addormentarsi`);
     if (v.dati.risvegli !== null) p.push(v.dati.risvegli === 1 ? "1 risveglio" : `${v.dati.risvegli} risvegli`);
+    if (v.dati.svegliMin != null) p.push(`${v.dati.svegliMin} min svegli di notte`);
+    if (v.dati.sveglia) p.push(`sveglio dalle ${v.dati.sveglia}`);
     return p.join(" · ");
   }
   if (v.diario === "peso") return kgTesto(v.dati.kg);

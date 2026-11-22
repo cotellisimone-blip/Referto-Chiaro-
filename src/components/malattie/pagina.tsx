@@ -6,6 +6,7 @@ import { GLOSSARY } from "@/content/glossario";
 import { MALATTIE_BOZZA, getMalattia, malattiaHref, type Malattia } from "@/content/malattie";
 import { getDiario } from "@/domain/diari/catalogo";
 import { MalattieSimboli } from "./simboli";
+import { SonnoPorte } from "@/components/sonno/porte";
 import "@/components/temi/temi.css";
 import "@/components/diari/diari.css";
 import "./malattie.css";
@@ -27,6 +28,8 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
   const diario = m.diario ? getDiario(m.diario.slug) : null;
   const esamiTool = m.esami.length ? `/strumenti/domande-per-il-medico?esami=${m.esami.map((e) => e.guida).join(",")}` : "/strumenti/domande-per-il-medico";
   const indice = [
+    // 22/11/2026: l'area sonno ha la sua sezione, con le porte in cima.
+    ...(m.slug === "sonno" ? [{ id: "sonno-porte", label: "Da dove parti" }] : []),
     { id: "che-cose", label: "Che cos’è" },
     ...(m.inNumeri ? [{ id: "in-numeri", label: "In numeri" }] : []),
     { id: "come-si-manifesta", label: "Come si manifesta" },
@@ -116,6 +119,8 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
           </nav>
         </div>
       </section>
+
+      {m.slug === "sonno" ? <SonnoPorte /> : null}
 
       <section className="ht-sec ml-sec" id="che-cose" aria-labelledby="che-cose-t">
         <div className="ht-wrap">

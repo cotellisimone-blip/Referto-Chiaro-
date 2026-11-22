@@ -4,6 +4,7 @@ import { GLOSSARY } from "@/content/glossario";
 import { AREAS } from "@/content/punto-di-partenza";
 import { INTEGRATORI } from "@/content/integratori";
 import { MALATTIE } from "@/content/malattie";
+import { AUTOVALUTAZIONI, SONNO_PAGINE } from "@/content/sonno";
 import { GLOSSARY_UPDATED, PAGES_UPDATED, absoluteUrl, glossaryIndexable, guideIndexable, indexingEnabled, integratoreIndexable, malattiaIndexable } from "@/lib/seo";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { isDoctorPath, mediciEnabled } from "@/lib/medici";
@@ -32,6 +33,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...INTEGRATORI.filter((i) => integratoreIndexable(i)).map((i) => ({ url: absoluteUrl(`/integratori/${i.slug}`), lastModified: new Date(i.lastUpdated), changeFrequency: "monthly" as const, priority: 0.6 })),
     // 22/11/2026: le pagine per malattia solo quando un medico le ha rivedute.
     ...MALATTIE.filter((m) => malattiaIndexable(m)).map((m) => ({ url: absoluteUrl(`/malattie/${m.slug}`), lastModified: new Date(m.aggiornato), changeFrequency: "monthly" as const, priority: 0.7 })),
+    // 22/11/2026: la sezione sonno, con la stessa regola.
+    ...[...SONNO_PAGINE, ...AUTOVALUTAZIONI].filter((p) => malattiaIndexable(p)).map((p) => ({ url: absoluteUrl(`/malattie/sonno/${p.slug}`), lastModified: new Date(p.aggiornato), changeFrequency: "monthly" as const, priority: 0.6 })),
     ...(glossaryIndexable() ? GLOSSARY : []).map((e) => ({ url: absoluteUrl(`/glossario/${e.slug}`), lastModified: new Date(GLOSSARY_UPDATED), changeFrequency: "monthly" as const, priority: 0.4 })),
   ];
 }

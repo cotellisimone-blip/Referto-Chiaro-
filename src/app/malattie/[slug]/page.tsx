@@ -11,7 +11,8 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/malattie/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const m = getMalattia(slug);
-  if (!m) return {};
+  // notFound() anche qui: i metadati si risolvono prima dello streaming, così l'indirizzo sbagliato risponde 404 e non 200.
+  if (!m) notFound();
   return {
     title: pageTitle(m.seoTitle),
     description: m.metaDescription,

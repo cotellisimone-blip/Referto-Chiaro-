@@ -1,8 +1,8 @@
 import type { Malattia } from "../schema";
 
 /**
- * Area sonno: nasce come pagina principale sull'insonnia, con le apnee notturne nominate. La sezione sonno «molto
- * tecnica» chiesta da Simone (22/11/2026) arriverà dopo, sotto /malattie/sonno/{argomento}: questa pagina resta il capo.
+ * Area sonno: pagina principale sull'insonnia e capo della sezione sonno (22/11/2026), che vive sotto
+ * /malattie/sonno/{argomento} (src/content/sonno): le porte per problema compaiono in cima a questa pagina.
  */
 export const SONNO: Malattia = {
   slug: "sonno",
@@ -12,7 +12,7 @@ export const SONNO: Malattia = {
   altriNomi: ["insonnia cronica", "disturbi del sonno", "dormire male", "apnee notturne"],
   tono: "vi",
   icona: "luna",
-  riga: "Dormire male per settimane non è un destino. Che cos'è l'insonnia, le apnee notturne e che cosa aiuta davvero.",
+  riga: "Dormire male per settimane non è un destino. Si entra dal problema, con un percorso di due settimane e un foglio per il medico.",
   seoTitle: "Insonnia: cause, apnee notturne e che cosa fare",
   metaDescription: "Insonnia e sonno disturbato: quando diventa cronica, che cosa sono le apnee notturne, le abitudini che aiutano e perché un diario del sonno serve.",
   titolo: "Insonnia:",
@@ -91,11 +91,7 @@ export const SONNO: Malattia = {
     "insonnia",
     "dormire male",
     "non riesco a dormire",
-    "risvegli notturni",
-    "mi sveglio di notte",
     "svegliarsi presto",
-    "apnee notturne",
-    "russare",
     "sonno disturbato",
     "disturbi del sonno",
     "stanchezza al mattino",

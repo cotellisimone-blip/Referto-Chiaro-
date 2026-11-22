@@ -23,6 +23,9 @@ import {
   riepilogoPressione,
   riepilogoRespiro,
   riepilogoSonno,
+  scartoBreve,
+  sonnoStimato,
+  efficienzaNotte,
   type VoceDiario,
 } from "./voci";
 
@@ -295,7 +298,15 @@ export async function renderDiarioVuoto(d: Diario, opts: { fonts?: DiarioFonts |
 export async function renderFoglioMedico(
   d: Diario,
   voci: VoceDiario[],
-  opts: { persona: string; giorni: number; oggi: string; fonts?: DiarioFonts | null; date?: Date },
+  opts: {
+    persona: string;
+    giorni: number;
+    oggi: string;
+    fonts?: DiarioFonts | null;
+    date?: Date;
+    /** 22/11/2026, sezione sonno: righe delle autovalutazioni scelte dalla persona (già scritte per il medico). */
+    autovalutazioni?: string[];
+  },
 ): Promise<Uint8Array> {
   const date = opts.date ?? new Date();
   const c = await open(`Cura Privata — Foglio per il medico: ${d.nome}`, "Valori scritti dalla persona; medie calcolate, senza valutazioni.", opts.fonts, date);
@@ -306,8 +317,9 @@ export async function renderFoglioMedico(
   y = para(c, `Periodo: dal ${dataIt(dal)} al ${dataIt(opts.oggi)} · ${xs.length} ${xs.length === 1 ? "voce" : "voci"}. I valori li ha scritti la persona, con il suo apparecchio; il sito ha calcolato le medie e non le valuta.`, M, y, W, { size: 9, color: MUTED, lead: 11.5 });
   y -= 8;
 
-  // Riquadri del riepilogo
+  // Riquadri del riepilogo (il sonno ne ha una seconda fila, dal 22/11/2026)
   const boxes: { t: string; v: string; s: string }[] = [];
+  const boxes2: { t: string; v: string; s: string }[] = [];
   if (d.slug === "pressione") {
     const r = riepilogoPressione(voci, opts.giorni, opts.oggi);
     boxes.push(
@@ -327,6 +339,12 @@ export async function renderFoglioMedico(
       { t: "Per addormentarsi, media", v: r.addormentarsiMin !== null ? `${r.addormentarsiMin} min` : "—", s: "stima della persona" },
       { t: "Risvegli, media", v: r.risvegli !== null ? String(r.risvegli).replace(".", ",") : "—", s: "per notte" },
       { t: "Com'è andata", v: `${r.perQualita.bene} bene`, s: `così così ${r.perQualita.cosi} · male ${r.perQualita.male}` },
+    );
+    boxes2.push(
+      { t: "Sonno stimato, media", v: r.sonnoMin !== null ? oreMinuti(r.sonnoMin) : "—", s: `${r.nottiComplete} notti con tutti i numeri · svegli di notte ${r.svegliMin !== null ? `${r.svegliMin} min` : "—"}` },
+      { t: "Efficienza del sonno", v: r.efficienza !== null ? `${r.efficienza}%` : "—", s: "sonno stimato / tempo a letto (Consensus Sleep Diary)" },
+      { t: "Variabilità degli orari", v: r.variabilitaLetto !== null ? `± ${r.variabilitaLetto} min` : "—", s: r.variabilitaInPiedi !== null ? `a letto · in piedi ± ${r.variabilitaInPiedi} min (dev. standard)` : "servono almeno 4 notti" },
+      { t: "Notti oltre 30 minuti", v: `${r.nottiAddormentarsiOltre30} · ${r.nottiSvegliOltre30}`, s: `per addormentarsi · svegli di notte${r.scartoFineSettimana !== null ? ` · fine sett. ${scartoBreve(r.scartoFineSettimana)}` : ""}` },
     );
   } else if (d.slug === "peso") {
     const r = riepilogoPeso(voci, opts.giorni, opts.oggi);
@@ -353,15 +371,27 @@ export async function renderFoglioMedico(
       { t: "Durata media", v: r.durataMedia !== null ? durataTesto(r.durataMedia) : "—", s: "degli episodi con durata" },
     );
   }
-  const bw = (W - 10 * (boxes.length - 1)) / boxes.length;
-  boxes.forEach((b, i) => {
-    const x = M + i * (bw + 10);
-    c.page.drawRectangle({ x, y: y - 62, width: bw, height: 62, color: MIST });
-    para(c, b.t, x + 8, y - 6, bw - 16, { size: 7.8, font: c.bold, color: SAGE_DEEP, lead: 9.5, maxLines: 2 });
-    txt(c, b.v, x + 8, y - 42, 17, c.bold, INK);
-    para(c, b.s, x + 8, y - 46, bw - 16, { size: 7, color: MUTED, lead: 8.5, maxLines: 2 });
-  });
-  y -= 76;
+  for (const fila of [boxes, boxes2]) {
+    if (!fila.length) continue;
+    const bw = (W - 10 * (fila.length - 1)) / fila.length;
+    fila.forEach((b, i) => {
+      const x = M + i * (bw + 10);
+      c.page.drawRectangle({ x, y: y - 62, width: bw, height: 62, color: MIST });
+      para(c, b.t, x + 8, y - 6, bw - 16, { size: 7.8, font: c.bold, color: SAGE_DEEP, lead: 9.5, maxLines: 2 });
+      txt(c, b.v, x + 8, y - 42, 17, c.bold, INK);
+      para(c, b.s, x + 8, y - 46, bw - 16, { size: 7, color: MUTED, lead: 8.5, maxLines: 2 });
+    });
+    y -= 72;
+  }
+  y -= 4;
+
+  // Autovalutazioni fatte sul sito (solo se la persona le ha aggiunte)
+  if (opts.autovalutazioni?.length) {
+    etichetta(c, "Autovalutazioni fatte sul sito (questionari di orientamento, non validati)", M, y);
+    y -= 13;
+    for (const r of opts.autovalutazioni.slice(0, 4)) y = para(c, `• ${r}`, M, y, W, { size: 8.2, color: INK, lead: 10.5, maxLines: 2 }) - 2;
+    y -= 8;
+  }
 
   // Calendario del mal di testa
   if (d.slug === "cefalea") {
@@ -415,29 +445,34 @@ export async function renderFoglioMedico(
     rows = xs.map((x) => (x.diario === "glicemia" ? [giornoBreve(dayOf(x.at)), x.at.slice(11), MOMENTI_GLICEMIA[x.dati.momento], String(x.dati.mgdl), x.note ?? ""] : []));
   } else if (d.slug === "sonno") {
     cols = [
-      { t: "Mattino del", w: 13 },
-      { t: "A letto", w: 9 },
-      { t: "In piedi", w: 9 },
-      { t: "Tempo a letto", w: 12 },
-      { t: "Per addormentarsi", w: 12 },
-      { t: "Risvegli", w: 9 },
-      { t: "Com'è andata", w: 11 },
-      { t: "Note", w: 25 },
+      { t: "Mattino del", w: 11 },
+      { t: "A letto", w: 7 },
+      { t: "In piedi", w: 7 },
+      { t: "Tempo a letto", w: 10 },
+      { t: "Per addorm.", w: 9 },
+      { t: "Risvegli", w: 8, sub: "volte · min" },
+      { t: "Sveglio dalle", w: 8 },
+      { t: "Sonno stimato", w: 10, sub: "efficienza" },
+      { t: "Com'è andata", w: 9 },
+      { t: "Note", w: 21 },
     ];
-    rows = xs.map((x) =>
-      x.diario === "sonno"
-        ? [
-            giornoBreve(dayOf(x.at)),
-            x.dati.aLetto,
-            x.dati.inPiedi,
-            oreMinuti(minutiTra(x.dati.aLetto, x.dati.inPiedi)),
-            x.dati.addormentarsiMin !== null ? `${x.dati.addormentarsiMin} min` : "",
-            x.dati.risvegli !== null ? String(x.dati.risvegli) : "",
-            QUALITA_SONNO[x.dati.qualita],
-            x.note ?? "",
-          ]
-        : [],
-    );
+    rows = xs.map((x) => {
+      if (x.diario !== "sonno") return [];
+      const st = sonnoStimato(x.dati);
+      const ris = [x.dati.risvegli !== null ? String(x.dati.risvegli) : "", x.dati.svegliMin != null ? `${x.dati.svegliMin} min` : ""].filter(Boolean).join(" · ");
+      return [
+        giornoBreve(dayOf(x.at)),
+        x.dati.aLetto,
+        x.dati.inPiedi,
+        oreMinuti(minutiTra(x.dati.aLetto, x.dati.inPiedi)),
+        x.dati.addormentarsiMin !== null ? `${x.dati.addormentarsiMin} min` : "",
+        ris,
+        x.dati.sveglia ?? "",
+        st !== null ? `${oreMinuti(st)} · ${efficienzaNotte(x.dati)}%` : "",
+        QUALITA_SONNO[x.dati.qualita],
+        x.note ?? "",
+      ];
+    });
   } else if (d.slug === "peso") {
     cols = [
       { t: "Giorno", w: 14 },

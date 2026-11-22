@@ -3,6 +3,7 @@ import { GUIDE_CATEGORIES } from "@/content/guides/schema";
 import { GLOSSARY } from "@/content/glossario";
 import { INTEGRATORI, INTEGRATORI_GROUPS } from "@/content/integratori";
 import { MALATTIE } from "@/content/malattie";
+import { AUTOVALUTAZIONI, SONNO_PAGINE } from "@/content/sonno";
 import { MAIN_NAV, FOOTER_NAV, LEGAL_NAV, EXTRA_PAGES } from "@/components/site/nav";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { isDoctorPath, mediciEnabled } from "@/lib/medici";
@@ -123,6 +124,17 @@ export function buildSearchIndex(): SearchItem[] {
     context: `${m.area} · ${shorten(m.riga, 90)}`,
     aliases: [m.nomeMedico, ...m.altriNomi, ...m.ricerche],
   }));
+  // 22/11/2026: la sezione sonno, pagina per pagina, con le frasi di chi dorme male.
+  const sonno: SearchItem[] = [
+    ...SONNO_PAGINE.map((p) => ({ kind: "malattia" as const, title: p.porta, href: `/malattie/sonno/${p.slug}`, context: `Sonno · ${shorten(p.riga, 90)}`, aliases: p.ricerche })),
+    ...AUTOVALUTAZIONI.map((a) => ({
+      kind: "malattia" as const,
+      title: `Autovalutazione: ${a.porta.toLowerCase()}`,
+      href: `/malattie/sonno/${a.slug}`,
+      context: `Sonno · ${a.domande.length} domande scritte da noi, con le fonti`,
+      aliases: ["test", "questionario", "autovalutazione", `test ${a.porta.toLowerCase()}`],
+    })),
+  ];
   const seen = new Set<string>();
   const pages: SearchItem[] = [];
   const add = (href: string, label: string, section: string) => {
@@ -138,7 +150,7 @@ export function buildSearchIndex(): SearchItem[] {
   for (const l of [...EXTRA_PAGES, ...LEGAL_NAV]) add(l.href, l.label, "Cura Privata");
   add("/strumenti", "Strumenti gratuiti", "Gratis");
   add("/glossario", "Glossario", "Gratis");
-  return [...malattie, ...guides, ...supplements, ...terms, ...pages];
+  return [...malattie, ...sonno, ...guides, ...supplements, ...terms, ...pages];
 }
 
 function shorten(s: string, max: number) {
