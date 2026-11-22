@@ -4,6 +4,7 @@ import { Logo } from "@/components/brand/logo";
 import { Wave } from "@/components/ui/wave";
 import { FOOTER_NAV, LEGAL_NAV, PERCORSO } from "./nav";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
+import { mediciEnabled } from "@/lib/medici";
 import { readTitolare } from "@/domain/titolare";
 import { PAYOFF } from "@/domain/offerta";
 import { SITE_URL } from "@/lib/seo";
@@ -26,6 +27,7 @@ function OwnerLine() {
  */
 export function SiteFooter() {
   const pdp = puntoDiPartenzaEnabled();
+  const medici = mediciEnabled();
   return (
     <footer className="site-footer no-print">
       {/* L'onda prende il colore della pagina: per questo sta fuori dallo «scope» scuro. */}
@@ -41,7 +43,8 @@ export function SiteFooter() {
                   <b aria-hidden>{p.n}</b>
                   <span>
                     {p.label}
-                    <small>{p.desc}</small>
+                    {/* Con i medici spenti il passo 4 non promette il secondo parere (vedi src/lib/medici.ts). */}
+                    <small>{p.n === 4 && !medici ? "In arrivo" : p.desc}</small>
                   </span>
                 </Link>
               </li>
