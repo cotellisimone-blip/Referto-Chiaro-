@@ -113,6 +113,14 @@ svg.hb-ic{width:1.15em;height:1.15em;flex:none}
 .hb-t-end{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem .7rem}
 .hb-t-end .hb-chips{margin:0;padding:0}
 .hb-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:54px;padding:0 1.35rem;border-radius:999px;font:800 1.02rem var(--sans);text-decoration:none;border:0;background:var(--btn-bg);color:var(--btn-fg);box-shadow:var(--btn-sh,none);cursor:pointer;white-space:nowrap}
+/* 22/11/2026 (analisi di chiarezza, punti 10–11): il primo pulsante è gratuito, e una riga dice che cosa si paga */
+.hb-start{margin-top:1rem;width:100%;max-width:26rem}
+.hb-start .hb-ic{width:1.15em;height:1.15em}
+.hb-free{margin-top:.6rem;font-size:.9rem;line-height:1.45;color:var(--soft);max-width:34rem;text-wrap:pretty}
+.hb-free b{color:var(--ink);font-weight:800}
+html:root .hb-home .hb-num.hb-num-plus{width:auto;min-width:32px;padding:0 .45rem;border-radius:999px}
+.hb-doc-o .hb-price.hb-price-soon{font-size:1.1rem;letter-spacing:0}
+@media(min-width:768px){.hb-start{width:auto}}
 svg.hb-art{position:absolute;right:-16px;top:-16px;width:88px;height:88px;opacity:.13;color:var(--ta);z-index:-1;stroke-width:1.6}
 .hb-num{position:absolute;top:.8rem;right:.8rem;font:italic 600 1rem/1 var(--serif);display:grid;place-items:center}
 .hb-answers{display:flex;flex-wrap:wrap;gap:.4rem}
@@ -155,7 +163,11 @@ svg.hb-art{position:absolute;right:-16px;top:-16px;width:88px;height:88px;opacit
 .hb-w-and .hb-pt{fill:none;stroke:currentColor;stroke-width:8;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .hb-w-and .hb-ul{stroke-width:11}
 .hb-w-and .hb-uc{stroke:var(--mini-solid,#fff);stroke-width:4.5;stroke-linecap:round;fill:none;vector-effect:non-scaling-stroke}
-.hb-w-scaf svg{height:76px}
+.hb-w-scaf svg,.hb-w-sp svg{height:76px}
+.hb-w-sp .hb-f1{fill:var(--mini-solid,#fff);stroke:currentColor;stroke-width:2}
+.hb-w-sp .hb-f2{fill:color-mix(in srgb,currentColor 30%,transparent);stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.hb-w-sp .hb-lb{fill:currentColor}
+.hb-w-sp .hb-ln{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .hb-w-scaf .hb-f1{fill:color-mix(in srgb,currentColor 16%,transparent);stroke:currentColor;stroke-width:2}
 .hb-w-scaf .hb-f2{fill:color-mix(in srgb,currentColor 40%,transparent);stroke:currentColor;stroke-width:2}
 .hb-w-scaf .hb-lb{fill:var(--mini-solid,#fff);stroke:currentColor;stroke-width:1.5}
@@ -191,9 +203,9 @@ svg.hb-art{position:absolute;right:-16px;top:-16px;width:88px;height:88px;opacit
   .hb-c4 .hb-gp{flex:1.15}
   .hb-c1 .hb-tile{padding:1.8rem}
   .hb-t-wide h3{font-size:2.1rem}
-  .hb-k-sh.hb-tile{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center;gap:.5rem 1.6rem}
-  .hb-k-sh.hb-tile > *{grid-column:1}
-  .hb-k-sh.hb-tile > .hb-mini{grid-column:2;grid-row:1/span 4;margin:0}
+  .hb-k-sh.hb-tile,.hb-k-sp.hb-tile{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center;gap:.5rem 1.6rem}
+  .hb-k-sh.hb-tile > *,.hb-k-sp.hb-tile > *{grid-column:1}
+  .hb-k-sh.hb-tile > .hb-mini,.hb-k-sp.hb-tile > .hb-mini{grid-column:2;grid-row:1/span 4;margin:0}
 }
 .hb-gp{display:grid;gap:.4rem;width:100%;padding:.7rem;border-radius:18px;background:var(--gp-bg,#f4f8f6);border:1px solid var(--gp-line,var(--line));min-width:0}
 .hb-gp-h{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font:600 1.05rem var(--serif);padding:.1rem .25rem .2rem}

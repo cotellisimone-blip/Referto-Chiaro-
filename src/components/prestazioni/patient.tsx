@@ -99,7 +99,10 @@ export function PatientHome() {
       <header>
         <p className="eyebrow">{DEMO_PATIENT.name} · paziente di prova</p>
         <h1 className="area-title mt-3">Le tue richieste</h1>
-        <p className="area-lead">Qui chiedi una visita a domicilio, un videoconsulto o un secondo parere e segui ogni richiesta, dalla risposta del medico al riepilogo scritto.</p>
+        <p className="area-lead">
+          {/* 22/11/2026 (analisi di chiarezza, punto 33): senza domicilio non lo promettiamo. */}
+          Qui chiedi {domicilioEnabled() ? "una visita a domicilio, un videoconsulto o un secondo parere" : "un videoconsulto o un secondo parere"} e segui ogni richiesta, dalla risposta del medico al riepilogo scritto.
+        </p>
       </header>
       {paths.roles ? <DemoNotice /> : null}
       {active.length ? (

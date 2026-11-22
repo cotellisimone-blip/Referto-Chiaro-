@@ -26,7 +26,7 @@ const KIND: Record<SearchKind, { label: string; Icon: typeof FileText }> = {
 
 const NO_RESULT_LINKS = [
   { href: "/prevenzione", label: "Prevenzione: quali esami conoscere", Icon: HeartPulse },
-  { href: "/lettura-referti", label: "Lettura referti: ho un referto da capire", Icon: FileText },
+  { href: "/lettura-referti", label: "Capisci il referto: ho un referto da capire", Icon: FileText },
   { href: "/medici", label: "Medici: vorrei parlare con una persona", Icon: Stethoscope },
 ];
 

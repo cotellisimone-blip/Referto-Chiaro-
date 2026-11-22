@@ -6,10 +6,12 @@ import { pickerServices, publicPricesEnabled } from "@/domain/offerta";
 import { offerItems } from "@/domain/prestazioni/offerta-completa";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
 import { PageLd } from "@/components/site/page-ld";
+import { DaDoveParto } from "@/components/offerta/da-dove-parto";
+import "@/components/offerta/offerta.css";
 
 export const metadata: Metadata = {
-  title: "Ti aiutiamo a scegliere",
-  description: "Rispondi a una domanda sul tuo bisogno: ti indichiamo il servizio di Cura Privata adatto, con prezzo e tempi. Nessuna domanda sui sintomi.",
+  title: "Da dove parto? Ti aiutiamo a scegliere",
+  description: "Cinque risposte, una per passo del percorso di Cura Privata: che cosa è gratis, che cosa costa e da dove cominciare. Nessuna domanda sui sintomi.",
   alternates: { canonical: "/inizia" },
 };
 
@@ -30,10 +32,14 @@ export default function IniziaPage() {
       <div className="container-rc page-hero-inner page-hero-flat">
         <p className="eyebrow">Ti aiutiamo a scegliere</p>
         <h1 id="inizia-titolo" className="page-title mt-4">
-          Da dove vuoi cominciare?
+          Da dove parto?
         </h1>
-        <p className="lead mt-5 max-w-[38rem]">Una risposta sola, su ciò che ti serve. Non è un consulto e non ti chiediamo nulla sulla tua salute.</p>
-        <div className="mt-8 sm:mt-11">
+        <p className="lead mt-5 max-w-[38rem]">Cinque risposte, una per passo. Tocca quella più vicina a te. Non è un consulto e non ti chiediamo nulla sulla tua salute.</p>
+        <div className="mt-7 sm:mt-9">
+          <DaDoveParto />
+        </div>
+        <h2 className="mt-12 text-[1.5rem] font-extrabold tracking-[-0.01em] text-ink sm:mt-14">Oppure: scegli un servizio</h2>
+        <div className="mt-5">
           <NeedPicker services={services} headingId="inizia-titolo" />
         </div>
         {medici ? null : <PrestoMedico className="mt-10" />}

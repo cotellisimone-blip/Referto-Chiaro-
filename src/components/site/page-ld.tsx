@@ -76,7 +76,7 @@ export function PageLd({
 export function capisciServiceLd() {
   if (!publicPricesEnabled()) return undefined;
   return {
-    name: "Lettura referti",
+    name: "Capisci il referto",
     description: "Spiegazione informativa, in parole semplici, di un referto di laboratorio. Automatica, senza medico: non è una diagnosi.",
     offers: [
       { name: "Primo referto", cents: capisciPriceCents(true), description: "Una volta per cliente." },

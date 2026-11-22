@@ -4,6 +4,7 @@ import { Jar } from "@/components/wow/jar";
 import { ArrowLeft, ArrowRight, BookOpen, MessageCircleQuestionMark, TriangleAlert } from "lucide-react";
 import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS, INTEGRATORI_PRIMA_DI_TUTTO, getIntegratore } from "@/content/integratori";
 import { getGuide } from "@/content/guides";
+import { ScaffaleStrip } from "@/components/scaffale/scaffale-strip";
 
 /** Scheda di un integratore: spiega, collega l'esame del referto, mette le domande per il medico accanto. */
 export function IntegratoreArticle({ slug }: { slug: string }) {
@@ -116,6 +117,10 @@ export function IntegratoreArticle({ slug }: { slug: string }) {
               </ul>
             </div>
           </aside>
+        </div>
+        {/* 22/11/2026 (analisi di chiarezza, punto 28): i prodotti di questa scheda, dopo la spiegazione e mai in mezzo. */}
+        <div className="tm-wrap">
+          <ScaffaleStrip scheda={i.slug} titolo={`${i.name}: alcuni prodotti nei negozi partner`} />
         </div>
       </section>
       <section className="ds-sec-light ds-sec-alt ds-sec-tight" aria-labelledby="i-altri">

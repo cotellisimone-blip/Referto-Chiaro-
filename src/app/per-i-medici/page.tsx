@@ -4,6 +4,7 @@ import { ArrowRight, BadgeCheck, FileLock2, Home, KeyRound, PenLine, ScrollText,
 import { PageHeader } from "@/components/ui/page-header";
 import { Method } from "@/components/offerta/method";
 import { DoctorCaseVisual } from "@/components/offerta/service-visuals";
+import { domicilioEnabled } from "@/lib/medici";
 
 export const metadata: Metadata = {
   title: "Per i medici",
@@ -20,12 +21,16 @@ const HOW = [
   { icon: BadgeCheck, title: "Iscrizione verificata", text: "Prima di attivarti controlliamo l'iscrizione all'Albo. Il tuo profilo pubblico mostra solo dati verificati." },
 ];
 
-/** Le tre prestazioni viste dal medico: che cosa gli si chiede, in una riga. Nessun compenso promesso. */
-const WORK = [
+/**
+ * Le prestazioni viste dal medico: che cosa gli si chiede, in una riga. Nessun compenso promesso.
+ * 22/11/2026 (analisi di chiarezza, punto 32): la visita a domicilio solo con il suo interruttore acceso.
+ */
+const WORK_ALL = [
   { icon: Home, tone: "medico", title: "Visita a domicilio", text: "Circa 45 minuti a casa del paziente, nell'area coperta. Accetti la fascia richiesta o ne proponi un'altra." },
   { icon: Video, tone: "medico", title: "Videoconsulto", text: "20–25 minuti in video, con i documenti scelti dal paziente già letti. Poi un breve riepilogo scritto." },
   { icon: PenLine, tone: "parere", title: "Secondo parere", text: "Un quesito circoscritto: lo accetti, chiedi altri documenti o lo rifiuti. Poi il video e la sintesi scritta." },
 ];
+const WORK = WORK_ALL.filter((w) => w.icon !== Home || domicilioEnabled());
 
 export default function Page() {
   return (

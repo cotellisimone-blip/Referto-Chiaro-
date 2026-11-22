@@ -22,7 +22,8 @@ export function StatoDomicilio({ attivo, dark = false, medici = false }: { attiv
   return attivo ? (
     <span className={`ds-state ds-state-prova${dark ? " ds-on-dark" : ""}`}>
       <i aria-hidden />
-      {medici ? "Medici a Brescia" : "A Brescia"}
+      {/* 22/11/2026 (analisi di chiarezza, punto 15): senza domicilio il medico è in video, da ovunque. */}
+      {domicilioEnabled() ? (medici ? "Medici a Brescia" : "A Brescia") : medici ? "Medici in video" : "In video"}
     </span>
   ) : (
     <span className={`ds-state ds-state-arrivo${dark ? " ds-on-dark" : ""}`}>
@@ -61,7 +62,7 @@ export function Porte({ attivo, entry, prices }: { attivo: boolean; entry: strin
           <span className="ds-door-ic" aria-hidden>
             <FileText className="tm-ic" />
           </span>
-          <span className="ds-door-k">Lettura referti</span>
+          <span className="ds-door-k">Capisci il referto</span>
           <span className="ds-door-t">Il tuo referto, in parole semplici</span>
           <span className="ds-door-d">Carichi il referto, controlli i valori e lo leggi spiegato riga per riga.</span>
           <span className="ds-door-f">
@@ -257,7 +258,7 @@ export function ServiziMedico({ prices, attivo, dark = false, onSection = false 
 export type Passo = 1 | 2 | 3 | 4 | 5;
 /** Il colore di ogni passo riprende quello delle tre sezioni di prima: 1–2 inchiostro e menta, 3 menta, 4 pesca, 5 menta. */
 export const PASSO_TONO: Record<Passo, 1 | 2 | 3> = { 1: 1, 2: 1, 3: 2, 4: 3, 5: 1 };
-export const PASSO_NOME: Record<Passo, string> = { 1: "Inizia da te", 2: "I controlli per te", 3: "Capisci i referti", 4: "Un medico", 5: "Prenditi cura di te" };
+export const PASSO_NOME: Record<Passo, string> = { 1: "Inizia da te", 2: "Gli esami per te", 3: "Capisci il referto", 4: "Un medico", 5: "Prenditi cura di te" };
 
 /**
  * Proposta 16/11/2026, rifatta il 22/11/2026: il percorso in cinque passi (lo stesso del menu), in testa alle pagine
@@ -266,8 +267,8 @@ export const PASSO_NOME: Record<Passo, string> = { 1: "Inizia da te", 2: "I cont
 export function PercorsoSezioni({ current }: { current?: Passo | null }) {
   const steps = [
     { n: 1, href: "/punto-di-partenza", t: "Inizia da te", s: "Inizia" },
-    { n: 2, href: PREVENZIONE_HREF, t: "I controlli per te", s: "Esami" },
-    { n: 3, href: REFERTI_HREF, t: "Capisci i referti", s: "Referti" },
+    { n: 2, href: PREVENZIONE_HREF, t: "Gli esami per te", s: "Esami" },
+    { n: 3, href: REFERTI_HREF, t: "Capisci il referto", s: "Referti" },
     { n: 4, href: MEDICI_HREF, t: "Un medico", s: "Medico" },
     { n: 5, href: CURA_HREF, t: "Prenditi cura di te", s: "Cura di te" },
   ] as const;

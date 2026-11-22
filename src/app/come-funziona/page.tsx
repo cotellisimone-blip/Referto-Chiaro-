@@ -2,12 +2,13 @@ import { pageTitle } from "@/lib/seo";
 import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Ban, Check, ClipboardList, FlaskConical, LineChart, LockKeyhole, X, type LucideIcon } from "lucide-react";
+import { ArrowRight, Ban, Check, Compass, FlaskConical, HeartPulse, Leaf, LockKeyhole, Stethoscope, X, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { OFFER_ICON } from "@/components/offerta/service-triad";
 import { offerItems, type OfferKey } from "@/domain/prestazioni/offerta-completa";
-import { domicilioEnabled, mediciEnabled } from "@/lib/medici";
+import { mediciEnabled } from "@/lib/medici";
+import { PERCORSO } from "@/components/site/nav";
 import { PageLd } from "@/components/site/page-ld";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) la pagina racconta il referto, il tempo e la visita dal proprio medico. */
@@ -31,18 +32,24 @@ const HOW: Record<OfferKey, { you: string; get: string }> = {
 
 type HowCard = { key: string; tone: string; href: string; name: string; Icon: LucideIcon; you: string; get: string; go: string };
 
-/** Le schede della pagina: i servizi del listino, oppure (senza medici) il referto, il tempo e la visita. */
+/**
+ * Le schede della pagina: i cinque passi del percorso, come nel menu e nella home.
+ * 22/11/2026 (analisi di chiarezza, punto 31, sì di Simone): prima erano i servizi del listino, un ordine diverso dal resto
+ * del sito. Il passo 3 e il passo 4 prendono nome e testi dal listino; il medico solo con l'interruttore acceso.
+ */
 function howCards(): HowCard[] {
-  const services: HowCard[] = offerItems()
-    .filter((s) => MEDICI || !s.kind)
-    // 22/11/2026: la visita a domicilio solo con il suo interruttore acceso.
-    .filter((s) => s.key !== "domicilio" || domicilioEnabled())
-    .map((s) => ({ key: s.key, tone: s.tone, href: s.href, name: s.name, Icon: OFFER_ICON[s.icon], ...HOW[s.key], go: "Scopri il servizio" }));
-  if (MEDICI) return services;
+  const items = offerItems();
+  const capisci = items.find((s) => s.key === "capisci")!;
+  const video = items.find((s) => s.key === "video");
+  const p = (n: number) => PERCORSO.find((x) => x.n === n)!;
   return [
-    ...services,
-    { key: "tempo", tone: "capisci", href: "/famiglia", name: "Nel tempo, per tutta la famiglia", Icon: LineChart, you: "Aggiungi i referti man mano, tuoi e dei tuoi familiari.", get: "I numeri in fila negli anni e un promemoria quando serve.", go: "Scopri" },
-    { key: "visita", tone: "partenza", href: "/strumenti/preparati-alla-visita", name: "Preparati alla visita", Icon: ClipboardList, you: "Rispondi a tre domande pratiche, senza registrarti.", get: "La lista di cosa portare e che cosa chiedere al tuo medico.", go: "Apri lo strumento" },
+    { key: "passo-1", tone: "partenza", href: p(1).href, name: `1 · ${p(1).label}`, Icon: Compass, you: "Rispondi a poche domande, senza registrarti e senza sintomi.", get: "La tua mappa: che cosa sai già, che cosa chiedere al medico. Gratis.", go: "Comincia" },
+    { key: "passo-2", tone: "partenza", href: p(2).href, name: `2 · ${p(2).label}`, Icon: HeartPulse, you: "Guardi gli esami di base e gli screening per la tua età.", get: "Che cosa misura ogni esame e quali screening sono gratuiti. Gratis.", go: "Apri" },
+    { key: "passo-3", tone: capisci.tone, href: capisci.href, name: `3 · ${p(3).label}`, Icon: OFFER_ICON[capisci.icon], ...HOW.capisci, go: "Scopri il servizio" },
+    MEDICI && video
+      ? { key: "passo-4", tone: video.tone, href: p(4).href, name: `4 · ${p(4).label}`, Icon: OFFER_ICON[video.icon], ...HOW.video, go: "Scopri" }
+      : { key: "passo-4", tone: "medico", href: p(4).href, name: `4 · ${p(4).label}`, Icon: Stethoscope, you: "Lasci l'email, se vuoi.", get: "Un medico in video, con i tuoi referti già letti: in arrivo. Ti avvisiamo quando parte.", go: "Scopri" },
+    { key: "passo-5", tone: "partenza", href: p(5).href, name: `5 · ${p(5).label}`, Icon: Leaf, you: "Scegli un tema: sonno, alimentazione, intestino, integratori.", get: "Percorsi e schede spiegati, con le domande per il medico. Gratis.", go: "Apri" },
   ];
 }
 
@@ -59,7 +66,7 @@ export default function ComeFunzionaPage() {
   return (
     <>
       <PageLd path="/come-funziona" meta={metadata} name="Come funziona" />
-      <PageHeader eyebrow="Come funziona" title="Scegli tu fin dove arrivare." lead={MEDICI ? "Puoi fermarti al referto spiegato, o andare avanti con un medico. I documenti che carichi restano nella tua area: non li ricarichi." : "Puoi fermarti al referto spiegato, o tenerlo nel tuo spazio: lo ritrovi in fila con gli altri, negli anni, e arrivi alla visita con le domande pronte."}>
+      <PageHeader eyebrow="Come funziona" title="Scegli tu fin dove arrivare." lead={MEDICI ? "Cinque passi, dal conoscerti al prenderti cura di te. Molti sono gratis; paghi solo il referto spiegato e il medico. I documenti che carichi restano nel tuo spazio: non li ricarichi." : "Cinque passi, dal conoscerti al prenderti cura di te. Molti sono gratis; paghi solo il referto spiegato. Lo ritrovi nel tuo spazio, in fila con gli altri, e arrivi alla visita con le domande pronte."}>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
           <Link href="/referti/esempio" className="btn btn-primary btn-lg sm:shrink-0">
             Prova con un referto di esempio <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
@@ -71,7 +78,7 @@ export default function ComeFunzionaPage() {
       <section aria-labelledby="percorso-titolo" className="section">
         <div className="container-rc">
           <h2 id="percorso-titolo" className="display-lg max-w-3xl">
-            Che cosa fai tu, che cosa ricevi.
+            Cinque passi: che cosa fai tu, che cosa ricevi.
           </h2>
           <ol className="how-grid mt-7 sm:mt-10">
             {howCards().map((s) => {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
 import { DraftNotice, Prose } from "@/components/ui/draft-notice";
-import { mediciEnabled } from "@/lib/medici";
+import { domicilioEnabled, mediciEnabled } from "@/lib/medici";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) restano solo le condizioni di ciò che si offre davvero. */
 const MEDICI = mediciEnabled();
@@ -34,7 +34,8 @@ export default function Page() {
             <h2>Prestazioni con un medico (condizioni previste)</h2>
             <ul>
               <li>Videoconsulto: circa 20–25 minuti in video con un medico di medicina generale, che legge prima i documenti scelti da te. Dopo il colloquio ricevi un breve riepilogo scritto.</li>
-              <li>Visita a domicilio: un medico di medicina generale a casa, per esigenze non urgenti, nelle zone coperte. Al termine ricevi un riepilogo scritto e, se il medico lo ritiene, una prescrizione su ricetta bianca.</li>
+              {/* 22/11/2026 (analisi di chiarezza, punto 32): la visita a domicilio solo con il suo interruttore acceso. */}
+              {domicilioEnabled() ? <li>Visita a domicilio: un medico di medicina generale a casa, per esigenze non urgenti, nelle zone coperte. Al termine ricevi un riepilogo scritto e, se il medico lo ritiene, una prescrizione su ricetta bianca.</li> : null}
               <li>Secondo parere: un quesito circoscritto rivolto a uno specialista, che esamina la documentazione pertinente, ne parla con te in video e consegna una sintesi scritta, firmata e non modificabile.</li>
               <li>I documenti e il quesito vengono condivisi con il medico solo con un consenso specifico, dato al momento della richiesta.</li>
               <li>Il medico può chiedere altri documenti o non accettare la richiesta, indicando il motivo: in quel caso non c&apos;è addebito.</li>

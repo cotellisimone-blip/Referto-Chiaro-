@@ -154,7 +154,7 @@ export default function MediciPage() {
             </div>
             <p>
               {attivo
-                ? `${nomiMedici()}: medici di medicina generale a Brescia. Ognuno ha la sua scheda; cognome e iscrizione all’Ordine compaiono qui appena completati, e li leggi sempre prima di pagare.`
+                ? `${nomiMedici()}: medici di medicina generale a Brescia${dom ? "" : ", in video ovunque tu sia"}. Ognuno ha la sua scheda; cognome e iscrizione all’Ordine compaiono qui appena completati, e li leggi sempre prima di pagare.`
                 : "Lavoreremo solo con medici iscritti all’Ordine e verificati, ciascuno con la sua scheda: nome, iscrizione, zona e che cosa fa. Li presenteremo quando avremo i contratti firmati."}
             </p>
           </div>
@@ -345,7 +345,7 @@ export default function MediciPage() {
             </span>
             <span>
               <span className="ds-sec-tag ds-sec-tag-2">
-                <span>3</span> Capisci i referti
+                <span>3</span> Capisci il referto
               </span>
               <span id="dom-ponte" className="ds-bridge-t">
                 Prima o dopo la visita: il tuo referto spiegato in parole semplici.

@@ -41,10 +41,11 @@ const fraunces = localFont({
 
 export const metadata: Metadata = {
   // 17/11/2026 (20 interventi, punto 10): titolo e descrizione dicono le tre sezioni, come la prima schermata.
-  title: { default: "Cura Privata — previeni, capisci i referti, un medico se serve", template: "%s · Cura Privata" },
+  // 22/11/2026 (analisi di chiarezza): i cinque passi del percorso, come la prima schermata e il menu.
+  title: { default: "Cura Privata — conosciti, capisci il referto, prenditi cura di te", template: "%s · Cura Privata" },
   description: mediciEnabled()
-    ? "Prevenzione: quali esami conoscere, con guide gratuite. Lettura referti: il tuo referto in parole semplici. Medici: in video o a casa. Non è una diagnosi."
-    : "Prevenzione: quali esami conoscere, con guide gratuite. Lettura referti: il tuo referto spiegato in parole semplici. Medici: in arrivo. Non è una diagnosi.",
+    ? "Cinque passi per la tua salute: poche domande su di te, gli esami da conoscere, il referto spiegato, un medico in video, e ogni giorno sonno e alimentazione."
+    : "Cinque passi per la tua salute: poche domande su di te, gli esami da conoscere, il referto spiegato in parole semplici, e ogni giorno sonno e alimentazione.",
   robots: indexingEnabled() ? { index: true, follow: true } : { index: false, follow: false },
   metadataBase: new URL(SITE_URL),
 };

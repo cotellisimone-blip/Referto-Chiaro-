@@ -10,6 +10,7 @@ import { SONNO_BASE } from "@/content/sonno";
 import "@/components/home/tre-momenti.css";
 import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
+import { ScaffaleStrip } from "@/components/scaffale/scaffale-strip";
 
 export const metadata: Metadata = {
   title: "Prenditi cura di te: sonno, intestino, integratori",
@@ -222,6 +223,13 @@ export default function PrendersiCuraPage() {
               Passo 4: parla con un medico <ArrowRight aria-hidden className="tm-ic" />
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* 22/11/2026 (analisi di chiarezza, punto 28): lo Scaffale in fondo, dopo le spiegazioni e la regola del medico. */}
+      <section className="ds-sec-light ds-sec-tight">
+        <div className="tm-wrap">
+          <ScaffaleStrip />
         </div>
       </section>
     </div>

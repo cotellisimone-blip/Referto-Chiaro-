@@ -6,6 +6,8 @@ import { serviceStart } from "@/domain/offerta";
 import { MEDICI, datiMancanti, inizialiMedico, nomeMedico, nomiMedici } from "@/content/medici";
 import { buildGuidaPersonale, guidaEsempio } from "@/domain/reporting/guida-personale";
 import { FORBIDDEN_PHRASES } from "@/content/guides/schema";
+import { PRODOTTI_SCAFFALE } from "@/content/scaffale";
+import { getIntegratore } from "@/content/integratori";
 import { PREFS_INIT_SCRIPT, THEME_COLOR } from "@/lib/prefs-init";
 import type { ExplanationItem } from "@/domain/reporting/explanation-schema";
 
@@ -150,18 +152,32 @@ describe("le pagine delle tessere della home", () => {
     const home = readFileSync("src/components/home-b/home-b.tsx", "utf8");
     // 22/11/2026: la tessera del passo 2 diventa «Gli esami per te» (piano della home in cinque passi, approvato da Simone).
     expect(home).toContain("Gli esami per te");
-    expect(home).toContain("Senza ricetta*");
+    // 22/11/2026 (analisi di chiarezza): il chip diventa «Elenco gratis»; l'asterisco resta spiegato nella nota.
+    expect(home).toContain("Elenco gratis");
     expect(readFileSync(PAGINE[0], "utf8")).toContain("L’elenco degli");
     expect(home).toContain("Per preparare il tuo piano insieme al medico o al farmacista.");
     expect(home).toContain("Equilibrio intestinale: fibre, fermentati, probiotici");
     expect(readFileSync(PAGINE[1], "utf8")).toContain("Equilibrio intestinale:");
   });
 
-  it("lo Scaffale non mostra prodotti né aziende: è «In arrivo» e pubblica i criteri", () => {
+  it("lo Scaffale pubblica i criteri; i prodotti sono esempi dichiarati, senza prezzi né frasi sulla salute", () => {
     const s = readFileSync("src/app/scaffale/page.tsx", "utf8");
-    expect(s).toContain('stato="In arrivo"');
+    expect(s).toContain('"In arrivo"');
     expect(s).toContain("Criteri pubblici");
     expect(s).not.toMatch(/€|\bsconto\b|acquista/i);
+    // 22/11/2026: finché non ci sono affiliazioni, ogni prodotto è un esempio e nessun collegamento è di affiliazione.
+    for (const p of PRODOTTI_SCAFFALE) {
+      expect(p.esempio, p.id).toBe(true);
+      expect(getIntegratore(p.scheda), p.id).toBeTruthy();
+      for (const n of p.negozi) {
+        expect(n.affiliateUrl, p.id).toBeNull();
+        expect(n.url, p.id).toMatch(/^https:\/\//);
+      }
+    }
+    const strip = readFileSync("src/components/scaffale/scaffale-strip.tsx", "utf8");
+    expect(strip).toContain("Pubblicità");
+    expect(strip).toContain('rel="sponsored nofollow noopener noreferrer"');
+    expect(JSON.stringify(PRODOTTI_SCAFFALE)).not.toMatch(/€|cura|guarisc|previen|migliora/i);
   });
 
   it("nessuna pagina nuova scrive prezzi a mano", () => {

@@ -22,7 +22,7 @@ import { GuidaPersonaleView } from "@/components/report/guida-personale-view";
 import { guidaEsempio } from "@/domain/reporting/guida-personale";
 
 export const metadata: Metadata = {
-  title: "Lettura referti: il tuo referto in parole semplici",
+  title: "Capisci il referto: in parole semplici",
   description: "Carichi il referto, controlli i valori letti e leggi accanto a ogni riga che cosa misura e dove sta il tuo numero. In parole semplici. Non è una diagnosi.",
   alternates: { canonical: "/lettura-referti" },
 };
@@ -46,7 +46,7 @@ export default function LetturaRefertiPage() {
   const start = serviceStart("capisci");
   return (
     <div className="tm ds">
-      <PageLd path="/lettura-referti" meta={metadata} name="Lettura referti" service={capisciServiceLd()} />
+      <PageLd path="/lettura-referti" meta={metadata} name="Capisci il referto" service={capisciServiceLd()} />
       <TrackView event="visita-capisci" />
       <section className="ds-ph ds-ph-2" aria-labelledby="lr-titolo">
         <div className="tm-wrap">
@@ -55,7 +55,7 @@ export default function LetturaRefertiPage() {
         <div className="tm-wrap ds-ph-g">
           <div>
             <p className="ds-sec-tag ds-sec-tag-2">
-              <span>3</span> Capisci i referti
+              <span>3</span> Capisci il referto
             </p>
             <h1 id="lr-titolo">
               Il tuo referto, <em>in parole semplici.</em>
@@ -65,7 +65,7 @@ export default function LetturaRefertiPage() {
               {prices ? (
                 <p className="ds-price ds-price-ink">
                   <b>{promo ? first : std}</b>
-                  <span>{promo ? `il primo referto, poi ${std}` : "a referto, senza abbonamento"}</span>
+                  <span>{promo ? `il primo referto (una volta per persona), poi ${std}` : "a referto, senza abbonamento"}</span>
                 </p>
               ) : null}
               <Link href={start.href} className="tm-btn tm-btn-carica" data-track="cta-capisci">

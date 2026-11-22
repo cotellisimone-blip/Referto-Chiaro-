@@ -15,7 +15,7 @@ export default function GlossarioPage() {
   const groups = glossaryByLetter().map((g) => ({ letter: g.letter, entries: g.entries.map((e) => ({ slug: e.slug, term: e.term, aliases: e.aliases, definition: e.definition })) }));
   return (
     <>
-      <PageLd path="/glossario" meta={metadata} name="Glossario" trail={[{ name: "Lettura referti", path: "/lettura-referti" }]} />
+      <PageLd path="/glossario" meta={metadata} name="Glossario" trail={[{ name: "Capisci il referto", path: "/lettura-referti" }]} />
       <PageHeader section={3} art="search" eyebrow="Glossario" title="Le parole dei referti." lead={`${GLOSSARY.length} termini e sigle, spiegati in parole comuni. Definizioni generali: che cosa significhi un valore per te lo dice il medico.`} />
       <GlossaryFinder groups={groups} />
     </>

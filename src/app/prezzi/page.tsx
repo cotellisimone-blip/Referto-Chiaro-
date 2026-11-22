@@ -3,12 +3,12 @@ import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PercorsoSezioni } from "@/components/sezioni/parts";
-import { famigliaIncludes, famigliaPrice } from "@/domain/famiglia/piano";
 import {
   ArrowRight,
   Check,
   ChevronDown,
-  CircleDashed,
+  Gift,
+  Wallet,
   Clock3,
   UserRound,
 } from "lucide-react";
@@ -17,6 +17,7 @@ import { FaqList } from "@/components/ui/faq-list";
 import { Wave } from "@/components/ui/wave";
 import { publicOfferItems } from "@/domain/prestazioni/offerta-completa";
 import { PARERE_HREF, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
+import { prestazionePrice } from "@/domain/prestazioni/listino";
 import { PrestoMedico } from "@/components/site/presto-medico";
 import {
   PRESTAZIONI,
@@ -107,8 +108,8 @@ export default function PrezziPage() {
           </h1>
           <p className="lead mt-5 max-w-[40rem]">
             {medici
-              ? "Il referto spiegato, oppure un medico: in video o per un secondo parere. "
-              : "Il referto spiegato, valore per valore. Il tuo spazio, con i numeri nel tempo e i promemoria, è gratis. "}
+              ? "Molto è gratis. Paghi solo il referto spiegato e il medico. "
+              : "Molto è gratis. Paghi solo il referto spiegato, valore per valore. "}
             Nessun abbonamento. In questa versione dimostrativa nessun
             pagamento è reale.
           </p>
@@ -118,6 +119,63 @@ export default function PrezziPage() {
 
       <section aria-label="Confronto dei servizi" className="price-section">
         <div className="container-rc">
+          {/* 22/11/2026 (analisi di chiarezza, punti 24 e 29): prima di tutto, che cosa è gratis e che cosa si paga. */}
+          <div className="price-split" data-testid="gratis-pagamento">
+            <section className="price-split-col price-split-free" aria-labelledby="prezzi-gratis">
+              <h2 id="prezzi-gratis">
+                <Gift aria-hidden /> Gratis
+              </h2>
+              <ul>
+                <li>
+                  <b>Passo 1 · Inizia da te</b>: il Punto di Partenza e la tua mappa
+                </li>
+                <li>
+                  <b>Passo 2 · Gli esami per te</b>: esami di base e screening per età
+                </li>
+                <li>
+                  <b>Passo 5 · Prenditi cura di te</b>: sonno, intestino, integratori spiegati
+                </li>
+                <li>
+                  <b>Il tuo spazio</b>: referti in ordine, diari della salute, promemoria
+                </li>
+                <li>
+                  <b>Guide e glossario</b>: oltre 90 esami spiegati
+                </li>
+              </ul>
+            </section>
+            <section className="price-split-col price-split-pay" aria-labelledby="prezzi-pagamento">
+              <h2 id="prezzi-pagamento">
+                <Wallet aria-hidden /> A pagamento
+              </h2>
+              <ul>
+                <li>
+                  <b>Passo 3 · Capisci il referto</b>:{" "}
+                  {prices && firstRefertoCents() < priceCents("capisci")
+                    ? `il primo ${formatEuro(firstRefertoCents())} (una volta per persona), poi ${formatEuro(priceCents("capisci"))}, con la guida personale`
+                    : prices
+                      ? `${formatEuro(priceCents("capisci"))} a referto, con la guida personale`
+                      : "a referto, con la guida personale"}
+                </li>
+                {medici ? (
+                  <li>
+                    <b>Passo 4 · Un medico in video</b>: {prices ? `${prestazionePrice("video")}, prezzo fisso` : "prezzo fisso"}
+                    {secondoParereEnabled() ? "; secondo parere a parte" : "; il secondo parere è in arrivo"}
+                  </li>
+                ) : (
+                  <li>
+                    <b>Passo 4 · Un medico</b>: in arrivo
+                  </li>
+                )}
+                <li>
+                  <b>Integratori e probiotici</b>: non li vendiamo noi. Dallo{" "}
+                  <Link href="/scaffale" className="link">
+                    Scaffale
+                  </Link>{" "}
+                  vai al negozio partner e paghi il suo prezzo
+                </li>
+              </ul>
+            </section>
+          </div>
           <ul className="price-grid" data-solo={solo ? "true" : undefined}>
             {items.map((s) => {
               const Icon = OFFER_ICON[s.icon];
@@ -222,60 +280,8 @@ export default function PrezziPage() {
         </div>
       </section>
 
-      {/* 13/11/2026: il piano Famiglia è una PROPOSTA. Oggi i servizi si pagano uno per uno. */}
-      {prices ? (
-        <section
-          aria-labelledby="piano-famiglia-titolo"
-          className="section pt-6 lg:pt-10"
-        >
-          <div className="container-rc">
-            <div
-              className="fam-plan grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center"
-              data-testid="piano-famiglia"
-            >
-              <div className="min-w-0">
-                <span className="fam-proposal">
-                  <CircleDashed aria-hidden className="h-4 w-4" /> In proposta,
-                  prezzo da confermare
-                </span>
-                <h2 id="piano-famiglia-titolo" className="display-md mt-4">
-                  Cura Privata Famiglia
-                </h2>
-                <p className="mt-3 text-[1.0625rem] text-ink-soft">
-                  Oggi nessun abbonamento: ogni servizio si paga quando lo usi.
-                  Stiamo valutando un piano unico per chi segue la salute di più
-                  persone. Il tuo spazio personale resterebbe gratis.
-                </p>
-                <p className="mt-5">
-                  <span className="fam-plan-price">
-                    {famigliaPrice().amount}
-                  </span>{" "}
-                  <span className="text-[1.125rem] font-semibold text-ink-soft">
-                    {famigliaPrice().per}
-                  </span>
-                  <span className="mt-1 block text-[1rem] text-muted">
-                    {famigliaPrice().monthly}
-                  </span>
-                </p>
-                <Link href="/famiglia#piano" className="btn btn-secondary mt-6">
-                  Come funzionerebbe{" "}
-                  <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
-                </Link>
-              </div>
-              <ul className="check-list min-w-0">
-                {famigliaIncludes().map((t) => (
-                  <li key={t}>
-                    <span aria-hidden className="check-dot">
-                      <Check />
-                    </span>
-                    {t}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-      ) : null}
+      {/* 22/11/2026 (analisi di chiarezza, punto 25, sì di Simone): il piano Famiglia (una proposta) non sta più tra i
+          prezzi, dove sembrava un abbonamento da comprare. Resta descritto in /famiglia#piano. */}
 
       <section aria-labelledby="pagamenti-titolo" className="section">
         <div className="container-rc grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[0.7fr_1.3fr] lg:gap-14">

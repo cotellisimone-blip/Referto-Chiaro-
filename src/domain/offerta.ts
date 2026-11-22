@@ -174,7 +174,8 @@ export const CORE_SERVICES: CoreService[] = [
  * messaggio»). Dal 15/11 il sito è fatto di tre sezioni (Prevenzione, Lettura referti, Medici) e la home apre con
  * queste tre frasi: prima il piè di pagina ne diceva altre («Capisci. Segui nel tempo…»).
  */
-export const PAYOFF_LINES: readonly [string, string, string] = ["Previeni.", "Capisci.", "Un medico, se serve."];
+// 22/11/2026 (analisi di chiarezza, punto 19, sì di Simone): il payoff nomina il passo 5, il più importante.
+export const PAYOFF_LINES: readonly [string, string, string] = ["Conosciti.", "Capisci.", "Prenditi cura di te."];
 export const PAYOFF = PAYOFF_LINES.join(" ");
 /** I tre livelli del percorso, nell'ordine in cui si sale. */
 export const LEVELS: readonly CoreServiceId[] = mediciEnabled() ? ["capisci", "parla-con-un-medico", "secondo-parere"] : ["capisci"];
@@ -248,7 +249,7 @@ export function priceDisplay(id: CoreServiceId, env: Env = process.env): PriceDi
   const std = formatEuro(priceCents(id, env));
   if (id === "capisci" && firstPromoEnabled(env) && firstRefertoCents(env) < priceCents(id, env)) {
     const first = formatEuro(firstRefertoCents(env));
-    return { lead: "Primo referto", amount: first, note: `poi ${std} per referto`, label: `Primo referto ${first}, poi ${std} per referto` };
+    return { lead: "Primo referto, una volta per persona", amount: first, note: `poi ${std} per referto`, label: `Primo referto ${first}, poi ${std} per referto` };
   }
   if (id === "capisci") return { lead: null, amount: std, note: "per referto", label: `${std} per referto` };
   const amount = s.priceKind === "from" ? `da ${std}` : std;

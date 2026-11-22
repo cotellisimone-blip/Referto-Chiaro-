@@ -49,7 +49,7 @@ export default async function IntegratorePage({ params }: PageProps<"/integrator
       mainEntityOfPage: absoluteUrl(`/integratori/${i.slug}`),
     },
     breadcrumbLd([
-      { name: "Prevenzione", path: "/prevenzione" },
+      { name: "Prenditi cura di te", path: "/prenditi-cura-di-te" },
       { name: "Guide agli integratori", path: "/integratori" },
       { name: `${i.name} (${INTEGRATORI_GROUPS[i.group].toLowerCase()})`, path: `/integratori/${i.slug}` },
     ]),

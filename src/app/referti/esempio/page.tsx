@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function EsempioPage() {
   return (
     <>
-      <PageLd path="/referti/esempio" meta={metadata} name="Referto di esempio" trail={[{ name: "Lettura referti", path: "/lettura-referti" }]} />
+      <PageLd path="/referti/esempio" meta={metadata} name="Referto di esempio" trail={[{ name: "Capisci il referto", path: "/lettura-referti" }]} />
       <PageHeader section={3}
         art="translate"
         eyebrow="Demo con dati inventati"

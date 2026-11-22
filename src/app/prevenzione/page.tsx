@@ -14,7 +14,7 @@ import "@/components/sezioni/sezioni.css";
 import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
-  title: "I controlli per te: esami di base e screening",
+  title: "Gli esami per te: di base e screening per età",
   description: "Gli esami da conoscere, per la tua età: esami di base, screening gratuiti del Servizio sanitario, guide agli esami e promemoria. Gratis, senza registrarti.",
   alternates: { canonical: "/prevenzione" },
 };
@@ -33,7 +33,7 @@ export default function PrevenzionePage() {
   const cats = Object.entries(GUIDE_CATEGORIES).map(([id, c]) => ({ id, ...c }));
   return (
     <div className="tm ds">
-      <PageLd path="/prevenzione" meta={metadata} name="I controlli per te" />
+      <PageLd path="/prevenzione" meta={metadata} name="Gli esami per te" />
       <section className="ds-ph ds-ph-1" aria-labelledby="pv-titolo">
         <div className="tm-wrap">
           <PercorsoSezioni current={2} />
@@ -41,7 +41,7 @@ export default function PrevenzionePage() {
         <div className="tm-wrap ds-ph-g">
           <div>
             <p className="ds-sec-tag ds-sec-tag-1">
-              <span>2</span> I controlli per te
+              <span>2</span> Gli esami per te
             </p>
             <h1 id="pv-titolo">
               Gli esami da conoscere, <em>per la tua età.</em>
@@ -176,7 +176,7 @@ export default function PrevenzionePage() {
             </span>
             <span>
               <span className="ds-sec-tag ds-sec-tag-2">
-                <span>3</span> Capisci i referti
+                <span>3</span> Capisci il referto
               </span>
               <span id="pv-ponte" className="ds-bridge-t">
                 Hai già fatto gli esami? Leggi il referto in parole semplici.

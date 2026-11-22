@@ -4,12 +4,13 @@ import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
 import { Photo } from "@/components/ui/photo";
 import { TrackView } from "@/components/site/track";
 import { WaitlistForm } from "@/components/site/waitlist-form";
-import { PARERE_HREF, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
+import { PARERE_HREF, domicilioEnabled, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
 import { PRICE_NOTE, firstPromoEnabled, firstRefertoCents, formatEuro, priceCents, publicPricesEnabled, serviceStart } from "@/domain/offerta";
 import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
 import { HomeSimboli, Ic } from "./simboli";
 import { HomeMoto } from "./moto";
 import { readTitolare } from "@/domain/titolare";
+import { ScaffaleStrip } from "@/components/scaffale/scaffale-strip";
 import "./home-b.css";
 
 /** Indirizzi delle pagine a cui portano le tessere. */
@@ -24,6 +25,7 @@ export const HOME_B_LINKS = {
   vicino: "/vicino-a-te",
   neltempo: "/famiglia",
   scaffale: "/scaffale",
+  spazio: "/accedi",
   sonno: "/prenditi-cura-di-te/sonno",
   curaDiTe: "/prenditi-cura-di-te",
 } as const;
@@ -38,7 +40,8 @@ const v = (o: Record<string, string>) => o as CSSProperties;
  * - nessuna scritta sotto i 14 px (la regola del terzo giro, punto 9): etichette e assaggi sono un po' più grandi;
  * - la domanda «Fatti conoscere» elenca le domande vere del Punto di Partenza e dura «3–5 minuti», come la pagina;
  * - la guida personale è «costruita sui tuoi esami»: le risposte del Punto di Partenza non vengono salvate;
- * - lo Scaffale è «In arrivo»: non ci sono ancora partner, e non lo diamo per fatto.
+ * - lo Scaffale sta in fondo al passo 5 (22/11/2026): prodotti veri ma di ESEMPIO, scritto in chiaro, finché non ci
+ *   sono affiliazioni (src/content/scaffale.ts); al suo posto, in «Sempre con te», la tessera «Il tuo spazio».
  * I colori delle due luci sono in home-b.css; la luce la decide `data-theme` su <html> (src/lib/prefs-init.ts).
  */
 export function HomeB() {
@@ -66,11 +69,12 @@ export function HomeB() {
         </span>
         <div className="hb-wrap hb-hero-g">
           <div className="hb-hero-t">
-            <p className="hb-kicker">Prevenzione e stato di salute</p>
+            <p className="hb-kicker">Gratis per cominciare</p>
             <h1 id="hb-titolo">
               La tua salute, <em>tutta in una pagina.</em>
             </h1>
-            <p className="hb-lead">Capiscila da solo, un passo alla volta: fatti conoscere, scopri quali esami conoscere, capisci i referti. Poi prenditi cura di te ogni giorno: sonno, alimentazione, intestino, integratori.</p>
+            {/* 22/11/2026 (analisi di chiarezza, punti 9 e 12, sì di Simone): la frase dice che cosa fa il sito, passo per passo. */}
+            <p className="hb-lead">Cinque passi per capire e curare la tua salute: poche domande su di te, gli esami da conoscere, il referto spiegato, un medico se serve. E ogni giorno sonno, alimentazione e intestino.</p>
           </div>
           <div className="hb-hero-r">
             <nav className="hb-filo hb-filo5" aria-label="Il percorso, in cinque passi">
@@ -90,10 +94,11 @@ export function HomeB() {
                 <ol>
                   {(
                     [
-                      ["k-pr", "pr", "1", "Inizia da te", "3–5 minuti, gratis", "#passo-1"],
-                      ["k-es", "es", "2", "Gli esami", "Quali conoscere", "#passo-2"],
-                      ["k-re", "re", "3", "Il referto", "Spiegato semplice", "#passo-3"],
-                      ["k-me", "me", "4", "Il medico", "Video o secondo parere", "#medico"],
+                      // 22/11/2026: gli stessi nomi brevi della testata e della barra dei passi (Inizia, Esami, Referti, Medico, Cura di te).
+                      ["k-pr", "pr", "1", "Inizia", "3–5 minuti, gratis", "#passo-1"],
+                      ["k-es", "es", "2", "Esami", "Quali conoscere", "#passo-2"],
+                      ["k-re", "re", "3", "Referti", "In parole semplici", "#passo-3"],
+                      ["k-me", "me", "4", "Medico", "In video", "#medico"],
                       ["k-gu", "so", "5", "Cura di te", "Sonno, cibo, intestino", "#esplora"],
                     ] as const
                   ).map(([k, ic, n, b, s, href]) => (
@@ -111,6 +116,23 @@ export function HomeB() {
                 </ol>
               </div>
             </nav>
+            {/* 22/11/2026 (analisi di chiarezza, punti 10 e 11): sul telefono la prima cosa da toccare è gratuita, e una riga dice
+                che cosa è gratis e che cosa si paga. Prima il primo pulsante era il medico a pagamento. */}
+            <Link className="hb-btn hb-start" href={HOME_B_LINKS.fattiConoscere} data-track="home-inizia-hero">
+              Inizia da te, gratis <Ic id="go" className="hb-ic" />
+            </Link>
+            <p className="hb-free" data-testid="home-gratis-paghi">
+              <b>Gratis:</b> i passi 1, 2 e 5 e il tuo spazio.{" "}
+              {prices ? (
+                <>
+                  <b>Paghi solo</b> il referto spiegato ({promo ? `il primo ${entry}, poi ${formatEuro(priceCents("capisci"))}` : entry}){attivo ? ` e il medico (${prestazionePrice("video")})` : ""}.
+                </>
+              ) : (
+                <>
+                  <b>Paghi solo</b> il referto spiegato{attivo ? " e il medico" : ""}.
+                </>
+              )}
+            </p>
             <a className="hb-docq hb-k-me" href="#medico" data-track="home-medico">
               <span className="hb-wi">
                 <Ic id="me" />
@@ -144,7 +166,7 @@ export function HomeB() {
                     </span>
                     <span className="hb-kicker">Comincia da qui</span>
                   </span>
-                  <h3>Fatti conoscere</h3>
+                  <h3>Inizia da te</h3>
                   <p>Poche domande: quanti anni hai, quali esami hai già fatto, se hai condizioni già seguite da un medico. Ricevi la tua mappa.</p>
                 </span>
                 <span className="hb-answers" aria-hidden="true">
@@ -186,7 +208,7 @@ export function HomeB() {
                   <i className="hb-w">Transaminasi</i>
                 </span>
                 <span className="hb-chips">
-                  <span className="hb-chip hb-hot">Senza ricetta*</span>
+                  <span className="hb-chip hb-hot">Elenco gratis</span>
                 </span>
               </Link>
               <span className="hb-conn hb-d-right hb-wd-right" aria-hidden="true">
@@ -216,7 +238,7 @@ export function HomeB() {
                   <span className="hb-say hb-w">È lo zucchero nel sangue, a digiuno.</span>
                 </span>
                 <span className="hb-chips">
-                  <span className="hb-chip">{carica.waitlist ? "In arrivo" : prices ? `Da ${entry}` : "Senza abbonamento"}</span>
+                  <span className="hb-chip">{carica.waitlist ? "In arrivo" : prices ? (promo ? `Primo ${entry} · poi ${formatEuro(priceCents("capisci"))}` : entry) : "Senza abbonamento"}</span>
                 </span>
               </Link>
               <span className="hb-conn hb-d-down" aria-hidden="true">
@@ -225,15 +247,15 @@ export function HomeB() {
             </div>
             <div className="hb-cell hb-c4" id="passo-4">
               <Link className="hb-tile hb-t-wide hb-k-gu" href={HOME_B_LINKS.guidaPersonale} data-track="home-passo-4">
-                <span className="hb-num" aria-hidden="true">
-                  3
+                <span className="hb-num hb-num-plus" aria-hidden="true">
+                  3+
                 </span>
                 <span className="hb-t-a">
                   <span className="hb-tile-top">
                     <span className="hb-wi">
                       <Ic id="gu" />
                     </span>
-                    <span className="hb-kicker">Con il tuo referto</span>
+                    <span className="hb-kicker">Inclusa nel passo 3</span>
                   </span>
                   <h3>Ricevi la tua guida personale</h3>
                   <p>Una guida completa, costruita sui tuoi esami. Per preparare il tuo piano insieme al medico o al farmacista.</p>
@@ -294,7 +316,7 @@ export function HomeB() {
           {prices ? (
             <p className="hb-foot-note">
               <span>
-                Lettura referti: {promo ? `il primo referto ${entry}, poi ${formatEuro(priceCents("capisci"))}` : `${entry} a referto`}. {PRICE_NOTE}
+                Capisci il referto: {promo ? `il primo referto ${entry} (una volta per persona), poi ${formatEuro(priceCents("capisci"))}` : `${entry} a referto`}. {PRICE_NOTE}
               </span>
             </p>
           ) : null}
@@ -308,7 +330,7 @@ export function HomeB() {
           <div className="hb-doc-p hb-k-me">
             <div className="hb-doc-head">
               <p className="hb-kicker">
-                <span className="hb-chip hb-doc-state">{attivo ? "Medici a Brescia" : "In arrivo"}</span>
+                <span className="hb-chip hb-doc-state">{attivo ? (domicilioEnabled() ? "Medici a Brescia" : "In video da tutta Italia") : "In arrivo"}</span>
                 <span>Passo 4 · Un medico</span>
               </p>
               <h2 id="hb-medico-titolo">
@@ -356,10 +378,10 @@ export function HomeB() {
                     <Ic id="pa" />
                   </span>
                   <h3>Secondo parere</h3>
-                  <p>Uno specialista rilegge i tuoi esami e ti scrive.{parere ? "" : " In arrivo."}</p>
+                  <p>{parere ? "Uno specialista rilegge i tuoi esami e ti scrive." : "Un altro medico rilegge i tuoi esami e ti scrive. In arrivo: stiamo cercando lo specialista."}</p>
                   {attivo ? (
                     <>
-                      {prices ? <span className="hb-price">{prestazionePrice("parere")}</span> : null}
+                      {prices && parere ? <span className="hb-price">{prestazionePrice("parere")}</span> : !parere ? <span className="hb-price hb-price-soon">In arrivo</span> : null}
                       {parere ? (
                         <Link className="hb-btn" href={PRESTAZIONI.parere.startHref} data-track="home-richiedi-parere">
                           Richiedi<span className="sr-only"> il secondo parere</span>
@@ -505,10 +527,11 @@ export function HomeB() {
           <p className="hb-foot-note">
             <Ic id="sh" className="hb-ic" />
             <span>
-              Più avanti anche <b>Stress</b> e <b>Movimento</b>. E presto, in fondo alle pagine, <b>lo Scaffale</b>: integratori e probiotici dei partner, sempre segnati come pubblicità e separati dalle spiegazioni.{" "}
+              Più avanti anche <b>Stress</b> e <b>Movimento</b>.{" "}
               <Link href={HOME_B_LINKS.curaDiTe}>Tutto il passo 5</Link>
             </span>
           </p>
+          <ScaffaleStrip limit={3} id="scaffale" titolo="Dopo aver capito: lo Scaffale dei negozi partner" />
         </div>
       </section>
 
@@ -566,37 +589,33 @@ export function HomeB() {
                 <span className="hb-chip">Gratis</span>
               </span>
             </Link>
-            <Link className="hb-tile hb-k-sh hb-span2" id="scaffale" href={HOME_B_LINKS.scaffale}>
+            <Link className="hb-tile hb-k-te hb-k-sp hb-span2" id="spazio" href={HOME_B_LINKS.spazio}>
               <span className="hb-wi">
-                <Ic id="sh" />
+                <Ic id="lucchetto" />
               </span>
-              <h3>Lo Scaffale</h3>
-              <p>Integratori, probiotici e prodotti per lo sport di aziende partner. Li troverai in fondo alle pagine, sempre segnati come pubblicità.</p>
-              <span className="hb-mini hb-w-svg hb-w-scaf" aria-hidden="true">
+              <h3>Il tuo spazio, gratis</h3>
+              <p>I referti in ordine, i diari della salute, la mappa del Punto di Partenza e i promemoria: in un posto solo, che vedi solo tu.</p>
+              <span className="hb-mini hb-w-svg hb-w-sp" aria-hidden="true">
                 <svg viewBox="0 0 300 76" preserveAspectRatio="xMidYMid meet" focusable="false">
-                  <g transform="translate(64 2)">
-                    <rect className="hb-f2" x="9" y="6" width="18" height="10" rx="2.5" />
-                    <rect className="hb-f1" x="3" y="16" width="30" height="44" rx="7" />
-                    <rect className="hb-lb" x="8" y="30" width="20" height="14" rx="3" />
+                  <g transform="translate(56 6)">
+                    <rect className="hb-f1" x="0" y="0" width="52" height="64" rx="8" />
+                    <path className="hb-ln" d="M11 16h30M11 27h30M11 38h20" />
                   </g>
-                  <g transform="translate(126 2)">
-                    <rect className="hb-f2" x="4" y="22" width="40" height="9" rx="3" />
-                    <rect className="hb-f1" x="1" y="31" width="46" height="29" rx="8" />
-                    <rect className="hb-lb" x="10" y="39" width="28" height="12" rx="3" />
+                  <g transform="translate(124 6)">
+                    <rect className="hb-f1" x="0" y="0" width="52" height="64" rx="8" />
+                    <path className="hb-ln" d="M9 48L19 34 29 40 43 20" />
                   </g>
-                  <g transform="translate(200 2)">
-                    <rect className="hb-f1" x="2" y="14" width="36" height="46" rx="5" />
-                    <path className="hb-ln" d="M2 26h36" />
-                    <circle className="hb-lb" cx="20" cy="43" r="7" />
+                  <g transform="translate(192 6)">
+                    <rect className="hb-f1" x="0" y="0" width="52" height="64" rx="8" />
+                    <path className="hb-f2" d="M26 15a10 10 0 0 0-10 10v9l-4 6h28l-4-6v-9a10 10 0 0 0-10-10z" />
+                    <circle className="hb-lb" cx="26" cy="46" r="3.5" />
                   </g>
-                  <rect className="hb-rip" x="34" y="62" width="232" height="5" rx="2.5" />
                 </svg>
-                <i className="hb-tag">Pubblicità</i>
               </span>
               <span className="hb-chips">
-                <span className="hb-chip hb-hot">In arrivo</span>
-                <span className="hb-chip">Spazio partner</span>
-                <span className="hb-chip">Criteri pubblici</span>
+                <span className="hb-chip">Gratis</span>
+                <span className="hb-chip">Solo tuo</span>
+                <span className="hb-chip">Lo cancelli quando vuoi</span>
               </span>
             </Link>
           </div>

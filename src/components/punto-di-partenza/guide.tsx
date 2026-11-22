@@ -190,9 +190,10 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
       {/* Avanzamento: lista ordinata vera, con il passo corrente annunciato */}
       <div ref={topRef} className="pdp-top no-print">
         <p className="sr-only" aria-live="polite">
-          Passo {step} di {STEPS.length}: {STEPS[step - 1]}
+          Domanda {step} di {STEPS.length}: {STEPS[step - 1]}
         </p>
-        <Stepper steps={STEPS} step={step - 1} label="Avanzamento" />
+        {/* 22/11/2026 (analisi di chiarezza, punto 23): «Domanda», non «Passo»: i passi sono quelli del percorso del sito. */}
+        <Stepper steps={STEPS} step={step - 1} label="Avanzamento" unit="Domanda" />
       </div>
 
       <div className={clsx("mt-8 grid grid-cols-1 gap-8", step < 5 && "lg:grid-cols-[minmax(0,1fr)_21.5rem]")}>
@@ -525,6 +526,25 @@ export function PuntoDiPartenzaGuide({ prices, capisciHref, medicoHref }: { pric
                     </Link>
                   </div>
                 )}
+              </section>
+
+              {/* 22/11/2026 (analisi di chiarezza, punto 22): dopo la mappa, il tuo spazio gratuito. Le risposte restano sul
+                  telefono (nessun dato sanitario al server senza un consenso apposito): la mappa la porti con te come PDF. */}
+              <section aria-labelledby="pdp-spazio" className="no-print pdp-spazio mt-5" data-testid="pdp-spazio">
+                <h3 id="pdp-spazio" className="text-xl font-bold text-ink">
+                  Ritrovala nel tuo spazio, gratis
+                </h3>
+                <p className="mt-2 text-[1.0625rem] text-ink-soft">
+                  Nel tuo spazio tieni in ordine referti, diari della salute e promemoria. Le risposte di qui non escono dal tuo dispositivo: salva la mappa come PDF e tienila insieme ai tuoi referti.
+                </p>
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <Link href="/accedi" className="btn btn-secondary btn-lg">
+                    Crea il tuo spazio, gratis <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                  </Link>
+                  <button type="button" className="btn btn-ghost btn-lg" onClick={downloadPdf} disabled={busy}>
+                    <Download aria-hidden className="h-5 w-5" /> Salva la mappa (PDF)
+                  </button>
+                </div>
               </section>
 
               <p className="pdp-note mt-5 text-[1.0625rem] text-ink-soft">

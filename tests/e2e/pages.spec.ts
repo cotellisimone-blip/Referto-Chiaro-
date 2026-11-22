@@ -113,7 +113,7 @@ test.describe("Cura Privata: mappa, stati e prezzi", () => {
     // 15/11/2026, home a due sezioni: il titolo dice le due cose che fa Cura Privata.
     // 19/11/2026, home «chiara e scura»: il titolo è la promessa, la frase dei tre servizi resta nel piè di pagina.
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/La tua salute,\s*tutta in una pagina\./);
-    await expect(page.locator("footer").getByText("Previeni. Capisci. Un medico, se serve.")).toBeVisible();
+    await expect(page.locator("footer").getByText("Conosciti. Capisci. Prenditi cura di te.")).toBeVisible();
     // Nessun «.it» accanto al logo finché il sito non gira su un dominio vero (PUBLIC_BASE_URL).
     await expect(page.locator("footer").getByText(".it", { exact: true })).toHaveCount(0);
     const menu = (await page.locator("header").getByRole("link").allInnerTexts()).map((t) => t.trim());

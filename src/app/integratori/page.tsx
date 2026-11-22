@@ -22,7 +22,7 @@ export default function IntegratoriPage() {
   const groups = Object.keys(INTEGRATORI_GROUPS) as IntegratoreGroup[];
   return (
     <div className="tm ds">
-      <PageLd path="/integratori" meta={metadata} name="Guide agli integratori" trail={[{ name: "Prevenzione", path: "/prevenzione" }]} />
+      <PageLd path="/integratori" meta={metadata} name="Guide agli integratori" trail={[{ name: "Prenditi cura di te", path: "/prenditi-cura-di-te" }]} />
       <section className="ds-ph ds-ph-1 ds-ph-short" aria-labelledby="int-titolo">
         <div className="tm-wrap">
           <PercorsoSezioni current={5} />

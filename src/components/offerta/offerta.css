@@ -553,4 +553,135 @@
       line-height: 1.2;
     }
   }
+
+  /* 22/11/2026 (analisi di chiarezza, punti 24 e 29): gratis / a pagamento, prima delle schede dei servizi. */
+  .price-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
+  .price-split-col {
+    min-width: 0;
+    padding: 1.25rem 1.25rem 1.375rem;
+    border-radius: var(--radius-xl);
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+  }
+  .price-split-free {
+    background: var(--color-mist);
+  }
+  .price-split-col h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+  .price-split-col h2 svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    color: var(--color-teal-deep);
+    flex: none;
+  }
+  .price-split-col ul {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .price-split-col li {
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: var(--color-ink-soft);
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .price-split-col li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--color-teal);
+  }
+  .price-split-col li b {
+    color: var(--color-ink);
+  }
+  @media (min-width: 768px) {
+    .price-split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+    .price-split-col {
+      padding: 1.5rem 1.75rem 1.75rem;
+    }
+  }
+
+  /* 22/11/2026 (analisi di chiarezza, punto 21): «Da dove parto?», cinque risposte, una per passo. */
+  .ddp {
+    display: grid;
+    gap: 0.625rem;
+    max-width: 44rem;
+  }
+  .ddp-a {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 4.5rem;
+    padding: 0.875rem 1rem;
+    border-radius: 1.25rem;
+    border: 1.5px solid var(--color-line);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: border-color 0.15s, background-color 0.15s;
+  }
+  .ddp-a:hover {
+    border-color: var(--color-teal);
+    background: var(--color-mist);
+  }
+  .ddp-a:focus-visible {
+    outline: 3px solid var(--color-teal);
+    outline-offset: 2px;
+  }
+  .ddp-n {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--color-mist);
+    color: var(--color-teal-deep);
+    font-weight: 800;
+    font-size: 1.125rem;
+  }
+  .ddp-t {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .ddp-t b {
+    font-size: 1.125rem;
+    line-height: 1.3;
+  }
+  .ddp-t span {
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+  }
+  .ddp-t i {
+    font-style: normal;
+    font-weight: 800;
+    color: var(--color-teal-deep);
+  }
+  .ddp-go {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--color-teal-deep);
+  }
 }

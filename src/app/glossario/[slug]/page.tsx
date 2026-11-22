@@ -42,7 +42,7 @@ export default async function VocePage({ params }: { params: Promise<{ slug: str
         <Breadcrumbs items={[{ name: "Glossario", path: "/glossario" }, { name: e.term, path: `/glossario/${e.slug}` }]} />
         <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
           <div className="max-w-3xl">
-            <p className="eyebrow">Lettura referti · Glossario</p>
+            <p className="eyebrow">Capisci il referto · Glossario</p>
             <h1 className="page-title page-title-sm mt-4">{e.term}</h1>
             {e.aliases.length ? <p className="mt-3 text-base text-muted">Altri nomi: {e.aliases.join(", ")}.</p> : null}
             <p className="lead mt-5 text-ink">{e.definition}</p>

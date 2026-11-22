@@ -52,6 +52,8 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_ENABLE_SECONDO_PARERE: process.env.ENABLE_MEDICI === "true" && process.env.ENABLE_SECONDO_PARERE === "true" ? "true" : "false",
     // 22/11/2026: la visita a domicilio ha il suo interruttore, spento per decisione di Simone (vedi src/lib/medici.ts).
     NEXT_PUBLIC_ENABLE_DOMICILIO: process.env.ENABLE_MEDICI === "true" && process.env.ENABLE_DOMICILIO === "true" ? "true" : "false",
+    // 22/11/2026: prodotti di esempio dello Scaffale (solo per provare la grafica); SCAFFALE_ESEMPI=false li spegne.
+    NEXT_PUBLIC_SCAFFALE_ESEMPI: process.env.SCAFFALE_ESEMPI === "false" ? "false" : "true",
     NEXT_PUBLIC_VETRINA: process.env.SITE_PROFILE?.trim().toLowerCase() === "vetrina" ? "true" : "false",
   },
   /** Vecchi indirizzi di Referto Chiaro → nuova mappa del sito Cura Privata (redirect permanenti interni). */

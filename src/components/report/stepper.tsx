@@ -8,7 +8,7 @@ import { Check } from "lucide-react";
  * restano i numeri e, sotto, una riga con il nome intero del passo attuale, che va a capo quando serve
  * (schermi stretti, testo grande). I nomi di tutti i passi restano nella lista per i lettori di schermo.
  */
-export function Stepper({ steps, step, label, className }: { steps: readonly string[]; step: number; label: string; className?: string }) {
+export function Stepper({ steps, step, label, className, unit = "Passo" }: { steps: readonly string[]; step: number; label: string; className?: string; unit?: string }) {
   const current = step >= 0 && step < steps.length ? steps[step] : null;
   return (
     <nav aria-label={label} className={clsx("pdp-stepper no-print", className)}>
@@ -31,7 +31,7 @@ export function Stepper({ steps, step, label, className }: { steps: readonly str
       {current ? (
         <p aria-hidden className="pdp-step-now" data-step-current="">
           <span className="pdp-step-count">
-            Passo {step + 1} di {steps.length} ·
+            {unit} {step + 1} di {steps.length} ·
           </span>{" "}
           <span className="pdp-step-name">{current}</span>
         </p>

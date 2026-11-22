@@ -80,7 +80,7 @@ describe("punti 2 e 10 · un'azione e un messaggio soli", () => {
     expect(CARICA_HREF).toBe("/area-personale/nuovo");
     expect(HEADER_CTA.href).toBe(CARICA_HREF);
   });
-  it("il messaggio è uno: Previeni. Capisci. Un medico, se serve.", () => {
-    expect(PAYOFF_LINES.join(" ")).toBe("Previeni. Capisci. Un medico, se serve.");
+  it("il messaggio è uno: Conosciti. Capisci. Prenditi cura di te. (22/11/2026)", () => {
+    expect(PAYOFF_LINES.join(" ")).toBe("Conosciti. Capisci. Prenditi cura di te.");
   });
 });

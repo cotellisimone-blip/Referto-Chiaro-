@@ -17,8 +17,8 @@ export type NavIcon = "file" | "home" | "video" | "stethoscope" | "euro" | "book
 export type PassoPercorso = { n: 1 | 2 | 3 | 4 | 5; href: string; label: string; short: string; desc: string; icon: NavIcon; cuore?: boolean };
 export const PERCORSO: readonly PassoPercorso[] = [
   { n: 1, href: "/punto-di-partenza", label: "Inizia da te", short: "Inizia", desc: "Poche domande, gratis: la tua mappa", icon: "userCheck" },
-  { n: 2, href: "/prevenzione", label: "I controlli per te", short: "Esami", desc: "Gli esami da conoscere, per la tua età", icon: "heart" },
-  { n: 3, href: "/lettura-referti", label: "Capisci i referti", short: "Referti", desc: "Il referto spiegato riga per riga", icon: "file" },
+  { n: 2, href: "/prevenzione", label: "Gli esami per te", short: "Esami", desc: "Gli esami da conoscere, per la tua età", icon: "heart" },
+  { n: 3, href: "/lettura-referti", label: "Capisci il referto", short: "Referti", desc: "Il referto spiegato riga per riga", icon: "file" },
   { n: 4, href: "/medici", label: "Un medico", short: "Medico", desc: "In video, o un secondo parere", icon: "stethoscope" },
   { n: 5, href: "/prenditi-cura-di-te", label: "Prenditi cura di te", short: "Cura di te", desc: "Sonno, alimentazione, intestino, integratori", icon: "leaf", cuore: true },
 ];
@@ -52,8 +52,8 @@ export const HEADER_CTA = { href: CARICA_HREF, label: "Carica un referto", menu:
 const FOOTER_NAV_ALL = {
   "Il percorso": [
     { href: "/punto-di-partenza", label: "1 · Inizia da te" },
-    { href: "/prevenzione", label: "2 · I controlli per te" },
-    { href: "/lettura-referti", label: "3 · Capisci i referti" },
+    { href: "/prevenzione", label: "2 · Gli esami per te" },
+    { href: "/lettura-referti", label: "3 · Capisci il referto" },
     { href: "/medici", label: "4 · Un medico" },
     { href: "/prenditi-cura-di-te", label: "5 · Prenditi cura di te" },
     { href: "/famiglia", label: "Famiglia e salute nel tempo" },

@@ -105,10 +105,14 @@ test.describe("home chiara e scura", () => {
     const filo = main.getByRole("navigation", { name: "Il percorso, in cinque passi" });
     await expect(filo.getByRole("link")).toHaveCount(5);
     for (const [i, href] of ["#passo-1", "#passo-2", "#passo-3", "#medico", "#esplora"].entries()) await expect(filo.getByRole("link").nth(i)).toHaveAttribute("href", href);
-    for (const t of ["Inizia da te", "Gli esami", "Il referto", "Il medico", "Cura di te"]) await expect(filo).toContainText(t);
+    // 22/11/2026 (analisi di chiarezza, punto 13): gli stessi nomi brevi della testata.
+    for (const t of ["Inizia", "Esami", "Referti", "Medico", "Cura di te"]) await expect(filo).toContainText(t);
     await expect(main.locator("#passo-1 a").first()).toHaveAttribute("href", "/punto-di-partenza");
     await expect(main.locator("#passo-2 a").first()).toHaveAttribute("href", "/prevenzione/esami-di-base");
-    await expect(main.locator("#passo-2")).toContainText("Senza ricetta*");
+    await expect(main.locator("#passo-2")).toContainText("Elenco gratis");
+    // 22/11/2026 (punti 10–11): il primo pulsante è gratuito e una riga dice che cosa si paga.
+    await expect(main.getByRole("link", { name: /Inizia da te, gratis/ }).first()).toHaveAttribute("href", "/punto-di-partenza");
+    await expect(main.getByTestId("home-gratis-paghi")).toContainText("Paghi solo");
     await expect(main.locator("#passo-3")).toContainText("2,90 €");
     await expect(main.locator("#passo-4 a").first()).toHaveAttribute("href", "/lettura-referti#guida-personale");
     await expect(main.locator("#passo-4")).toContainText("Inclusa nel report");
@@ -119,10 +123,13 @@ test.describe("home chiara e scura", () => {
     await expect(medico).not.toContainText("€");
     await expect(medico.getByRole("button", { name: "Iscrivimi alla lista d'attesa" })).toBeVisible();
     await expect(page.locator('main a[href^="/servizi/"], main a[href^="/richiedi/"]')).toHaveCount(0);
-    // I mondi da esplorare, vicino a casa e nel tempo, lo Scaffale «In arrivo» e segnato come pubblicità
-    for (const href of ["/integratori", "/prevenzione/intestino-e-microbiota", "/prevenzione/alimentazione", "/prenditi-cura-di-te/sonno", "/vicino-a-te", "/famiglia", "/scaffale"]) await expect(main.locator(`a[href="${href}"]`).first()).toBeVisible();
+    // I mondi da esplorare, vicino a casa e nel tempo, il tuo spazio; lo Scaffale in fondo al passo 5, segnato come
+    // pubblicità e, finché non ci sono affiliazioni, come esempio (22/11/2026, sì di Simone).
+    for (const href of ["/integratori", "/prevenzione/intestino-e-microbiota", "/prevenzione/alimentazione", "/prenditi-cura-di-te/sonno", "/vicino-a-te", "/famiglia", "/scaffale", "/accedi"]) await expect(main.locator(`a[href="${href}"]`).first()).toBeVisible();
     await expect(main.locator("#scaffale")).toContainText("Pubblicità");
-    await expect(main.locator("#scaffale")).toContainText("In arrivo");
+    await expect(main.locator("#scaffale")).toContainText("Esempio");
+    await expect(main.locator("#scaffale")).toContainText("non abbiamo ancora accordi");
+    for (const a of await main.locator('#scaffale a[target="_blank"]').all()) await expect(a).toHaveAttribute("rel", /sponsored/);
     // Ogni fotografia è dichiarata
     for (const f of await main.locator("figure:has(img)").all()) await expect(f).toContainText("Immagine illustrativa");
     const text = (await main.innerText()).toLowerCase();
@@ -181,10 +188,10 @@ test.describe("home chiara e scura", () => {
     await expect(page.locator("#senza-ricetta")).toContainText("In molti laboratori privati");
     await page.getByRole("link", { name: /Emocromo/ }).first().click();
     await expect(page).toHaveURL(/\/guide\/emocromo$/);
-    // Lo Scaffale non mostra prodotti né prezzi
+    // Lo Scaffale: prodotti di esempio dichiarati, nessun prezzo
     await page.goto("/scaffale");
     await expect(page.locator("main")).not.toContainText("€");
-    await expect(page.locator("main")).toContainText("In arrivo");
+    await expect(page.locator("main [data-testid=scaffale]")).toContainText("Esempio");
   });
 });
 

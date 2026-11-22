@@ -6,7 +6,7 @@ import { Section } from "@/components/ui/section";
 import { Wave } from "@/components/ui/wave";
 import { LinkCards } from "@/components/ui/link-cards";
 import { CapisciFeature, DoctorServices } from "@/components/offerta/service-triad";
-import { StepsVisual } from "@/components/offerta/service-visuals";
+import { DaDoveParto } from "@/components/offerta/da-dove-parto";
 import { FaqList } from "@/components/ui/faq-list";
 import { FAQ } from "@/content/faq";
 import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
@@ -51,23 +51,29 @@ export default function ServiziPage() {
   return (
     <>
       <section aria-labelledby="servizi-titolo" className="page-hero page-hero-wave">
-        <div className="container-rc page-hero-inner page-hero-overlap page-hero-split">
+        <div className="container-rc page-hero-inner page-hero-overlap">
           <div>
             <p className="eyebrow">I servizi</p>
             <h1 id="servizi-titolo" className="page-title mt-4 max-w-[17ch]">
-              {MEDICI ? "Dal referto al medico, un passo alla volta." : "Dal referto alla visita, un passo alla volta."}
+              Cinque passi, <em>uno alla volta.</em>
             </h1>
-            <p className="lead mt-5 max-w-[38rem]">{MEDICI ? "Parti dal tuo referto, spiegato in parole semplici. Quando serve una persona c'è un medico: " + (domicilioEnabled() ? "a casa, in video o per un secondo parere." : "in video, e presto anche per un secondo parere.") : "Parti dal tuo referto, spiegato in parole semplici. Poi lo ritrovi nel tuo spazio, in fila con gli altri, e arrivi dal tuo medico con le domande pronte."}</p>
+            {/* 22/11/2026 (analisi di chiarezza, punto 31): Servizi racconta gli stessi cinque passi del menu e della home. */}
+            <p className="lead mt-5 max-w-[38rem]">
+              Molto è gratis: conoscerti, gli esami per la tua età, prenderti cura di te e il tuo spazio. Paghi solo il referto spiegato
+              {MEDICI ? " e il medico: " + (domicilioEnabled() ? "a casa, in video o per un secondo parere." : "in video, e presto anche per un secondo parere.") : "."}
+            </p>
+            <div className="mt-7 max-w-[44rem]">
+              <DaDoveParto passi />
+            </div>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
               <Link href="/inizia" className="btn btn-primary btn-lg">
-                Ti aiutiamo a scegliere <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
+                Da dove parto? <ArrowRight aria-hidden className="btn-arrow h-5 w-5" />
               </Link>
               <Link href="/prezzi" className="link inline-flex min-h-11 items-center text-lg font-semibold">
                 Confronta prezzi e tempi
               </Link>
             </div>
           </div>
-          <StepsVisual />
         </div>
         <Wave className="text-canvas" />
       </section>

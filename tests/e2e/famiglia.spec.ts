@@ -41,8 +41,10 @@ test("pagina pubblica: la promessa, pezzi veri di prodotto, il piano come propos
   await expect(plan).toContainText("Proposta, prezzo da confermare");
   await expect(plan).toContainText("39 €");
   await expectAccessible(page);
+  // 22/11/2026 (analisi di chiarezza, punto 25): il piano in proposta non sta più tra i prezzi; lì c'è «gratis / a pagamento».
   await page.goto("/prezzi");
-  await expect(page.getByTestId("piano-famiglia")).toContainText("In proposta");
+  await expect(page.getByTestId("piano-famiglia")).toHaveCount(0);
+  await expect(page.getByTestId("gratis-pagamento")).toContainText("una volta per persona");
 });
 
 test("la sezione Prevenzione porta a Famiglia", async ({ page }) => {

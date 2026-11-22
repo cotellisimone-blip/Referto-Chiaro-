@@ -202,3 +202,6 @@
   .pdp-nav { background: var(--color-canvas); backdrop-filter: none; }
   .pdp-stage { padding-top: 0.25rem; }
 }
+
+/* 22/11/2026 (analisi di chiarezza, punto 22): il tuo spazio, dopo la mappa */
+.pdp-spazio{padding:1.25rem 1.25rem 1.375rem;border-radius:1.5rem;border:1.5px dashed var(--color-line);background:var(--color-paper)}

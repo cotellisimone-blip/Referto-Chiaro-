@@ -901,6 +901,12 @@
       display: none !important;
     }
   }
+  /* 22/11/2026: «Il tuo spazio» nella testata dai 1280 px; sotto resta «Accedi», che ci sta. */
+  @media (min-width: 1280px) {
+    .hdr-tight {
+      display: none !important;
+    }
+  }
   .hdr-mobile {
     display: flex;
   }

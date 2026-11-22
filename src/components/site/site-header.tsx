@@ -139,8 +139,10 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
             </Link>
           ) : (
             <>
+              {/* 22/11/2026 (analisi di chiarezza, punto 30): «Il tuo spazio» dice che cosa trovi, «Accedi» no. */}
               <Link href="/accedi" className="btn btn-ghost btn-sm whitespace-nowrap">
-                Accedi
+                <span className="hdr-roomy">Il tuo spazio</span>
+                <span className="hdr-tight">Accedi</span>
               </Link>
               <Link href={HEADER_CTA.href} className="btn btn-primary btn-sm whitespace-nowrap">
                 {HEADER_CTA.label}
@@ -254,7 +256,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                 </Link>
                 {signedIn ? null : (
                   <Link href="/accedi" className="btn btn-secondary w-full">
-                    Accedi all&apos;area personale
+                    Il tuo spazio: entra o crealo, gratis
                   </Link>
                 )}
               </div>
