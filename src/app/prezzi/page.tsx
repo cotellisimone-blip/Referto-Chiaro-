@@ -2,7 +2,7 @@ import { pageTitle } from "@/lib/seo";
 import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { GUIDES } from "@/content/guides";
+import { EXAM_GUIDE_COUNT } from "@/content/guides";
 import { PercorsoSezioni } from "@/components/sezioni/parts";
 import {
   ArrowRight,
@@ -140,7 +140,7 @@ export default function PrezziPage() {
                   <b>Il tuo spazio</b>: referti in ordine, diari della salute, promemoria
                 </li>
                 <li>
-                  <b>Guide e glossario</b>: {GUIDES.length} esami spiegati
+                  <b>Guide e glossario</b>: {EXAM_GUIDE_COUNT} esami spiegati
                 </li>
               </ul>
             </section>

@@ -177,7 +177,7 @@ export function SonnoPaginaView({ p }: { p: SonnoPagina }) {
     { id: "fonti", label: "Fonti" },
   ];
   return (
-    <div className="ht ht-vi ml sn" data-sonno={p.slug}>
+    <div className="ht ht-sc ml sn" data-sonno={p.slug}>
       <HomeSimboli />
       <DiariSimboli />
       <MalattieSimboli />
@@ -367,7 +367,7 @@ export function SonnoPaginaView({ p }: { p: SonnoPagina }) {
             {p.correlate.map((s) => {
               const c = getSonnoPagina(s)!;
               return (
-                <li key={s} className="ht-vi">
+                <li key={s} className="ht-sc">
                   <Link href={sonnoHref(c.slug)} className="ml-area">
                     <span className="ml-area-ico" aria-hidden="true">
                       <Ic id={c.icona} />

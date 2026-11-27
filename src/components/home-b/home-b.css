@@ -20,7 +20,7 @@ svg.hb-ic{width:1.15em;height:1.15em;flex:none}
 .hb-home h1,.hb-home h2,.hb-home h3{font-family:var(--h-font);font-weight:var(--h-weight);letter-spacing:var(--h-track,-.012em);line-height:1.1;text-wrap:balance}
 .hb-home em{font-family:var(--serif);font-style:italic}
 .hb-hero-g,.hb-filo a,.hb-sec-h,.hb-mini,.hb-gp,.hb-doc-steps,.hb-doc-wait,.hb-lg{grid-auto-columns:minmax(0,1fr)}
-.hb-tile h3,.hb-doc-o h3,.hb-filo b,.hb-filo small,.hb-gp-r b,.hb-gp-r small,.hb-answers i,.hb-mini i,.hb-mini .hb-say,.hb-pv b,.hb-lg i,.hb-et-c b{overflow-wrap:anywhere}
+.hb-tile h3,.hb-doc-o h3,.hb-filo b,.hb-filo small,.hb-gp-r b,.hb-gp-r small,.hb-answers i,.hb-mini i,.hb-mini .hb-say,.hb-pv b,.hb-lg i,.hb-et-c b{overflow-wrap:anywhere;hyphens:auto}
 .hb-home h1 em,.hb-home h2 em{display:inline-block}
 .hb-hero{position:relative;padding-block:1.5rem 1rem;overflow:clip;overflow-clip-margin:48px}
 .hb-hero-g{display:grid;gap:1.1rem;position:relative;z-index:1}

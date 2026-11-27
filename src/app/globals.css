@@ -4765,3 +4765,63 @@ body:has([data-bottom-nav]) .site-footer .footer-legal { margin-top: 1.25rem; }
 .menu-cons-a small { font-size: 0.875rem; line-height: 1.3; color: var(--color-muted); }
 .menu-foot { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin: 1.125rem 0 0; padding: 0 0.25rem; list-style: none; }
 .menu-foot a { font-size: 1rem; color: var(--color-muted); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ───────── 27/11/2026 (fase 2) · Una sola veste: i titoli del sito come quelli della home ─────────
+   Prima c'erano due scale: la home (Fraunces 560, tracciatura leggera) e il resto del sito («Luce»: Manrope 800,
+   tracciatura stretta). Ora titoli di pagina, di sezione e di riquadro usano la stessa voce della home.
+   I numeri (.num, .stat-num, prezzi) restano in Manrope: si leggono meglio. */
+@layer components {
+  .display,
+  .display-xl,
+  .display-lg,
+  .display-md,
+  .page-title,
+  .box-title,
+  .prose-rc h2,
+  .guide-h2,
+  .area-h2,
+  .letter-head,
+  .guide-card-title {
+    font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+    font-weight: 560;
+    letter-spacing: -0.014em;
+  }
+  .display-xl,
+  .page-title {
+    line-height: 1.06;
+  }
+  :root[data-theme="dark"] :is(.display, .display-xl, .display-lg, .display-md, .page-title, .box-title, .prose-rc h2, .guide-h2, .area-h2, .letter-head, .guide-card-title) {
+    font-weight: 480;
+  }
+}
+
+/* 27/11/2026 (fase 2): su telefono una tabella a tre colonne diventa una scheda per riga, con l'etichetta accanto
+   a ogni dato. Prima la terza colonna («Conservazione») restava fuori dallo schermo senza che si capisse. */
+@layer components {
+  @media (max-width: 639.98px) {
+    table.rc-stack thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    table.rc-stack,
+    table.rc-stack tbody,
+    table.rc-stack tr,
+    table.rc-stack td {
+      display: block;
+    }
+    table.rc-stack tr {
+      padding-block: 0.5rem;
+    }
+    table.rc-stack td {
+      padding-block: 0.25rem;
+    }
+    table.rc-stack td[data-label]:not(:first-child)::before {
+      content: attr(data-label) ": ";
+      font-weight: 700;
+      color: var(--color-ink);
+    }
+  }
+}

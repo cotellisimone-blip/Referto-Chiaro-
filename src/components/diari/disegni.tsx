@@ -26,9 +26,6 @@ const ART: Record<string, ReactNode> = {
       <path d="M34 34l10 12" />
       <circle cx="88" cy="32" r="18" {...F} />
       <path d="M88 22v10l7 5" />
-      <text x="88" y="66" textAnchor="middle" fontSize="12" fontWeight="800" fill="currentColor" stroke="none">
-        5 min
-      </text>
     </>
   ),
   "p-postura": (
@@ -46,9 +43,6 @@ const ART: Record<string, ReactNode> = {
       <rect x="34" y="34" width="30" height="27" rx="6" {...F} />
       <path d="M64 46h14c6 0 8 10 14 10" />
       <path d="M70 26v6M70 26h12" opacity=".7" />
-      <text x="86" y="29" fontSize="10" fontWeight="800" fill="currentColor" stroke="none">
-        2–3 cm
-      </text>
     </>
   ),
   "p-due": (
@@ -62,9 +56,6 @@ const ART: Record<string, ReactNode> = {
         2
       </text>
       <path d="M52 43h14M62 39l4 4-4 4" />
-      <text x="60" y="84" textAnchor="middle" fontSize="11" fontWeight="800" fill="currentColor" stroke="none">
-        1 minuto
-      </text>
     </>
   ),
   "p-sette": (
@@ -139,15 +130,6 @@ const ART: Record<string, ReactNode> = {
       <rect x="48" y="36" width="24" height="38" rx="6" {...F} />
       <rect x="82" y="16" width="24" height="58" rx="6" {...S} />
       <rect x="82" y="16" width="24" height="58" rx="6" />
-      <text x="26" y="88" textAnchor="middle" fontSize="10" fontWeight="800" fill="currentColor" stroke="none">
-        Lieve
-      </text>
-      <text x="60" y="88" textAnchor="middle" fontSize="10" fontWeight="800" fill="currentColor" stroke="none">
-        Media
-      </text>
-      <text x="94" y="88" textAnchor="middle" fontSize="10" fontWeight="800" fill="currentColor" stroke="none">
-        Forte
-      </text>
     </>
   ),
   "c-sintomi": (
@@ -193,12 +175,6 @@ const ART: Record<string, ReactNode> = {
       <circle cx="88" cy="42" r="22" {...F} />
       <path d="M88 28v14l10 4" />
       <path d="M22 18a10 10 0 1 0 8-12 8 8 0 0 1-8 12z" {...S} />
-      <text x="32" y="84" textAnchor="middle" fontSize="10" fontWeight="800" fill="currentColor" stroke="none">
-        a letto
-      </text>
-      <text x="88" y="84" textAnchor="middle" fontSize="10" fontWeight="800" fill="currentColor" stroke="none">
-        in piedi
-      </text>
     </>
   ),
   "s-addormentarsi": (
@@ -210,9 +186,6 @@ const ART: Record<string, ReactNode> = {
       </text>
       <text x="82" y="20" fontSize="18" fontWeight="800" fill="currentColor" stroke="none">
         z
-      </text>
-      <text x="60" y="88" textAnchor="middle" fontSize="10" fontWeight="800" fill="currentColor" stroke="none">
-        quanti minuti?
       </text>
     </>
   ),
@@ -274,9 +247,6 @@ const ART: Record<string, ReactNode> = {
       <rect x="20" y="54" width="80" height="22" rx="8" {...F} />
       <path d="M44 54V40c0-4 3-6 6-6s6 2 6 6v14M64 54V40c0-4 3-6 6-6s6 2 6 6v14" />
       <rect x="44" y="10" width="32" height="16" rx="4" {...S} />
-      <text x="60" y="22" textAnchor="middle" fontSize="11" fontWeight="800" fill="currentColor" stroke="none">
-        72,4
-      </text>
     </>
   ),
   "w-scrivi": (
@@ -330,9 +300,6 @@ const ART: Record<string, ReactNode> = {
       <text x="96" y="50" textAnchor="middle" fontSize="14" fontWeight="800" fill="currentColor" stroke="none">
         3
       </text>
-      <text x="60" y="84" textAnchor="middle" fontSize="10" fontWeight="800" fill="currentColor" stroke="none">
-        il migliore
-      </text>
     </>
   ),
   "r-momento": (
@@ -346,6 +313,7 @@ const ART: Record<string, ReactNode> = {
   ),
 };
 
+/** 27/11/2026 (fase 2): niente più scritte piccole dentro i disegni (8-10 px a schermo): lo dice già il testo accanto. */
 export function Disegno({ art, className }: { art: string; className?: string }) {
   return (
     <svg viewBox="0 0 120 90" className={className} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">

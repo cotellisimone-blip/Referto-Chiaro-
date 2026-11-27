@@ -803,3 +803,42 @@
   background: #ddf2ec !important;
   color: #0b5a55 !important;
 }
+
+/* 27/11/2026 (fase 2, una sola veste): nel tema scuro la «carta» non resta più un riquadro bianco acceso in mezzo
+   alla pagina scura (guide: «Unità e intervalli»; integratori: «Nel tuo referto»). Diventa la carta scura della home. */
+:root[data-theme="dark"] .wow-paper {
+  background: #0f2a33 !important;
+  border-color: #21434f !important;
+  box-shadow: none;
+}
+:root[data-theme="dark"] .wow-paper,
+:root[data-theme="dark"] .wow-paper p,
+:root[data-theme="dark"] .wow-paper h2,
+:root[data-theme="dark"] .wow-paper li {
+  color: #e8f1f2 !important;
+}
+:root[data-theme="dark"] .wow-paper a,
+:root[data-theme="dark"] .wow-paper .tm-tlink {
+  color: #7be0d2 !important;
+}
+:root[data-theme="dark"] .wow-paper .ds-onrep-ex span {
+  background: #12383a !important;
+  color: #7be0d2 !important;
+}
+:root[data-theme="dark"] .wow-mono-row {
+  background: rgb(123 224 210 / 0.16);
+}
+
+/* 27/11/2026 (fase 2): sul telefono il titolo-lettera del glossario contiene il pulsante che apre la lettera.
+   Il quadratino colorato della lettera restava dietro il pulsante e si vedeva agli angoli come due archi. */
+@media (max-width: 639.98px) {
+  .gl-sec .letter-head,
+  :root[data-theme="dark"] .gl-sec .letter-head {
+    display: block;
+    min-width: 0;
+    height: auto;
+    border-radius: 0;
+    background: none;
+    color: inherit;
+  }
+}

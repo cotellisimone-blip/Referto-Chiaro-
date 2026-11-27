@@ -13,7 +13,7 @@ import "./sonno.css";
 /** Una autovalutazione della sezione sonno (22/11/2026): testata, da dove vengono le domande, il questionario, le fonti. */
 export function AutovalutazioneView({ a }: { a: Autovalutazione }) {
   return (
-    <div className="ht ht-vi ml sn" data-sonno={a.slug}>
+    <div className="ht ht-sc ml sn" data-sonno={a.slug}>
       <HomeSimboli />
       <DiariSimboli />
       <MalattieSimboli />
