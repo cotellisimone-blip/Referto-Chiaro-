@@ -40,7 +40,9 @@
     ".next-medici/types/**/*.ts",
     ".next-medici/dev/types/**/*.ts",
     ".next-vetrina-medici/types/**/*.ts",
-    ".next-vetrina-medici/dev/types/**/*.ts"
+    ".next-vetrina-medici/dev/types/**/*.ts",
+    ".next-lancio/types/**/*.ts",
+    ".next-lancio/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
