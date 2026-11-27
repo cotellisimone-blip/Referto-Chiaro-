@@ -3884,6 +3884,7 @@ input[type="search"]::-webkit-search-decoration {
   .link-list a {
     display: inline-flex;
     min-height: 2.75rem;
+    min-width: 2.75rem; /* 27/11/2026: anche una voce di una parola corta («Asma») è larga quanto un dito */
     align-items: center;
     padding-block: 0.625rem;
     line-height: 1.35;
