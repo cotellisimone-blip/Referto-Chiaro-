@@ -4,7 +4,6 @@ import { Jar } from "@/components/wow/jar";
 import { ArrowLeft, ArrowRight, BookOpen, MessageCircleQuestionMark, TriangleAlert } from "lucide-react";
 import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS, INTEGRATORI_PRIMA_DI_TUTTO, getIntegratore } from "@/content/integratori";
 import { getGuide } from "@/content/guides";
-import { ScaffaleStrip } from "@/components/scaffale/scaffale-strip";
 
 /** Scheda di un integratore: spiega, collega l'esame del referto, mette le domande per il medico accanto. */
 export function IntegratoreArticle({ slug }: { slug: string }) {
@@ -118,9 +117,12 @@ export function IntegratoreArticle({ slug }: { slug: string }) {
             </div>
           </aside>
         </div>
-        {/* 22/11/2026 (analisi di chiarezza, punto 28): i prodotti di questa scheda, dopo la spiegazione e mai in mezzo. */}
+        {/* 27/11/2026 (fase 1): niente prodotti qui. Questa scheda si apre anche dal report, accanto ai propri valori:
+            i prodotti restano nello Scaffale, a parte (src/components/scaffale/scaffale-strip.tsx). */}
         <div className="tm-wrap">
-          <ScaffaleStrip scheda={i.slug} titolo={`${i.name}: alcuni prodotti nei negozi partner`} />
+          <p className="ds-p mt-8">
+            I prodotti in commercio non sono in questa pagina: stanno nello <Link href="/scaffale">Scaffale</Link>, separati dalle spiegazioni.
+          </p>
         </div>
       </section>
       <section className="ds-sec-light ds-sec-alt ds-sec-tight" aria-labelledby="i-altri">

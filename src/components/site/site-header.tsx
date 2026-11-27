@@ -10,6 +10,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { TextSizeToggle } from "./text-size-toggle";
 import { SearchTrigger } from "@/components/search/site-search";
 import { AREA_ITEMS, AREA_TAB_HREFS } from "@/components/area/area-nav";
+import { cancellaDatiSanitariSulDispositivo } from "@/lib/dati-sul-dispositivo";
 
 const NAV_ICON: Record<NavIcon, LucideIcon> = { file: FileText, home: Home, video: Video, stethoscope: Stethoscope, euro: Euro, book: BookOpen, users: Users, tools: ClipboardList, chart: ChartLine, laptop: Laptop, pill: Pill, heart: HeartPulse, activity: Activity, leaf: Leaf, notebook: NotebookPen, userCheck: UserCheck };
 
@@ -41,6 +42,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
   const inArea = signedIn && Boolean(pathname?.startsWith("/area-personale"));
   async function logout() {
     await fetch("/api/v1/auth/logout", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: "{}" }).catch(() => {});
+    cancellaDatiSanitariSulDispositivo(); // 27/11/2026: su un telefono condiviso non restano risposte sanitarie
     setMe(null);
     setOpen(false);
     router.push("/");

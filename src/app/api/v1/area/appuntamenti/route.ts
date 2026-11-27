@@ -1,3 +1,4 @@
+import { hasHealthDataConsent } from "@/lib/auth/service";
 import { z } from "zod";
 import { isUuid, readJson, requireUser } from "@/lib/auth/guard";
 import { createAppointment, listAppointments } from "@/domain/appointments/repository";
@@ -45,6 +46,8 @@ function validSlots(slots: { day: string }[], now = new Date()): boolean {
 export async function POST(req: Request) {
   const g = await requireUser();
   if ("response" in g) return g.response;
+  // 27/11/2026 (fase 1): dopo la revoca del consenso ai dati sanitari non si salva nulla di sanitario (prima i diari sì).
+  if (!(await hasHealthDataConsent(g.user.id))) return json({ error: "consent-withdrawn", message: "Hai revocato il consenso al trattamento dei dati sanitari: per salvare serve un nuovo consenso, dalle Impostazioni." }, { status: 403 });
   const b = await readJson(req, 8192);
   if ("response" in b) return b.response;
   const parsed = Body.safeParse(b.body);

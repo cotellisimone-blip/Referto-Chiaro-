@@ -2,9 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Download, Loader2, ShieldOff, Trash2 } from "lucide-react";
+import { Download, Loader2, ShieldCheck, ShieldOff, Smartphone, Trash2 } from "lucide-react";
 import { api, formatDateTime } from "./api";
 import { mediciEnabled } from "@/lib/medici";
+import { DATI_SUL_DISPOSITIVO, cancellaDatiSulDispositivo } from "@/lib/dati-sul-dispositivo";
 
 interface Consent {
   kind: string;
@@ -52,6 +53,25 @@ export function Settings({ email, isDemoAccount }: { email: string; isDemoAccoun
       setMsg(err instanceof Error ? err.message : "Errore");
     }
     setBusy("");
+  }
+
+  // 27/11/2026 (fase 1): dopo una revoca il consenso ai dati sanitari si può ridare da qui.
+  async function grantHealth() {
+    setBusy("health");
+    try {
+      await api("/api/v1/area/consents", { method: "POST", body: { kind: "health-data", granted: true } });
+      const r = await api<{ consents: Consent[] }>("/api/v1/area/consents");
+      setConsents(r.consents);
+      setMsg("Consenso registrato: puoi di nuovo salvare referti, diari e promemoria.");
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Errore");
+    }
+    setBusy("");
+  }
+
+  function clearDevice() {
+    const n = cancellaDatiSulDispositivo();
+    setMsg(n ? "Fatto: su questo dispositivo non resta più nulla di Cura Privata." : "Su questo dispositivo non c'era niente da cancellare.");
   }
 
   async function deleteAccount(e: React.FormEvent) {
@@ -130,6 +150,33 @@ export function Settings({ email, isDemoAccount }: { email: string; isDemoAccoun
           )}
         </section>
       ) : null}
+
+      {!isDemoAccount && latest.get("health-data") && !latest.get("health-data")?.granted ? (
+        <section className="form-card" aria-labelledby="ridai-titolo">
+          <h2 id="ridai-titolo" className="form-card-title">
+            Dai di nuovo il consenso ai dati sanitari
+          </h2>
+          <p className="form-card-text">Hai revocato il consenso: per ora non salviamo referti, diari o promemoria. Se vuoi ricominciare, dallo di nuovo qui. I dati cancellati con la revoca non tornano.</p>
+          <button type="button" className="btn btn-secondary mt-4" onClick={grantHealth} disabled={busy === "health"}>
+            {busy === "health" ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <ShieldCheck aria-hidden className="h-5 w-5" />} Do il consenso
+          </button>
+        </section>
+      ) : null}
+
+      <section className="form-card" aria-labelledby="dispositivo-titolo">
+        <h2 id="dispositivo-titolo" className="form-card-title">
+          Che cosa resta su questo dispositivo
+        </h2>
+        <p className="form-card-text">Alcune cose restano solo nel browser di questo telefono o computer e non arrivano a noi. Se il dispositivo lo usano anche altre persone, puoi cancellarle.</p>
+        <ul className="mt-3 list-disc space-y-1 pl-6 text-[1.0625rem] text-ink-soft">
+          {DATI_SUL_DISPOSITIVO.map((d) => (
+            <li key={d.key}>{d.cosa}</li>
+          ))}
+        </ul>
+        <button type="button" className="btn btn-secondary mt-5 max-sm:w-full" onClick={clearDevice}>
+          <Smartphone aria-hidden className="h-5 w-5" /> Cancella da questo dispositivo
+        </button>
+      </section>
 
       <section className="form-card" aria-labelledby="export-titolo">
         <h2 id="export-titolo" className="form-card-title">

@@ -168,8 +168,10 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_enabled_at timestamptz;
 -- Ultimo passo TOTP accettato: un codice già usato non vale una seconda volta.
 ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_last_step bigint;
 -- Vincolo sui consensi esteso (v3): dichiarazione sull'interessato e consenso per il secondo parere.
+-- 27/11/2026: ogni ripetizione di questo vincolo usa l'elenco COMPLETO. Lo schema si riesegue a ogni avvio: con un
+-- elenco più corto qui, le righe già salvate con i valori aggiunti dopo lo violavano e il sito non ripartiva.
 ALTER TABLE consents DROP CONSTRAINT IF EXISTS consents_kind_check;
-ALTER TABLE consents ADD CONSTRAINT consents_kind_check CHECK (kind IN ('terms', 'privacy', 'health-data', 'marketing', 'subject-declaration', 'second-opinion'));
+ALTER TABLE consents ADD CONSTRAINT consents_kind_check CHECK (kind IN ('terms', 'privacy', 'health-data', 'marketing', 'subject-declaration', 'second-opinion', 'video-consult', 'family-delegation'));
 ALTER TABLE sessions ADD COLUMN IF NOT EXISTS mfa_verified_at timestamptz;
 
 -- Ordini: creati dall'utente, aggiornati dal sistema (webhook o pagamento simulato).
@@ -213,7 +215,7 @@ CREATE TABLE IF NOT EXISTS waitlist (
 );
 -- Cura Privata (8/11/2026): liste d'attesa per i servizi in preparazione. Idempotente sui database esistenti.
 ALTER TABLE waitlist DROP CONSTRAINT IF EXISTS waitlist_interest_check;
-ALTER TABLE waitlist ADD CONSTRAINT waitlist_interest_check CHECK (interest IN ('completo', 'secondo-parere', 'strutture', 'archivio', 'visite', 'prevenzione'));
+ALTER TABLE waitlist ADD CONSTRAINT waitlist_interest_check CHECK (interest IN ('completo', 'secondo-parere', 'strutture', 'archivio', 'visite', 'prevenzione', 'domicilio', 'famiglia'));
 
 -- Medici: profilo collegato a un utente con ruolo 'physician'. Verifica a carico dell'admin.
 CREATE TABLE IF NOT EXISTS physicians (
@@ -345,7 +347,7 @@ ALTER TABLE orders ADD CONSTRAINT orders_service_check CHECK (service IN ('essen
 CREATE INDEX IF NOT EXISTS orders_ref_idx ON orders(ref_id);
 ALTER TABLE cases ADD COLUMN IF NOT EXISTS awaiting_payment boolean NOT NULL DEFAULT false;
 ALTER TABLE consents DROP CONSTRAINT IF EXISTS consents_kind_check;
-ALTER TABLE consents ADD CONSTRAINT consents_kind_check CHECK (kind IN ('terms', 'privacy', 'health-data', 'marketing', 'subject-declaration', 'second-opinion', 'video-consult'));
+ALTER TABLE consents ADD CONSTRAINT consents_kind_check CHECK (kind IN ('terms', 'privacy', 'health-data', 'marketing', 'subject-declaration', 'second-opinion', 'video-consult', 'family-delegation'));
 
 CREATE TABLE IF NOT EXISTS appointments (
   id uuid PRIMARY KEY,
@@ -419,7 +421,7 @@ ALTER TABLE funnel_source_daily ENABLE ROW LEVEL SECURITY;
 -- Ciclo 4 (12/11/2026): «Avvisami nella mia zona». Interesse per la visita a domicilio e CAP facoltativo
 -- (solo 5 cifre: è una zona, non un indirizzo), per capire dove c'è domanda.
 ALTER TABLE waitlist DROP CONSTRAINT IF EXISTS waitlist_interest_check;
-ALTER TABLE waitlist ADD CONSTRAINT waitlist_interest_check CHECK (interest IN ('completo', 'secondo-parere', 'strutture', 'archivio', 'visite', 'prevenzione', 'domicilio'));
+ALTER TABLE waitlist ADD CONSTRAINT waitlist_interest_check CHECK (interest IN ('completo', 'secondo-parere', 'strutture', 'archivio', 'visite', 'prevenzione', 'domicilio', 'famiglia'));
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS cap text CHECK (cap IS NULL OR cap ~ '^[0-9]{5}$');
 ALTER TABLE waitlist ADD COLUMN IF NOT EXISTS source text CHECK (source IS NULL OR source IN ('diretto', 'google', 'facebook', 'instagram', 'tiktok', 'whatsapp', 'email', 'medico', 'altro'));
 INSERT INTO schema_migrations(version) VALUES (8) ON CONFLICT DO NOTHING;

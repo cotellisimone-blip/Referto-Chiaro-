@@ -21,6 +21,7 @@ import { LogoMark } from "@/components/brand/logo";
 import { api } from "./api";
 import { isFocusPath } from "./area-shell";
 import { isDoctorPath, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
+import { cancellaDatiSanitariSulDispositivo } from "@/lib/dati-sul-dispositivo";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) spariscono «Visite e videoconsulti» e «I miei pareri». */
 const MEDICI = mediciEnabled();
@@ -139,6 +140,7 @@ export function AreaNav({
   const focus = isFocusPath(pathname);
   async function logout() {
     await api("/api/v1/auth/logout", { method: "POST", body: {} });
+    cancellaDatiSanitariSulDispositivo(); // 27/11/2026: su un telefono condiviso non restano risposte sanitarie
     router.push("/");
     router.refresh();
   }

@@ -177,7 +177,7 @@ export default function PrendersiCuraPage() {
         <div className="tm-wrap">
           <div className="tm-sec-h">
             <div>
-              <p className="tm-kicker">Integratori e nutraceutica</p>
+              <p className="tm-kicker">Integratori</p>
               <h2 id="pc-int">
                 Integratori: <em>prima capire,</em> poi chiedere.
               </h2>

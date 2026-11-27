@@ -260,7 +260,6 @@ export function HomeB() {
                   <h3>Ricevi la tua guida personale</h3>
                   <p>Una guida completa, costruita sui tuoi esami. Per preparare il tuo piano insieme al medico o al farmacista.</p>
                   <span className="hb-chips">
-                    <span className="hb-chip">Novità</span>
                     <span className="hb-chip">Inclusa nel report</span>
                   </span>
                 </span>
@@ -268,15 +267,6 @@ export function HomeB() {
                   <span className="hb-gp-h">
                     <span>La tua guida</span>
                     <span className="hb-chip">Esempio</span>
-                  </span>
-                  <span className="hb-gp-r hb-k-in">
-                    <span className="hb-wi">
-                      <Ic id="in" />
-                    </span>
-                    <span>
-                      <b>Integratori e nutraceutica</b>
-                      <small>Ferritina sotto l’intervallo del tuo laboratorio: che cosa chiedere al medico</small>
-                    </span>
                   </span>
                   <span className="hb-gp-r hb-k-mi">
                     <span className="hb-wi">
@@ -294,6 +284,16 @@ export function HomeB() {
                     <span>
                       <b>Alimentazione, peso e forma</b>
                       <small>Colesterolo LDL sopra l’intervallo: che cosa dice la ricerca</small>
+                    </span>
+                  </span>
+                  {/* 27/11/2026 (fase 1): gli integratori dopo alimentazione e intestino, come nel report vero. */}
+                  <span className="hb-gp-r hb-k-in">
+                    <span className="hb-wi">
+                      <Ic id="in" />
+                    </span>
+                    <span>
+                      <b>Integratori</b>
+                      <small>Ferritina sotto l’intervallo: prima la causa, con il medico</small>
                     </span>
                   </span>
                   <span className="hb-gp-r hb-k-sc">
@@ -438,7 +438,7 @@ export function HomeB() {
               <span className="hb-wi">
                 <Ic id="in" />
               </span>
-              <h3>Integratori e nutraceutica</h3>
+              <h3>Integratori</h3>
               <p>Capire prima di prendere</p>
               <span className="hb-mini hb-w-prove" aria-hidden="true">
                 <span className="hb-pv" style={v({ "--w": "92%" })}>
@@ -531,7 +531,7 @@ export function HomeB() {
               <Link href={HOME_B_LINKS.curaDiTe}>Tutto il passo 5</Link>
             </span>
           </p>
-          <ScaffaleStrip limit={3} id="scaffale" titolo="Dopo aver capito: lo Scaffale dei negozi partner" />
+          <ScaffaleStrip limit={3} id="scaffale" titolo="Dopo aver capito: lo Scaffale" />
         </div>
       </section>
 

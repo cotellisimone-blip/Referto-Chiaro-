@@ -9,21 +9,25 @@ import "./scaffale.css";
  * Lo Scaffale in fondo a una pagina (22/11/2026, analisi di chiarezza punti 27–28, sì di Simone): dopo la spiegazione,
  * mai in mezzo. Ogni prodotto porta «Pubblicità», la marca, la scheda da leggere prima e i negozi dove si compra.
  * Finché i prodotti sono esempi lo dice in chiaro. Senza prodotti da mostrare non disegna niente.
+ * 27/11/2026 (fase 1): finché non c'è un accordo nessuno paga lo spazio, quindi non si scrive «Pubblicità» né «negozi
+ * partner»: l'etichetta è «Esempio». E lo Scaffale non sta più sulle schede degli integratori, che si raggiungono dal
+ * report: mai un prodotto a due tocchi da un valore del referto.
  */
 export function ScaffaleStrip({ scheda, titolo, limit, id = "scaffale", criteri = true }: { scheda?: string; titolo?: string; limit?: number; id?: string; criteri?: boolean }) {
   const all = prodottiScaffale(scheda);
   const list = limit ? all.slice(0, limit) : all;
   if (!list.length) return null;
   const esempi = list.some((p) => p.esempio);
+  const etichetta = esempi ? "Esempi, nessun accordo" : "Pubblicità";
   return (
     <aside className="scf" id={id} aria-labelledby={`${id}-t`} data-testid="scaffale">
       <div className="scf-head">
         <p className="scf-k">
           <span>Lo Scaffale</span>
-          <span className="scf-adv">Pubblicità</span>
+          <span className="scf-adv">{etichetta}</span>
         </p>
         <h2 id={`${id}-t`} className="scf-t">
-          {titolo ?? "Dopo aver capito: i prodotti dei negozi partner"}
+          {titolo ?? (esempi ? "Dopo aver capito: alcuni prodotti in commercio" : "Dopo aver capito: i prodotti dei negozi partner")}
         </h2>
         <p className="scf-d">
           Separati dalle spiegazioni. Prima di cominciare un integratore chiedi al medico o al farmacista, soprattutto se prendi farmaci.
@@ -39,8 +43,7 @@ export function ScaffaleStrip({ scheda, titolo, limit, id = "scaffale", criteri 
               <div className="scf-top">
                 <Jar c={c} d={d} size={44} />
                 <span className="scf-tags">
-                  <span className="scf-adv">Pubblicità</span>
-                  {p.esempio ? <span className="scf-ex">Esempio</span> : null}
+                  {p.esempio ? <span className="scf-ex">Esempio</span> : <span className="scf-adv">Pubblicità</span>}
                 </span>
               </div>
               <p className="scf-brand">{p.marca}</p>

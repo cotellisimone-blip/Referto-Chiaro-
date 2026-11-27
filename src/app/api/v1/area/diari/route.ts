@@ -1,3 +1,4 @@
+import { hasHealthDataConsent } from "@/lib/auth/service";
 import { readJson, requireUser } from "@/lib/auth/guard";
 import { json } from "@/lib/api";
 import { SELF_ID, UUID_RE } from "@/domain/famiglia/persone";
@@ -20,6 +21,8 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const g = await requireUser();
   if ("response" in g) return g.response;
+  // 27/11/2026 (fase 1): dopo la revoca del consenso ai dati sanitari non si salva nulla di sanitario (prima i diari sì).
+  if (!(await hasHealthDataConsent(g.user.id))) return json({ error: "consent-withdrawn", message: "Hai revocato il consenso al trattamento dei dati sanitari: per salvare serve un nuovo consenso, dalle Impostazioni." }, { status: 403 });
   const r = await readJson(req, 4_096);
   if ("response" in r) return r.response;
   const parsed = VoceInputSchema.safeParse(r.body);

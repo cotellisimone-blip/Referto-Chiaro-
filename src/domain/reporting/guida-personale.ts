@@ -9,8 +9,8 @@ import { INTEGRATORI } from "@/content/integratori";
  *
  * Deterministica: non scrive testo nuovo sulla persona e non chiede niente all'AI. A partire dagli esami confermati del
  * referto (il nome e la posizione rispetto all'intervallo stampato, calcolata dal codice in glance.ts) mette in fila le
- * letture del sito che li riguardano: le schede sugli integratori collegati a quell'esame, le pagine su alimentazione e
- * intestino, le guide agli esami, la preparazione alla visita.
+ * letture del sito che li riguardano: le guide agli esami, le pagine su alimentazione e intestino, per ultime le schede
+ * sugli integratori (solo per un valore basso della sostanza stessa), la preparazione alla visita.
  * Non dice che cosa fare né che cosa prendere: è fatta per preparare il piano con il medico o con il farmacista.
  * Si calcola sul server (le guide sono pesanti) e viaggia con gli altri arricchimenti del report.
  */
@@ -50,14 +50,31 @@ const ALIMENTAZIONE = new Set(["colesterolo-totale", "colesterolo-hdl", "coleste
 const INTESTINO = new Set(["calprotectina-fecale", "sangue-occulto-nelle-feci", "helicobacter-pylori", "esami-per-la-celiachia"]);
 
 const TITOLI: Record<GuidaTema, string> = {
-  integratori: "Integratori e nutraceutica",
+  integratori: "Integratori: solo dopo aver sentito il medico",
   alimentazione: "Alimentazione, peso e forma",
   intestino: "Intestino e microbiota",
   esami: "Le guide ai tuoi esami",
   visita: "Per preparare la visita",
 };
 
-const ORDINE: GuidaTema[] = ["integratori", "alimentazione", "intestino", "esami", "visita"];
+/**
+ * 27/11/2026 (fase 1, revisione dei due medici simulati): gli integratori vengono DOPO le guide agli esami,
+ * l'alimentazione e l'intestino. Prima si capisce il valore e se ne parla con il medico; solo dopo, eventualmente,
+ * si legge la scheda di un integratore.
+ */
+const ORDINE: GuidaTema[] = ["esami", "alimentazione", "intestino", "integratori", "visita"];
+
+/**
+ * 27/11/2026 (fase 1): una scheda integratore compare solo per un valore SOTTO l'intervallo e solo se l'esame misura
+ * proprio quella sostanza (ferritina → ferro, vitamina D, B12, folati). Prima bastava che l'esame fosse «collegato»:
+ * una ferritina alta portava a «Ferro: prima di prenderlo», un potassio al magnesio, i trigliceridi all'omega-3.
+ */
+const INTEGRATORE_DIRETTO: Record<string, string> = {
+  ferritina: "ferro",
+  "vitamina-d": "vitamina-d",
+  "vitamina-b12": "vitamina-b12",
+  folati: "acido-folico",
+};
 
 export function buildGuidaPersonale(explanation: Pick<Explanation, "items">): GuidaPersonale {
   const righe: Record<GuidaTema, GuidaRiga[]> = { integratori: [], alimentazione: [], intestino: [], esami: [], visita: [] };
@@ -78,13 +95,13 @@ export function buildGuidaPersonale(explanation: Pick<Explanation, "items">): Gu
       righe.esami.push({ titolo: guida.examName, motivo: `Nel tuo referto: ${valore}, ${dove}.`, href: `/guide/${guida.slug}`, fuori });
     }
 
-    for (const integ of INTEGRATORI.filter((i) => i.onReport.guide === guida.slug)) {
-      if (viste.has(`i:${integ.slug}`)) continue;
-      viste.add(`i:${integ.slug}`);
+    const diretto = pos === "below-range" ? INTEGRATORI.find((i) => i.slug === INTEGRATORE_DIRETTO[guida.slug]) : undefined;
+    if (diretto && !viste.has(`i:${diretto.slug}`)) {
+      viste.add(`i:${diretto.slug}`);
       righe.integratori.push({
-        titolo: `${integ.name}: prima di prenderlo`,
-        motivo: `${guida.examName} ${dove}: che cosa chiedere al medico o al farmacista.`,
-        href: `/integratori/${integ.slug}`,
+        titolo: `${diretto.name}: che cosa chiedere`,
+        motivo: `${guida.examName} ${dove}: prima si cerca la causa con il medico. La scheda dice che cosa chiedere a lui o al farmacista.`,
+        href: `/integratori/${diretto.slug}`,
         fuori,
       });
     }

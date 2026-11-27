@@ -90,11 +90,12 @@ const voce = (id: string, nameExact: string, originalValueExact: string, origina
 describe("la guida personale del report", () => {
   it("nell'esempio della home: ferritina sotto porta alla scheda sul ferro, LDL sopra all'alimentazione", () => {
     const g = guidaEsempio();
-    expect(g.gruppi.map((x) => x.tema)).toEqual(["integratori", "alimentazione", "intestino", "esami", "visita"]);
+    // 27/11/2026 (fase 1): gli integratori vengono dopo esami, alimentazione e intestino.
+    expect(g.gruppi.map((x) => x.tema)).toEqual(["esami", "alimentazione", "intestino", "integratori", "visita"]);
     const integ = g.gruppi.find((x) => x.tema === "integratori")!;
     expect(integ.righe).toHaveLength(1);
-    expect(integ.righe[0]).toMatchObject({ titolo: "Ferro: prima di prenderlo", href: "/integratori/ferro", fuori: true });
-    expect(integ.righe[0].motivo).toBe("Ferritina sotto l’intervallo del tuo laboratorio: che cosa chiedere al medico o al farmacista.");
+    expect(integ.righe[0]).toMatchObject({ titolo: "Ferro: che cosa chiedere", href: "/integratori/ferro", fuori: true });
+    expect(integ.righe[0].motivo).toBe("Ferritina sotto l’intervallo del tuo laboratorio: prima si cerca la causa con il medico. La scheda dice che cosa chiedere a lui o al farmacista.");
     const cibo = g.gruppi.find((x) => x.tema === "alimentazione")!;
     expect(cibo.righe[0].titolo).toBe("Colesterolo LDL: che cosa dice la ricerca");
     const intestino = g.gruppi.find((x) => x.tema === "intestino")!;
@@ -106,6 +107,17 @@ describe("la guida personale del report", () => {
     const tutte = g.gruppi.flatMap((x) => x.righe.map((r) => r.href));
     expect(tutte).not.toContain("/integratori/omega-3");
     expect(g.gruppi.find((x) => x.tema === "integratori")).toBeUndefined();
+  });
+
+  it("un valore alto o un esame solo «vicino» non porta mai a un integratore (27/11/2026)", () => {
+    const g = buildGuidaPersonale({
+      items: [voce("1", "Ferritina", "420", "ng/mL", "30 - 300"), voce("2", "Potassio", "3,2", "mmol/L", "3,5 - 5,1"), voce("3", "Trigliceridi", "120", "mg/dL", "< 150"), voce("4", "Vitamina D", "45", "ng/mL", "30 - 100")],
+    });
+    expect(g.gruppi.find((x) => x.tema === "integratori")).toBeUndefined();
+    // Gli esami ci sono: la guida non è vuota, solo senza integratori.
+    expect(g.gruppi.find((x) => x.tema === "esami")!.righe.length).toBeGreaterThanOrEqual(3);
+    const bassa = buildGuidaPersonale({ items: [voce("1", "Vitamina D", "18", "ng/mL", "30 - 100")] });
+    expect(bassa.gruppi.find((x) => x.tema === "integratori")!.righe.map((r) => r.href)).toEqual(["/integratori/vitamina-d"]);
   });
 
   it("prima le righe dei valori fuori dall'intervallo, e le domande per il medico restano in fondo", () => {
@@ -178,6 +190,8 @@ describe("le pagine delle tessere della home", () => {
     expect(strip).toContain("Pubblicità");
     expect(strip).toContain('rel="sponsored nofollow noopener noreferrer"');
     expect(JSON.stringify(PRODOTTI_SCAFFALE)).not.toMatch(/€|cura|guarisc|previen|migliora/i);
+    // 27/11/2026 (fase 1): le schede degli integratori si aprono dal report: niente prodotti lì.
+    expect(readFileSync("src/components/sezioni/integratore-article.tsx", "utf8")).not.toContain("ScaffaleStrip");
   });
 
   it("nessuna pagina nuova scrive prezzi a mano", () => {

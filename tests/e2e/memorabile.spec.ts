@@ -126,7 +126,7 @@ test.describe("home chiara e scura", () => {
     // I mondi da esplorare, vicino a casa e nel tempo, il tuo spazio; lo Scaffale in fondo al passo 5, segnato come
     // pubblicità e, finché non ci sono affiliazioni, come esempio (22/11/2026, sì di Simone).
     for (const href of ["/integratori", "/prevenzione/intestino-e-microbiota", "/prevenzione/alimentazione", "/prenditi-cura-di-te/sonno", "/vicino-a-te", "/famiglia", "/scaffale", "/accedi"]) await expect(main.locator(`a[href="${href}"]`).first()).toBeVisible();
-    await expect(main.locator("#scaffale")).toContainText("Pubblicità");
+    await expect(main.locator("#scaffale")).toContainText("nessun accordo");
     await expect(main.locator("#scaffale")).toContainText("Esempio");
     await expect(main.locator("#scaffale")).toContainText("non abbiamo ancora accordi");
     for (const a of await main.locator('#scaffale a[target="_blank"]').all()) await expect(a).toHaveAttribute("rel", /sponsored/);
@@ -165,7 +165,7 @@ test.describe("home chiara e scura", () => {
     await expect(page).toHaveURL(/#medico$/);
     await expect(page.locator("main #medico")).toContainText("In arrivo");
     // 5. Un integratore: un clic dalla tessera
-    await page.locator("main #esplora").getByRole("link", { name: /Integratori e nutraceutica/ }).click();
+    await page.locator("main #esplora").getByRole("link", { name: /^Integratori/ }).click();
     await expect(page).toHaveURL(/\/integratori$/);
   });
 
