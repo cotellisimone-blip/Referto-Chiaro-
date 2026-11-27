@@ -31,6 +31,7 @@ const PAGE_CONTEXT: Record<string, string> = {
   "/servizi/visita-a-domicilio": "Un medico di medicina generale a casa tua, a Brescia città",
   "/prezzi": "Quanto costa far spiegare un referto e che cosa è gratis",
   "/inizia": "Ti aiutiamo a scegliere da dove cominciare",
+  "/famiglia/segui-un-genitore": "Segui la salute di un genitore, anche da lontano: madre, padre, anziano, esami, visite, promemoria",
   "/cura-privata-o-un-ai-gratuita": "Perché non un’AI gratuita? Che cosa facciamo in più, e quando basta la risposta gratuita",
   "/strumenti/preparati-alla-visita": "Gratis: cosa portare e cosa chiedere, in 2 minuti",
   "/famiglia": "I referti di tutta la famiglia, i numeri nel tempo, i promemoria",

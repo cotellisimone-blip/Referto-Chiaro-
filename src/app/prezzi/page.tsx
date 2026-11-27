@@ -92,6 +92,19 @@ export default function PrezziPage() {
   // 17/11/2026 (20 interventi, punto 4): senza medici c'è un solo servizio a pagamento. Una scheda sola non sta in una
   // griglia da quattro (restava una colonna stretta nel vuoto): diventa una scheda larga, con «Che cosa include» in vista.
   const solo = items.length === 1;
+  const capisciPrezzo = !prices
+    ? "a referto"
+    : firstRefertoCents() < priceCents("capisci")
+      ? `il primo ${formatEuro(firstRefertoCents())}, poi ${formatEuro(priceCents("capisci"))}`
+      : `${formatEuro(priceCents("capisci"))} a referto`;
+  const scelte = [
+    { id: "esami", chi: "Non so quali esami fare alla mia età", cosa: "Gli esami per te", prezzo: "gratis", nota: "Gli esami di base e gli screening gratuiti del Servizio sanitario, per età.", href: "/prevenzione/esami-di-base", azione: "Vedi gli esami" },
+    { id: "parola", chi: "Voglio sapere che cosa misura un esame", cosa: "Guide e glossario", prezzo: "gratis", nota: `${EXAM_GUIDE_COUNT} esami spiegati e le parole dei referti.`, href: "/guide", azione: "Apri le guide" },
+    { id: "referto", chi: "Ho un referto e voglio capire i miei valori", cosa: "Capisci il referto", prezzo: capisciPrezzo, nota: "Ogni valore con la sua riga, le domande per il medico e la guida personale. Paghi dopo aver visto il prezzo.", href: "/lettura-referti", azione: "Carica un referto" },
+    medici
+      ? { id: "medico", chi: "Voglio parlarne con un medico", cosa: "Un medico in video", prezzo: prices ? `${prestazionePrice("video")}, prezzo fisso` : "prezzo fisso", nota: "Paghi solo dopo che il medico ha confermato l’orario. Non per le urgenze.", href: "/medici", azione: "Vedi i medici" }
+      : { id: "medico", chi: "Voglio parlarne con un medico", cosa: "Un medico", prezzo: "in arrivo", nota: "Il servizio non è ancora attivo: ti avvisiamo quando parte.", href: "/medici", azione: "Avvisami" },
+  ];
   return (
     <>
       <PageLd path="/prezzi" meta={metadata} name="Prezzi" service={capisciServiceLd()} />
@@ -127,6 +140,33 @@ export default function PrezziPage() {
 
       <section aria-label="Confronto dei servizi" className="price-section">
         <div className="container-rc">
+          {/* 27/11/2026 (fase 6, esperto dei testi: «Prezzi come pagina di decisione»): prima di tutto, da che cosa parti.
+              Ogni situazione ha una risposta sola, con il suo prezzo e il pulsante giusto. */}
+          <section aria-labelledby="prezzi-scegli" className="mb-10 sm:mb-14" data-testid="prezzi-scegli">
+            <h2 id="prezzi-scegli" className="display-lg max-w-3xl">
+              Che cosa ti serve?
+            </h2>
+            <p className="mt-3 max-w-2xl text-[1.0625rem] text-ink-soft">Scegli la frase che ti somiglia di più: accanto c’è che cosa fa per te e quanto costa.</p>
+            <ul className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-5">
+              {scelte.map((x) => (
+                <li key={x.chi} className="tile-card" data-scelta={x.id}>
+                  <div className="min-w-0">
+                    <p className="tile-card-title">«{x.chi}»</p>
+                    <p className="tile-card-text">
+                      <b>{x.cosa}</b> · {x.prezzo}
+                    </p>
+                    <p className="tile-card-text">{x.nota}</p>
+                    <Link href={x.href} className="link mt-2 inline-flex min-h-11 items-center font-semibold">
+                      {x.azione} <ArrowRight aria-hidden className="ml-1 h-4 w-4" />
+                    </Link>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-5 max-w-3xl text-[1.0625rem] text-ink-soft">
+              Stai male adesso? Non è un caso per noi: chiama il 112. Di notte e nei festivi, per un consiglio, la guardia medica (116117 in Lombardia e in molte regioni).
+            </p>
+          </section>
           {/* 22/11/2026 (analisi di chiarezza, punti 24 e 29): prima di tutto, che cosa è gratis e che cosa si paga. */}
           <div className="price-split" data-testid="gratis-pagamento">
             <section className="price-split-col price-split-free" aria-labelledby="prezzi-gratis">

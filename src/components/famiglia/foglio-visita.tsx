@@ -23,6 +23,9 @@ import { SELF_ID } from "@/domain/famiglia/persone";
 import { TIPI, whenLabel, type Promemoria } from "@/domain/famiglia/promemoria";
 import { DateBlock } from "./promemoria";
 import { personaName, usePersone } from "./shared";
+import { blocchiDiari } from "@/domain/diari/foglio-unico";
+import { nowAt, type VoceDiario } from "@/domain/diari/voci";
+import { leggiRisultati, rigaPerIlMedico, type RisultatoSalvato } from "@/domain/sonno/autovalutazione";
 
 /**
  * Il foglio per la visita: le domande scelte e gli ultimi numeri della persona, esame per esame, con la volta prima.
@@ -32,6 +35,9 @@ export function FoglioVisita({ id }: { id: string }) {
   const { persone } = usePersone();
   const [r, setR] = useState<Promemoria | null>(null);
   const [t, setT] = useState<Timeline | null>(null);
+  // 27/11/2026 (un solo foglio per il medico): anche i diari e le autovalutazioni del sonno, nello stesso foglio.
+  const [voci, setVoci] = useState<VoceDiario[]>([]);
+  const [autov, setAutov] = useState<RisultatoSalvato[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [own, setOwn] = useState("");
   const [busy, setBusy] = useState(false);
@@ -46,6 +52,11 @@ export function FoglioVisita({ id }: { id: string }) {
           `/api/v1/area/nel-tempo?persona=${x.promemoria.profileId ?? SELF_ID}`,
         );
         if (alive) setT(tl.timeline);
+        const persona = x.promemoria.profileId ?? SELF_ID;
+        // Le autovalutazioni del sonno stanno solo su questo dispositivo e sono di chi lo usa: solo nella propria scheda.
+        if (alive && persona === SELF_ID) setAutov(leggiRisultati());
+        const d = await api<{ voci: VoceDiario[] }>(`/api/v1/area/diari?persona=${persona}`).catch(() => ({ voci: [] as VoceDiario[] }));
+        if (alive) setVoci(d.voci);
       })
       .catch(
         (e) => alive && setError(e instanceof Error ? e.message : "Errore"),
@@ -84,6 +95,7 @@ export function FoglioVisita({ id }: { id: string }) {
 
   const who = personaName(persone, r.profileId);
   const rows = [...(t?.series ?? []), ...(t?.single ?? [])];
+  const blocchi = blocchiDiari(voci, nowAt().slice(0, 10));
 
   return (
     <div className="print-sheet">
@@ -313,6 +325,38 @@ export function FoglioVisita({ id }: { id: string }) {
           </p>
         )}
       </section>
+
+      {blocchi.length || autov.length ? (
+        <section className="mt-8" aria-labelledby="foglio-diari" data-testid="foglio-diari">
+          <h2 id="foglio-diari" className="area-h2">
+            Dai diari
+          </h2>
+          <p className="area-lead">Medie e conteggi delle misure segnate, senza giudizi: il medico li legge con te.</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {blocchi.map((b) => (
+              <div key={b.diario} className="form-card">
+                <p className="font-bold">{b.titolo}</p>
+                {b.periodo ? <p className="text-[0.9375rem] text-muted">{b.periodo}</p> : null}
+                <ul className="mt-2 list-disc pl-5 text-[1rem]">
+                  {b.righe.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            {autov.length ? (
+              <div className="form-card">
+                <p className="font-bold">Autovalutazioni del sonno</p>
+                <ul className="mt-2 list-disc pl-5 text-[1rem]">
+                  {autov.map((a) => (
+                    <li key={a.slug}>{rigaPerIlMedico(a)}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       <p className="emergency-note mt-10">
         <span aria-hidden>

@@ -125,6 +125,11 @@ export default function FamigliaPage() {
                 Il piano Famiglia
               </a>
             </div>
+            <p className="mt-5 text-[1.0625rem]">
+              <Link href="/famiglia/segui-un-genitore" className="link font-semibold" data-track="famiglia-genitore">
+                Segui un genitore, anche da lontano: sei passi
+              </Link>
+            </p>
           </div>
           <div className="fam-hero-stack">
             <ExamplePeople />

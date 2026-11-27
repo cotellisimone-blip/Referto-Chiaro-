@@ -359,6 +359,14 @@ export function DiarioArea({ slug }: { slug: DiarioSlug }) {
           <BellPlus aria-hidden className="h-5 w-5" /> Ricordamelo sul telefono
         </button>
       </div>
+      {/* 27/11/2026 (un solo foglio per il medico): il foglio della visita mette insieme referti, diari e domande. */}
+      <p className="mt-3 text-[1.0625rem]" data-testid="foglio-unico-link">
+        Hai una visita in programma?{" "}
+        <Link href="/area-personale/promemoria" className="link font-semibold">
+          Segnala tra i promemoria
+        </Link>
+        : il suo foglio mette insieme referti, diari e domande, in una pagina.
+      </p>
       {ric ? <Promemoria d={d} onBusy={(b) => setBusy(b ? "ics" : null)} /> : null}
       {slug === "sonno" && persona === SELF_ID ? (
         <AutovalutazioniSalvate

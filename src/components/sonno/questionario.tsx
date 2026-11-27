@@ -162,7 +162,7 @@ export function Questionario({ a }: { a: Autovalutazione }) {
             </button>
             <p className="sn-q-privacy" aria-live="polite">
               {salvato === "ok"
-                ? "Salvato solo su questo dispositivo: lo trovi nel diario del sonno, quando prepari il foglio per il medico."
+                ? "Salvato solo su questo dispositivo: lo trovi nel diario del sonno e nel foglio della visita, quando la prepari."
                 : salvato === "no"
                   ? "Questo browser non permette di salvare: scrivi il risultato sul foglio a mano."
                   : "Si salvano solo il risultato e la data, su questo dispositivo. Puoi toglierli quando vuoi dal diario."}
