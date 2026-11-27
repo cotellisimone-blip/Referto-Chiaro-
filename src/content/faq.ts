@@ -20,6 +20,11 @@ const FAQ_CON_MEDICI: FaqItem[] = [
   },
   {
     topic: "servizio",
+    q: "Perché pagare, se un'AI gratuita legge il referto?",
+    a: "Una chat gratuita spiega bene molte parole. Qui ogni numero torna alla riga del tuo referto, si confronta con l'intervallo del tuo laboratorio, ci fermiamo se un dato non si legge e non diamo mai diagnosi o dosi. Lo spieghiamo per esteso nella pagina «Cura Privata o un'AI gratuita?», con i casi in cui la risposta gratuita basta.",
+  },
+  {
+    topic: "servizio",
     q: "Quali documenti si possono spiegare?",
     a: "La prima versione è pensata per i referti di laboratorio in formato testo, come gli esami del sangue. Non legge immagini diagnostiche (TAC, RM, ecografie) e non tratta referti istologici, genetici, in gravidanza o di minori.",
   },

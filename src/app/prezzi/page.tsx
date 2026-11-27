@@ -114,6 +114,11 @@ export default function PrezziPage() {
             Nessun abbonamento. In questa versione dimostrativa nessun
             pagamento è reale.
           </p>
+          <p className="mt-4 text-[1.0625rem]">
+            <Link href="/cura-privata-o-un-ai-gratuita" className="link font-semibold">
+              Perché pagare, se un’AI gratuita legge il referto?
+            </Link>
+          </p>
         </div>
         <Wave className="text-canvas" />
       </section>

@@ -74,6 +74,7 @@ const FOOTER_NAV_ALL = {
   ],
   "Cura Privata": [
     { href: "/come-funziona", label: "Come funziona" },
+    { href: "/cura-privata-o-un-ai-gratuita", label: "Perché non un’AI gratuita?" },
     { href: "/per-i-medici", label: "Per i medici" },
     { href: "/domande-frequenti", label: "Domande frequenti" },
     { href: "/chi-siamo", label: "Chi siamo" },
