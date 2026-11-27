@@ -35,7 +35,7 @@ export function PatientShell({ children, vetrina = false }: { children: React.Re
           </span>
           <div className="min-w-0">
             <p className="callout-title">Prova dimostrativa</p>
-            <p className="callout-text">Medici, fasce, pagamenti e documenti sono simulati e restano in questo browser.</p>
+            <p className="callout-text">In questa prova orari, pagamenti e documenti sono simulati e restano in questo browser: nessuna chiamata parte davvero.</p>
             <p className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-1">
               <Link href="/prova" className="action-link">
                 Guarda anche il lato del medico e dell&apos;amministrazione

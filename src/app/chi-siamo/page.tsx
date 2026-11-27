@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Photo } from "@/components/ui/photo";
 import { Section } from "@/components/ui/section";
 import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
-import { mediciEnabled } from "@/lib/medici";
+import { domicilioEnabled, mediciEnabled } from "@/lib/medici";
 import { PageLd } from "@/components/site/page-ld";
 
 /** 14/11/2026: senza medici (src/lib/medici.ts) i testi dicono solo quello che c'è. */
@@ -62,7 +62,7 @@ export default function Page() {
             <p className="lead mt-5">
               Con un referto in mano ci si sente soli: sigle, asterischi, numeri fuori colonna. Noi partiamo da lì. Ti diciamo che cosa misura ogni esame e dove cade il tuo valore rispetto all&apos;intervallo del laboratorio, senza giudicarlo.
             </p>
-            <p className="lead mt-4">{MEDICI ? "Se vuoi andare avanti c'è un medico abilitato: a casa, in video o per un secondo parere. Le decisioni restano tue e del tuo medico." : "Poi ne parli con il tuo medico, con le domande già pronte. Le decisioni restano tue e sue."}</p>
+            <p className="lead mt-4">{MEDICI ? (domicilioEnabled() ? "Se vuoi andare avanti c'è un medico abilitato: a casa, in video o per un secondo parere. Le decisioni restano tue e del tuo medico." : "Se vuoi andare avanti c'è un medico abilitato, in video, e presto anche un secondo parere. Le decisioni restano tue e del tuo medico.") : "Poi ne parli con il tuo medico, con le domande già pronte. Le decisioni restano tue e sue."}</p>
           </div>
         </div>
       </section>
@@ -121,7 +121,7 @@ export default function Page() {
                 A che punto siamo.
               </h2>
               <p className="lead mt-3 max-w-[40rem]">
-                Cura Privata è un progetto italiano in fase di sviluppo, nato come «Referto Chiaro». Oggi è una versione dimostrativa: {MEDICI ? "provi tutti i servizi su documenti inventati, e le prenotazioni con un medico sono di prova" : "provi tutto su documenti inventati"}. Ogni servizio apre davvero solo dopo le verifiche che un
+                Cura Privata è un progetto italiano in fase di sviluppo. Oggi è una versione dimostrativa: {MEDICI ? "provi tutti i servizi su documenti inventati, e le prenotazioni con un medico sono di prova" : "provi tutto su documenti inventati"}. Ogni servizio apre davvero solo dopo le verifiche che un
                 servizio sanitario richiede.
               </p>
             </div>

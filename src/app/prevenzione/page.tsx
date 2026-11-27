@@ -85,7 +85,7 @@ export default function PrevenzionePage() {
                 Tre strumenti, <em>tutti gratuiti.</em>
               </h2>
             </div>
-            <p>Nessuno ti dice quale esame fare: ti aiutano ad arrivare dal medico con le domande giuste. Se vuoi una prescrizione, c’è il passo 4.</p>
+            <p>Nessuno ti dice quale esame fare: ti aiutano ad arrivare dal medico con le domande giuste. Se vuoi parlarne con un medico, c’è il passo 4.</p>
           </div>
           <PrevenzioneCards />
         </div>

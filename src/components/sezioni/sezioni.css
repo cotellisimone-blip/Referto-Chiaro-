@@ -72,7 +72,7 @@
 .tm .ds-mini-doc small{display:block;font-size:0.75rem;color:rgba(244,239,230,.7)}
 .tm .ds-mini-when{display:flex;flex-direction:column;gap:1px;margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.08);font-size:0.8125rem;color:rgba(244,239,230,.82)}
 .tm .ds-mini-when b{color:#fff;font-size:0.9375rem}
-.tm .ds-mini-ok{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:0.8125rem;font-weight:800;color:#7BE0D2}
+.tm .ds-mini-ok{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:0.875rem;font-weight:800;color:#7BE0D2}
 .tm .ds-mini-ok .tm-ic{stroke-width:2.6}
 
 /* avatar con le iniziali: mai foto di medici */
@@ -779,7 +779,7 @@ html .tm .ds-art-pro{width:86%}
 /* 19/11/2026: le schede dei medici veri (Sara, Elena, Riccardo). Quello che manca si vede, tratteggiato, come per i dati
    del titolare; due azioni, videoconsulto e visita a casa. */
 .tm .ds-doc .ds-todo{display:inline-block;padding:1px 7px;border:1.5px dashed #B7791F;border-radius:6px;background:#FFF4DC;color:#6B4400;font-weight:700;font-size:0.875rem;line-height:1.45}
-.tm .ds-doc-todo{margin-top:12px}
+.tm .ds-doc-todo{margin:0 0 14px}
 .tm .ds-doc-foot .ds-doc-btn-2{background:transparent;color:#0C3340;box-shadow:inset 0 0 0 1.5px #0C3340}
 .tm .ds-doc-foot .ds-doc-btn-2:hover{background:#0C3340;color:#fff}
 :root[data-theme="dark"] .tm .ds-doc .ds-todo{background:#3A2C12;color:#FFE2A8;border-color:#E8B968}

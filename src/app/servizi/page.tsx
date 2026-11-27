@@ -100,7 +100,7 @@ export default function ServiziPage() {
             <DoctorServices />
           </div>
           <p className="mt-5 text-[1.0625rem] text-muted">
-            Versione dimostrativa: medici, fasce e pagamenti sono simulati.{" "}
+            Versione dimostrativa: i medici sono veri, orari e pagamenti sono simulati.{" "}
             <Link href="/stato-del-progetto" className="link font-semibold">
               Stato del progetto
             </Link>

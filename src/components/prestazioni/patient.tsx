@@ -482,7 +482,7 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
               ) : null}
               <label className="field-label">
                 {kind === "parere" ? "Il tuo quesito, in una o due frasi" : "Di che cosa si tratta, in poche parole"}
-                <textarea value={reason} onChange={(e) => setReason(e.target.value)} required minLength={8} maxLength={400} rows={3} className="field-input" placeholder={kind === "parere" ? "Esempio fittizio: mi è stata proposta una procedura, vorrei sapere se è indicata nel mio caso." : "Esempio fittizio: febbre da tre giorni, vorrei essere visitato a casa."} />
+                <textarea value={reason} onChange={(e) => setReason(e.target.value)} required minLength={8} maxLength={400} rows={3} className="field-input" placeholder={kind === "parere" ? "Esempio fittizio: mi è stata proposta una procedura, vorrei sapere se è indicata nel mio caso." : kind === "video" ? "Esempio fittizio: tosse da una settimana, vorrei parlarne con un medico." : "Esempio fittizio: febbre da tre giorni, vorrei essere visitato a casa."} />
                 <span className="field-hint block font-normal">Solo ciò che serve al medico per organizzarsi. È una prova: non scrivere dati reali.</span>
               </label>
               {kind !== "domicilio" ? (
@@ -501,7 +501,7 @@ export function PatientStart({ kind }: { kind: PrestazioneKind }) {
               ) : null}
               <label className="field-label">
                 Telefono per il medico
-                <input value={phone} onChange={(e) => setPhone(e.target.value)} required autoComplete="tel" className="field-input" />
+                <input type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required autoComplete="tel" className="field-input" />
                 <span className="field-hint block font-normal">Il medico lo vede solo a prestazione confermata.</span>
               </label>
               {kind === "domicilio" ? <EmergencyNumbers compact /> : null}

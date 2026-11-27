@@ -149,7 +149,7 @@ export default function MediciPage() {
             <div>
               <p className="tm-kicker">I medici</p>
               <h2 id="dom-medici">
-                Medici con nome e cognome, <em>{attivo ? "prima di pagare." : "prima di scegliere."}</em>
+                {attivo ? <>Tre medici di medicina generale, <em>a Brescia.</em></> : <>Medici con nome e cognome, <em>prima di scegliere.</em></>}
               </h2>
             </div>
             <p>

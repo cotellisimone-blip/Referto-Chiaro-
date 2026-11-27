@@ -35,6 +35,7 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   /* config options here */
   // Ciclo 2: una seconda build (profilo vetrina) può vivere accanto a quella standard, per i test e2e della vetrina.
   ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),

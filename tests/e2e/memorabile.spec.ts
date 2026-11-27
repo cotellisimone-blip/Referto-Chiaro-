@@ -125,7 +125,7 @@ test.describe("home chiara e scura", () => {
     await expect(page.locator('main a[href^="/servizi/"], main a[href^="/richiedi/"]')).toHaveCount(0);
     // I mondi da esplorare, vicino a casa e nel tempo, il tuo spazio; lo Scaffale in fondo al passo 5, segnato come
     // pubblicità e, finché non ci sono affiliazioni, come esempio (22/11/2026, sì di Simone).
-    for (const href of ["/integratori", "/prevenzione/intestino-e-microbiota", "/prevenzione/alimentazione", "/prenditi-cura-di-te/sonno", "/vicino-a-te", "/famiglia", "/scaffale", "/accedi"]) await expect(main.locator(`a[href="${href}"]`).first()).toBeVisible();
+    for (const href of ["/integratori", "/prevenzione/intestino-e-microbiota", "/prevenzione/alimentazione", "/prenditi-cura-di-te/sonno", "/vicino-a-te", "/area-personale/nel-tempo", "/scaffale", "/accedi"]) await expect(main.locator(`a[href="${href}"]`).first()).toBeVisible();
     await expect(main.locator("#scaffale")).toContainText("nessun accordo");
     await expect(main.locator("#scaffale")).toContainText("Esempio");
     await expect(main.locator("#scaffale")).toContainText("non abbiamo ancora accordi");

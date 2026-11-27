@@ -164,11 +164,11 @@ export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; ve
               </label>
               <label className="field-check">
                 <input type="checkbox" checked={consents["health-data"]} onChange={toggle("health-data")} />
-                <span>Acconsento in modo esplicito al trattamento dei miei dati relativi alla salute, solo per spiegarmi i referti che caricherò. Posso revocarlo quando voglio dalle impostazioni.</span>
+                <span>Acconsento in modo esplicito al trattamento dei miei dati relativi alla salute, solo per i servizi che uso: spiegarmi i referti, tenere diari e promemoria. Posso revocarlo quando voglio dalle impostazioni.</span>
               </label>
               <label className="field-check">
                 <input type="checkbox" checked={consents["subject-declaration"]} onChange={toggle("subject-declaration")} />
-                <span>Dichiaro di essere maggiorenne e di caricare solo referti che riguardano me.</span>
+                <span>Dichiaro di essere maggiorenne e di caricare solo referti miei o di un familiare che me lo ha chiesto o di cui ho la tutela.</span>
               </label>
             </fieldset>
             {state.kind === "error" ? (

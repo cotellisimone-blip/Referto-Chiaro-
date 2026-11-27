@@ -70,7 +70,7 @@ test("punto 8 · la ricerca trova gli integratori e, se non trova, propone le tr
   await campo.fill("dolore al ginocchio");
   const sezioni = page.getByTestId("search-sezioni");
   await expect(sezioni).toBeVisible();
-  expect(await sezioni.locator("a").evaluateAll((as) => as.map((a) => a.getAttribute("href")))).toEqual(["/prevenzione", "/lettura-referti", "/medici"]);
+  expect(await sezioni.locator("a").evaluateAll((as) => as.map((a) => a.getAttribute("href")))).toEqual(["/punto-di-partenza", "/prevenzione", "/lettura-referti", "/prenditi-cura-di-te"]); // 27/11/2026: i passi del percorso (senza medici, niente passo 4)
 });
 
 test("punto 9 · home da telefono: sotto le 9,5 schermate, senza ripetere il percorso in fondo", async ({ page, isMobile }) => {

@@ -110,7 +110,7 @@ export function DiariIndice() {
               Tutti gli strumenti gratuiti <Ic id="go" className="ht-ic" />
             </Link>
           </div>
-          <p className="ht-112">Per un’emergenza chiama il 112. Di notte e nei festivi c’è la guardia medica pubblica, gratuita: 116117.</p>
+          <p className="ht-112">Per un’emergenza chiama il 112. Di notte e nei festivi c’è la guardia medica pubblica, gratuita: il 116117 in Lombardia e in molte regioni, altrove il numero della tua ASL.</p>
         </div>
       </section>
     </div>
@@ -279,7 +279,7 @@ export function DiarioPubblico({ slug }: { slug: DiarioSlug }) {
               </Link>
             ))}
           </div>
-          <p className="ht-112">Se stai male non aspettare il diario: chiama il tuo medico. Per un’emergenza chiama il 112; di notte e nei festivi c’è la guardia medica, gratuita: 116117.</p>
+          <p className="ht-112">Se stai male non aspettare il diario: chiama il tuo medico. Per un’emergenza chiama il 112; di notte e nei festivi c’è la guardia medica, gratuita: il 116117 in Lombardia e in molte regioni, altrove il numero della tua ASL.</p>
         </div>
       </section>
     </div>

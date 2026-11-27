@@ -46,7 +46,7 @@ const FAQ_CON_MEDICI: FaqItem[] = [
   {
     topic: "medico",
     q: "Chi sono i medici?",
-    a: "Medici abilitati e identificabili: prima di pagare leggi il nome di chi ti visita o ti risponde. Prima di attivare un medico controlliamo la sua iscrizione all'Albo. Oggi, nella versione dimostrativa, i medici sono profili di prova.",
+    a: "Medici abilitati e identificabili: prima di pagare leggi il nome di chi ti visita o ti risponde. Prima di attivare un medico controlliamo la sua iscrizione all'Albo. Nella versione dimostrativa orari, pagamenti e videoconsulti sono simulati: nessuna chiamata parte davvero.",
   },
   {
     topic: "medico",

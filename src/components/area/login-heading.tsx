@@ -12,6 +12,12 @@ const MOTIVI: Record<string, { eyebrow: string; title: string; lead: string; lea
     lead: "Un attimo e sei al caricamento: con l'account demo provi subito, senza registrarti. Oppure ricevi un link via email, senza password.",
     leadVetrina: "Un attimo e sei al caricamento: oggi si prova con l'account demo, con referti inventati e senza registrazione.",
   },
+  "/area-personale/nel-tempo": {
+    eyebrow: "Nel tempo · gratis",
+    title: "I tuoi valori nel tempo, in un posto solo.",
+    lead: "Entra e trovi i referti in ordine, l'andamento dei valori e i promemoria. Con l'account demo provi subito, senza registrarti.",
+    leadVetrina: "Oggi si prova con l'account demo: referti inventati, nessuna registrazione.",
+  },
 };
 
 const DEFAULT = {

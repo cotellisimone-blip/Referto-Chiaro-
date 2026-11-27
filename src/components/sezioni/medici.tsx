@@ -14,10 +14,17 @@ const ICON = { domicilio: Home, video: Video, parere: Stethoscope } as const;
  * Niente fasce libere qui: le fasce della versione dimostrativa sono inventate e non vanno accanto a un nome vero.
  */
 export function MediciRete({ book = true }: { book?: boolean }) {
+  // 27/11/2026 (fase 1): quello che manca si dice UNA volta sopra le schede, non tre volte (una per medico).
+  const manca = [...new Set(MEDICI.flatMap((m) => datiMancanti(m)))];
   return (
+    <>
+    {manca.length ? (
+      <p className="ds-doc-todo ds-todo" data-segnaposto="medici">
+        Da completare prima di andare online: {manca.join(", ")}.
+      </p>
+    ) : null}
     <ul className="ds-docs" id="i-medici">
       {MEDICI.map((m) => {
-        const manca = datiMancanti(m);
         return (
           <li key={m.id} className="ds-doc" data-medico={m.id}>
             <div className="ds-doc-top">
@@ -53,11 +60,6 @@ export function MediciRete({ book = true }: { book?: boolean }) {
                 <dd>{m.ordine ?? <span className="ds-todo" data-segnaposto="medico">da completare</span>}</dd>
               </div>
             </dl>
-            {manca.length ? (
-              <p className="ds-doc-todo ds-todo" data-segnaposto="medico">
-                Da completare prima di andare online: {manca.join(", ")}.
-              </p>
-            ) : null}
             {book ? (
               <div className="ds-doc-foot">
                 <Link href="/richiedi/videoconsulto" className="ds-doc-btn" data-track="medico-video">
@@ -74,5 +76,6 @@ export function MediciRete({ book = true }: { book?: boolean }) {
         );
       })}
     </ul>
+    </>
   );
 }

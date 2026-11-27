@@ -526,7 +526,7 @@ export function DoctorApply() {
         </label>
         <label className="field-label">
           Telefono professionale
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} className="field-input" />
+          <input type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="field-input" />
         </label>
         <label className="field-label">
           Iscrizione all&apos;Ordine (provincia e numero)

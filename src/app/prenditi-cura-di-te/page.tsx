@@ -214,7 +214,7 @@ export default function PrendersiCuraPage() {
               <ul>
                 <li>Se un disturbo è nuovo, forte o peggiora: parlane prima con il tuo medico.</li>
                 <li>Se prendi farmaci, sei in gravidanza o allatti, o hai una malattia seguita da un medico: ogni cambiamento lo decidi con lui.</li>
-                <li>Per un’emergenza chiama il 112. Di notte e nei festivi c’è la guardia medica pubblica, gratuita: 116117.</li>
+                <li>Per un’emergenza chiama il 112. Di notte e nei festivi c’è la guardia medica pubblica, gratuita: il 116117 in Lombardia e in molte regioni, altrove il numero della tua ASL.</li>
               </ul>
             </div>
           </div>

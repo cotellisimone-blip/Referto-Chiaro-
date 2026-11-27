@@ -132,7 +132,7 @@ export function TemaPage({
               </Link>
             ))}
           </div>
-          <p className="ht-112">Per un’emergenza chiama il 112. Di notte e nei festivi c’è la guardia medica pubblica, gratuita: 116117.</p>
+          <p className="ht-112">Per un’emergenza chiama il 112. Di notte e nei festivi c’è la guardia medica pubblica, gratuita: il 116117 in Lombardia e in molte regioni, altrove il numero della tua ASL.</p>
         </div>
       </section>
     </div>

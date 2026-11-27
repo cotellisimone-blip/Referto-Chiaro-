@@ -85,7 +85,7 @@ export function DemoNotice({ children }: { children?: React.ReactNode }) {
       </span>
       <div>
         <p className="callout-title">Prova dimostrativa</p>
-        <p className="callout-text">Medici, fasce, pagamenti, video, documenti e comunicazioni sono simulati e restano in questo browser. {children}</p>
+        <p className="callout-text">In questa prova orari, pagamenti, video, documenti e messaggi sono simulati e restano in questo browser. {children}</p>
       </div>
     </div>
   );

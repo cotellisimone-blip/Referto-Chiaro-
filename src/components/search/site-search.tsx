@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
-import { Activity, ArrowRight, BookOpenText, FileText, HeartPulse, Pill, Search, SpellCheck, Stethoscope, X } from "lucide-react";
+import { Activity, ArrowRight, BookOpenText, Compass, FileText, HeartPulse, Leaf, Pill, Search, SpellCheck, Stethoscope, X } from "lucide-react";
+import { mediciEnabled } from "@/lib/medici";
 import { searchSite, type SearchItem, type SearchKind } from "@/lib/search-core";
 
 export const SEARCH_OPEN_EVENT = "cp-search-open";
@@ -24,10 +25,13 @@ const KIND: Record<SearchKind, { label: string; Icon: typeof FileText }> = {
   pagina: { label: "Pagine", Icon: FileText },
 };
 
+// 27/11/2026 (fase 1): senza risultati si riparte dai cinque passi del percorso, non dalle «tre sezioni» di prima.
 const NO_RESULT_LINKS = [
-  { href: "/prevenzione", label: "Prevenzione: quali esami conoscere", Icon: HeartPulse },
-  { href: "/lettura-referti", label: "Capisci il referto: ho un referto da capire", Icon: FileText },
-  { href: "/medici", label: "Medici: vorrei parlare con una persona", Icon: Stethoscope },
+  { href: "/punto-di-partenza", label: "1 · Inizia da te: poche domande su di te", Icon: Compass },
+  { href: "/prevenzione", label: "2 · Gli esami per te", Icon: HeartPulse },
+  { href: "/lettura-referti", label: "3 · Capisci il referto", Icon: FileText },
+  ...(mediciEnabled() ? [{ href: "/medici", label: "4 · Un medico, in video", Icon: Stethoscope }] : []),
+  { href: "/prenditi-cura-di-te", label: "5 · Prenditi cura di te: sonno, alimentazione", Icon: Leaf },
 ];
 
 function readRecent(): string[] {
@@ -225,8 +229,8 @@ export function SiteSearch() {
           {noResults ? (
             <div className="px-5 py-8 text-center">
               <p className="text-lg font-semibold text-ink">Nessun risultato per «{query.trim()}».</p>
-              <p className="mt-2 text-muted">Qui trovi esami, sigle e integratori: prova con la sigla stampata sul referto (per esempio «ALT», «HbA1c»). Oppure parti da una delle tre sezioni.</p>
-              {/* 17/11/2026 (punto 8): senza risultati non si resta fermi, si riparte dalle tre sezioni. */}
+              <p className="mt-2 text-muted">Qui trovi esami, sigle e integratori: prova con la sigla stampata sul referto (per esempio «ALT», «HbA1c»). Oppure parti da uno dei passi del percorso.</p>
+              {/* 17/11/2026 (punto 8): senza risultati non si resta fermi, si riparte dal percorso. */}
               <ul className="search-none-links mt-5" data-testid="search-sezioni">
                 {NO_RESULT_LINKS.map(({ href, label, Icon }) => (
                   <li key={href}>

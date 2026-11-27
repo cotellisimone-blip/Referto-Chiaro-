@@ -23,7 +23,8 @@ export const HOME_B_LINKS = {
   alimentazione: "/prevenzione/alimentazione",
   screening: "/prevenzione/screening",
   vicino: "/vicino-a-te",
-  neltempo: "/famiglia",
+  // 27/11/2026 (fase 1): la tessera «Nel tempo · Gratis» porta allo spazio personale, non alla pagina con il piano Famiglia.
+  neltempo: "/area-personale/nel-tempo",
   scaffale: "/scaffale",
   spazio: "/accedi",
   sonno: "/prenditi-cura-di-te/sonno",
@@ -74,7 +75,7 @@ export function HomeB() {
               La tua salute, <em>tutta in una pagina.</em>
             </h1>
             {/* 22/11/2026 (analisi di chiarezza, punti 9 e 12, sì di Simone): la frase dice che cosa fa il sito, passo per passo. */}
-            <p className="hb-lead">Cinque passi per capire e curare la tua salute: poche domande su di te, gli esami da conoscere, il referto spiegato, un medico se serve. E ogni giorno sonno, alimentazione e intestino.</p>
+            <p className="hb-lead">Cinque passi per capire la tua salute e prendertene cura: poche domande su di te, gli esami da conoscere, il referto spiegato, un medico se serve. E ogni giorno sonno, alimentazione e intestino.</p>
           </div>
           <div className="hb-hero-r">
             <nav className="hb-filo hb-filo5" aria-label="Il percorso, in cinque passi">
@@ -417,7 +418,7 @@ export function HomeB() {
               </div>
             )}
             <p className="hb-doc-112">
-              Per esigenze non urgenti. Per un’emergenza chiama il 112. Di notte e nei festivi c’è anche la guardia medica pubblica, gratuita: 116117.
+              Per esigenze non urgenti. Per un’emergenza chiama il 112. Di notte e nei festivi c’è anche la guardia medica pubblica, gratuita: il 116117 in Lombardia e in molte regioni, altrove il numero della tua ASL.
             </p>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { pageTitle } from "@/lib/seo";
 import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { GUIDES } from "@/content/guides";
 import { PercorsoSezioni } from "@/components/sezioni/parts";
 import {
   ArrowRight,
@@ -53,7 +54,7 @@ const START_LABEL: Record<PrestazioneKind, string> = {
 const PAY_FAQ = [
   [
     "Perché il primo referto costa meno?",
-    `Per farti provare il servizio: il primo referto che rendi chiaro costa ${formatEuro(firstRefertoCents())}, una sola volta per persona. Dal secondo, ${formatEuro(priceCents("capisci"))} per referto. Nessun abbonamento.`,
+    `Per farti provare il servizio: il primo referto che fai spiegare costa ${formatEuro(firstRefertoCents())}, una sola volta per persona. Dal secondo, ${formatEuro(priceCents("capisci"))} per referto. Nessun abbonamento.`,
   ],
   [
     "Quando pago?",
@@ -139,7 +140,7 @@ export default function PrezziPage() {
                   <b>Il tuo spazio</b>: referti in ordine, diari della salute, promemoria
                 </li>
                 <li>
-                  <b>Guide e glossario</b>: oltre 90 esami spiegati
+                  <b>Guide e glossario</b>: {GUIDES.length} esami spiegati
                 </li>
               </ul>
             </section>

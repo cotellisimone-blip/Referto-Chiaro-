@@ -16,9 +16,10 @@ const SOURCES = [...walk("src"), ...walk("public")];
 const norm = (f: string) => f.split(path.sep).join("/");
 
 describe("rebrand Cura Privata", () => {
-  it("il vecchio nome compare solo nella nota storica di Chi siamo", () => {
+  // 27/11/2026 (fase 1): la nota storica in Chi siamo è stata tolta; il vecchio nome non compare più da nessuna parte.
+  it("il vecchio nome non compare nelle pagine", () => {
     const hits = SOURCES.filter((f) => /referto ?chiaro|referto-chiaro/i.test(readFileSync(f, "utf8"))).map(norm);
-    expect(hits).toEqual(["src/app/chi-siamo/page.tsx"]);
+    expect(hits).toEqual([]);
   });
 
   it("nessun prezzo scritto a mano nelle pagine pubbliche (il listino passa dal flag)", () => {

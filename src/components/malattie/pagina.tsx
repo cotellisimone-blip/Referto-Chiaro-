@@ -234,7 +234,7 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
                   <li key={s}>{s}</li>
                 ))}
               </ul>
-              <p className="ml-guardia">Di notte e nei festivi c’è la guardia medica, gratuita: 116117.</p>
+              <p className="ml-guardia">Di notte e nei festivi c’è la guardia medica, gratuita: il 116117 in Lombardia e in molte regioni, altrove il numero della tua ASL.</p>
             </div>
           </div>
         </div>
@@ -453,7 +453,7 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
               Diari della salute
             </Link>
           </div>
-          <p className="ht-112">Per un’emergenza chiama il 112. Di notte e nei festivi c’è la guardia medica pubblica, gratuita: 116117.</p>
+          <p className="ht-112">Per un’emergenza chiama il 112. Di notte e nei festivi c’è la guardia medica pubblica, gratuita: il 116117 in Lombardia e in molte regioni, altrove il numero della tua ASL.</p>
         </div>
       </section>
     </div>

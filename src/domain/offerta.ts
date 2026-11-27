@@ -324,7 +324,7 @@ export function publicPricesEnabled(env: Env = process.env): boolean {
   return env.ENABLE_PUBLIC_PRICES !== "false";
 }
 
-export const PRICE_NOTE = "Prezzi di riferimento, IVA inclusa ove dovuta. Il prezzo esatto lo vedi sempre prima di pagare.";
+export const PRICE_NOTE = "Prezzi di riferimento, IVA inclusa, se dovuta. Il prezzo esatto lo vedi sempre prima di pagare.";
 
 /**
  * Professionisti mostrati sul sito pubblico. Si aggiungono SOLO dopo la verifica dell'iscrizione all'Albo
