@@ -186,3 +186,6 @@
 .dra-autov-l input{flex:none;width:22px;height:22px;margin-top:.15rem;accent-color:var(--color-teal)}
 .dra-autov ul{margin:.4rem 0 .5rem;padding-left:1.2rem;font-size:1rem;line-height:1.5;color:var(--color-ink)}
 .dra-autov-vuoto{margin-top:1rem;font-size:1rem;line-height:1.5;color:var(--color-muted)}
+/* 27/11/2026 (fase 5): sotto «Salva», quando non aspettare. */
+.dra-subito{margin:.75rem 0 0;font-size:.9375rem;line-height:1.45;color:var(--color-ink-soft,inherit)}
+.dra-subito a{font-weight:700;text-decoration:underline;text-underline-offset:.2em}

@@ -42,6 +42,8 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
     { id: "fonti", label: "Fonti" },
   ];
   const rivista = m.revisione.stato === "rivista" ? m.revisione : null;
+  const s0 = m.quandoChiamare.subito[0].replace(/\.$/, "");
+  const primoSubito = s0.charAt(0).toLowerCase() + s0.slice(1);
 
   return (
     <div className={`ht ht-${m.tono} ml`} data-malattia={m.slug}>
@@ -86,6 +88,15 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
               ))}
             </ol>
           </div>
+
+          {/* 27/11/2026 (fase 5, medici simulati): su telefono «Quando chiamare» arrivava dopo cinque schermate. In cima
+              ora c'è il primo segnale da 112 e il collegamento all'elenco completo. */}
+          <p className="ml-subito" data-testid="subito-in-cima">
+            <a href="tel:112" className="ml-subito-tel">112</a>
+            <span>
+              <b>Chiama subito se:</b> {primoSubito}. <a href="#quando-chiamare">Tutti i segnali da non aspettare</a>
+            </span>
+          </p>
 
           <div className="ml-fiducia" data-revisione={m.revisione.stato}>
             <span className="ml-fiducia-ico" aria-hidden="true">

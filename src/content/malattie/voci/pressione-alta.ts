@@ -50,7 +50,7 @@ export const PRESSIONE_ALTA: Malattia = {
   },
   quandoChiamare: {
     subito: [
-      "Pressione molto alta (180/110 o più) insieme a dolore al petto, fiato corto o sudore freddo.",
+      "Dolore al petto, fiato corto o sudore freddo: chiama il 112 qualunque sia il valore della pressione.",
       "Debolezza o formicolio di un braccio, di una gamba o di metà del viso, bocca storta, difficoltà a parlare o a capire.",
       "Perdita improvvisa della vista, mal di testa improvviso e fortissimo, confusione o convulsioni.",
     ],

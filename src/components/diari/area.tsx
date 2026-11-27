@@ -464,6 +464,15 @@ function Quando({ at, setAt }: { at: string; setAt: (v: string) => void }) {
 
 const soloCifre = (s: string) => s.replace(/\D/g, "").slice(0, 3);
 
+const NON_ASPETTARE: Record<DiarioSlug, string> = {
+  pressione: "Dolore al petto, fiato corto, debolezza di un lato del corpo o difficoltà a parlare: chiama subito il 112, qualunque sia il valore.",
+  glicemia: "Se ti senti confuso, molto debole o sudato, o la persona non risponde bene: chiama subito il 112.",
+  cefalea: "Un mal di testa improvviso e fortissimo, o con debolezza, bocca storta o difficoltà a parlare: chiama subito il 112.",
+  sonno: "Se ti addormenti alla guida o hai pensieri di farti del male, non aspettare il prossimo controllo: chiama il 112.",
+  peso: "Fiato corto improvviso, dolore al petto o gambe che si gonfiano in pochi giorni: chiama il medico subito, o il 112.",
+  respiro: "Se non riesci a finire una frase, hai labbra bluastre o il farmaco al bisogno non basta: chiama subito il 112.",
+};
+
 function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; voci: VoceDiario[] | null; onSaved: () => void }) {
   const [at, setAt] = useState(nowAt());
   const [a, setA] = useState("");
@@ -828,6 +837,10 @@ function NuovaVoce({ d, persona, voci, onSaved }: { d: Diario; persona: string; 
           <button type="submit" className="btn btn-primary dra-save" disabled={saving} data-testid="salva-voce">
             {saving ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <Check aria-hidden className="h-5 w-5" />} Salva
           </button>
+          {/* 27/11/2026 (fase 5, medici simulati): accanto a «Salva», una riga fissa su quando non aspettare. */}
+          <p className="dra-subito" data-testid="quando-non-aspettare">
+            {NON_ASPETTARE[d.slug]} <Link href={`/diari/${d.slug}#quando-chiamare`}>Quando non aspettare</Link>
+          </p>
         </>
       ) : null}
 

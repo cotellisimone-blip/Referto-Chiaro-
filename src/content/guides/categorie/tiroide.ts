@@ -19,7 +19,7 @@ export const GUIDE_TIROIDE: Guide[] = [
         "Il TSH viene richiesto come primo esame di approfondimento quando si vuole valutare la funzione della tiroide: in presenza di sintomi che il medico ritiene possano riguardare la ghiandola, in un controllo di routine, in gravidanza o per seguire nel tempo una situazione già nota. Spesso è affiancato dalla FT4 e, se serve, dalla FT3.",
       ],
       howToRead: [
-        "Sul referto trovi il valore (di solito in mUI/L, equivalente a µUI/mL), l'intervallo di riferimento del laboratorio e un eventuale segno accanto ai valori fuori dall'intervallo stampato. Leggi il TSH insieme alla FT4: il medico li interpreta come coppia, non separatamente.",
+        "Sul referto trovi il valore (di solito in mUI/L, equivalente a µUI/mL), l'intervallo di riferimento del laboratorio e un eventuale segno accanto ai valori fuori dall'intervallo stampato. Spesso il TSH si fa da solo, come primo esame; se è fuori dall'intervallo, o se ci sono disturbi, il medico lo legge insieme alla FT4.",
         "Il TSH può oscillare nell'arco della giornata e da un prelievo all'altro. Un singolo risultato fuori dall'intervallo non è, da solo, un'indicazione: il medico valuta l'andamento, i sintomi e spesso chiede di ripetere l'esame. Gli intervalli cambiano con l'età e in gravidanza, e dipendono dal metodo del laboratorio.",
       ],
       factors: [

@@ -19,7 +19,7 @@ const SEZIONI: TemaSezione[] = [
     id: "programmi",
     kicker: "Screening organizzati",
     titolo: "I tre programmi gratuiti",
-    testo: "L’invito ti arriva per lettera dall’ATS o dall’ASL della tua zona. Se non l’hai ricevuto, chiedi al tuo medico o al centro screening.",
+    testo: "Sono pensati per chi sta bene e non ha disturbi. L’invito ti arriva per lettera dall’ATS o dall’ASL della tua zona; se non l’hai ricevuto, chiedi al tuo medico o al centro screening. Se hai disturbi, non aspettare l’invito: parlane con il medico.",
     voci: [
       { titolo: "Mammografia", tag: "Ogni 2 anni", testo: "Per le donne dai 50 ai 69 anni. Alcune Regioni la offrono già dai 45 e fino ai 74.", href: "/guide/mammografia" },
       { titolo: "Pap test e test HPV", tag: "Ogni 3 o 5 anni", testo: "Per le donne dai 25 ai 64 anni: Pap test ogni 3 anni fino ai 29, poi test HPV ogni 5 anni.", href: "/guide/pap-test-e-hpv-test" },
@@ -32,7 +32,7 @@ const SEZIONI: TemaSezione[] = [
     titolo: "Se arriva un richiamo",
     testo: "Un richiamo non è una diagnosi: spesso serve solo un esame in più per chiarire.",
     voci: [
-      { titolo: "Esito negativo", testo: "Ricevi una lettera, e il prossimo invito arriva alla scadenza." },
+      { titolo: "Esito negativo", testo: "Ricevi una lettera, e il prossimo invito arriva alla scadenza. Un esito negativo non esclude del tutto la malattia: se nel frattempo compaiono disturbi, parlane con il medico." },
       { titolo: "Richiamo per approfondire", testo: "Ti propongono un esame in più, dentro lo stesso programma e senza pagare." },
       { titolo: "Il referto, in parole semplici", testo: "Puoi farlo spiegare e preparare le domande per il medico.", href: "/lettura-referti", go: "Lettura referti" },
     ],

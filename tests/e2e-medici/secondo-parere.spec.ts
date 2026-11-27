@@ -139,7 +139,10 @@ test.describe("secondo parere e portali riservati", () => {
     expect(over.overview.users).toBeGreaterThan(0);
     const csv = await ctx.request.get("/api/v1/admin/lista-attesa?formato=csv");
     expect(csv.headers()["content-type"]).toContain("text/csv");
-    expect(await csv.text()).toContain("Laboratorio di prova");
+    // 27/11/2026 (fase 1): in demo chiunque entra come admin, quindi email mascherate e note e organizzazioni tolte.
+    const testo = await csv.text();
+    expect(testo).not.toContain("Laboratorio di prova");
+    expect(testo).toContain("•••");
     const page = await ctx.newPage();
     await page.goto("/admin");
     await expect(page.getByRole("heading", { name: "Panoramica" })).toBeVisible({ timeout: 15_000 });

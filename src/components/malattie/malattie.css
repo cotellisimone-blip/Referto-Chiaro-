@@ -200,3 +200,10 @@
   .ht .ml-sec,.ht [id]{scroll-margin-top:7.5rem}
 }
 @media (prefers-reduced-motion:reduce){.ml-aggancio{transition:none}}
+
+/* 27/11/2026 (fase 5): il primo segnale da 112 in cima alla pagina. */
+.ml-subito{display:flex;align-items:flex-start;gap:.75rem;max-width:56rem;margin:1.1rem 0 0;padding:.75rem .9rem;border-radius:18px;font-size:1rem;line-height:1.45;color:var(--ink);background:color-mix(in srgb,#b3261e 8%,transparent);border:1px solid color-mix(in srgb,#b3261e 30%,transparent)}
+.ml-subito a{color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:.2em}
+.ml-subito .ml-subito-tel{flex:none;display:inline-grid;place-items:center;min-width:52px;min-height:44px;border-radius:12px;background:#b3261e;color:#fff;font-weight:800;text-decoration:none}
+:root[data-theme="dark"] .ml-subito{background:rgba(255,143,128,.1);border-color:rgba(255,143,128,.35)}
+:root[data-theme="dark"] .ml-subito .ml-subito-tel{background:#ff8f80;color:#3d1410}

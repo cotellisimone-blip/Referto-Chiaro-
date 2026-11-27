@@ -41,21 +41,23 @@ describe("secondo parere e videoconsulto: pagamento prima del medico", () => {
     expect((await getOrderForRef(alice, c.id))?.status).toBe("refunded");
   });
 
-  it("C: videoconsulto pagato → conferma → riepilogo firmato; un altro utente non lo vede", async () => {
+  // 27/11/2026 (fase 4): si paga DOPO la conferma del medico, come promettono /prezzi e /richiedi.
+  it("C: richiesta → il medico la vede e conferma → pagamento → riepilogo firmato; un altro utente non lo vede", async () => {
     const a = await createAppointment(alice, { reason: "Parlare dei valori del referto.", slots: [{ day: tomorrow, window: "mattina" }], documentIds: [doc], isSimulated: true });
     if ("error" in a) throw new Error(a.error);
-    expect(await listPhysicianAppointments(doctorUser, physician)).toHaveLength(0);
-    expect(await getPhysicianAppointment(doctorUser, physician, a.id)).toBeNull();
-
-    const o = await createServiceOrder(alice, { service: "videoconsulto", refId: a.id, documentIds: [doc], provider: "simulated" });
-    expect(o.amountCents).toBe(6900);
-    await markOrderPaid(o.id);
+    expect(await listPhysicianAppointments(doctorUser, physician)).toHaveLength(1);
     const seen = await getPhysicianAppointment(doctorUser, physician, a.id);
     expect(seen?.documents.map((d) => d.id)).toEqual([doc]);
 
     const when = new Date(Date.now() + 2 * 86_400_000).toISOString();
     expect((await physicianAppointmentAct(doctorUser, physician, a.id, { kind: "complete", summary: "x".repeat(50) })).ok).toBe(false);
     expect((await physicianAppointmentAct(doctorUser, physician, a.id, { kind: "confirm", scheduledAt: when, videoUrl: "https://meet.esempio.it/a" })).ok).toBe(true);
+    // Confermato ma non pagato: niente riepilogo
+    expect((await physicianAppointmentAct(doctorUser, physician, a.id, { kind: "complete", summary: "x".repeat(50) })).ok).toBe(false);
+
+    const o = await createServiceOrder(alice, { service: "videoconsulto", refId: a.id, documentIds: [doc], provider: "simulated" });
+    expect(o.amountCents).toBe(6900);
+    await markOrderPaid(o.id);
     const done = await physicianAppointmentAct(doctorUser, physician, a.id, { kind: "complete", summary: "Abbiamo parlato dei valori e delle domande per il medico curante." });
     expect(done.ok && done.appointment.status).toBe("completed");
     expect(done.ok && done.appointment.summaryHash).toMatch(/^[0-9a-f]{64}$/);

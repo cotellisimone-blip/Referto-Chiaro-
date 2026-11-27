@@ -10,7 +10,7 @@ import { StatusNotify } from "@/components/site/status-notify";
 import { PREREQUISITES, PREREQUISITES_DOMICILIO } from "@/content/stato-progetto";
 import { ECOSYSTEM } from "@/domain/ecosystem";
 import { offerItems, type OfferKey } from "@/domain/prestazioni/offerta-completa";
-import { CON_UN_MEDICO_HREF, mediciEnabled } from "@/lib/medici";
+import { CON_UN_MEDICO_HREF, domicilioEnabled, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
 import { PageLd } from "@/components/site/page-ld";
 
 export const metadata: Metadata = {
@@ -48,6 +48,9 @@ export default function StatoDelProgettoPage() {
   // 14/11/2026: senza medici (src/lib/medici.ts) i loro servizi restano in elenco, perché qui si dice che cosa manca,
   // ma come «In preparazione» e con il collegamento alla lista d'attesa, non alle pagine di vendita.
   const medici = mediciEnabled();
+  // 27/11/2026 (fase 1): un servizio con il suo interruttore spento (domicilio, secondo parere) resta in elenco ma porta
+  // alla sezione Medici, non alla sua pagina (che rimanda altrove).
+  const spento = (key: string) => (key === "domicilio" && !domicilioEnabled()) || (key === "parere" && !secondoParereEnabled());
   return (
     <>
       <PageLd path="/stato-del-progetto" meta={metadata} name="Stato del progetto" />
@@ -76,11 +79,11 @@ export default function StatoDelProgettoPage() {
                       </span>
                       <div className="min-w-0">
                         <h3 id={`stato-${s.key}`} className="svc-card-title">
-                          <Link href={s.kind && !medici ? CON_UN_MEDICO_HREF : s.href} className="hover:underline">
+                          <Link href={s.kind && (!medici || spento(s.key)) ? CON_UN_MEDICO_HREF : s.href} className="hover:underline">
                             {s.name}
                           </Link>
                         </h3>
-                        <p className="tone-text mt-0.5 text-[1.0625rem] font-bold">{s.kind && !medici ? "In arrivo" : "Versione dimostrativa"}</p>
+                        <p className="tone-text mt-0.5 text-[1.0625rem] font-bold">{s.kind && (!medici || spento(s.key)) ? "In arrivo" : "Versione dimostrativa"}</p>
                       </div>
                     </div>
                     <ul className="status-list">

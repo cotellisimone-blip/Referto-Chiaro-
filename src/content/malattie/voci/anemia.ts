@@ -67,7 +67,7 @@ export const ANEMIA: Malattia = {
     { guida: "transferrina-e-saturazione", perche: "Quanto ferro sta viaggiando verso il midollo: completa il quadro del ferro." },
     { guida: "vitamina-b12", perche: "La sua carenza dà un'anemia con globuli rossi grandi e, a volte, disturbi dei nervi." },
     { guida: "folati", perche: "Si cercano insieme alla vitamina B12 quando i globuli rossi sono grandi." },
-    { guida: "sangue-occulto-nelle-feci", perche: "Cerca tracce di sangue non visibili nelle feci, una possibile causa della carenza di ferro." },
+    { guida: "sangue-occulto-nelle-feci", perche: "Cerca sangue non visibile nelle feci, una possibile causa della carenza di ferro. Se è negativo non esclude una perdita di sangue: decide il medico." },
   ],
   ogniGiorno: [
     "Il ferro si trova nella carne, nel pesce, nei legumi e nelle verdure a foglia verde. Quello di origine vegetale si assorbe meglio insieme a cibi ricchi di vitamina C, e peggio con tè e caffè ai pasti.",

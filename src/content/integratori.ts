@@ -80,6 +80,7 @@ export const INTEGRATORI: Integratore[] = [
       "Attenzione a sommare più prodotti che la contengono, come multivitaminici e gocce.",
       "Alcuni farmaci e alcune malattie dei reni o delle ghiandole paratiroidi cambiano il modo in cui l'organismo la usa.",
       "Quantità e durata le decide il medico, che di solito valuta anche il calcio.",
+      "Con alcuni diuretici (i tiazidici) o con la digossina un calcio alto è più pericoloso: se li prendi, dillo prima al medico.",
     ],
     questions: [
       "Nel mio caso ha senso controllare la vitamina D?",
@@ -250,6 +251,7 @@ export const INTEGRATORI: Integratore[] = [
       "Possono sommarsi all'effetto dei farmaci che rendono il sangue più fluido: dillo al medico prima di un intervento o di un esame invasivo.",
       "Chi è allergico a pesce o crostacei deve leggere bene l'origine del prodotto.",
       "Non sostituiscono le terapie per colesterolo o trigliceridi decise dal medico.",
+      "Nelle persone con malattie del cuore, dosi alte sono state associate a un rischio maggiore di battito irregolare (fibrillazione atriale): chiedi al medico prima.",
     ],
     questions: [
       "Con i miei trigliceridi ha senso parlare di omega-3?",
@@ -316,6 +318,8 @@ export const INTEGRATORI: Integratore[] = [
       "Prendere più integratori insieme può far sommare le stesse vitamine, in particolare A, D ed E, e il ferro.",
       "La biotina, presente in molti prodotti per capelli e unghie, può alterare alcuni esami del sangue, tra cui quelli della tiroide: dillo prima del prelievo.",
       "Fumatori ed ex fumatori dovrebbero parlare con il medico dei prodotti con beta-carotene.",
+      "In gravidanza, o se la cerchi, troppa vitamina A può fare male al bambino: scegli solo con il medico.",
+      "Chi prende anticoagulanti come il warfarin deve dirlo al medico: la vitamina K, presente in molti multivitaminici, ne cambia l'effetto.",
     ],
     questions: [
       "Con quello che mangio e i miei esami, mi serve davvero?",

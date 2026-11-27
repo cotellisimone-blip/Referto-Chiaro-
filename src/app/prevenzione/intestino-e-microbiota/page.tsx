@@ -53,7 +53,7 @@ const SEZIONI: TemaSezione[] = [
     titolo: "Segnali da non rimandare",
     testo: "Se noti uno di questi segnali, parlane con il tuo medico senza aspettare.",
     voci: [
-      { titolo: "Sangue nelle feci", testo: "Oppure feci molto scure, come catrame." },
+      { titolo: "Sangue nelle feci", testo: "Anche poco: parlane con il medico. Se invece le feci sono nere come catrame, o il sangue è abbondante, chiama subito il 112." },
       { titolo: "Cambiamenti che durano", testo: "Diarrea o stitichezza che vanno avanti per settimane, senza un motivo chiaro." },
       { titolo: "Dolore e peso", testo: "Un dolore alla pancia che non passa, o una perdita di peso senza volerlo." },
     ],
