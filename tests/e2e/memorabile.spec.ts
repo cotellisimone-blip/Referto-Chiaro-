@@ -146,7 +146,8 @@ test.describe("home chiara e scura", () => {
       await expect(bar).toBeVisible();
     }
     const h = await page.evaluate(() => document.documentElement.scrollHeight / window.innerHeight);
-    expect(h, "schermate").toBeLessThan(isMobile ? 9 : 6);
+    // 27/11/2026: +1 riga nel piè di pagina («Cura Privata o un’AI gratuita?»); la home è invariata.
+    expect(h, "schermate").toBeLessThan(isMobile ? 9 : 6.2);
     await expectAccessible(page);
   });
 

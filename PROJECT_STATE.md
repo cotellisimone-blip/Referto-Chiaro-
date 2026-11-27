@@ -1,6 +1,16 @@
 # Stato del progetto — Cura Privata
 
-*Aggiornato: 19/11/2026, dopo la home «chiara e scura» (decisioni di Simone delle 16:53 e 16:57 UTC). Fonte di verità è il codice: se questo file e il codice non coincidono, vince il codice e questo file va corretto.*
+*Aggiornato: 27/11/2026, dopo le sei fasi del piano «livello successivo» (via di Simone del 27/11). Fonte di verità è il codice: se questo file e il codice non coincidono, vince il codice e questo file va corretto.*
+
+## Novità del 27/11 (sei fasi, ramo `claude/project-thread-k8rhen`)
+- **Ordine:** un solo ramo con tutto il lavoro, una sola PR verso `main`; le PR #5–#9 sono superate.
+- **Errori chiusi:** il database riparte anche con i consensi nuovi salvati; in demo l'admin di prova non vede dati veri; diari e promemoria non salvano dopo la revoca del consenso (che dopo la revoca si può ridare); secondo parere non acquistabile finché è «In arrivo»; integratori dopo, e solo se c'entrano; richieste da un altro sito rifiutate (`crossOrigin` in `src/lib/auth/guard.ts`).
+- **Una veste sola:** titoli in Fraunces su tutte le pagine, carta avorio, tema scuro corretto su medici, glossario e diari; tabelle che su telefono diventano schede (`.rc-stack`).
+- **Percorsi corti da telefono:** indice agganciato sulle pagine lunghe (`src/components/malattie/indice-agganciato.tsx`), «passo successivo» in fondo alle pagine (`src/components/site/prossimo-passo.tsx`), esito del sonno senza punteggio e con l'avviso prima di tutto.
+- **Medico:** un solo pulsante «Prenota un videoconsulto»; **si paga solo dopo che il medico ha confermato** (`src/domain/appointments/repository.ts`), il link della visita compare dopo il pagamento; avviso «Non per le urgenze».
+- **Contenuti più sicuri:** striscia 112 in cima a ogni pagina per malattia, correzioni su pressione alta, anemia, intestino, TSH, screening, avvertenze sugli integratori; sotto «Salva» dei diari la riga «quando non aspettare».
+- **Pagina nuova:** `/cura-privata-o-un-ai-gratuita`.
+- **Non ancora fatti:** sito più leggero (CSS comune), «Non lo so» nelle domande del sonno, prezzi come pagina di decisione, «segui un genitore», foglio unico per il medico, un solo motore per `/richiedi`.
 
 ## Obiettivo e pubblico
 Servizio digitale italiano in tre sezioni: **1 Prevenzione** (che cosa conoscere prima degli esami), **2 Lettura referti** (il referto in parole semplici), **3 Medici** (una persona, quando serve). Messaggio unico: «Previeni. Capisci. Un medico, se serve.»

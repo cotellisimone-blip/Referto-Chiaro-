@@ -17,8 +17,6 @@ test.describe("audit GDPR: consensi, revoca, cancellazione", () => {
     const c = await ctx.request.post("/api/v1/area/documents", { data: { sampleId: "demo-referto-lab-001" } });
     expect(c.status()).toBe(201);
     expect((await (await ctx.request.get("/api/v1/area/documents")).json()).documents).toHaveLength(1);
-    // Il consenso ai dati sanitari si può solo revocare, mai concedere da qui.
-    expect((await ctx.request.post("/api/v1/area/consents", { data: { kind: "health-data", granted: true } })).status()).toBe(400);
     const w = await ctx.request.post("/api/v1/area/consents", { data: { kind: "health-data", granted: false } });
     expect(w.status()).toBe(200);
     expect((await (await ctx.request.get("/api/v1/area/documents")).json()).documents).toHaveLength(0);
@@ -26,6 +24,9 @@ test.describe("audit GDPR: consensi, revoca, cancellazione", () => {
     const consents = (await (await ctx.request.get("/api/v1/area/consents")).json()).consents as { kind: string; granted: boolean }[];
     expect(consents.find((x) => x.kind === "health-data")?.granted).toBe(false);
     expect(consents.some((x) => x.kind === "subject-declaration" && x.granted)).toBe(true);
+    // 27/11/2026: dopo la revoca il consenso si può ridare da qui; i contenuti cancellati non tornano.
+    expect((await ctx.request.post("/api/v1/area/consents", { data: { kind: "health-data", granted: true } })).status()).toBe(200);
+    expect((await (await ctx.request.get("/api/v1/area/documents")).json()).documents).toHaveLength(0);
     await ctx.close();
   });
 
