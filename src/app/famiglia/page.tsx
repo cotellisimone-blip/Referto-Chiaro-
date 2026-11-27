@@ -1,3 +1,4 @@
+import { ProssimoPasso } from "@/components/site/prossimo-passo";
 import "@/components/offerta/offerta.css";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -325,6 +326,7 @@ export default function FamigliaPage() {
           </p>
         </div>
       </section>
+      <ProssimoPasso passo={1} titolo="Per cominciare" />
     </div>
   );
 }

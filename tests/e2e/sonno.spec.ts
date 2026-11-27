@@ -83,9 +83,12 @@ test("autovalutazione: manca una risposta, poi il risultato, l'avviso della guid
   for (const id of ["telefono", "pranzo", "lavoro"]) await page.locator(`#sn-q-${id}`).getByText("Qualche volta").click();
   await page.locator("#sn-q-guida").getByText("Sì", { exact: true }).click();
   await page.getByTestId("vedi-risultato").click();
-  await expect(page.getByTestId("esito")).toContainText("Molta sonnolenza di giorno");
-  await expect(page.getByTestId("esito")).toContainText("9 su 12");
+  // 27/11/2026 (fasi 3 e 5): niente punteggio; il segnale da non trascurare è il titolo, la fascia viene dopo.
+  await expect(page.getByTestId("esito")).toContainText(/molta sonnolenza di giorno/i);
+  await expect(page.getByTestId("esito")).not.toContainText("9 su 12");
   await expect(page.getByTestId("esito").getByRole("alert")).toContainText("Colpi di sonno alla guida");
+  await expect(page.locator("#sn-esito-t")).toContainText("Colpi di sonno alla guida");
+  await expect(page.getByTestId("esito-diario")).toHaveAttribute("href", "/area-personale/diari/sonno");
   await page.getByTestId("salva-esito").click();
   await expect(page.getByTestId("salva-esito")).toHaveText("Aggiunto al foglio per il medico");
   const salvati = await page.evaluate(() => JSON.parse(localStorage.getItem("cp-sonno-autovalutazioni") ?? "{}"));

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { safeAreaNext } from "@/lib/auth/next-path";
@@ -8,7 +8,7 @@ import { ArrowRight, FlaskConical, Info, Loader2, MailCheck } from "lucide-react
 import { api } from "./api";
 import { WaitlistForm } from "@/components/site/waitlist-form";
 
-type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; link?: string; delivery: "on-screen" | "email" | "unavailable" | "email-failed" } | { kind: "error"; message: string };
+type State = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; link?: string; delivery: "on-screen" | "email" | "unavailable" | "email-failed" } | { kind: "error"; message: string; field?: "email" };
 
 const CONSENT_KINDS = ["terms", "privacy", "health-data", "subject-declaration"] as const;
 type ConsentKind = (typeof CONSENT_KINDS)[number];
@@ -26,9 +26,18 @@ export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; ve
   const toggle = (k: ConsentKind) => (e: React.ChangeEvent<HTMLInputElement>) => setConsents((c) => ({ ...c, [k]: e.target.checked }));
   const [state, setState] = useState<State>({ kind: "idle" });
   const [demoBusy, setDemoBusy] = useState(false);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const emailErr = state.kind === "error" && state.field === "email";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    // 27/11/2026 (fase 3): un indirizzo sbagliato si dice accanto al campo, che riceve il fuoco (prima l'errore era in
+    // fondo al modulo, lontano, e il fuoco restava sulla pagina).
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setState({ kind: "error", message: "Scrivi un indirizzo email completo, per esempio nome@esempio.it.", field: "email" });
+      emailRef.current?.focus();
+      return;
+    }
     setState({ kind: "sending" });
     try {
       const r = await api<{ ok: true; delivery: "on-screen" | "email" | "unavailable" | "email-failed"; link?: string }>("/api/v1/auth/magic-link", {
@@ -37,7 +46,10 @@ export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; ve
       });
       setState({ kind: "sent", link: r.link, delivery: r.delivery });
     } catch (err) {
-      setState({ kind: "error", message: err instanceof Error ? err.message : "Errore imprevisto." });
+      const message = err instanceof Error ? err.message : "Errore imprevisto.";
+      const field = /email/i.test(message) ? ("email" as const) : undefined;
+      setState({ kind: "error", message, field });
+      if (field) emailRef.current?.focus();
     }
   }
 
@@ -129,9 +141,12 @@ export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; ve
                 Indirizzo email
               </label>
               <input
+                ref={emailRef}
                 id="email"
                 name="email"
                 type="email"
+                aria-invalid={emailErr || undefined}
+                aria-describedby={emailErr ? "email-errore" : undefined}
                 autoComplete="email"
                 required
                 value={email}
@@ -139,6 +154,11 @@ export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; ve
                 className="field-input"
                 placeholder="nome@esempio.it"
               />
+              {emailErr ? (
+                <p id="email-errore" role="alert" className="field-error mt-2">
+                  {state.message}
+                </p>
+              ) : null}
             </div>
             <fieldset className="space-y-2">
               <legend className="field-label mb-2">Se è la prima volta (bozze in revisione legale)</legend>
@@ -171,7 +191,7 @@ export function LoginForm({ demoMode, vetrina = false }: { demoMode: boolean; ve
                 <span>Dichiaro di essere maggiorenne e di caricare solo referti miei o di un familiare che me lo ha chiesto o di cui ho la tutela.</span>
               </label>
             </fieldset>
-            {state.kind === "error" ? (
+            {state.kind === "error" && !emailErr ? (
               <p role="alert" className="field-error">
                 {state.message}
               </p>

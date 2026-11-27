@@ -48,7 +48,7 @@ export function AutovalutazioneView({ a }: { a: Autovalutazione }) {
         </div>
       </section>
 
-      <section className="ht-sec ml-sec" aria-labelledby="sn-q-t">
+      <section className="ht-sec ml-sec" id="domande" aria-labelledby="sn-q-t">
         <div className="ht-wrap">
           <div className="ml-col sn-col">
             <p className="ht-kicker">{a.periodo}</p>

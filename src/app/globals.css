@@ -4825,3 +4825,60 @@ body:has([data-bottom-nav]) .site-footer .footer-legal { margin-top: 1.25rem; }
     }
   }
 }
+
+/* 27/11/2026 (fase 3): «Il passo successivo» in fondo alle pagine lunghe. */
+@layer components {
+  .prossimo-passo {
+    padding-block: 2rem 2.5rem;
+  }
+  .prossimo-passo-box {
+    max-width: 40rem;
+  }
+  .prossimo-passo-k {
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-teal-deep);
+  }
+  .prossimo-passo-link {
+    margin-top: 0.75rem;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 4.5rem;
+    padding: 0.875rem 1.125rem;
+    border-radius: 22px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    text-decoration: none;
+    box-shadow: var(--shadow-card);
+  }
+  .prossimo-passo-link:hover {
+    border-color: var(--color-teal);
+  }
+  .prossimo-passo-link b {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+  .prossimo-passo-link small {
+    display: block;
+    margin-top: 0.125rem;
+    font-size: 0.9375rem;
+    color: var(--color-ink-soft);
+  }
+  .prossimo-passo-n {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    font-weight: 800;
+    background: var(--color-strong);
+    color: var(--color-on-strong);
+  }
+}

@@ -1,3 +1,4 @@
+import { ProssimoPasso } from "@/components/site/prossimo-passo";
 import type { Metadata } from "next";
 import { TemaPage, type TemaSezione } from "@/components/temi/tema";
 import { PageLd } from "@/components/site/page-ld";
@@ -79,6 +80,7 @@ export default function VicinoATePage() {
           { href: "/lettura-referti", label: "Ho già un referto" },
         ]}
       />
+      <ProssimoPasso passo={2} />
     </>
   );
 }

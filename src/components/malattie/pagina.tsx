@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { IndiceAgganciato } from "@/components/malattie/indice-agganciato";
 import { HomeSimboli, Ic } from "@/components/home-b/simboli";
 import { DiariSimboli } from "@/components/diari/disegni";
 import { getGuide } from "@/content/guides";
@@ -107,7 +108,7 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
             </div>
           </div>
 
-          <nav className="ml-indice" aria-label="In questa pagina">
+          <nav className="ml-indice" id="indice-pagina" aria-label="In questa pagina">
             <p className="ml-indice-t">In questa pagina</p>
             <ul>
               {indice.map((i) => (
@@ -119,6 +120,7 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
           </nav>
         </div>
       </section>
+      <IndiceAgganciato voci={indice} ancora="indice-pagina" />
 
       {m.slug === "sonno" ? <SonnoPorte /> : null}
 

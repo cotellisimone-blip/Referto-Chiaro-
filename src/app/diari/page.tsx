@@ -1,3 +1,4 @@
+import { ProssimoPasso } from "@/components/site/prossimo-passo";
 import type { Metadata } from "next";
 import { DiariIndice } from "@/components/diari/pubblico";
 import { PageLd } from "@/components/site/page-ld";
@@ -14,6 +15,7 @@ export default function DiariPage() {
     <>
       <PageLd path="/diari" meta={metadata} name="Diari della salute" />
       <DiariIndice />
+      <ProssimoPasso passo={4} />
     </>
   );
 }

@@ -1,3 +1,4 @@
+import { ProssimoPasso } from "@/components/site/prossimo-passo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TemaPage, type TemaSezione } from "@/components/temi/tema";
@@ -85,6 +86,7 @@ export default function EsamiDiBasePage() {
           { href: "/guide", label: "Tutte le guide agli esami" },
         ]}
       />
+      <ProssimoPasso passo={3} />
     </>
   );
 }

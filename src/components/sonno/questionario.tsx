@@ -17,6 +17,7 @@ export function Questionario({ a }: { a: Autovalutazione }) {
   const [manca, setManca] = useState<string | null>(null);
   const esitoRef = useRef<HTMLDivElement>(null);
   const esito = useMemo(() => calcolaEsito(a, r), [a, r]);
+  const allarme = esito.avvisi.find((v) => v.tono === "attenzione");
   const risposte = a.domande.filter((d) => r[d.id] !== undefined).length;
 
   function mostra() {
@@ -114,14 +115,22 @@ export function Questionario({ a }: { a: Autovalutazione }) {
       {visto && esito.completo ? (
         <div className="sn-esito" ref={esitoRef} tabIndex={-1} aria-labelledby="sn-esito-t" data-testid="esito">
           <p className="ht-kicker">Il tuo risultato · non è una diagnosi</p>
-          <h2 id="sn-esito-t" className="sn-esito-t">
-            {esito.fascia.titolo}
-          </h2>
-          <p className="sn-esito-punti">
-            {esito.punti} su {esito.massimo} con le nostre domande
-          </p>
-          <p className="sn-esito-d">{esito.fascia.testo}</p>
-          {esito.avvisi.map((v) => (
+          {/* 27/11/2026 (fasi 3 e 5, medici simulati): niente punteggio («14 su 21» sembrava un voto o un test), e se c'è
+              un segnale da non trascurare è quello il titolo, prima della fascia. */}
+          {allarme ? (
+            <div role="alert">
+              <h2 id="sn-esito-t" className="sn-esito-t">
+                {allarme.titolo}
+              </h2>
+              <p className="sn-esito-d">{allarme.testo}</p>
+            </div>
+          ) : (
+            <h2 id="sn-esito-t" className="sn-esito-t">
+              {esito.fascia.titolo}
+            </h2>
+          )}
+          <p className="sn-esito-d">{allarme ? `Per il resto: ${esito.fascia.titolo.charAt(0).toLowerCase()}${esito.fascia.titolo.slice(1)}. ${esito.fascia.testo}` : esito.fascia.testo}</p>
+          {esito.avvisi.filter((v) => v !== allarme).map((v) => (
             <div key={v.titolo} className={`sn-riquadro sn-riquadro-${v.tono}`} role={v.tono === "attenzione" ? "alert" : undefined}>
               <span className="sn-riquadro-ico" aria-hidden="true">
                 <Ic id={v.tono === "attenzione" ? "allarme" : "firma"} />
@@ -147,6 +156,14 @@ export function Questionario({ a }: { a: Autovalutazione }) {
           <div className="sn-esito-poi">
             <p className="sn-esito-poi-t">E adesso</p>
             <ul>
+              <li>
+                <Link href="/area-personale/diari/sonno" className="sn-vai sn-vai-piccolo" data-testid="esito-diario">
+                  <span className="sn-vai-t">Domattina apri il diario del sonno: due minuti, ogni mattina</span>
+                  <span className="sn-vai-go" aria-hidden="true">
+                    <Ic id="go" />
+                  </span>
+                </Link>
+              </li>
               {a.poi.map((p) => (
                 <li key={p.href}>
                   <Link href={p.href} className="sn-vai sn-vai-piccolo">

@@ -1,3 +1,4 @@
+import { ProssimoPasso } from "@/components/site/prossimo-passo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BookOpen, ClipboardList, Compass, MessageCircleQuestionMark, NotebookPen, SpellCheck, type LucideIcon } from "lucide-react";
@@ -53,6 +54,7 @@ export default function StrumentiPage() {
           </ul>
         </div>
       </section>
+      <ProssimoPasso passo={1} />
     </>
   );
 }

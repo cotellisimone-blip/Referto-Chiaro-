@@ -59,6 +59,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
     };
   }, [pathname]);
   const panelRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
   // La testata sta in un confine di Suspense e può idratarsi dopo il resto: segnale proprio per i test (vedi tests/e2e/_lib/ready.ts).
   const headerRef = useRef<HTMLElement>(null);
   useEffect(() => headerRef.current?.setAttribute("data-hydrated", "1"), []);
@@ -79,7 +80,11 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        // 27/11/2026 (fase 3): chiuso con Esc, il fuoco torna sul pulsante del menu invece di perdersi sulla pagina.
+        toggleRef.current?.focus();
+      }
       if (e.key === "Tab" && panelRef.current) {
         const focusables = panelRef.current.querySelectorAll<HTMLElement>("a[href],button:not([disabled])");
         const first = focusables[0];
@@ -157,7 +162,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
           <SearchTrigger className="icon-btn hdr-round" />
           <ThemeToggle />
           <TextSizeToggle className="hdr-wide-only icon-btn hdr-round px-2" />
-          <button type="button" className="icon-btn hdr-round" aria-expanded={open} aria-controls="menu-mobile" onClick={() => setOpen((v) => !v)}>
+          <button ref={toggleRef} type="button" className="icon-btn hdr-round" aria-expanded={open} aria-controls="menu-mobile" onClick={() => setOpen((v) => !v)}>
             {open ? <X aria-hidden className="h-5 w-5" /> : <Menu aria-hidden className="h-5 w-5" />}
             <span className="sr-only">{open ? "Chiudi il menu" : "Apri il menu"}</span>
           </button>
@@ -167,7 +172,7 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
       {open ? (
         <>
           <button type="button" aria-label="Chiudi il menu" tabIndex={-1} className="menu-backdrop" onClick={() => setOpen(false)} />
-          <div id="menu-mobile" ref={panelRef} className="menu-panel fade-in">
+          <div id="menu-mobile" ref={panelRef} className="menu-panel fade-in" role="dialog" aria-modal="true" aria-label="Menu">
             <nav aria-label="Menu mobile" className="container-rc pb-6 pt-2">
               {inArea && me ? (
                 <div className="menu-area" data-testid="menu-area">
@@ -199,16 +204,17 @@ export function SiteHeaderView({ pathname }: { pathname: string | null }) {
                   <p className="menu-area-label mt-5">Il sito</p>
                 </div>
               ) : null}
-              {/* 22/11/2026: in cima il punto di partenza (o il tuo spazio, se sei entrato), poi i cinque passi del percorso,
+              {/* 27/11/2026 (fase 3): in cima sempre «Il tuo spazio» (prima, da non entrati, era «Comincia da qui», lo stesso
+                  indirizzo del passo 1 subito sotto); poi i cinque passi del percorso,
                   poi ciò che si consulta, il referto da caricare e le pagine di servizio. */}
               {inArea ? null : (
-                <Link prefetch={false} href={signedIn ? "/area-personale" : "/punto-di-partenza"} className="menu-me" data-testid="menu-me">
+                <Link prefetch={false} href="/area-personale" className="menu-me" data-testid="menu-me">
                   <span aria-hidden className="menu-me-av">
-                    {signedIn ? <UserCheck /> : "1"}
+                    <UserCheck />
                   </span>
                   <span>
-                    <b>{signedIn ? "Il tuo spazio" : "Comincia da qui"}</b>
-                    <small>{signedIn ? "Referti, diari, promemoria: riprendi da dove eri" : "Poche domande, gratis: ricevi la tua mappa"}</small>
+                    <b>Il tuo spazio</b>
+                    <small>{signedIn ? "Referti, diari, promemoria: riprendi da dove eri" : "Entra o prova con l’account demo: referti, diari, promemoria"}</small>
                   </span>
                   <ChevronRight aria-hidden className="h-5 w-5" />
                 </Link>

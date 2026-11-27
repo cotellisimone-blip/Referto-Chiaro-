@@ -1,3 +1,4 @@
+import { ProssimoPasso } from "@/components/site/prossimo-passo";
 import type { Metadata } from "next";
 import { CalendarClock, FileText, MonitorSmartphone, NotebookPen } from "lucide-react";
 import { ServiceLanding } from "@/components/offerta/service-landing";
@@ -42,6 +43,7 @@ export default function ParlaConUnMedicoPage() {
           </ul>
         </div>
       </section>
+      <ProssimoPasso passo={5} />
     </ServiceLanding>
   );
 }

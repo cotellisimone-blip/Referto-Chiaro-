@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { IndiceAgganciato } from "@/components/malattie/indice-agganciato";
 import { HomeSimboli, Ic } from "@/components/home-b/simboli";
 import { DiariSimboli } from "@/components/diari/disegni";
 import { MalattieSimboli } from "@/components/malattie/simboli";
@@ -214,7 +215,7 @@ export function SonnoPaginaView({ p }: { p: SonnoPagina }) {
           </div>
           <Fiducia aggiornato={p.aggiornato} fonti={p.fonti.length} />
 
-          <nav className="ml-indice" aria-label="In questa pagina">
+          <nav className="ml-indice" id="indice-pagina" aria-label="In questa pagina">
             <p className="ml-indice-t">In questa pagina</p>
             <ul>
               {indice.map((i) => (
@@ -226,6 +227,7 @@ export function SonnoPaginaView({ p }: { p: SonnoPagina }) {
           </nav>
         </div>
       </section>
+      <IndiceAgganciato voci={indice} ancora="indice-pagina" />
 
       {p.sezioni.map((s, i) => (
         <section key={s.id} className="ht-sec ml-sec" id={s.id} aria-labelledby={`${s.id}-t`}>
@@ -240,7 +242,7 @@ export function SonnoPaginaView({ p }: { p: SonnoPagina }) {
               ))}
             </div>
             {i === 0 && av ? (
-              <Link href={sonnoHref(av.slug)} className="sn-av-invito" data-testid="invito-autovalutazione">
+              <Link href={`${sonnoHref(av.slug)}#domande`} className="sn-av-invito" data-testid="invito-autovalutazione">
                 <span className="sn-av-invito-ico" aria-hidden="true">
                   <Ic id="s-test" />
                 </span>
