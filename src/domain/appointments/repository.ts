@@ -141,7 +141,7 @@ export async function cancelAppointment(userId: string, id: string): Promise<boo
 
 export async function listPhysicianAppointments(userId: string, physicianId: string): Promise<AppointmentRow[]> {
   return withPhysician(userId, physicianId, async (tx) =>
-    (await tx.query("SELECT * FROM appointments WHERE physician_id = $1 AND awaiting_payment = false ORDER BY created_at DESC", [physicianId])).rows.map(toAppointment),
+    (await tx.query("SELECT * FROM appointments WHERE physician_id = $1 AND (awaiting_payment = false OR status IN ('requested', 'confirmed')) ORDER BY created_at DESC", [physicianId])).rows.map(toAppointment),
   );
 }
 
@@ -151,7 +151,7 @@ export async function listPhysicianAppointments(userId: string, physicianId: str
  */
 export async function getPhysicianAppointment(userId: string, physicianId: string, id: string) {
   const found = await withPhysician(userId, physicianId, async (tx) => {
-    const r = await tx.query("SELECT * FROM appointments WHERE id = $1 AND physician_id = $2 AND awaiting_payment = false", [id, physicianId]);
+    const r = await tx.query("SELECT * FROM appointments WHERE id = $1 AND physician_id = $2 AND (awaiting_payment = false OR status IN ('requested', 'confirmed'))", [id, physicianId]);
     return r.rows[0] ? toAppointment(r.rows[0]) : null;
   });
   if (!found) return null;
@@ -173,7 +173,7 @@ export async function physicianAppointmentAct(
   action: { kind: "confirm"; scheduledAt: string; videoUrl: string } | { kind: "decline"; reason: string } | { kind: "complete"; summary: string },
 ): Promise<{ ok: true; appointment: AppointmentRow } | { ok: false; error: "not-found" | "invalid-state" }> {
   const res = await withPhysician(userId, physicianId, async (tx) => {
-    const r = await tx.query("SELECT * FROM appointments WHERE id = $1 AND physician_id = $2 AND awaiting_payment = false", [id, physicianId]);
+    const r = await tx.query("SELECT * FROM appointments WHERE id = $1 AND physician_id = $2 AND (awaiting_payment = false OR status IN ('requested', 'confirmed'))", [id, physicianId]);
     if (!r.rows[0]) return { ok: false as const, error: "not-found" as const };
     const a = toAppointment(r.rows[0]);
     let updated;
@@ -184,7 +184,8 @@ export async function physicianAppointmentAct(
       if (!["requested", "confirmed"].includes(a.status)) return { ok: false as const, error: "invalid-state" as const };
       updated = await tx.query("UPDATE appointments SET status = 'declined', decline_reason = $2, updated_at = now() WHERE id = $1 RETURNING *", [id, action.reason]);
     } else {
-      if (a.status !== "confirmed") return { ok: false as const, error: "invalid-state" as const };
+      // 27/11/2026 (fase 4): si paga dopo la conferma del medico; il riepilogo solo per un videoconsulto pagato.
+      if (a.status !== "confirmed" || a.awaitingPayment) return { ok: false as const, error: "invalid-state" as const };
       const at = new Date().toISOString();
       const hash = createHash("sha256").update(`${id}\n${physicianId}\n${at}\n${action.summary}`).digest("hex");
       updated = await tx.query("UPDATE appointments SET status = 'completed', summary = $2, summary_hash = $3, completed_at = $4, updated_at = now() WHERE id = $1 RETURNING *", [id, action.summary, hash, at]);
@@ -192,7 +193,7 @@ export async function physicianAppointmentAct(
     await audit(tx, { userId, actor: "physician", action: `appointment-${action.kind}`, target: id });
     return { ok: true as const, appointment: toAppointment(updated.rows[0]) };
   });
-  // Rifiuto di un caso già pagato: rimborso (fuori dalla transazione del medico, che non vede gli ordini).
+  // Rifiuto di un videoconsulto già pagato: rimborso (se non era pagato, refundForRef non trova ordini pagati) (fuori dalla transazione del medico, che non vede gli ordini).
   if (res.ok && action.kind === "decline") await refundForRef(id, userId);
   return res;
 }

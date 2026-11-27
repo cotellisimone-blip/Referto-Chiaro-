@@ -38,7 +38,17 @@ export function goToCheckout(router: ReturnType<typeof useRouter>, url: string) 
   else window.location.assign(url);
 }
 
-export function PaymentPending({ payPath, label = "Completa il pagamento" }: { payPath: string; label?: string }) {
+export function PaymentPending({
+  payPath,
+  label = "Completa il pagamento",
+  title = "Pagamento in sospeso",
+  text = "La richiesta è pronta ma non è ancora stata inviata al medico: lo sarà appena il pagamento risulta registrato.",
+}: {
+  payPath: string;
+  label?: string;
+  title?: string;
+  text?: string;
+}) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,8 +58,8 @@ export function PaymentPending({ payPath, label = "Completa il pagamento" }: { p
         <CreditCard />
       </span>
       <div className="min-w-0">
-        <p className="callout-title">Pagamento in sospeso</p>
-        <p className="callout-text">La richiesta è pronta ma non è ancora stata inviata al medico: lo sarà appena il pagamento risulta registrato.</p>
+        <p className="callout-title">{title}</p>
+        <p className="callout-text">{text}</p>
         {error ? (
           <p role="alert" className="field-error mt-3">
             {error}

@@ -10,7 +10,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   if (!isUuid(id)) return json({ error: "not-found" }, { status: 404 });
   const r = await getAppointment(g.user.id, id);
   if (!r) return json({ error: "not-found", message: "Appuntamento non trovato." }, { status: 404 });
-  return json({ ...r, order: await getOrderForRef(g.user.id, id) });
+  // 27/11/2026 (fase 4): il collegamento alla videochiamata si consegna solo dopo il pagamento.
+  const appointment = r.appointment.awaitingPayment ? { ...r.appointment, videoUrl: null } : r.appointment;
+  return json({ ...r, appointment, order: await getOrderForRef(g.user.id, id) });
 }
 
 /** Annullamento da parte del paziente, solo prima della conferma del medico. */

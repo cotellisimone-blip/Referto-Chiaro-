@@ -171,13 +171,17 @@ export function OrderCheckout({ orderId }: { orderId: string }) {
               {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : null}
               Conferma il pagamento di prova
             </button>
-            <button type="button" className="btn btn-secondary" disabled={busy} onClick={() => simulate("fallito")}>
-              Simula un pagamento fallito
-            </button>
             <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => simulate("annullato")}>
               Annulla
             </button>
           </div>
+          {/* 27/11/2026 (fase 3): i comandi da collaudatore stanno in un riquadro chiuso, non accanto al pagamento. */}
+          <details className="mt-5">
+            <summary className="flex min-h-11 cursor-pointer items-center text-[1.0625rem] font-semibold text-ink-soft">Strumenti di prova</summary>
+            <button type="button" className="btn btn-secondary mt-3" disabled={busy} onClick={() => simulate("fallito")}>
+              Simula un pagamento fallito
+            </button>
+          </details>
         </section>
       ) : null}
 

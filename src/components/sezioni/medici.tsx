@@ -60,22 +60,25 @@ export function MediciRete({ book = true }: { book?: boolean }) {
                 <dd>{m.ordine ?? <span className="ds-todo" data-segnaposto="medico">da completare</span>}</dd>
               </div>
             </dl>
-            {book ? (
-              <div className="ds-doc-foot">
-                <Link href="/richiedi/videoconsulto" className="ds-doc-btn" data-track="medico-video">
-                  Videoconsulto<span className="sr-only"> con {m.nome}</span>
-                </Link>
-                {domicilioEnabled() ? (
-                  <Link href="/richiedi/domicilio" className="ds-doc-btn ds-doc-btn-2" data-track="medico-casa">
-                    A casa<span className="sr-only"> con {m.nome}</span>
-                  </Link>
-                ) : null}
-              </div>
-            ) : null}
           </li>
         );
       })}
     </ul>
+    {/* 27/11/2026 (fase 4): un pulsante per scheda faceva pensare di scegliere quel medico, ma nella prova risponde un
+        profilo dimostrativo. Ora un solo pulsante, con la regola detta chiara. */}
+    {book ? (
+      <div className="ds-docs-book" data-testid="medici-prenota">
+        <Link href="/richiedi/videoconsulto" className="ds-doc-btn" data-track="medico-video">
+          Prenota un videoconsulto
+        </Link>
+        {domicilioEnabled() ? (
+          <Link href="/richiedi/domicilio" className="ds-doc-btn ds-doc-btn-2" data-track="medico-casa">
+            Una visita a casa
+          </Link>
+        ) : null}
+        <p>Ti risponde il primo di loro libero nel giorno e nell’ora che scegli. In questa versione di prova risponde un medico dimostrativo, con un nome di prova.</p>
+      </div>
+    ) : null}
     </>
   );
 }

@@ -2,10 +2,8 @@ import { hasHealthDataConsent } from "@/lib/auth/service";
 import { z } from "zod";
 import { isUuid, readJson, requireUser } from "@/lib/auth/guard";
 import { createAppointment, listAppointments } from "@/domain/appointments/repository";
-import { createServiceOrder } from "@/domain/orders/repository";
 import { getDocument } from "@/domain/pipeline/repository";
 import { isCapabilityEnabled } from "@/lib/feature-flags";
-import { openCheckout, providerOrResponse } from "@/lib/payments/checkout";
 import { json } from "@/lib/api";
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -61,12 +59,9 @@ export async function POST(req: Request) {
     if (!d) return json({ error: "not-found", message: "Documento non trovato." }, { status: 404 });
     if (!real && d.sourceKind !== "synthetic") return json({ error: "capability-disabled", message: "Il videoconsulto con documenti reali non è attivo." }, { status: 403 });
   }
-  const pr = providerOrResponse();
-  if ("response" in pr) return pr.response;
   const r = await createAppointment(g.user.id, { reason: parsed.data.reason, slots: parsed.data.slots, documentIds: docs, isSimulated: !real });
   if ("error" in r) return json({ error: r.error, message: r.error === "limit-reached" ? "Hai già 3 appuntamenti aperti." : "Documento non trovato." }, { status: r.error === "limit-reached" ? 409 : 404 });
-  const order = await createServiceOrder(g.user.id, { service: "videoconsulto", refId: r.id, documentIds: docs, provider: pr.provider.kind });
-  const c = await openCheckout(req, g.user.id, pr.provider, order);
-  if ("response" in c) return json({ id: r.id, checkoutUrl: null, paymentError: true }, { status: 201 });
-  return json({ id: r.id, orderId: order.id, checkoutUrl: c.checkoutUrl }, { status: 201 });
+  // 27/11/2026 (fase 4, un solo percorso per il medico): ora non si paga nulla. Il medico vede la richiesta e conferma
+  // giorno e ora; solo allora si paga (POST …/pagamento), come promettono /prezzi e /richiedi/videoconsulto.
+  return json({ id: r.id, checkoutUrl: null }, { status: 201 });
 }

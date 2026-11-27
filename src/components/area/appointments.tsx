@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, CalendarClock, FileText, Loader2, Plus, Trash2, Video } from "lucide-react";
 import { api, formatDateTime } from "./api";
-import { goToCheckout, PaymentPending } from "./cases";
+import { PaymentPending } from "./cases";
 import { SimulationCallout } from "./ui";
 
 type Window = "mattina" | "pomeriggio" | "sera";
@@ -39,7 +39,7 @@ const STATUS: Record<AppointmentRow["status"], { label: string; cls: string }> =
 const WINDOW_LABEL: Record<Window, string> = { mattina: "mattina (9–13)", pomeriggio: "pomeriggio (14–18)", sera: "sera (18–20)" };
 
 export function AppointmentChip({ a }: { a: Pick<AppointmentRow, "status" | "awaitingPayment"> }) {
-  const s = a.awaitingPayment && a.status === "requested" ? { label: "Da pagare", cls: "bg-cream text-warn" } : STATUS[a.status];
+  const s = a.awaitingPayment && a.status === "confirmed" ? { label: "Da pagare", cls: "bg-cream text-warn" } : STATUS[a.status];
   return <span className={`chip ${s.cls}`}>{s.label}</span>;
 }
 
@@ -97,12 +97,11 @@ export function AppointmentsPage({ price }: { price: string | null }) {
     setBusy(true);
     setError(null);
     try {
-      const r = await api<{ id: string; checkoutUrl: string | null }>("/api/v1/area/appuntamenti", {
+      const r = await api<{ id: string }>("/api/v1/area/appuntamenti", {
         method: "POST",
         body: { reason, slots, documentIds: chosen, acknowledgeSimulation: ack, consentToShare: share },
       });
-      if (r.checkoutUrl) goToCheckout(router, r.checkoutUrl);
-      else router.push(`/area-personale/appuntamenti/${r.id}`);
+      router.push(`/area-personale/appuntamenti/${r.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Errore");
       setBusy(false);
@@ -147,6 +146,13 @@ export function AppointmentsPage({ price }: { price: string | null }) {
           Prenota un videoconsulto
         </h2>
         <form onSubmit={submit} className="mt-5 space-y-7">
+          {/* 27/11/2026 (fase 4): prima di tutto, non è per le urgenze. */}
+          <p className="callout callout-warn" data-testid="non-urgenze">
+            <span className="min-w-0">
+              <b className="callout-title">Non per le urgenze.</b>
+              <span className="callout-text block">Se stai male adesso chiama il 112. Il videoconsulto è per domande che possono aspettare qualche giorno.</span>
+            </span>
+          </p>
           <p className="rounded-2xl bg-mist px-5 py-4 text-[1.0625rem] text-ink">
             Parlerai con un <strong>medico di medicina generale o internista</strong>: non devi sapere quale specialista ti serve. Se serve uno specialista o una visita in presenza, te lo dice lui.
           </p>
@@ -165,7 +171,7 @@ export function AppointmentsPage({ price }: { price: string | null }) {
               className="field-input"
               placeholder="Esempio: vorrei capire insieme al medico i valori del referto e quali domande fare al mio medico curante."
             />
-            <p className="field-hint">Bastano poche parole. Non inserire dati di persone reali: questa è una simulazione.</p>
+            <p className="field-hint">Bastano poche parole. Se prendi farmaci o hai allergie, scrivilo qui: il medico lo legge prima. Non inserire dati di persone reali: questa è una simulazione.</p>
           </div>
           <fieldset>
             <legend className="field-label">Quando ti farebbe comodo? (da 1 a 3 fasce)</legend>
@@ -256,8 +262,9 @@ export function AppointmentsPage({ price }: { price: string | null }) {
             </p>
           ) : null}
           <button type="submit" disabled={busy} className="btn btn-primary btn-lg w-full sm:w-auto">
-            {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <CalendarClock aria-hidden className="h-5 w-5" />} Continua al pagamento{price ? ` (${price})` : ""}
+            {busy ? <Loader2 aria-hidden className="h-5 w-5 animate-spin" /> : <CalendarClock aria-hidden className="h-5 w-5" />} Invia la richiesta
           </button>
+          <p className="field-hint">Ora non paghi nulla. {price ? `Paghi ${price} ` : "Paghi "}solo dopo che il medico ha confermato giorno e ora.</p>
         </form>
       </section>
     </div>
@@ -278,7 +285,8 @@ export function AppointmentDetail({ id }: { id: string }) {
         const r = await api<NonNullable<typeof data>>(`/api/v1/area/appuntamenti/${id}`);
         if (!alive) return;
         setData(r);
-        if (["requested", "confirmed"].includes(r.appointment.status) && !r.appointment.awaitingPayment) timer = setTimeout(load, 5000);
+        // In attesa della conferma del medico (o del riepilogo) la pagina si aggiorna da sola.
+        if (r.appointment.status === "requested" || (r.appointment.status === "confirmed" && !r.appointment.awaitingPayment)) timer = setTimeout(load, 5000);
       } catch (e) {
         if (alive) setError(e instanceof Error ? e.message : "Errore");
       }
@@ -309,7 +317,15 @@ export function AppointmentDetail({ id }: { id: string }) {
         </p>
       </div>
       {a.isSimulated ? <VideoSimulationNotice /> : null}
-      {a.awaitingPayment && a.status === "requested" ? <PaymentPending payPath={`/api/v1/area/appuntamenti/${id}/pagamento`} /> : null}
+      {/* 27/11/2026 (fase 4): si paga solo dopo la conferma del medico, come dicono /prezzi e /richiedi. */}
+      {a.awaitingPayment && a.status === "confirmed" ? (
+        <PaymentPending
+          payPath={`/api/v1/area/appuntamenti/${id}/pagamento`}
+          title="Il medico ha confermato: ora puoi pagare"
+          text="Paghi adesso, dopo aver visto giorno e ora. Il collegamento al videoconsulto compare qui appena il pagamento risulta registrato."
+          label="Paga il videoconsulto"
+        />
+      ) : null}
 
       {a.status === "confirmed" && a.scheduledAt ? (
         <section className="tone-medico form-card form-card-accent" aria-labelledby="quando-titolo">
@@ -319,8 +335,8 @@ export function AppointmentDetail({ id }: { id: string }) {
             </span>
             {formatDateTime(a.scheduledAt)}
           </h2>
-          <p className="form-card-text">Il medico ha confermato. Entra qualche minuto prima, da computer o telefono.</p>
-          {a.videoUrl ? (
+          <p className="form-card-text">{a.awaitingPayment ? "Il medico ha confermato questo giorno e quest’ora." : "Il medico ha confermato. Entra qualche minuto prima, da computer o telefono."}</p>
+          {a.videoUrl && !a.awaitingPayment ? (
             <a href={a.videoUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg mt-5 w-full sm:w-auto">
               <Video aria-hidden className="h-5 w-5" /> Entra nel videoconsulto
             </a>
@@ -328,9 +344,12 @@ export function AppointmentDetail({ id }: { id: string }) {
         </section>
       ) : null}
 
-      {a.status === "requested" && !a.awaitingPayment ? (
-        <p className="text-[1.0625rem] text-ink-soft" aria-live="polite">
-          Richiesta inviata al medico: riceverai qui la conferma di data e collegamento. Questa pagina si aggiorna da sola.
+      {a.status === "requested" ? (
+        <p className="callout" aria-live="polite" data-testid="attesa-conferma">
+          <span className="min-w-0">
+            <b className="callout-title">Ora non paghi nulla.</b>
+            <span className="callout-text block">Richiesta inviata{data.physician ? ` a ${data.physician.fullName}` : " al medico"}: qui ricevi la conferma di giorno e ora, poi paghi. Questa pagina si aggiorna da sola.</span>
+          </span>
         </p>
       ) : null}
 
@@ -381,7 +400,7 @@ export function AppointmentDetail({ id }: { id: string }) {
             Il medico non ha potuto accettare
           </h2>
           <p className="mt-3 text-[1.0625rem] text-ink-soft">{a.declineReason}</p>
-          <p className="mt-3 text-[1.0625rem] font-semibold text-ink">Il pagamento ti viene restituito.</p>
+          <p className="mt-3 text-[1.0625rem] font-semibold text-ink">{a.awaitingPayment ? "Non hai pagato nulla." : "Il pagamento ti viene restituito."}</p>
         </section>
       ) : null}
 

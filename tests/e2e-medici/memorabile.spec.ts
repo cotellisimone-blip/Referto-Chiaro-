@@ -168,17 +168,18 @@ test.describe("percorsi A, C, D", () => {
     await page.getByLabel(/Di che cosa vuoi parlare/).fill("Vorrei capire con un medico i valori del referto di esempio.");
     await page.getByLabel(/Ho capito che questa è una simulazione/).check();
     await page.getByLabel(/Acconsento a condividere/).check();
-    await page.getByRole("button", { name: /Continua al pagamento/ }).click();
-    await expect(page.getByRole("heading", { name: "Il tuo ordine." })).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByRole("main").getByText("Videoconsulto con medico generalista", { exact: true }).first()).toBeVisible();
-    await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
-    await page.getByRole("link", { name: "Vai all'appuntamento" }).click();
+    // 27/11/2026 (fase 4): ora non si paga nulla; si paga dopo la conferma del medico, poi arriva il collegamento.
+    await expect(page.getByTestId("non-urgenze")).toBeVisible();
+    await page.getByRole("button", { name: "Invia la richiesta" }).click();
     await expect(page.getByRole("heading", { name: "Videoconsulto" })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId("attesa-conferma")).toContainText("Ora non paghi nulla");
     await expect(page.getByText("In attesa di conferma").first()).toBeVisible();
     const id = page.url().split("/").pop()!;
+    // Prima della conferma il pagamento non si apre
+    expect((await patient.request.post(`/api/v1/area/appuntamenti/${id}/pagamento`, { data: {} })).status()).toBe(409);
     await expectAccessible(page);
 
-    // Il medico conferma con un collegamento https; un link non sicuro viene rifiutato
+    // Il medico vede la richiesta non pagata e conferma con un collegamento https; un link non sicuro viene rifiutato
     const when = new Date(Date.now() + 2 * 86_400_000).toISOString();
     expect((await doctor.request.post(`/api/v1/medico/appuntamenti/${id}`, { data: { kind: "confirm", scheduledAt: when, videoUrl: "javascript:alert(1)" } })).status()).toBe(400);
     const dp = await doctor.newPage();
@@ -187,6 +188,18 @@ test.describe("percorsi A, C, D", () => {
     await expect(dp.getByRole("figure", { name: /Facsimile/ }).first()).toBeVisible();
     await expectAccessible(dp);
     expect((await doctor.request.post(`/api/v1/medico/appuntamenti/${id}`, { data: { kind: "confirm", scheduledAt: when, videoUrl: "https://meet.esempio.it/cura-privata-demo" } })).status()).toBe(200);
+    // Senza pagamento niente riepilogo e niente collegamento
+    expect((await doctor.request.post(`/api/v1/medico/appuntamenti/${id}`, { data: { kind: "complete", summary: "Riepilogo dimostrativo troppo presto, prima del pagamento del paziente.", confirmResponsibility: true } })).status()).toBe(409);
+    const prima = await (await patient.request.get(`/api/v1/area/appuntamenti/${id}`)).json();
+    expect(prima.appointment.videoUrl).toBeNull();
+
+    await page.reload();
+    await page.getByRole("button", { name: "Paga il videoconsulto" }).click();
+    await expect(page.getByRole("heading", { name: "Il tuo ordine." })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("main").getByText("Videoconsulto con medico generalista", { exact: true }).first()).toBeVisible();
+    await page.getByRole("button", { name: "Conferma il pagamento di prova" }).click();
+    await page.getByRole("link", { name: "Vai all'appuntamento" }).click();
+    await expect(page.getByRole("heading", { name: "Videoconsulto" })).toBeVisible({ timeout: 15_000 });
 
     await page.reload();
     await expect(page.getByRole("link", { name: "Entra nel videoconsulto" })).toHaveAttribute("href", "https://meet.esempio.it/cura-privata-demo");

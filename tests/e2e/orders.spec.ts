@@ -55,6 +55,7 @@ test.describe("ordini e pagamenti simulati", () => {
     const o = await newOrder(ctx.request, doc);
     const page = await ctx.newPage();
     await page.goto(o.checkoutUrl);
+    await page.getByText("Strumenti di prova").click();
     await page.getByRole("button", { name: "Simula un pagamento fallito" }).click();
     await expect(page.getByText("Il pagamento non è andato a buon fine.")).toBeVisible();
     // Nessun report generato da un pagamento fallito
