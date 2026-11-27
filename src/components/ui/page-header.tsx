@@ -24,6 +24,8 @@ import {
 import { Wave } from "./wave";
 import { enfasi } from "./titolo";
 import { PASSO_NOME, PASSO_TONO, PercorsoSezioni, type Passo } from "@/components/sezioni/parts";
+import "@/components/sezioni/tre-momenti.css";
+import "@/components/sezioni/sezioni.css";
 
 export type HeaderArt = "translate" | "magnify" | "dossier" | "dialogue" | "shield" | "faq" | "search" | "questions" | "structures" | "none";
 

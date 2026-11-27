@@ -36,6 +36,8 @@ import {
   serviceStart,
 } from "@/domain/offerta";
 import { PageLd, capisciServiceLd } from "@/components/site/page-ld";
+import "@/components/sezioni/tre-momenti.css";
+import "@/components/sezioni/sezioni.css";
 
 export const metadata: Metadata = {
   title: pageTitle("Quanto costa farsi spiegare un referto"),

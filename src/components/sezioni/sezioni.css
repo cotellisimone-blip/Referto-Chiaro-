@@ -837,3 +837,133 @@ html .tm .ds-art-pro{width:86%}
 .tm .ds-docs-book{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:18px}
 .tm .ds-docs-book .ds-doc-btn{min-height:52px;padding:0 22px;font-size:1rem}
 .tm .ds-docs-book p{flex:1 1 18rem;margin:0;font-size:0.9375rem;line-height:1.45;color:inherit;opacity:.85}
+
+/* 27/11/2026 (sito più leggero): regole di wow.css che valgono solo dentro .tm, spostate qui nello stesso ordine.
+   Questo foglio si carica solo nelle pagine che usano la veste «Carta». */
+.tm.ds-bare {
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.tm.ds-bare .ds-path {
+  padding-top: 0;
+}
+.tm.ds-bare .ds-sec-tag {
+  margin: 0;
+}
+.tm .ds-card-t > .tm-ic:first-child {
+  box-sizing: content-box;
+  width: 22px;
+  height: 22px;
+  padding: 11px;
+  border-radius: 999px;
+  background: var(--ds-mint-tint, #dff3ee);
+  color: #0b5a55;
+  flex: none;
+}
+@media (hover: hover) {
+  .tm .ds-hero .ds-door:hover,
+  .tm .ds-end .ds-door:hover {
+    transform: translateY(-7px) scale(1.012);
+    box-shadow: 0 24px 46px -20px rgb(11 70 66 / 0.55), 0 0 0 3px #7be0d2;
+  }
+}
+.tm .ds-door:focus-visible {
+  box-shadow: 0 0 0 3px #7be0d2;
+}
+.tm .ds-door:active {
+  transform: translateY(-3px) scale(1.005);
+  box-shadow: 0 0 0 3px #7be0d2;
+}
+.tm .ds-door-f .tm-ic {
+  transition: transform 0.2s ease;
+}
+.tm .ds-door:hover .ds-door-f .tm-ic {
+  transform: translateX(7px);
+}
+.tm .ds-int .wow-jar {
+  margin-bottom: 4px;
+  transition: transform 0.2s ease;
+}
+.tm .ds-int:hover .wow-jar {
+  transform: rotate(-6deg) translateY(-2px);
+}
+.tm .ds-price b {
+  font-family: var(--font-fraunces), Georgia, serif !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.035em !important;
+}
+.tm .ds-price b {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .tm .ds-card-t > .tm-ic:first-child {
+    background: rgb(123 224 210 / 0.16);
+    color: #7be0d2;
+  }
+}
+:root[data-theme="dark"] .tm .ds-card-t > .tm-ic:first-child {
+  background: rgb(123 224 210 / 0.16);
+  color: #7be0d2;
+}
+.tm .ds-cats a.wow-catlink {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border-left-width: 1px;
+}
+.tm .ds-cats a.wow-catlink > span:last-child {
+  margin: 0;
+}
+.tm .ds-cats .wow-cat {
+  display: grid;
+  margin: 0;
+}
+.tm .ds-cats a.wow-catlink > span:last-child {
+  display: block;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tm .ds-mini-1 .tm-rb i {
+    animation: wow-settle 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+  }
+}
+.tm .tm-how li .wow-scene {
+  grid-column: 1 / -1;
+}
+.tm .tm-how {
+  align-items: end;
+}
+.tm #avvisami .ds-cov button[type="submit"] {
+  min-height: 3.75rem;
+  padding-inline: 1.75rem;
+  border-radius: 999px;
+  font-size: 1.1875rem;
+  box-shadow: 0 14px 28px -14px rgb(0 117 111 / 0.7);
+}
+.tm #avvisami .ds-cov button[type="submit"]:hover {
+  transform: translateY(-2px);
+}
+@media (max-width: 600px) {
+  .tm .ds-cats a.wow-catlink {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+@media (max-width: 600px) {
+  .tm .ds-cats .wow-cat {
+    --s: 40px !important;
+  }
+}
+@media (max-width: 600px) {
+  .tm .ds-cats b {
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+}
+.wow-paper .tm-tlink {
+  color: #0b6b63 !important;
+}
+:root[data-theme="dark"] .wow-paper .tm-tlink {
+  color: #7be0d2 !important;
+}

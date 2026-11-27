@@ -5,6 +5,8 @@ import { Home, MapPin, Stethoscope, Video } from "lucide-react";
 import { SERVIZIO_LABEL } from "@/content/medici-prova";
 import { MEDICI, datiMancanti, inizialiMedico, nomeMedico } from "@/content/medici";
 import { domicilioEnabled } from "@/lib/medici";
+import "@/components/sezioni/tre-momenti.css";
+import "@/components/sezioni/sezioni.css";
 
 const ICON = { domicilio: Home, video: Video, parere: Stethoscope } as const;
 

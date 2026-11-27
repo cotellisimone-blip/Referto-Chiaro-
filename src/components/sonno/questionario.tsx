@@ -157,7 +157,7 @@ export function Questionario({ a }: { a: Autovalutazione }) {
             <p className="sn-esito-poi-t">E adesso</p>
             <ul>
               <li>
-                <Link href="/area-personale/diari/sonno" className="sn-vai sn-vai-piccolo" data-testid="esito-diario">
+                <Link prefetch={false} href="/area-personale/diari/sonno" className="sn-vai sn-vai-piccolo" data-testid="esito-diario">
                   <span className="sn-vai-t">Domattina apri il diario del sonno: due minuti, ogni mattina</span>
                   <span className="sn-vai-go" aria-hidden="true">
                     <Ic id="go" />
@@ -166,7 +166,7 @@ export function Questionario({ a }: { a: Autovalutazione }) {
               </li>
               {a.poi.map((p) => (
                 <li key={p.href}>
-                  <Link href={p.href} className="sn-vai sn-vai-piccolo">
+                  <Link prefetch={false} href={p.href} className="sn-vai sn-vai-piccolo">
                     <span className="sn-vai-t">{p.label}</span>
                     <span className="sn-vai-go" aria-hidden="true">
                       <Ic id="go" />

@@ -16,6 +16,8 @@ import { Breadcrumbs } from "./breadcrumbs";
 import { CategoryBadge } from "@/components/wow/category-art";
 import { enfasi } from "@/components/ui/titolo";
 import { PercorsoSezioni } from "@/components/sezioni/parts";
+import "@/components/sezioni/tre-momenti.css";
+import "@/components/sezioni/sezioni.css";
 
 /** Prima frase di un paragrafo, per il riquadro «In breve» (stesso testo già validato, nessuna parola nuova). */
 

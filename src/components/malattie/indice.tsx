@@ -25,7 +25,7 @@ export function MalattieIndice() {
         <div className="ht-wrap">
           <nav aria-label="Sei qui">
             <p className="ht-crumb">
-              <Link href="/">Home</Link> <span aria-hidden>/</span> <span>Malattie</span>
+              <Link prefetch={false} href="/">Home</Link> <span aria-hidden>/</span> <span>Malattie</span>
             </p>
           </nav>
           <div className="ht-hero-g">
@@ -61,7 +61,7 @@ export function MalattieIndice() {
           <ul className="ml-aree">
             {MALATTIE.map((m) => (
               <li key={m.slug} className={`ht-${m.tono}`}>
-                <Link href={malattiaHref(m.slug)} className="ml-area" data-testid={`area-${m.slug}`}>
+                <Link prefetch={false} href={malattiaHref(m.slug)} className="ml-area" data-testid={`area-${m.slug}`}>
                   <span className="ml-area-ico" aria-hidden="true">
                     <Ic id={m.icona} />
                   </span>
@@ -109,13 +109,13 @@ export function MalattieIndice() {
       <section className="ht-sec ht-end" aria-label="Da qui">
         <div className="ht-wrap">
           <div className="ht-azioni">
-            <Link href="/diari" className="ht-btn">
+            <Link prefetch={false} href="/diari" className="ht-btn">
               Diari della salute <Ic id="go" className="ht-ic" />
             </Link>
-            <Link href="/guide" className="ht-btn ht-btn-line">
+            <Link prefetch={false} href="/guide" className="ht-btn ht-btn-line">
               Guide agli esami
             </Link>
-            <Link href="/glossario" className="ht-btn ht-btn-line">
+            <Link prefetch={false} href="/glossario" className="ht-btn ht-btn-line">
               Glossario
             </Link>
           </div>

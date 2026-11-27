@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, CalendarCheck, ClipboardCheck } from "lucide-react";
 import { EXAM_GUIDE_COUNT } from "@/content/guides";
+import "@/components/sezioni/tre-momenti.css";
+import "@/components/sezioni/sezioni.css";
 
 /**
  * Le cose del passo 2 «I controlli per te» (22/11/2026: prima erano le quattro della sezione Prevenzione; il Punto di

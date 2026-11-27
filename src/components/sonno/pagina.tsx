@@ -23,7 +23,7 @@ export function Briciole({ ultima }: { ultima: string }) {
   return (
     <nav aria-label="Sei qui">
       <p className="ht-crumb">
-        <Link href="/">Home</Link> <span aria-hidden>/</span> <Link href="/prenditi-cura-di-te">Prenditi cura di te</Link> <span aria-hidden>/</span> <Link href="/prenditi-cura-di-te/sonno">Sonno</Link> <span aria-hidden>/</span>{" "}
+        <Link prefetch={false} href="/">Home</Link> <span aria-hidden>/</span> <Link prefetch={false} href="/prenditi-cura-di-te">Prenditi cura di te</Link> <span aria-hidden>/</span> <Link prefetch={false} href="/prenditi-cura-di-te/sonno">Sonno</Link> <span aria-hidden>/</span>{" "}
         <span>{ultima}</span>
       </p>
     </nav>
@@ -76,13 +76,13 @@ export function FineSonno() {
     <section className="ht-sec ht-end" aria-label="Da qui">
       <div className="ht-wrap">
         <div className="ht-azioni">
-          <Link href="/prenditi-cura-di-te/sonno#sonno-porte" className="ht-btn">
+          <Link prefetch={false} href="/prenditi-cura-di-te/sonno#sonno-porte" className="ht-btn">
             Tutta la sezione sonno <Ic id="go" className="ht-ic" />
           </Link>
-          <Link href="/prenditi-cura-di-te/sonno/percorso-due-settimane" className="ht-btn ht-btn-line">
+          <Link prefetch={false} href="/prenditi-cura-di-te/sonno/percorso-due-settimane" className="ht-btn ht-btn-line">
             Il percorso di due settimane
           </Link>
-          <Link href="/area-personale/diari/sonno" className="ht-btn ht-btn-line">
+          <Link prefetch={false} href="/area-personale/diari/sonno" className="ht-btn ht-btn-line">
             Diario del sonno
           </Link>
         </div>
@@ -158,7 +158,7 @@ function BloccoView({ b }: { b: Blocco }) {
     );
   if ("vai" in b)
     return (
-      <Link href={b.vai.href} className="sn-vai">
+      <Link prefetch={false} href={b.vai.href} className="sn-vai">
         <span className="sn-vai-t">{b.vai.titolo}</span>
         <span className="sn-vai-d">{b.vai.testo}</span>
         <span className="sn-vai-go" aria-hidden="true">
@@ -242,7 +242,7 @@ export function SonnoPaginaView({ p }: { p: SonnoPagina }) {
               ))}
             </div>
             {i === 0 && av ? (
-              <Link href={`${sonnoHref(av.slug)}#domande`} className="sn-av-invito" data-testid="invito-autovalutazione">
+              <Link prefetch={false} href={`${sonnoHref(av.slug)}#domande`} className="sn-av-invito" data-testid="invito-autovalutazione">
                 <span className="sn-av-invito-ico" aria-hidden="true">
                   <Ic id="s-test" />
                 </span>
@@ -327,10 +327,10 @@ export function SonnoPaginaView({ p }: { p: SonnoPagina }) {
               ))}
             </ol>
             <div className="ml-domande-azioni">
-              <Link href="/prenditi-cura-di-te/sonno/percorso-due-settimane" className="ht-btn">
+              <Link prefetch={false} href="/prenditi-cura-di-te/sonno/percorso-due-settimane" className="ht-btn">
                 Porta anche il diario di due settimane <Ic id="go" className="ht-ic" />
               </Link>
-              <Link href="/strumenti/preparati-alla-visita" className="ht-btn ht-btn-line">
+              <Link prefetch={false} href="/strumenti/preparati-alla-visita" className="ht-btn ht-btn-line">
                 Preparati alla visita
               </Link>
             </div>
@@ -370,7 +370,7 @@ export function SonnoPaginaView({ p }: { p: SonnoPagina }) {
               const c = getSonnoPagina(s)!;
               return (
                 <li key={s} className="ht-sc">
-                  <Link href={sonnoHref(c.slug)} className="ml-area">
+                  <Link prefetch={false} href={sonnoHref(c.slug)} className="ml-area">
                     <span className="ml-area-ico" aria-hidden="true">
                       <Ic id={c.icona} />
                     </span>

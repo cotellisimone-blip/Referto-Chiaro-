@@ -9,6 +9,8 @@ import { Breadcrumbs } from "@/components/guide/breadcrumbs";
 import { ReviewNotice } from "@/components/guide/review-notice";
 import { PercorsoSezioni } from "@/components/sezioni/parts";
 import { NOINDEX_DRAFT, absoluteUrl, breadcrumbLd, glossaryIndexable, indexingEnabled, jsonLd, metaDescription, pageTitle } from "@/lib/seo";
+import "@/components/sezioni/tre-momenti.css";
+import "@/components/sezioni/sezioni.css";
 
 export function generateStaticParams() {
   return GLOSSARY.map((e) => ({ slug: e.slug }));

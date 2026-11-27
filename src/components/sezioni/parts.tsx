@@ -3,6 +3,8 @@ import { CountUp } from "@/components/wow/count-up";
 import { ArrowUp, Check, Home, Stethoscope, Video } from "lucide-react";
 import { PRESTAZIONI, prestazionePrice, type PrestazioneKind } from "@/domain/prestazioni/listino";
 import { domicilioEnabled, secondoParereEnabled } from "@/lib/medici";
+import "@/components/sezioni/tre-momenti.css";
+import "@/components/sezioni/sezioni.css";
 
 /**
  * Pezzi comuni della home e delle pagine delle tre sezioni (15/11/2026 sera, divisione voluta da Simone):

@@ -23,7 +23,7 @@ export function SonnoPorte() {
         <ul className="sn-porte-l">
           {SONNO_PROBLEMI.map((p) => (
             <li key={p.slug}>
-              <Link href={sonnoHref(p.slug)} className="sn-porta" data-testid={`porta-${p.slug}`}>
+              <Link prefetch={false} href={sonnoHref(p.slug)} className="sn-porta" data-testid={`porta-${p.slug}`}>
                 <span className="sn-porta-ico" aria-hidden="true">
                   <Ic id={p.icona} />
                 </span>
@@ -36,7 +36,7 @@ export function SonnoPorte() {
           ))}
         </ul>
 
-        <Link href={sonnoHref(SONNO_PERCORSO.slug)} className="sn-percorso" data-testid="porta-percorso">
+        <Link prefetch={false} href={sonnoHref(SONNO_PERCORSO.slug)} className="sn-percorso" data-testid="porta-percorso">
           <span className="sn-percorso-k ht-kicker">Gratis · Due settimane</span>
           <span className="sn-percorso-t">{SONNO_PERCORSO.porta}</span>
           <span className="sn-percorso-passi" aria-hidden="true">
@@ -62,7 +62,7 @@ export function SonnoPorte() {
             <ul className="sn-capire">
               {SONNO_SPIEGAZIONI.map((p) => (
                 <li key={p.slug}>
-                  <Link href={sonnoHref(p.slug)} className="sn-capire-a">
+                  <Link prefetch={false} href={sonnoHref(p.slug)} className="sn-capire-a">
                     <span className="sn-capire-ico" aria-hidden="true">
                       <Ic id={p.icona} />
                     </span>
@@ -80,7 +80,7 @@ export function SonnoPorte() {
             <ul className="sn-capire">
               {AUTOVALUTAZIONI.map((a) => (
                 <li key={a.slug}>
-                  <Link href={sonnoHref(a.slug)} className="sn-capire-a">
+                  <Link prefetch={false} href={sonnoHref(a.slug)} className="sn-capire-a">
                     <span className="sn-capire-ico" aria-hidden="true">
                       <Ic id="s-test" />
                     </span>

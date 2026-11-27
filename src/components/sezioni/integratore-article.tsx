@@ -4,6 +4,8 @@ import { Jar } from "@/components/wow/jar";
 import { ArrowLeft, ArrowRight, BookOpen, MessageCircleQuestionMark, TriangleAlert } from "lucide-react";
 import { INTEGRATORI, INTEGRATORI_COLORS, INTEGRATORI_GROUPS, INTEGRATORI_PRIMA_DI_TUTTO, getIntegratore } from "@/content/integratori";
 import { getGuide } from "@/content/guides";
+import "@/components/sezioni/tre-momenti.css";
+import "@/components/sezioni/sezioni.css";
 
 /** Scheda di un integratore: spiega, collega l'esame del referto, mette le domande per il medico accanto. */
 export function IntegratoreArticle({ slug }: { slug: string }) {

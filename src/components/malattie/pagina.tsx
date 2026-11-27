@@ -56,7 +56,7 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
         <div className="ht-wrap">
           <nav aria-label="Sei qui">
             <p className="ht-crumb">
-              <Link href="/">Home</Link> <span aria-hidden>/</span> {m.slug === "sonno" ? <Link href="/prenditi-cura-di-te">Prenditi cura di te</Link> : <Link href="/malattie">Malattie</Link>} <span aria-hidden>/</span> <span>{m.area}</span>
+              <Link prefetch={false} href="/">Home</Link> <span aria-hidden>/</span> {m.slug === "sonno" ? <Link prefetch={false} href="/prenditi-cura-di-te">Prenditi cura di te</Link> : <Link prefetch={false} href="/malattie">Malattie</Link>} <span aria-hidden>/</span> <span>{m.area}</span>
             </p>
           </nav>
           <div className="ht-hero-g">
@@ -266,7 +266,7 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
                 const g = getGuide(e.guida);
                 return (
                   <li key={e.guida}>
-                    <Link href={`/guide/${e.guida}`} className="ht-voce">
+                    <Link prefetch={false} href={`/guide/${e.guida}`} className="ht-voce">
                       <span className="ht-voce-t">
                         <b>{g?.examName ?? e.guida}</b>
                       </span>
@@ -310,10 +310,10 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
                 <p className="ml-diario-d">{m.diario!.testo}</p>
               </div>
               <div className="ml-diario-azioni">
-                <Link href={`/diari/${diario.slug}`} className="ht-btn">
+                <Link prefetch={false} href={`/diari/${diario.slug}`} className="ht-btn">
                   Guida e diario da stampare <Ic id="go" className="ht-ic" />
                 </Link>
-                <Link href={`/area-personale/diari/${diario.slug}`} className="ht-btn ht-btn-line">
+                <Link prefetch={false} href={`/area-personale/diari/${diario.slug}`} className="ht-btn ht-btn-line">
                   Compilalo dal telefono
                 </Link>
               </div>
@@ -342,17 +342,17 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
               ))}
             </ol>
             <div className="ml-domande-azioni">
-              <Link href={esamiTool} className="ht-btn">
+              <Link prefetch={false} href={esamiTool} className="ht-btn">
                 Aggiungi le domande sugli esami <Ic id="go" className="ht-ic" />
               </Link>
-              <Link href="/strumenti/preparati-alla-visita" className="ht-btn ht-btn-line">
+              <Link prefetch={false} href="/strumenti/preparati-alla-visita" className="ht-btn ht-btn-line">
                 Preparati alla visita
               </Link>
             </div>
           </div>
 
           <div className="ml-due">
-            <Link href="/lettura-referti" className="ml-referto">
+            <Link prefetch={false} href="/lettura-referti" className="ml-referto">
               <span className="ml-referto-ico" aria-hidden="true">
                 <Ic id="re" />
               </span>
@@ -399,7 +399,7 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
               <ul>
                 {m.glossario.map((g) => (
                   <li key={g}>
-                    <Link href={`/glossario/${g}`}>{termine(g)}</Link>
+                    <Link prefetch={false} href={`/glossario/${g}`}>{termine(g)}</Link>
                   </li>
                 ))}
               </ul>
@@ -419,7 +419,7 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
               const c = getMalattia(s)!;
               return (
                 <li key={s} className={`ht-${c.tono}`}>
-                  <Link href={malattiaHref(c.slug)} className="ml-area">
+                  <Link prefetch={false} href={malattiaHref(c.slug)} className="ml-area">
                     <span className="ml-area-ico" aria-hidden="true">
                       <Ic id={c.icona} />
                     </span>
@@ -448,7 +448,7 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
                 </li>
               ))}
             </ul>
-            <p className="ml-fonti-regole">Questa pagina spiega e non fa diagnosi; non indica cure, dosi né cambiamenti di terapia. <Link href="/malattie#come-sono-fatte">Come sono fatte queste pagine</Link>.</p>
+            <p className="ml-fonti-regole">Questa pagina spiega e non fa diagnosi; non indica cure, dosi né cambiamenti di terapia. <Link prefetch={false} href="/malattie#come-sono-fatte">Come sono fatte queste pagine</Link>.</p>
           </div>
         </div>
       </section>
@@ -456,13 +456,13 @@ export function MalattiaPagina({ m }: { m: Malattia }) {
       <section className="ht-sec ht-end" aria-label="Da qui">
         <div className="ht-wrap">
           <div className="ht-azioni">
-            <Link href="/malattie" className="ht-btn">
+            <Link prefetch={false} href="/malattie" className="ht-btn">
               Tutte le malattie <Ic id="go" className="ht-ic" />
             </Link>
-            <Link href="/guide" className="ht-btn ht-btn-line">
+            <Link prefetch={false} href="/guide" className="ht-btn ht-btn-line">
               Guide agli esami
             </Link>
-            <Link href="/diari" className="ht-btn ht-btn-line">
+            <Link prefetch={false} href="/diari" className="ht-btn ht-btn-line">
               Diari della salute
             </Link>
           </div>

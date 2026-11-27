@@ -15,6 +15,8 @@ import { puntoDiPartenzaEnabled } from "@/lib/feature-flags";
 import { mediciEnabled } from "@/lib/medici";
 import { absoluteUrl, indexingEnabled, NOINDEX_DRAFT } from "@/lib/seo";
 import { PageLd } from "@/components/site/page-ld";
+import "@/components/sezioni/tre-momenti.css";
+import "@/components/sezioni/sezioni.css";
 
 export const metadata: Metadata = {
   title: "Punto di Partenza: il primo controllo, gratis",
@@ -108,7 +110,7 @@ export default function PuntoDiPartenzaPage() {
           <div className="pdp-hero-visual">
             {SHOW_ILLUSTRATIVE_PHOTOS ? (
               <figure className="pdp-hero-photo">
-                <Photo photo={photo} sizes="(min-width: 1024px) 30rem, 92vw" priority style={{ objectPosition: "38% 0%" }} />
+                <Photo photo={photo} sizes="(min-width: 1024px) 30rem, 92vw" style={{ objectPosition: "38% 0%" }} />
                 <figcaption className="caption-illus right-4 top-4">Immagine illustrativa</figcaption>
               </figure>
             ) : null}
