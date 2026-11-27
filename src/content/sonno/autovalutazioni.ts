@@ -155,7 +155,7 @@ export const AV_APNEE: Autovalutazione = {
   em: "nove domande con un sì o un no.",
   seoTitle: "Apnee notturne: i segnali da riconoscere",
   metaDescription: "Nove domande scritte da noi su russare, pause del respiro e fattori di rischio delle apnee notturne, con le fonti. Non è una diagnosi: aiuta a parlarne.",
-  intro: "Alcune domande riguardano quello che nota chi dorme con te: se puoi, rispondi insieme. Se non lo sai, rispondi «No».",
+  intro: "Alcune domande riguardano quello che nota chi dorme con te: se puoi, rispondi insieme. Se non lo sai, scegli «Non lo so».",
   periodo: "Pensa agli ultimi mesi.",
   ispirazione: {
     nome: "Temi del questionario STOP-Bang (Chung e altri, 2008) e dei segni delle apnee descritti da NHS e AASM",

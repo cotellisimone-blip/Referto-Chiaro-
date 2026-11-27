@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Ic } from "@/components/home-b/simboli";
 import type { Autovalutazione } from "@/content/sonno/schema";
-import { calcolaEsito, salvaRisultato, type Risposte } from "@/domain/sonno/autovalutazione";
+import { NON_LO_SO, calcolaEsito, salvaRisultato, type Risposte } from "@/domain/sonno/autovalutazione";
 
 /**
  * Il questionario di un'autovalutazione del sonno (22/11/2026). Tutto nel browser: nessuna risposta va al server. Il
@@ -44,6 +44,7 @@ export function Questionario({ a }: { a: Autovalutazione }) {
       massimo: esito.massimo,
       data: new Date().toISOString().slice(0, 10),
       avvisi: esito.avvisi.map((v) => v.titolo),
+      nonSo: esito.nonSo,
     });
     setSalvato(ok ? "ok" : "no");
   }
@@ -77,9 +78,10 @@ export function Questionario({ a }: { a: Autovalutazione }) {
                 <span>{d.t}</span>
               </legend>
               {d.aiuto ? <p className="sn-q-aiuto">{d.aiuto}</p> : null}
-              <div className="sn-q-scelte" data-n={d.opzioni.length}>
-                {d.opzioni.map((o) => (
-                  <label key={o.l} className="sn-q-scelta">
+              {/* 27/11/2026: «Non lo so» in ogni domanda (chi dorme da solo non sa se russa; chi non ha misurato non sa il peso). */}
+              <div className="sn-q-scelte" data-n={d.opzioni.length + 1}>
+                {[...d.opzioni, { l: "Non lo so", v: NON_LO_SO }].map((o) => (
+                  <label key={o.l} className="sn-q-scelta" data-non-so={o.v === NON_LO_SO || undefined}>
                     <input
                       type="radio"
                       name={d.id}
@@ -130,6 +132,19 @@ export function Questionario({ a }: { a: Autovalutazione }) {
             </h2>
           )}
           <p className="sn-esito-d">{allarme ? `Per il resto: ${esito.fascia.titolo.charAt(0).toLowerCase()}${esito.fascia.titolo.slice(1)}. ${esito.fascia.testo}` : esito.fascia.testo}</p>
+          {esito.nonSo ? (
+            <div className="sn-riquadro sn-riquadro-nota" data-testid="esito-non-so">
+              <span className="sn-riquadro-ico" aria-hidden="true">
+                <Ic id="firma" />
+              </span>
+              <div>
+                <p className="sn-riquadro-t">{esito.nonSo === 1 ? "Una risposta «Non lo so»" : `${esito.nonSo} risposte «Non lo so»`}</p>
+                <p className="sn-riquadro-d">
+                  Il risultato conta solo quello che sai: potrebbe essere più basso del vero. Se puoi, chiedi a chi dorme con te e rifallo, oppure dillo al medico così com’è.
+                </p>
+              </div>
+            </div>
+          ) : null}
           {esito.avvisi.filter((v) => v !== allarme).map((v) => (
             <div key={v.titolo} className={`sn-riquadro sn-riquadro-${v.tono}`} role={v.tono === "attenzione" ? "alert" : undefined}>
               <span className="sn-riquadro-ico" aria-hidden="true">

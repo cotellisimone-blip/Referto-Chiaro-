@@ -6,7 +6,7 @@ import { FORBIDDEN_PHRASES } from "@/content/guides/schema";
 import { GUIDES } from "@/content/guides";
 import { contaParole } from "@/content/malattie";
 import { TITLE_MAX, TITLE_SUFFIX, malattiaIndexable } from "@/lib/seo";
-import { calcolaEsito, rigaPerIlMedico } from "@/domain/sonno/autovalutazione";
+import { NON_LO_SO, calcolaEsito, rigaPerIlMedico } from "@/domain/sonno/autovalutazione";
 import { VoceInputSchema, efficienzaNotte, normalizza, riepilogoSonno, sonnoStimato, type VoceDiario } from "@/domain/diari/voci";
 import { vociEsempio } from "@/domain/diari/esempio";
 import { buildSearchIndex, searchSite as cerca } from "@/lib/search-index";
@@ -125,6 +125,19 @@ describe("sezione sonno: le pagine (22/11/2026)", () => {
       "Sonnolenza di giorno (22/11/2026): molta sonnolenza di giorno, 9 su 12 con le domande di Cura Privata · Colpi di sonno",
     );
     expect(calcolaEsito(a, { riunione: 0 }).completo).toBe(false);
+  });
+
+  it("«Non lo so» conta come risposta, non aggiunge punti e finisce nella riga per il medico", () => {
+    const a = AUTOVALUTAZIONI.find((x) => x.slug === "autovalutazione-apnee")!;
+    const r = Object.fromEntries(a.domande.map((d) => [d.id, 0])) as Record<string, number>;
+    r.russare = NON_LO_SO;
+    r.pause = NON_LO_SO;
+    const e = calcolaEsito(a, r);
+    expect(e.completo).toBe(true);
+    expect(e.punti).toBe(0);
+    expect(e.nonSo).toBe(2);
+    expect(e.avvisi).toHaveLength(0);
+    expect(rigaPerIlMedico({ slug: a.slug, porta: a.porta, fascia: e.fascia.titolo, punti: 0, massimo: e.massimo, data: "2026-11-27", avvisi: [], nonSo: 2 })).toContain("2 risposte «non lo so»");
   });
 
   it("la ricerca trova le pagine del sonno con le parole di tutti i giorni", () => {
