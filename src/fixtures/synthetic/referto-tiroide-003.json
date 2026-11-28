@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0",
+  "documentId": "demo-referto-tiroide-003",
+  "documentKind": "laboratory-text-report",
+  "isSynthetic": true,
+  "language": "it",
+  "displayTitle": "Funzionalità tiroidea — esempio sintetico",
+  "laboratoryName": "Centro Analisi Dimostrativo (struttura inesistente)",
+  "patientLabel": "Persona di esempio — nessuna persona reale",
+  "reportDate": "2026-10-02",
+  "pageCount": 1,
+  "extractionVersion": "extractor-fixture-v1",
+  "sourceLines": [
+    {
+      "page": 1,
+      "line": 1,
+      "text": "CENTRO ANALISI DIMOSTRATIVO — FACSIMILE"
+    },
+    {
+      "page": 1,
+      "line": 2,
+      "text": "Paziente: PERSONA DI ESEMPIO   Data prelievo: 02/10/2026"
+    },
+    {
+      "page": 1,
+      "line": 3,
+      "text": "ESAME                         RISULTATO   UNITÀ    INTERVALLO"
+    },
+    {
+      "page": 1,
+      "line": 4,
+      "text": "TSH                           2,35        µUI/mL   0,40 - 4,00"
+    },
+    {
+      "page": 1,
+      "line": 5,
+      "text": "FT4 (tiroxina libera)         1,12        ng/dL    0,80 - 1,70"
+    },
+    {
+      "page": 1,
+      "line": 6,
+      "text": "FT3 (triiodotironina libera)  3,1         pg/mL    2,3 - 4,2"
+    },
+    {
+      "page": 1,
+      "line": 7,
+      "text": "Anticorpi anti-TPO            ▒▒          UI/mL    < 35"
+    },
+    {
+      "page": 1,
+      "line": 8,
+      "text": "Documento dimostrativo. Valori inventati, nessun dato reale."
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-01",
+      "nameRaw": "TSH",
+      "valueRaw": "2,35",
+      "unitRaw": "µUI/mL",
+      "referenceRaw": "0,40 - 4,00",
+      "sourcePage": 1,
+      "sourceLine": 4,
+      "sourceTextExact": "TSH                           2,35        µUI/mL   0,40 - 4,00",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-02",
+      "nameRaw": "FT4 (tiroxina libera)",
+      "valueRaw": "1,12",
+      "unitRaw": "ng/dL",
+      "referenceRaw": "0,80 - 1,70",
+      "sourcePage": 1,
+      "sourceLine": 5,
+      "sourceTextExact": "FT4 (tiroxina libera)         1,12        ng/dL    0,80 - 1,70",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-03",
+      "nameRaw": "FT3 (triiodotironina libera)",
+      "valueRaw": "3,1",
+      "unitRaw": "pg/mL",
+      "referenceRaw": "2,3 - 4,2",
+      "sourcePage": 1,
+      "sourceLine": 6,
+      "sourceTextExact": "FT3 (triiodotironina libera)  3,1         pg/mL    2,3 - 4,2",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-04",
+      "nameRaw": "Anticorpi anti-TPO",
+      "valueRaw": null,
+      "unitRaw": "UI/mL",
+      "referenceRaw": "< 35",
+      "sourcePage": 1,
+      "sourceLine": 7,
+      "sourceTextExact": "Anticorpi anti-TPO            ▒▒          UI/mL    < 35",
+      "parseConfidence": "low",
+      "warnings": [
+        "Il risultato è coperto da un timbro e non è leggibile."
+      ]
+    }
+  ],
+  "notice": "Questa è una simulazione con dati inventati. Nessun esame di una persona reale è stato elaborato. Gli intervalli fanno parte del facsimile e non sono valori di riferimento universali."
+}

@@ -1,0 +1,4885 @@
+@import "tailwindcss";
+
+/*
+ * Cura Privata · sistema grafico «Luce» (giro del 12/11/2026).
+ * Direzione dal pacchetto «Memorabile» del titolare: carta calda, luce di menta, onde morbide, forme piene e arrotondate,
+ * pulsanti a pillola, il filo del percorso come motivo. Un solo carattere (Manrope), pesi alti per i titoli.
+ *
+ * Contrasti verificati (WCAG 2.2 AA) sul tema chiaro:
+ *  ink #10303B su carta #FBFAF6 ≈ 13,4:1 · ink-soft #2E4C57 ≈ 9:1 · muted #4F676E ≈ 5,7:1 (su nebbia ≈ 5,4:1)
+ *  turchese da testo #00756F ≈ 5,3:1 su carta, ≈ 5:1 su nebbia, ≈ 4,7:1 su menta chiara
+ *  turchese di marca #008F87 ≈ 3,8:1 → solo decorazione, icone o testo ≥ 24 px
+ *  menta #7BE0D2 → solo DIETRO testo scuro (ink su menta ≈ 8,7:1), mai come colore del testo su chiaro
+ * I nomi dei token restano quelli storici (teal, sage, marker…) per non toccare centinaia di componenti.
+ */
+@theme {
+  --color-ink: #10303b;
+  --color-ink-soft: #2e4c57;
+  --color-teal: #00756f;
+  --color-teal-deep: #005a55;
+  --color-sage: #008f87;
+  --color-sage-deep: #00756f;
+  --color-canvas: #fbfaf6;
+  --color-paper: #ffffff;
+  --color-mist: #eaf6f2;
+  --color-line: #dfe9e5;
+  --color-cream: #f6efe2;
+  --color-muted: #4f676e;
+  --color-focus: #00756f;
+  --color-danger: #b5454c;
+  --color-warn: #8a5a1f;
+  --color-strong: #0c3340;
+  --color-strong-soft: #123f4e;
+  --color-on-strong: #ffffff;
+  --color-on-strong-soft: rgb(255 255 255 / 0.82);
+  /* Segno di menta: sottolinea le parole chiave dei titoli, come la traccia del simbolo. */
+  --color-marker: #7be0d2;
+  --color-marker-soft: #cff3ec;
+  --color-amber: #a46a2b;
+  --color-glow: rgb(0 143 135 / 0.16);
+  --color-success: #287e67;
+  /* Avorio caldo e tinte dei servizi. Solo sfondi: il testo resta ink. */
+  --color-ivory: #fff9ef;
+  --color-tint-capisci: #e2f6f0;
+  --color-tint-parere: #e6f0f8;
+  --color-tint-medico: #fcf0e4;
+  --color-accent-capisci: #00756f;
+  --color-accent-parere: #24618a;
+  --color-accent-medico: #9a4f1c;
+  /* Petrolio del marchio (logo, superfici di marca); nel tema scuro diventa chiaro per restare leggibile. */
+  --color-brand: #0c3340;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  /* Un solo carattere (Manrope, OFL): i titoli usano pesi alti invece di un serif. */
+  --font-serif: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  --shadow-card: 0 1px 1px rgb(11 49 61 / 0.03), 0 14px 34px -18px rgb(11 49 61 / 0.16);
+  --shadow-lift: 0 2px 4px rgb(11 49 61 / 0.04), 0 28px 56px -26px rgb(11 49 61 / 0.3);
+  --shadow-float: 0 1px 0 rgb(255 255 255 / 0.7) inset, 0 2px 6px rgb(11 49 61 / 0.05), 0 40px 80px -34px rgb(11 49 61 / 0.38);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Token che non generano utility: luci, onde e superfici composte. Si ridefiniscono nel tema scuro. */
+:root {
+  /* Luce d'apertura: avorio caldo a sinistra, menta in alto a destra, come la finestra dietro la paziente. */
+  --aurora:
+    radial-gradient(52rem 34rem at 96% -6%, rgb(123 224 210 / 0.5), transparent 62%),
+    radial-gradient(38rem 26rem at -8% 8%, rgb(255 236 204 / 0.75), transparent 60%),
+    radial-gradient(44rem 30rem at 50% 118%, rgb(207 243 236 / 0.7), transparent 62%),
+    linear-gradient(180deg, #fffdf8, var(--color-canvas));
+  --aurora-soft:
+    radial-gradient(44rem 26rem at 100% -10%, rgb(123 224 210 / 0.34), transparent 62%),
+    radial-gradient(30rem 20rem at -6% 0%, rgb(255 236 204 / 0.6), transparent 60%),
+    linear-gradient(180deg, #fffdf8, var(--color-canvas));
+  --petrol:
+    radial-gradient(56rem 32rem at 100% 0%, rgb(0 143 135 / 0.42), transparent 62%),
+    radial-gradient(40rem 26rem at 0% 100%, rgb(123 224 210 / 0.12), transparent 60%),
+    linear-gradient(180deg, #0a2c38, #0c3340);
+  --glass: rgb(255 255 255 / 0.72);
+  --glass-line: rgb(255 255 255 / 0.9);
+  --line-strong: #c9d9d5;
+  --photo-fade: #fffdf8;
+  /* Margine laterale delle pagine: 16 px sui telefoni stretti, 20 px sui telefoni, 32 px da tablet in su. */
+  --gutter: 20px;
+}
+@media (max-width: 359px) {
+  :root {
+    --gutter: 16px;
+  }
+}
+@media (min-width: 768px) {
+  :root {
+    --gutter: 32px;
+  }
+}
+
+/*
+ * Tema scuro: ridefiniamo i token (non le utility), così ogni componente eredita.
+ * Contrasti su canvas #0b1e26: ink #e8f1f2 ≈ 15:1 · muted #9ab4ba ≈ 7.8:1 · teal #5fd3c4 ≈ 9.4:1 · menta #7be0d2 ≈ 10.9:1
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-ink: #e8f1f2;
+    --color-ink-soft: #c5d7da;
+    --color-teal: #5fd3c4;
+    --color-teal-deep: #7be0d2;
+    --color-sage: #3fb5a9;
+    --color-sage-deep: #7be0d2;
+    --color-canvas: #061a22;
+    --color-paper: #102a33;
+    --color-mist: #143440;
+    --color-line: #21434f;
+    --color-cream: #2f2b22;
+    --color-muted: #9ab4ba;
+    --color-focus: #7be0d2;
+    --color-danger: #f1a3a3;
+    --color-warn: #e8b968;
+    --color-strong: #0f3a47;
+    --color-strong-soft: #16495a;
+    --color-on-strong: #f4f8f9;
+    --color-on-strong-soft: rgb(244 248 249 / 0.8);
+    --color-marker: #1f5a55;
+    --marker-line: #3aa596;
+    --color-marker-soft: #173f3d;
+    --color-amber: #e8b968;
+    --color-glow: rgb(95 211 196 / 0.14);
+    --color-success: #7fd0b4;
+    --color-ivory: #0e252e;
+    --color-tint-capisci: #12383a;
+    --color-tint-parere: #142f42;
+    --color-tint-medico: #33281f;
+    --color-accent-capisci: #7be0d2;
+    --color-accent-parere: #8fc3ea;
+    --color-accent-medico: #f0b88a;
+    --color-brand: #e8f1f2;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
+    --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 18px 40px -18px rgb(0 0 0 / 0.7);
+    --shadow-float: 0 2px 6px rgb(0 0 0 / 0.35), 0 40px 80px -34px rgb(0 0 0 / 0.8);
+    --aurora:
+      radial-gradient(52rem 34rem at 96% -6%, rgb(63 181 169 / 0.26), transparent 62%),
+      radial-gradient(44rem 30rem at 50% 118%, rgb(31 90 85 / 0.5), transparent 62%),
+      linear-gradient(180deg, #0d2630, var(--color-canvas));
+    --aurora-soft:
+      radial-gradient(44rem 26rem at 100% -10%, rgb(63 181 169 / 0.2), transparent 62%),
+      linear-gradient(180deg, #0d2630, var(--color-canvas));
+    --petrol:
+      radial-gradient(56rem 32rem at 100% 0%, rgb(0 143 135 / 0.32), transparent 62%),
+      linear-gradient(180deg, #0c2b36, #0f3a47);
+    --glass: rgb(16 42 51 / 0.78);
+    --glass-line: rgb(255 255 255 / 0.12);
+    --line-strong: #2f5866;
+    --photo-fade: #0d2630;
+    --photo-dim: 0.88;
+    --aurora-foot: rgb(0 143 135 / 0.2);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --color-ink: #e8f1f2;
+  --color-ink-soft: #c5d7da;
+  --color-teal: #5fd3c4;
+  --color-teal-deep: #7be0d2;
+  --color-sage: #3fb5a9;
+  --color-sage-deep: #7be0d2;
+  --color-canvas: #061a22;
+  --color-paper: #102a33;
+  --color-mist: #143440;
+  --color-line: #21434f;
+  --color-cream: #2f2b22;
+  --color-muted: #9ab4ba;
+  --color-focus: #7be0d2;
+  --color-danger: #f1a3a3;
+  --color-warn: #e8b968;
+  --color-strong: #0f3a47;
+  --color-strong-soft: #16495a;
+  --color-on-strong: #f4f8f9;
+  --color-on-strong-soft: rgb(244 248 249 / 0.8);
+  --color-marker: #1f5a55;
+  --marker-line: #3aa596;
+  --color-marker-soft: #173f3d;
+  --color-amber: #e8b968;
+  --color-glow: rgb(95 211 196 / 0.14);
+  --color-success: #7fd0b4;
+  --color-ivory: #0e252e;
+  --color-tint-capisci: #12383a;
+  --color-tint-parere: #142f42;
+  --color-tint-medico: #33281f;
+  --color-accent-capisci: #7be0d2;
+  --color-accent-parere: #8fc3ea;
+  --color-accent-medico: #f0b88a;
+  --color-brand: #e8f1f2;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 18px 40px -18px rgb(0 0 0 / 0.7);
+  --shadow-float: 0 2px 6px rgb(0 0 0 / 0.35), 0 40px 80px -34px rgb(0 0 0 / 0.8);
+  --aurora:
+    radial-gradient(52rem 34rem at 96% -6%, rgb(63 181 169 / 0.26), transparent 62%),
+    radial-gradient(44rem 30rem at 50% 118%, rgb(31 90 85 / 0.5), transparent 62%),
+    linear-gradient(180deg, #0d2630, var(--color-canvas));
+  --aurora-soft:
+    radial-gradient(44rem 26rem at 100% -10%, rgb(63 181 169 / 0.2), transparent 62%),
+    linear-gradient(180deg, #0d2630, var(--color-canvas));
+  --petrol:
+    radial-gradient(56rem 32rem at 100% 0%, rgb(0 143 135 / 0.32), transparent 62%),
+    linear-gradient(180deg, #0c2b36, #0f3a47);
+  --glass: rgb(16 42 51 / 0.78);
+  --glass-line: rgb(255 255 255 / 0.12);
+  --line-strong: #2f5866;
+  --photo-fade: #0d2630;
+  --photo-dim: 0.88;
+  --aurora-foot: rgb(0 143 135 / 0.2);
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 96px;
+  }
+  /* Un gruppo di campi non può allargare la pagina: di suo un fieldset non si restringe sotto la parola più lunga. */
+  fieldset {
+    min-width: 0;
+  }
+  /* Una griglia senza colonne dichiarate ne crea una «implicita», che di suo si allarga quanto il titolo o la parola
+     più lunga che contiene: su telefono un titolo che non va a capo portava la pagina fuori dallo schermo.
+     Qui la colonna implicita non supera mai il contenitore. */
+  .grid {
+    grid-auto-columns: minmax(0, 1fr);
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.125rem;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv11";
+  }
+  /* Testo più grande, scelto dalla persona (pulsante «Aa» nel header): scala tutte le misure in rem. */
+  :root[data-size="large"] {
+    font-size: 112.5%;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 4px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: var(--color-marker-soft);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /*
+   * Dopo il rebrand «font-serif» punta a Manrope: i titoli che lo usano diventano titoli sans in grassetto.
+   * Sta nel layer components, quindi un font-semibold/font-bold esplicito resta prioritario.
+   */
+  .font-serif {
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+  .container-rc {
+    width: 100%;
+    max-width: calc(1176px + 2 * var(--gutter));
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  /* Ritmo verticale delle sezioni: uno solo per tutto il sito. */
+  .section {
+    padding-block: clamp(3.5rem, 2.2rem + 5.4vw, 7rem);
+  }
+  .section-tight {
+    padding-block: clamp(2.75rem, 2rem + 3.4vw, 5rem);
+  }
+
+  /* Etichetta sopra i titoli: maiuscoletto turchese con il punto di menta del simbolo. */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-sage-deep);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: var(--color-sage);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-marker) 45%, transparent);
+  }
+  .eyebrow-plain::before {
+    display: none;
+  }
+
+  .display {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    letter-spacing: -0.028em;
+    line-height: 1.08;
+  }
+  /* Titolo d'apertura: grande ma mai oltre lo schermo. */
+  .display-xl {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+    font-size: clamp(2.5rem, 1.55rem + 3.9vw, 4.75rem);
+  }
+  .display-lg {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    letter-spacing: -0.034em;
+    line-height: 1.06;
+    font-size: clamp(2rem, 1.45rem + 2.3vw, 3.5rem);
+  }
+  .display-md {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    letter-spacing: -0.026em;
+    line-height: 1.12;
+    font-size: clamp(1.625rem, 1.35rem + 1.15vw, 2.25rem);
+  }
+  /* Testo d'apertura sotto i titoli. */
+  .lead {
+    font-size: clamp(1.1875rem, 1.1rem + 0.42vw, 1.4375rem);
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+  /* Parola d'accento nei titoli: turchese (testo grande, contrasto ≥ 3:1). */
+  .accent {
+    font-family: var(--font-serif);
+    color: var(--color-teal);
+  }
+  /*
+   * Traccia di menta: la firma visiva di Cura Privata, ripresa dalla curva del simbolo.
+   * È una sottolineatura morbida dietro il testo scuro; il testo non cambia mai opacità.
+   */
+  .marker {
+    background-image: linear-gradient(100deg, transparent 0.5%, var(--marker-line, var(--color-marker)) 2%, var(--marker-line, var(--color-marker)) 97%, transparent 99.5%);
+    background-repeat: no-repeat;
+    background-size: 100% 0.34em;
+    background-position: 0 90%;
+    padding: 0 0.08em;
+    margin: 0 -0.08em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  /* Grana di carta: un rumore SVG leggerissimo sopra gli sfondi grandi. */
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  :root[data-theme="dark"] .grain::before {
+    mix-blend-mode: screen;
+    opacity: 0.05;
+  }
+  /* Griglia di punti: ricorda la carta millimetrata dei laboratori. */
+  /* Aloni morbidi: la "luce" del logo. */
+  .glow-teal {
+    background: radial-gradient(closest-side, var(--color-glow), transparent);
+  }
+
+  /* ───────── Pulsanti: pillole piene, grandi per il dito. ───────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-height: 54px;
+    padding: 0 1.625rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    letter-spacing: -0.005em;
+    line-height: 1.15;
+    transition:
+      background-color 160ms var(--ease-out-soft),
+      color 160ms var(--ease-out-soft),
+      border-color 160ms var(--ease-out-soft),
+      transform 160ms var(--ease-out-soft),
+      box-shadow 160ms var(--ease-out-soft);
+    white-space: nowrap;
+  }
+  .btn-lg {
+    min-height: 62px;
+    padding: 0.75rem 2rem;
+    font-size: 1.1875rem;
+    gap: 0.75rem;
+    line-height: 1.2;
+    text-align: center;
+    white-space: normal;
+  }
+  .btn-sm {
+    min-height: 44px;
+    padding: 0 1.125rem;
+    font-size: 0.9875rem;
+  }
+  /* Etichetta lunga: su telefono va a capo invece di uscire dal pulsante. */
+  .btn-wrap {
+    height: auto;
+    padding-block: 0.625rem;
+    text-align: center;
+    white-space: normal;
+  }
+  /* Schermi molto stretti, o stretti con il testo grande: un'etichetta lunga va a capo dentro il pulsante,
+     invece di allargare la pagina oltre lo schermo. */
+  @media (max-width: 379.98px) {
+    .btn:not(.btn-lg, .btn-wrap) {
+      padding-block: 0.5rem;
+      text-align: center;
+      white-space: normal;
+    }
+  }
+  @media (max-width: 479.98px) {
+    :root[data-size="large"] .btn:not(.btn-lg, .btn-wrap) {
+      padding-block: 0.5rem;
+      text-align: center;
+      white-space: normal;
+    }
+  }
+  .btn .btn-arrow {
+    transition: transform 220ms var(--ease-out-soft);
+  }
+  .btn:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+  .btn:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  /* Primario: turchese profondo (bianco ≈ 4,9:1 in alto, 5,9:1 in basso). */
+  .btn-primary {
+    background: linear-gradient(180deg, #00827b, #006c66);
+    color: var(--color-on-strong);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.2),
+      0 12px 26px -12px rgb(0 108 102 / 0.75);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(180deg, #007069, #005a55);
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.2),
+      0 18px 34px -14px rgb(0 108 102 / 0.8);
+  }
+  .btn-on-strong {
+    background: var(--color-on-strong);
+    color: var(--color-strong);
+  }
+  .btn-on-strong:hover:not(:disabled) {
+    background: var(--color-cream);
+    color: var(--color-ink);
+  }
+  :root[data-theme="dark"] .btn-on-strong:hover:not(:disabled) {
+    background: var(--color-mist);
+  }
+  .btn-secondary {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    box-shadow:
+      inset 0 0 0 1.5px var(--line-strong),
+      0 6px 16px -12px rgb(11 49 61 / 0.25);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    box-shadow:
+      inset 0 0 0 1.5px var(--color-teal),
+      0 10px 22px -12px rgb(11 49 61 / 0.3);
+    color: var(--color-teal-deep);
+  }
+  .btn-ghost {
+    color: var(--color-teal-deep);
+    padding-inline: 1rem;
+  }
+  .btn-ghost:hover {
+    background: var(--color-mist);
+  }
+
+  /* ───────── Schede ───────── */
+  .card {
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+  .card-lift {
+    transition:
+      transform 260ms var(--ease-out-soft),
+      box-shadow 260ms var(--ease-out-soft),
+      border-color 260ms var(--ease-out-soft);
+  }
+  .card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in oklab, var(--color-teal) 40%, var(--color-line));
+  }
+  /* Bordo sfumato per la card in evidenza: due sfondi, uno ritagliato al bordo. */
+  /* Vetro: schede sospese sopra una fotografia o una luce. */
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-line);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+    backdrop-filter: blur(14px) saturate(1.3);
+    box-shadow: var(--shadow-float);
+  }
+  /* Foglio di carta: ombra bassa e angolo piegato in CSS. */
+  .sheet {
+    position: relative;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: 6px 22px 6px 6px;
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.5) inset,
+      0 24px 50px -24px rgb(12 51 64 / 0.35);
+  }
+  .sheet::after {
+    content: "";
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(225deg, var(--color-canvas) 50%, var(--color-mist) 50%);
+    border-bottom-left-radius: 6px;
+    box-shadow: -2px 2px 4px rgb(12 51 64 / 0.08);
+  }
+  /* Numero di passo editoriale: "01", "02"… */
+  .num {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+  }
+  .stat-num {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .link {
+    color: var(--color-teal);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
+    text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  }
+  .link:hover {
+    color: var(--color-teal-deep);
+    text-decoration-color: currentColor;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 999px;
+    padding: 0.3125rem 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .doc-paper {
+    background:
+      linear-gradient(transparent 31px, rgb(219 230 229 / 0.45) 32px) 0 0 / 100% 32px,
+      var(--color-paper);
+  }
+
+  .fade-in {
+    animation: fade-in 220ms var(--ease-out-soft) both;
+  }
+  /* Solo opacità e nessun «fill»: una trasformazione che resta applicata a fine animazione farebbe da contenitore
+     agli elementi fissi della pagina (barra in basso dell'area personale, barra d'aiuto della home, barra di lettura),
+     che finirebbero in fondo al contenuto invece che attaccati allo schermo. */
+  .page-enter {
+    animation: page-in 260ms var(--ease-out-soft);
+  }
+  /* Momento "traduzione": la riga tecnica viene evidenziata e la frase semplice appare sotto. */
+  .draw-line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 1200ms 200ms var(--ease-out-soft) forwards;
+  }
+  /*
+   * Rivelazione allo scorrimento (componente Reveal): solo trasformazioni, mai opacità sul testo,
+   * così il contenuto è leggibile e misurabile in ogni istante. Senza JavaScript non succede nulla.
+   */
+  .reveal-prep {
+    transform: translateY(28px);
+  }
+  .reveal-in {
+    transform: none;
+    transition: transform 720ms var(--ease-out-soft);
+  }
+}
+
+/* 18/11/2026 (terzo giro, punto 2): chi stampa senza aver scorso la pagina aveva i blocchi non ancora «rivelati»
+   spostati di 28 px, con l'ultima riga fuori dalla scheda. Sulla carta niente spostamenti. */
+@media print {
+  .reveal-prep,
+  .reveal-in {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Solo trasformazione, mai opacità: resta visibile anche se l'animazione viene riavviata (screenshot, stampa, axe). */
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Superfici, onde, tessere di vetro e cornice del sito (testata, menu, piè di pagina)
+ * ══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  .bg-petrol {
+    background: var(--petrol);
+  }
+
+  /* Onda di raccordo tra due sezioni: prende il colore dal testo (text-canvas, text-mist, text-strong…). */
+  .wave {
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: clamp(2.25rem, 5.4vw, 5.25rem);
+    pointer-events: none;
+  }
+  .wave-bottom {
+    bottom: -1px;
+  }
+  .wave-top {
+    top: -1px;
+    transform: scaleY(-1);
+  }
+
+  /* Tessera di vetro con icona: il motivo del pacchetto «Memorabile». */
+  .tile-ico {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1.125rem;
+    color: var(--color-teal-deep);
+    background: linear-gradient(155deg, var(--color-paper) 12%, var(--color-marker-soft) 125%);
+    border: 1px solid color-mix(in srgb, var(--color-sage) 18%, var(--color-paper));
+    box-shadow:
+      inset 0 1px 0 var(--glass-line),
+      0 14px 26px -16px color-mix(in srgb, var(--color-sage) 70%, transparent),
+      0 2px 4px rgb(11 49 61 / 0.04);
+  }
+  .tile-ico svg {
+    width: 1.625rem;
+    height: 1.625rem;
+    stroke-width: 1.75;
+  }
+  .tile-ico-sm {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.875rem;
+  }
+  .tile-ico-sm svg {
+    width: 1.3125rem;
+    height: 1.3125rem;
+  }
+  .tile-ico-lg {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 1.5rem;
+  }
+  .tile-ico-lg svg {
+    width: 2.125rem;
+    height: 2.125rem;
+    stroke-width: 1.6;
+  }
+  /* La tessera prende il colore del servizio solo dove serve distinguere (prezzi, scelta guidata). */
+  .tile-ico-tone {
+    color: var(--tone-accent);
+    background: linear-gradient(155deg, var(--color-paper) 12%, var(--tone-bg) 125%);
+    border-color: color-mix(in srgb, var(--tone-accent) 20%, var(--color-paper));
+    box-shadow:
+      inset 0 1px 0 var(--glass-line),
+      0 14px 26px -16px color-mix(in srgb, var(--tone-accent) 60%, transparent);
+  }
+
+  /* Punto vivo: «disponibile adesso». */
+  .live-dot {
+    position: relative;
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: var(--color-sage);
+  }
+  .live-dot::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 999px;
+    border: 2px solid var(--color-sage);
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .live-dot::after {
+      animation: live-dot 2.4s ease-out infinite;
+    }
+  }
+
+  /* Elenco con spunte: sostituisce i puntini in tutto il sito. */
+
+  /* ───────── Barra «versione dimostrativa» ───────── */
+  .demo-ribbon {
+    background: var(--color-strong);
+    color: var(--color-on-strong);
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+  .demo-ribbon a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgb(255 255 255 / 0.5);
+  }
+  .demo-ribbon a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  /* ───────── Testata ───────── */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  /* Il vetro sta su uno pseudo-elemento: così il menu a tutto schermo resta agganciato alla finestra, non alla testata. */
+  .site-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: color-mix(in srgb, var(--color-canvas) 86%, transparent);
+    -webkit-backdrop-filter: saturate(1.5) blur(18px);
+    backdrop-filter: saturate(1.5) blur(18px);
+    box-shadow: 0 1px 0 transparent;
+    transition: box-shadow 220ms var(--ease-out-soft);
+  }
+  .site-header[data-scrolled="1"]::before,
+  .site-header[data-open="1"]::before {
+    box-shadow:
+      0 1px 0 var(--color-line),
+      0 16px 32px -26px rgb(11 49 61 / 0.45);
+  }
+  .site-header[data-open="1"]::before {
+    background: var(--color-canvas);
+  }
+  .site-header-row {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    height: 3.75rem;
+  }
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    font-size: 0.96875rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    color: var(--color-ink-soft);
+    transition:
+      color 150ms var(--ease-out-soft),
+      background-color 150ms var(--ease-out-soft);
+  }
+  .nav-link:hover {
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-mist) 85%, transparent);
+  }
+  .nav-link[aria-current="page"] {
+    color: var(--color-ink);
+    background: var(--color-mist);
+  }
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.75rem;
+    min-width: 2.75rem;
+    border-radius: 999px;
+    color: var(--color-ink-soft);
+    transition:
+      color 150ms var(--ease-out-soft),
+      background-color 150ms var(--ease-out-soft);
+  }
+  .icon-btn:hover {
+    color: var(--color-ink);
+    background: var(--color-mist);
+  }
+  .icon-btn-solid {
+    color: var(--color-ink);
+    background: var(--color-paper);
+    box-shadow:
+      inset 0 0 0 1px var(--color-line),
+      0 6px 14px -10px rgb(11 49 61 / 0.3);
+  }
+  .hdr-sep {
+    width: 1px;
+    height: 1.5rem;
+    margin-inline: 0.375rem;
+    background: var(--color-line);
+  }
+  /*
+   * Menu esteso da 1024 px (stretto fino a 1159 px: restano «Aa», Accedi e Inizia). Con il testo grande serve più
+   * spazio, quindi fino a 1535 px resta il menu compatto.
+   */
+  .hdr-desktop {
+    display: none;
+  }
+  /* 22/11/2026: con i cinque passi numerati la ricerca estesa entra dai 1280 px; sotto i 1160 px i passi si stringono. */
+  @media (max-width: 1279.98px) {
+    .hdr-roomy {
+      display: none !important;
+    }
+  }
+  /* 22/11/2026: «Il tuo spazio» nella testata dai 1280 px; sotto resta «Accedi», che ci sta. */
+  @media (min-width: 1280px) {
+    .hdr-tight {
+      display: none !important;
+    }
+  }
+  .hdr-mobile {
+    display: flex;
+  }
+  @media (min-width: 1024px) {
+    .site-header-row {
+      height: 4.5rem;
+    }
+    .hdr-desktop {
+      display: flex;
+    }
+    .hdr-mobile,
+    .menu-panel,
+    .menu-backdrop {
+      display: none;
+    }
+    .nav-link {
+      padding-inline: 0.5rem;
+      font-size: 0.9375rem;
+    }
+  }
+  @media (min-width: 1160px) {
+    .site-header-row {
+      height: 4.75rem;
+    }
+    .nav-link {
+      padding-inline: 0.75rem;
+      font-size: 0.96875rem;
+    }
+  }
+  @media (min-width: 1400px) {
+    .nav-link {
+      padding-inline: 0.9375rem;
+      font-size: 1rem;
+    }
+  }
+  @media (min-width: 1024px) and (max-width: 1535.98px) {
+    :root[data-size="large"] .site-header-row {
+      height: 3.75rem;
+    }
+    :root[data-size="large"] .hdr-desktop {
+      display: none;
+    }
+    :root[data-size="large"] .hdr-mobile {
+      display: flex;
+    }
+    :root[data-size="large"] .menu-panel,
+    :root[data-size="large"] .menu-backdrop {
+      display: block;
+    }
+  }
+
+  /* Menu a pannello (telefono e tablet) */
+  .menu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: rgb(8 30 38 / 0.42);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+  .menu-panel {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    z-index: 1;
+    max-height: calc(100dvh - 3.75rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: 0 0 1.75rem 1.75rem;
+    background: var(--color-canvas);
+    box-shadow: 0 30px 60px -30px rgb(8 30 38 / 0.55);
+  }
+  .menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 3.75rem;
+    padding: 0.375rem 0.5rem;
+    border-radius: 1.125rem;
+    font-size: 1.1875rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    transition: background-color 150ms var(--ease-out-soft);
+  }
+  .menu-link:hover,
+  .menu-link[aria-current="page"] {
+    background: var(--color-mist);
+  }
+  .menu-link > svg:last-child {
+    margin-left: auto;
+    color: var(--color-muted);
+  }
+
+  /* ───────── Piè di pagina: petrolio, con l'onda in cima ───────── */
+  .site-footer {
+    position: relative;
+    margin-top: auto;
+    background: var(--petrol);
+  }
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-block: 0.625rem;
+    font-size: 1.0625rem;
+    line-height: 1.35;
+    color: var(--color-ink-soft);
+    transition: color 150ms var(--ease-out-soft);
+  }
+  .footer-link:hover {
+    color: var(--color-teal);
+  }
+  .footer-emergency {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.875rem;
+    border-radius: 1.125rem;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    background: rgb(255 255 255 / 0.06);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  /* Barra d'aiuto mobile: compare dopo la hero, così non compete con le due azioni principali. */
+  .mobile-help-bar {
+    transition:
+      transform 300ms var(--ease-out-soft),
+      visibility 300ms;
+  }
+  .mobile-help-bar[data-shown="false"] {
+    transform: translateY(110%);
+    visibility: hidden;
+  }
+}
+@keyframes live-dot {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+@media (max-width: 1023px) {
+  body:has(.mobile-help-bar) .back-to-top {
+    bottom: 6.25rem;
+  }
+}
+/*
+ * 19/11/2026 (home «chiara e scura»): nella testata del telefono ci sono quattro comandi, lente, luce, «Aa» e menu, da
+ * 44 px. Logo e quattro comandi stanno in riga da 404 px (da 424 px con il testo grande); sotto, «Aa» passa nel menu con
+ * la sua etichetta. Lente, luce e menu restano sempre nella barra.
+ */
+.hdr-narrow-only {
+  display: none;
+}
+@media (max-width: 403.98px) {
+  .hdr-wide-only {
+    display: none !important;
+  }
+  .hdr-narrow-only {
+    display: flex;
+  }
+}
+@media (max-width: 423.98px) {
+  :root[data-size="large"] .hdr-wide-only {
+    display: none !important;
+  }
+  :root[data-size="large"] .hdr-narrow-only {
+    display: flex;
+  }
+}
+/* Testo grande sotto i 376 px: il logo torna della misura normale, così logo e tre comandi stanno nei margini. */
+@media (max-width: 375.98px) {
+  :root[data-size="large"] .site-header-row .brand-logo {
+    gap: 10px;
+  }
+  :root[data-size="large"] .site-header-row .brand-logo-mark {
+    width: 32px;
+    height: 32px;
+  }
+  :root[data-size="large"] .site-header-row .brand-logo-word {
+    font-size: 21px;
+  }
+}
+/* Telefoni da 320-347 px, con ogni misura del testo: il logo si stringe quanto basta a lasciare il margine a destra. */
+@media (max-width: 347.98px) {
+  .site-header-row .brand-logo,
+  :root[data-size="large"] .site-header-row .brand-logo {
+    gap: 7px;
+  }
+  .site-header-row .brand-logo-mark,
+  :root[data-size="large"] .site-header-row .brand-logo-mark {
+    width: 28px;
+    height: 28px;
+  }
+  .site-header-row .brand-logo-word,
+  :root[data-size="large"] .site-header-row .brand-logo-word {
+    font-size: 17px;
+  }
+}
+/* «aA» acceso si vede: pieno, turchese (tinta fissa, leggibile anche nel tema scuro). */
+.icon-btn[aria-pressed="true"] {
+  background: linear-gradient(180deg, #00827b, #006c66);
+  color: #fff;
+  box-shadow: none;
+}
+
+/*
+ * Testata della home «chiara e scura» (19/11/2026, approvata da Simone): comandi rotondi con il filo, come nelle
+ * immagini, e il pulsante della luce accanto alla lente. Il filo sotto la testata c'è sempre.
+ */
+.site-header::before {
+  box-shadow: 0 1px 0 var(--color-line);
+}
+/* Di sera il vetro della testata è quello della «Notte»: il buio della pagina si intravede. */
+:root[data-theme="dark"] .site-header::before {
+  background: rgb(6 26 34 / 0.72);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.13);
+}
+:root[data-theme="dark"] .site-header[data-open="1"]::before {
+  background: var(--color-canvas);
+}
+.hdr-round {
+  /* In px: i comandi della testata restano da 44 px anche con il testo grande, così stanno in riga con il logo. */
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1px solid var(--color-line);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  box-shadow: none;
+}
+.hdr-round:hover {
+  background: var(--color-mist);
+}
+:root[data-theme="dark"] .hdr-round {
+  border-color: rgb(255 255 255 / 0.13);
+  background: rgb(255 255 255 / 0.06);
+}
+:root[data-theme="dark"] .hdr-round:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+.hdr-round svg {
+  width: 1.3125rem;
+  height: 1.3125rem;
+}
+.hdr-aa {
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+/* Il pulsante della luce: mostra dove si va, la luna di giorno e il sole di sera (lo decide data-theme, già alla prima pittura). */
+.luce-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid #0c3340;
+  background: #0c3340;
+  color: #ffe7b3;
+  cursor: pointer;
+  --luce-eco: rgb(12 51 64 / 0.45);
+  transition: scale 150ms var(--ease-out-soft);
+}
+.luce-btn:active {
+  scale: 0.92;
+}
+.luce-btn .luce-ic {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 1.3125rem;
+  height: 1.3125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    rotate 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    scale 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s;
+}
+:root:not([data-theme="dark"]) .luce-btn .luce-sole {
+  opacity: 0;
+  rotate: -90deg;
+  scale: 0.4;
+}
+:root[data-theme="dark"] .luce-btn {
+  border-color: #ffe7b3;
+  background: #ffe7b3;
+  color: #3b2a08;
+  --luce-eco: rgb(255 231 179 / 0.5);
+}
+:root[data-theme="dark"] .luce-btn .luce-luna {
+  opacity: 0;
+  rotate: 90deg;
+  scale: 0.4;
+}
+.luce-btn::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+/* Il richiamo: un alone che pulsa qualche volta, finché la persona non ha usato il pulsante almeno una volta. */
+@keyframes luce-richiamo {
+  0% {
+    box-shadow: 0 0 0 0 var(--luce-eco);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 12px transparent;
+  }
+}
+:root:not([data-luce-vista]) .luce-btn::after {
+  animation: luce-richiamo 2.2s 0.8s ease-out 5;
+}
+/* Il cambio di luce: la pagina nuova si allarga a cerchio dal pulsante (View Transitions); senza, il cambio è immediato. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-luce-vista]) .luce-btn::after {
+    animation: none;
+  }
+  .luce-btn .luce-ic {
+    transition: none;
+  }
+}
+
+/* ───────── Upgrade grafica e funzionalità (8/11/2026): ricerca, strumenti, cruscotto, lettura ───────── */
+@layer components {
+  /* Ricerca del sito: <dialog> nativo centrato in alto, pannello di carta con ombra alta. */
+  .search-dialog {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+  }
+  .search-dialog::backdrop {
+    background: rgb(12 51 64 / 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .search-dialog[open] .search-panel {
+    animation: search-in 220ms var(--ease-out-soft) both;
+  }
+  .search-panel {
+    width: min(100vw - 24px, 720px);
+    margin: 12px auto 0;
+    max-height: calc(100dvh - 24px);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-float);
+    overflow: hidden;
+  }
+  @media (min-width: 640px) {
+    .search-panel {
+      margin-top: 10vh;
+      max-height: min(70vh, 640px);
+    }
+  }
+  .search-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  /* 18/11/2026: la ricerca dice quando ha tolto «alta» o corretto un refuso */
+  .search-hint {
+    margin: 0.75rem 1.25rem 0;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    background: var(--color-mist);
+    color: var(--color-ink-soft);
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+  /* 17/11/2026: senza risultati, le tre sezioni come uscite */
+  .search-none-links {
+    display: grid;
+    gap: 0.5rem;
+    text-align: left;
+  }
+  .search-result {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border-radius: 12px;
+    text-align: left;
+    transition: background-color 120ms var(--ease-out-soft);
+  }
+  .search-result:hover,
+  .search-result:focus-visible {
+    background: var(--color-mist);
+    outline: none;
+  }
+  .search-result:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--color-focus);
+  }
+  .search-result:hover svg,
+  .search-result:focus-visible svg {
+    opacity: 1;
+  }
+  .search-mark {
+    background: var(--color-marker);
+    color: inherit;
+    border-radius: 3px;
+    padding: 0 0.06em;
+  }
+  :root[data-theme="dark"] .search-mark {
+    background: var(--color-marker);
+    color: var(--color-ink);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .search-mark {
+      background: var(--color-marker);
+      color: var(--color-ink);
+    }
+  }
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.375rem;
+    padding: 0 0.375rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-line);
+    background: var(--color-canvas);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+  /* Campo "finto" che apre la ricerca: sembra un input, ma è un pulsante (niente tastiera che si apre a vuoto sul telefono). */
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 64px;
+    padding: 0 1.25rem 0 1.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: var(--color-paper);
+    font-size: 1.0625rem;
+    box-shadow: var(--shadow-card);
+    transition:
+      border-color 160ms var(--ease-out-soft),
+      box-shadow 160ms var(--ease-out-soft),
+      transform 160ms var(--ease-out-soft);
+  }
+  .search-field:hover {
+    border-color: var(--color-teal);
+    box-shadow: var(--shadow-lift);
+    transform: translateY(-1px);
+  }
+  .search-compact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.75rem;
+    min-width: 2.75rem;
+    justify-content: center;
+    padding: 0 0.625rem;
+    border-radius: 999px;
+    color: var(--color-ink-soft);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition:
+      color 150ms var(--ease-out-soft),
+      background-color 150ms var(--ease-out-soft);
+  }
+  .search-compact:hover {
+    color: var(--color-ink);
+    background: var(--color-mist);
+  }
+  /* «Cerca ⌘K» per esteso solo dove c'è posto: lì diventa un campo leggero. */
+  @media (min-width: 1536px) {
+    .search-compact {
+      padding: 0 0.875rem;
+      background: var(--color-paper);
+      box-shadow: inset 0 0 0 1px var(--color-line);
+      margin-right: 0.25rem;
+    }
+  }
+
+  /* Card con bagliore di menta in alto al passaggio del mouse (griglie di categorie, tessere del cruscotto). */
+  .card-glow {
+    position: relative;
+    overflow: hidden;
+  }
+  .card-glow::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-teal), var(--color-marker));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 320ms var(--ease-out-soft);
+  }
+  .card-glow:hover::before,
+  .card-glow:focus-within::before {
+    transform: scaleX(1);
+  }
+
+
+  /* Mini avanzamento: 4 tacche che si riempiono (letto, controllato, spiegato, pdf). */
+  .ticks {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 4px;
+  }
+  .ticks > span {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-line);
+  }
+  .ticks > span[data-on="true"] {
+    background: linear-gradient(90deg, var(--color-teal), var(--color-sage));
+  }
+  .ticks > span[data-live="true"] {
+    background: var(--color-teal);
+    animation: tick-pulse 1.2s ease-in-out infinite;
+  }
+
+  /* Barra di avanzamento lettura, sottile, sotto la testata. */
+  .reading-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 45;
+    height: 3px;
+    width: 100%;
+    transform-origin: left;
+    background: linear-gradient(90deg, var(--color-teal), var(--color-marker));
+    pointer-events: none;
+  }
+
+  /* Indice "In questa pagina": voce attiva evidenziata dalla traccia di menta. */
+  .toc-link {
+    display: block;
+    padding: 0.375rem 0 0.375rem 0.875rem;
+    border-left: 2px solid var(--color-line);
+    color: var(--color-muted);
+    font-size: 0.9375rem;
+    transition:
+      color 160ms var(--ease-out-soft),
+      border-color 160ms var(--ease-out-soft);
+  }
+  .toc-link:hover {
+    color: var(--color-ink);
+  }
+  .toc-link[aria-current="true"] {
+    border-color: var(--color-teal);
+    color: var(--color-teal-deep);
+    font-weight: 600;
+  }
+
+  /* Pulsante «Torna su»: appare dopo uno schermo di scorrimento. */
+  .back-to-top {
+    position: fixed;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 35;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-lift);
+    animation: back-to-top-in 220ms var(--ease-out-soft) both;
+  }
+  /* Nell'area personale su mobile c'è la barra in basso: il pulsante sale sopra di lei.
+     Il pulsante sta nel layout, fuori dall'area: per questo si guarda il body. */
+  @media (max-width: 1023.98px) {
+    body:has([data-bottom-nav]) .back-to-top {
+      bottom: calc(84px + env(safe-area-inset-bottom));
+    }
+    /* La barra resta sullo schermo anche in fondo alla pagina: il piè di pagina le lascia il posto, così l'ultima riga si legge. */
+    body:has([data-bottom-nav]) .site-footer {
+      padding-bottom: calc(4.25rem + env(safe-area-inset-bottom));
+    }
+  }
+  .area-tabbar a {
+    padding-inline: 0.25rem;
+  }
+  /* Barra in basso con il testo grande su schermi stretti: le cinque voci restano intere («Medico», non «Medi…»). */
+  @media (max-width: 359.98px) {
+    html[data-size="large"] .area-tabbar a {
+      padding-inline: 0.125rem;
+    }
+    html[data-size="large"] .area-tabbar-label {
+      font-size: 0.8125rem;
+    }
+  }
+
+  /* Casella di spunta grande, pensata per il dito: lista delle domande per il medico. */
+  .check-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.875rem;
+    align-items: start;
+    padding: 0.875rem 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    cursor: pointer;
+    transition:
+      border-color 160ms var(--ease-out-soft),
+      background-color 160ms var(--ease-out-soft);
+  }
+  .check-row:hover {
+    border-color: var(--color-teal);
+  }
+  .check-row:has(input:checked) {
+    background: var(--color-marker-soft);
+    border-color: color-mix(in oklab, var(--color-teal) 50%, var(--color-line));
+  }
+  .check-row:has(input:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .check-box {
+    appearance: none;
+    width: 26px;
+    height: 26px;
+    margin-top: 1px;
+    border-radius: 8px;
+    border: 2px solid var(--color-sage);
+    background: var(--color-paper);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .check-box::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    transform: scale(0);
+    transition: transform 140ms var(--ease-out-soft);
+    background: var(--color-on-strong);
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+  .check-box:checked {
+    background: var(--color-teal);
+    border-color: var(--color-teal);
+  }
+  .check-box:checked::before {
+    transform: scale(1);
+  }
+  .check-box:focus-visible {
+    outline: none;
+  }
+}
+
+@keyframes search-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes back-to-top-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tick-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .search-dialog[open] .search-panel,
+  .back-to-top,
+  .ticks > span[data-live="true"] {
+    animation: none;
+  }
+}
+
+/* Stampa della lista delle domande: solo il foglio, senza testata né casella interattiva. */
+.print-only {
+  display: none;
+}
+@media print {
+  .print-sheet {
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  .print-only {
+    display: inline-block;
+  }
+  .check-print {
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    border: 1.5px solid #15313c;
+    border-radius: 4px;
+  }
+  .check-row {
+    border-color: transparent !important;
+    background: transparent !important;
+    padding: 0.25rem 0 !important;
+    break-inside: avoid;
+  }
+  .check-row .line-through {
+    text-decoration: none;
+    color: inherit;
+  }
+  .back-to-top,
+  .reading-bar,
+  .search-dialog {
+    display: none !important;
+  }
+}
+
+/* Il campo di ricerca ha già il suo pulsante «cancella»: niente doppione nativo di WebKit. */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Toni dei servizi e «scope»: ridefiniscono i token, così ogni componente resta leggibile su fondo forte o su carta.
+ * Contrasti su strong #0c3340: ink #f4f8f9 ≈ 12,6:1 · ink-soft #c9dadd ≈ 9:1 · muted #a9c2c7 ≈ 7:1 · menta #7be0d2 ≈ 8,4:1
+ * ══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  .tone-capisci,
+  .tone-partenza {
+    --tone-bg: var(--color-tint-capisci);
+    --tone-accent: var(--color-accent-capisci);
+  }
+  .tone-parere {
+    --tone-bg: var(--color-tint-parere);
+    --tone-accent: var(--color-accent-parere);
+  }
+  .tone-medico {
+    --tone-bg: var(--color-tint-medico);
+    --tone-accent: var(--color-accent-medico);
+  }
+  .tone-text {
+    color: var(--tone-accent);
+  }
+  .tone-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.125rem;
+    color: var(--tone-accent);
+    background: linear-gradient(155deg, var(--color-paper) 12%, var(--tone-bg) 125%);
+    border: 1px solid color-mix(in srgb, var(--tone-accent) 20%, var(--color-paper));
+    box-shadow:
+      inset 0 1px 0 var(--glass-line),
+      0 14px 26px -16px color-mix(in srgb, var(--tone-accent) 60%, transparent);
+  }
+  /* Filo del colore del servizio in cima alle schede (prezzi, stato del progetto). */
+  .tone-band {
+    position: relative;
+  }
+  .tone-band::before {
+    content: "";
+    position: absolute;
+    inset: 0 1.75rem auto;
+    height: 4px;
+    border-radius: 0 0 4px 4px;
+    background: var(--tone-accent);
+  }
+}
+
+.scope-strong {
+  --color-ink: #f4f8f9;
+  --color-ink-soft: #c9dadd;
+  --color-muted: #a9c2c7;
+  --color-teal: #7be0d2;
+  --color-teal-deep: #a5ecdf;
+  --color-sage: #5fd3c4;
+  --color-sage-deep: #7be0d2;
+  --color-canvas: #0c3340;
+  --color-paper: #123f4e;
+  --color-mist: #17495a;
+  --color-line: rgb(255 255 255 / 0.16);
+  --color-cream: #3a3524;
+  --color-focus: #7be0d2;
+  --color-danger: #f4b0b0;
+  --color-warn: #edc57e;
+  --color-marker: #1f5a55;
+  --marker-line: #2f9c8e;
+  --color-marker-soft: #17494a;
+  --color-accent-capisci: #7be0d2;
+  --color-accent-parere: #a3d0f2;
+  --color-accent-medico: #f3c39b;
+  --color-tint-capisci: #12383a;
+  --color-tint-parere: #133349;
+  --color-tint-medico: #3a2c20;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 18px 40px -18px rgb(0 0 0 / 0.7);
+  --glass: rgb(255 255 255 / 0.07);
+  --glass-line: rgb(255 255 255 / 0.14);
+  --line-strong: rgb(255 255 255 / 0.42);
+  color: var(--color-ink);
+  color-scheme: dark;
+}
+.scope-strong .btn-secondary {
+  background: transparent;
+  color: #fff;
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.42);
+}
+.scope-strong .btn-secondary:hover:not(:disabled) {
+  color: #a5ecdf;
+  box-shadow: inset 0 0 0 1.5px #7be0d2;
+}
+.scope-strong .eyebrow {
+  color: #7be0d2;
+}
+.scope-strong .eyebrow::before {
+  background: #7be0d2;
+  box-shadow: 0 0 0 4px rgb(123 224 210 / 0.22);
+}
+/* Un foglio chiaro (documento, report) resta chiaro anche nel tema scuro e dentro le sezioni forti: è carta. */
+.scope-light {
+  --color-ink: #10303b;
+  --color-ink-soft: #2e4c57;
+  --color-muted: #4f676e;
+  --color-teal: #00756f;
+  --color-teal-deep: #005a55;
+  --color-sage: #008f87;
+  --color-sage-deep: #00756f;
+  --color-canvas: #fbfaf6;
+  --color-paper: #ffffff;
+  --color-mist: #eaf6f2;
+  --color-line: #dfe9e5;
+  --color-cream: #f6efe2;
+  --color-warn: #8a5a1f;
+  --color-marker: #7be0d2;
+  --color-marker-soft: #cff3ec;
+  --marker-line: #7be0d2;
+  --color-accent-capisci: #00756f;
+  --color-accent-parere: #24618a;
+  --color-accent-medico: #9a4f1c;
+  --glass: rgb(255 255 255 / 0.72);
+  --glass-line: rgb(255 255 255 / 0.9);
+  --line-strong: #c9d9d5;
+  color: var(--color-ink);
+  color-scheme: light;
+}
+/* Pulsante di menta: l'azione principale sulle superfici forti (petrolio su menta ≈ 8,4:1). */
+.btn-mint {
+  background: linear-gradient(180deg, #92eadd, #7be0d2);
+  color: #0c3340;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.55),
+    0 14px 30px -14px rgb(123 224 210 / 0.7);
+}
+.btn-mint:hover:not(:disabled) {
+  background: linear-gradient(180deg, #b4f1e8, #92eadd);
+  transform: translateY(-1px);
+}
+
+/*
+ * Luce d'apertura delle pagine di servizio: un solo linguaggio (carta calda + menta), con una velatura del colore
+ * del servizio. I nomi storici (stage-*) restano per non toccare le pagine.
+ */
+
+.caption-illus {
+  position: absolute;
+  z-index: 3;
+  border-radius: 999px;
+  background: rgb(8 30 38 / 0.56);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #fff;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Home: apertura con la fotografia fusa nella luce, i due ingressi, il referto prima e dopo,
+ * il percorso sul filo, i fatti di fiducia, la chiusura.
+ * ══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  /* Sezione «a pannello»: un grande riquadro arrotondato, staccato dai bordi dello schermo. */
+  .panel-section {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-inline: clamp(0.5rem, 1.4vw, 1.5rem);
+    border-radius: clamp(1.75rem, 3.2vw, 3rem);
+  }
+
+  /* ───────── Apertura ───────── */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--aurora);
+  }
+  /* Su telefono la fotografia sta sotto il testo, ingrandita sul viso, e sfuma verso l'alto; la scheda di vetro ne copre un angolo. */
+  /* Nel tema scuro le fotografie si abbassano appena di luce: non abbagliano accanto al fondo petrolio. */
+  /* La prima riga del report compare solo dove c'è spazio (schermi larghi). */
+  .hero-card-more {
+    display: none;
+  }
+  .hero .wave {
+    z-index: 2;
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      display: flex;
+      align-items: center;
+      min-height: min(45rem, calc(100vh - 7rem));
+    }
+  }
+  @media (min-width: 1280px) {
+    .hero-card-more {
+      display: block;
+    }
+  }
+
+  /* Annuncio in evidenza: vetro sopra il titolo. Scheda compatta su telefono, pillola su una riga da 1280 px. */
+
+  /* Il payoff come tre tappe sul filo del percorso. */
+  .payoff {
+    position: relative;
+    display: grid;
+    gap: 0.26em;
+    padding-left: 1.875rem;
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    color: var(--color-ink);
+  }
+  .payoff > span {
+    position: relative;
+    display: block;
+  }
+  .payoff > span::before {
+    content: "";
+    position: absolute;
+    left: -1.875rem;
+    top: 0.52em;
+    width: 0.9375rem;
+    height: 0.9375rem;
+    margin-top: -0.46875rem;
+    border-radius: 999px;
+    background: var(--color-paper);
+    border: 3px solid var(--color-sage);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-marker) 48%, transparent);
+  }
+  .payoff > span:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: calc(-1.875rem + 0.46875rem - 1px);
+    top: calc(0.52em + 0.75rem);
+    height: calc(100% + 0.26em - 1.5rem);
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--color-sage), color-mix(in srgb, var(--color-marker) 80%, transparent));
+  }
+  @media (max-width: 359.98px) {
+    .payoff {
+      font-size: 1.875rem;
+    }
+    /* Senza icona resta una colonna sola: occhiello e titolo uno sotto l'altro. */
+  }
+  /* Testo grande sui telefoni da 360–390 px: «secondo parere.» resta su una riga. */
+  @media (min-width: 360px) and (max-width: 389.98px) {
+    :root[data-size="large"] .payoff {
+      font-size: 2rem;
+    }
+  }
+  @media (min-width: 640px) {
+    .payoff {
+      font-size: 3rem;
+      padding-left: 2.25rem;
+    }
+    .payoff > span::before {
+      left: -2.25rem;
+    }
+    .payoff > span:not(:last-child)::after {
+      left: calc(-2.25rem + 0.46875rem - 1px);
+    }
+  }
+  @media (min-width: 1024px) {
+    .payoff {
+      font-size: clamp(2.625rem, 4.1vw, 3.5rem);
+    }
+    .payoff > span {
+      white-space: nowrap;
+    }
+    :root[data-size="large"] .payoff {
+      font-size: clamp(2.375rem, 3.5vw, 3rem);
+    }
+  }
+
+  /* ───────── I due ingressi ───────── */
+  /* Vignette dentro le due schede: pezzi di prodotto in miniatura. */
+
+  /* ───────── Il referto prima e dopo ─────────
+   * Su telefono: titolo, cursore, poi prezzo e azioni. Su computer: titolo e prezzo affiancati, il cursore sotto. */
+  .ba-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.75rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    box-shadow: var(--shadow-float);
+  }
+  .ba-handle {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 999px;
+    background: var(--color-paper);
+    color: var(--color-teal-deep);
+    box-shadow:
+      0 0 0 2px var(--color-teal),
+      0 0 0 8px color-mix(in srgb, var(--color-marker) 40%, transparent),
+      var(--shadow-lift);
+  }
+  .ba-tag {
+    position: absolute;
+    top: 1.25rem;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.1875rem 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  @media (min-width: 640px) {
+    .ba-tag {
+      top: 2rem;
+    }
+  }
+  /* Prezzo in grande nelle sezioni di prodotto. */
+
+  /* ───────── Il percorso: tessere di vetro sul filo ───────── */
+  .levels-wrap {
+    position: relative;
+  }
+  .levels {
+    position: relative;
+    display: grid;
+    gap: 0.625rem;
+  }
+  .levels-thread {
+    display: none;
+  }
+  .level-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0 1rem;
+    height: 100%;
+    border-radius: 1.5rem;
+    padding: 0.875rem 0.75rem;
+    transition:
+      background-color 200ms var(--ease-out-soft),
+      transform 260ms var(--ease-out-soft),
+      box-shadow 260ms var(--ease-out-soft);
+  }
+  .level-step:hover,
+  .level-step:focus-visible {
+    background: var(--color-paper);
+    box-shadow: var(--shadow-card);
+  }
+  /* Su telefono il filo scende dritto da una tessera alla successiva. */
+  .levels > li:not(:last-child) .level-step::after {
+    content: "";
+    position: absolute;
+    left: calc(0.75rem + 1.75rem - 1px);
+    top: calc(0.875rem + 3.5rem + 0.25rem);
+    bottom: -1.25rem;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--color-marker), color-mix(in srgb, var(--color-marker) 30%, transparent));
+  }
+  .level-verb {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-sage-deep);
+  }
+  .level-name {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 1.3125rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+  }
+  .level-line {
+    display: block;
+    margin-top: 0.375rem;
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    color: var(--color-ink-soft);
+  }
+  .level-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0 1rem;
+    margin-top: 0.25rem;
+  }
+  .level-price {
+    display: flex;
+    flex-direction: column;
+    color: var(--color-ink);
+  }
+  .level-price .stat-num {
+    font-size: 1.5rem;
+  }
+  .level-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.75rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-teal);
+  }
+  @media (min-width: 1024px) {
+    .levels {
+      grid-template-columns: repeat(var(--levels, 4), minmax(0, 1fr));
+      gap: 1.25rem;
+      padding-top: 0.5rem;
+    }
+    .levels-thread {
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      display: block;
+      width: 100%;
+      height: 6.5rem;
+      overflow: visible;
+    }
+    /* La tessera ha uno spazio fisso in cima: così i testi partono tutti alla stessa altezza. */
+    .level-step {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: 7.25rem minmax(0, 1fr);
+      justify-items: center;
+      align-content: start;
+      gap: 0;
+      padding: 0 0.75rem 1rem;
+      text-align: center;
+    }
+    .levels > li:not(:last-child) .level-step::after {
+      display: none;
+    }
+    .level-step .tile-ico {
+      width: 4.5rem;
+      height: 4.5rem;
+      border-radius: 1.5rem;
+      transition: transform 280ms var(--ease-out-soft);
+    }
+    .level-step .tile-ico svg {
+      width: 2.125rem;
+      height: 2.125rem;
+      stroke-width: 1.6;
+    }
+    /* Le tessere seguono l'onda del filo: una su, una giù. */
+    .levels > li:nth-child(odd) .tile-ico {
+      margin-top: 0.25rem;
+    }
+    .levels > li:nth-child(even) .tile-ico {
+      margin-top: 1.75rem;
+    }
+    .level-step:hover,
+    .level-step:focus-visible {
+      background: transparent;
+      box-shadow: none;
+    }
+    .level-step:hover .tile-ico,
+    .level-step:focus-visible .tile-ico {
+      transform: translateY(-4px) scale(1.04);
+    }
+    .level-name {
+      font-size: 1.375rem;
+    }
+    /* Prezzo e invito in fondo alla colonna: così stanno alla stessa altezza in tutte le tappe. */
+    .level-step > span:last-child {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      align-items: center;
+    }
+    .level-foot {
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      flex-grow: 1;
+      gap: 0;
+      margin-top: 0;
+      padding-top: 0.75rem;
+    }
+    .level-price {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0 0.5rem;
+    }
+  }
+
+  /* ───────── Fiducia: quattro fatti su fondo petrolio ───────── */
+  .fact-grid {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .fact {
+    border-radius: 1.5rem;
+    border: 1px solid var(--glass-line);
+    background: var(--glass);
+    padding: 1.25rem 1.25rem 1.375rem;
+  }
+  .fact dt,
+  .fact-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1875rem;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+  .fact dt svg,
+  .fact-title svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    color: var(--color-teal);
+  }
+  .fact dd,
+  .fact-text {
+    margin-top: 0.625rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+  @media (min-width: 640px) {
+    .fact-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    .fact {
+      padding: 1.5rem 1.5rem 1.625rem;
+    }
+  }
+
+  /* ───────── Chiusura: una scheda grande con la fotografia fusa a destra ───────── */
+  .emergency-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 0.5rem 1.125rem 0.5rem 0.625rem;
+    font-size: 1rem;
+    line-height: 1.35;
+    color: var(--color-ink);
+  }
+  .emergency-note > span:first-child {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-danger) 14%, var(--color-paper));
+    color: var(--color-danger);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Pagine interne «Luce»: apertura, fatti in breve, passi sul filo, include/esclude, altri servizi
+ * ══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  /* Ritmo: due sezioni semplici di fila non sommano gli spazi; due pannelli di fila restano staccati. */
+  .section:not(.panel-section) + .section:not(.panel-section) {
+    padding-top: 0;
+  }
+  .panel-section + .panel-section {
+    margin-top: clamp(0.5rem, 1.4vw, 1.5rem);
+  }
+  /* Pannello con la tinta del servizio. */
+  .bg-tone-soft {
+    background: linear-gradient(170deg, var(--tone-bg, var(--color-mist)), color-mix(in srgb, var(--tone-bg, var(--color-mist)) 30%, var(--color-canvas)));
+  }
+
+  /* ───────── Apertura di una pagina (luce morbida, onda in fondo) ───────── */
+  .page-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--aurora-soft);
+  }
+  /* Con l'onda in fondo: un velo di menta lungo il bordo, così l'onda si legge. */
+  .page-hero-wave {
+    background:
+      radial-gradient(70rem 13rem at 50% 104%, var(--aurora-foot, rgb(207 243 236 / 0.8)), transparent 72%),
+      var(--aurora-soft);
+  }
+  /* La prima sezione dopo l'apertura non somma il suo spazio a quello dell'onda. */
+  .page-hero + .section:not(.panel-section) {
+    padding-top: clamp(1.25rem, 0.75rem + 2vw, 2.75rem);
+  }
+  .page-hero-inner {
+    position: relative;
+    z-index: 2;
+    padding-block: clamp(1.75rem, 1rem + 3.2vw, 4.25rem) clamp(4.25rem, 3.4rem + 4.4vw, 7.5rem);
+  }
+  .page-title {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    letter-spacing: -0.038em;
+    line-height: 1.04;
+    font-size: clamp(2.125rem, 1.5rem + 2.9vw, 3.75rem);
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  .page-title-sm {
+    font-size: clamp(2rem, 1.5rem + 2.2vw, 3.125rem);
+  }
+  /* Disegno delle aperture: tre tessere di vetro sul filo. La grande dice l'argomento della pagina. */
+  .hero-tiles {
+    position: relative;
+    width: 19.5rem;
+    height: 15rem;
+    margin-right: 1.5rem;
+  }
+  .hero-tiles > svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .hero-tiles > svg > path {
+    stroke: var(--marker-line, var(--color-marker));
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1 11;
+  }
+  .hero-tiles > .tile-ico {
+    position: absolute;
+    left: 3.25rem;
+    bottom: 0;
+  }
+  .hero-tiles > .tile-ico-lg {
+    left: 0.5rem;
+    top: 0.25rem;
+    bottom: auto;
+  }
+  .hero-tiles > .tile-ico-xl {
+    left: auto;
+    right: 0.5rem;
+    top: 2.75rem;
+    bottom: auto;
+    width: 8.5rem;
+    height: 8.5rem;
+    border-radius: 2.5rem;
+  }
+  .hero-tiles > .tile-ico-xl svg {
+    width: 3.75rem;
+    height: 3.75rem;
+    stroke-width: 1.4;
+  }
+
+  /* ───────── Apertura di un servizio: la luce prende la tinta del servizio ───────── */
+  /* Fotografia in cornice (pagine con una persona): angolo grande in alto a sinistra, vetro sopra. */
+
+  /* Visita a domicilio: una mappa astratta in cornice, il tragitto fino a casa e, su vetro, che cosa vedi prima di pagare. */
+
+  /* ───────── In breve: una scheda sola, a cavallo dell'onda ───────── */
+
+  /* ───────── Passi: tessere numerate sul filo ───────── */
+  .steps {
+    position: relative;
+    display: grid;
+    gap: 1.375rem;
+  }
+  .step {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0 1rem;
+  }
+  .step-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 1.0625rem;
+    font-family: var(--font-serif);
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: var(--tone-accent, var(--color-teal-deep));
+    background: linear-gradient(155deg, var(--color-paper) 12%, var(--tone-bg, var(--color-marker-soft)) 125%);
+    border: 1px solid color-mix(in srgb, var(--tone-accent, var(--color-sage)) 20%, var(--color-paper));
+    box-shadow:
+      inset 0 1px 0 var(--glass-line),
+      0 14px 26px -16px color-mix(in srgb, var(--tone-accent, var(--color-sage)) 60%, transparent);
+  }
+  .step-num svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    stroke-width: 1.8;
+  }
+  .step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: calc(1.625rem - 1px);
+    top: 3.625rem;
+    bottom: -1.125rem;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--tone-accent, var(--color-sage)) 42%, transparent), color-mix(in srgb, var(--tone-accent, var(--color-sage)) 8%, transparent));
+  }
+  .step-title {
+    font-size: 1.3125rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+  }
+  .step-text {
+    margin-top: 0.375rem;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: var(--color-ink-soft);
+  }
+  @media (min-width: 768px) {
+    .steps {
+      grid-template-columns: repeat(var(--steps, 3), minmax(0, 1fr));
+      gap: 2.25rem;
+    }
+    .step {
+      display: block;
+    }
+    .step-num {
+      width: 3.75rem;
+      height: 3.75rem;
+      margin-bottom: 1.375rem;
+      border-radius: 1.25rem;
+      font-size: 1.5rem;
+    }
+    .step:not(:last-child)::after {
+      left: 4.5rem;
+      right: -1.5rem;
+      top: calc(1.875rem - 1px);
+      bottom: auto;
+      width: auto;
+      height: 2px;
+      background: linear-gradient(90deg, color-mix(in srgb, var(--tone-accent, var(--color-sage)) 42%, transparent), color-mix(in srgb, var(--tone-accent, var(--color-sage)) 10%, transparent));
+    }
+    .step-title {
+      font-size: 1.4375rem;
+    }
+  }
+
+  /* ───────── Che cosa include · Quando non è la strada giusta ───────── */
+  .incl-card,
+  .excl-card {
+    border-radius: var(--radius-xl);
+    padding: 1.375rem 1.25rem 1.5rem;
+  }
+  .incl-card {
+    border: 1px solid color-mix(in srgb, var(--tone-accent, var(--color-sage)) 22%, transparent);
+    background: linear-gradient(160deg, var(--tone-bg, var(--color-tint-capisci)), var(--color-paper) 82%);
+  }
+  .excl-card {
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+  }
+  .incl-card > .check-list:first-child,
+  .excl-card > .check-list:first-child {
+    margin-top: 0;
+  }
+  .box-title {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .check-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.125rem;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: var(--color-ink);
+  }
+  .check-list > li {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .check-dot,
+  .cross-dot {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.0625rem;
+    border-radius: 999px;
+  }
+  .check-dot {
+    background: var(--tone-accent, var(--color-teal));
+    color: var(--color-paper);
+  }
+  .cross-dot {
+    background: color-mix(in srgb, var(--color-danger) 13%, var(--color-paper));
+    color: var(--color-danger);
+  }
+  .check-dot svg,
+  .cross-dot svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    stroke-width: 3;
+  }
+  @media (min-width: 640px) {
+    .incl-card,
+    .excl-card {
+      padding: 2.25rem 2.25rem 2.5rem;
+    }
+    .box-title {
+      font-size: 1.75rem;
+    }
+    .check-list {
+      gap: 0.875rem;
+      font-size: 1.125rem;
+    }
+  }
+
+  /* ───────── Scheda con tessera: un fatto, una promessa mantenuta ───────── */
+  .tile-card {
+    display: flex;
+    gap: 1rem;
+    border-radius: 1.5rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 1.125rem;
+    box-shadow: var(--shadow-card);
+  }
+  .tile-card-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.22;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+  }
+  .tile-card-text {
+    margin-top: 0.375rem;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: var(--color-ink-soft);
+  }
+  @media (min-width: 640px) {
+    .tile-card {
+      gap: 1.25rem;
+      border-radius: 1.75rem;
+      padding: 1.625rem;
+    }
+    .tile-card-title {
+      font-size: 1.375rem;
+    }
+  }
+
+  /* ───────── Corpo delle pagine di lettura ───────── */
+  .page-body {
+    padding-top: clamp(1.25rem, 0.75rem + 2vw, 2.75rem);
+    padding-bottom: clamp(3.5rem, 2.2rem + 5.4vw, 7rem);
+  }
+  .prose-rc {
+    max-width: 46rem;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+  .prose-rc > * + * {
+    margin-top: 1.125rem;
+  }
+  .prose-rc h2 {
+    margin-top: 2.75rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.875rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .prose-rc > h2:first-child {
+    margin-top: 0;
+  }
+  .prose-rc h3 {
+    margin-top: 1.75rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.25;
+    color: var(--color-ink);
+  }
+  .prose-rc strong {
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .prose-rc ul {
+    display: grid;
+    gap: 0.625rem;
+  }
+  .prose-rc ul > li {
+    position: relative;
+    padding-left: 1.75rem;
+  }
+  .prose-rc ul > li::before {
+    content: "";
+    position: absolute;
+    left: 0.25rem;
+    top: 0.62em;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-sage);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-marker) 40%, transparent);
+  }
+  .prose-rc ol {
+    display: grid;
+    gap: 0.625rem;
+    padding-left: 1.5rem;
+    list-style: decimal;
+  }
+  .prose-rc a:not(.btn):not(.link) {
+    font-weight: 600;
+    color: var(--color-teal-deep);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-teal) 45%, transparent);
+    text-underline-offset: 0.2em;
+  }
+
+  /* Riquadro di avviso: bozza, versione dimostrativa, cose da sapere. */
+  .callout {
+    display: flex;
+    gap: 0.875rem;
+    border-radius: 1.5rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 1.125rem 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  .callout-warn {
+    border-color: color-mix(in srgb, var(--color-warn) 30%, transparent);
+    background: color-mix(in srgb, var(--color-cream) 60%, var(--color-paper));
+    box-shadow: none;
+  }
+  .callout-ico {
+    display: inline-flex;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.875rem;
+    background: var(--color-mist);
+    color: var(--color-teal-deep);
+  }
+  .callout-warn .callout-ico {
+    background: color-mix(in srgb, var(--color-warn) 14%, var(--color-paper));
+    color: var(--color-warn);
+  }
+  .callout-danger .callout-ico {
+    background: color-mix(in srgb, var(--color-danger) 13%, var(--color-paper));
+    color: var(--color-danger);
+  }
+  .callout-ico svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .callout-title {
+    font-size: 1.125rem;
+    font-weight: 800;
+    line-height: 1.25;
+    color: var(--color-ink);
+  }
+  .callout-text {
+    margin-top: 0.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+
+  /* ───────── Moduli: etichette leggibili, campi alti, anello di fuoco morbido ───────── */
+  .field-label {
+    display: block;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--color-ink);
+  }
+  .field-input {
+    display: block;
+    width: 100%;
+    min-height: 3.5rem;
+    margin-top: 0.5rem;
+    border-radius: 1rem;
+    border: 1.5px solid var(--line-strong);
+    background: var(--color-paper);
+    padding: 0 1rem;
+    font-size: 1.125rem;
+    color: var(--color-ink);
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+  }
+  textarea.field-input {
+    min-height: 6.5rem;
+    padding-block: 0.875rem;
+    line-height: 1.5;
+  }
+  .field-input::placeholder {
+    color: var(--color-muted);
+    opacity: 0.75;
+  }
+  .field-input:focus {
+    border-color: var(--color-teal);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-teal) 18%, transparent);
+    outline: none;
+  }
+  .field-hint {
+    margin-top: 0.375rem;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--color-muted);
+  }
+  .field-check {
+    display: flex;
+    min-height: 2.75rem;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding-block: 0.5rem;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+  .field-check input {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.0625rem;
+    accent-color: var(--color-teal);
+  }
+  .field-error {
+    border-radius: 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-danger) 35%, transparent);
+    background: color-mix(in srgb, var(--color-danger) 6%, var(--color-paper));
+    padding: 0.875rem 1rem;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--color-danger);
+  }
+
+  /* Schede dei moduli (accesso, richieste): carta ampia, titolo netto. La scheda «demo» porta la tinta di marca. */
+  .form-card {
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 1.5rem 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  .form-card-accent {
+    border-color: color-mix(in srgb, var(--color-sage) 26%, transparent);
+    background:
+      radial-gradient(26rem 14rem at 100% 0%, color-mix(in srgb, var(--color-marker) 30%, transparent), transparent 66%),
+      linear-gradient(160deg, var(--color-tint-capisci), var(--color-paper) 72%);
+    box-shadow: var(--shadow-lift);
+  }
+  @media (min-width: 640px) {
+    .form-card {
+      padding: 2.25rem;
+    }
+  }
+  .form-card-title {
+    font-size: clamp(1.5rem, 1.35rem + 0.6vw, 1.75rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    overflow-wrap: anywhere;
+  }
+  .form-card-text {
+    margin-top: 0.625rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+  .field-ok {
+    border-radius: 1.25rem;
+    background: var(--color-mist);
+    padding: 1.125rem 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+  .field-ok-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+
+  /* Area personale, richieste e portali: titoli, righe di servizio e collegamenti ricorrenti. */
+  .area-title {
+    font-size: clamp(2rem, 1.6rem + 1.7vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.032em;
+    line-height: 1.06;
+    color: var(--color-ink);
+    overflow-wrap: anywhere;
+  }
+  .area-lead {
+    margin-top: 0.75rem;
+    max-width: 46rem;
+    font-size: 1.125rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+  .area-h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--color-ink);
+  }
+  .area-h3 {
+    font-size: 1.125rem;
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--color-ink);
+  }
+  .back-link,
+  .action-link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-teal-deep);
+  }
+  .action-link {
+    text-align: left;
+  }
+  .back-link:hover,
+  .action-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .back-link svg,
+  .action-link svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+  }
+  /* Azione che elimina: discreta finché non la cerchi, chiara quando la tocchi. */
+  .danger-link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 999px;
+    padding-inline: 0.875rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-danger);
+  }
+  .danger-link:hover {
+    background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+  }
+  /* Riga di dettaglio sotto un titolo: data, stato, conteggi. */
+  .meta {
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--color-muted);
+  }
+  /* Confronto tra referti nel dossier. Da tablet è una tabella a tre colonne. Quando la scheda è stretta (telefono,
+     testo grande) ogni rilevazione va su due righe: data e valore in alto, intervallo stampato sotto.
+     La soglia è in rem dentro una «container query»: così segue la scheda e anche il testo grande, non lo schermo. */
+  /* Le date si leggono meglio con le cifre normali: quelle a larghezza fissa restano ai valori, che si confrontano in colonna. */
+  @container (max-width: 26rem) {
+    /* L'intestazione resta per i lettori di schermo, ma non occupa spazio. */
+  }
+  /* Coppie «voce: valore» nelle schede di riepilogo. */
+
+  /* Righe «voce / valore» una sotto l'altra (riepilogo di una richiesta): da tablet in su l'etichetta sta a sinistra. */
+
+  /* Riga di scelta (radio o spunta) alta quanto un dito: richieste, candidatura, strumenti di prova. */
+
+  /* Scheda di stato che chiede una decisione (proposta da confermare, documenti richiesti). */
+  .form-card-warn {
+    border-color: color-mix(in srgb, var(--color-warn) 34%, transparent);
+    background: linear-gradient(165deg, color-mix(in srgb, var(--color-cream) 70%, var(--color-paper)), var(--color-paper) 62%);
+  }
+  .form-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  /* Accanto all'icona il titolo ha sempre lo spazio di una parola lunga («Videoconsulto»):
+     se lo schermo è troppo stretto passa sotto l'icona, invece di spezzare la parola. */
+  .form-card-head > .form-card-title {
+    flex: 1 1 12.5rem;
+    min-width: 0;
+  }
+  .form-card-body {
+    margin-top: 1.125rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+
+  /* Avviso senza titolo, dentro un modulo: più stretto, senza ombra. */
+  .callout-compact {
+    align-items: center;
+    border-radius: 1.125rem;
+    padding: 0.875rem 1rem;
+    box-shadow: none;
+  }
+  @media (max-width: 379.98px) {
+    .callout-compact .callout-ico {
+      display: none;
+    }
+  }
+  @media (max-width: 479.98px) {
+    :root[data-size="large"] .callout-compact .callout-ico {
+      display: none;
+    }
+  }
+  .callout-compact .callout-text {
+    margin-top: 0;
+    font-size: 1rem;
+  }
+  .callout-danger {
+    border-color: color-mix(in srgb, var(--color-danger) 24%, transparent);
+  }
+
+  /* Comando della prova: dichiara che è una simulazione prima di far agire «il medico». */
+
+  /* Sala d'attesa e video simulati: un riquadro scuro, come una stanza a parte. */
+  .video-room {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background:
+      radial-gradient(30rem 18rem at 100% 0%, color-mix(in srgb, var(--color-sage) 42%, transparent), transparent 70%),
+      linear-gradient(160deg, var(--color-strong-soft), var(--color-strong) 60%);
+    padding: 1.5rem 1.25rem;
+    color: var(--color-on-strong);
+    box-shadow: var(--shadow-float);
+  }
+  .video-room-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-on-strong-soft);
+  }
+  .video-room-title {
+    margin-top: 0.75rem;
+    font-size: clamp(1.5rem, 1.3rem + 0.9vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .video-room-text {
+    margin-top: 0.5rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--color-on-strong-soft);
+  }
+  @media (min-width: 640px) {
+    .video-room {
+      padding: 2.25rem;
+    }
+  }
+
+  /* Cronologia di una richiesta: una riga del tempo con i punti. */
+  .timeline > li {
+    position: relative;
+    padding: 0 0 1.125rem 1.75rem;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--color-ink-soft);
+  }
+  .timeline > li::before {
+    content: "";
+    position: absolute;
+    left: 0.1875rem;
+    top: 0.4375rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 999px;
+    background: var(--color-sage);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-marker) 40%, transparent);
+  }
+  .timeline > li::after {
+    content: "";
+    position: absolute;
+    left: calc(0.5rem - 1px);
+    top: 1.375rem;
+    bottom: 0.125rem;
+    width: 2px;
+    border-radius: 999px;
+    background: var(--color-line);
+  }
+  .timeline > li:last-child {
+    padding-bottom: 0;
+  }
+  .timeline > li:last-child::after {
+    display: none;
+  }
+  .timeline-when {
+    display: block;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+
+  /* Schede a linguetta (amministrazione): una pillola per sezione, quella attiva piena. */
+  .tab-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tab-pill {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--line-strong);
+    background: var(--color-paper);
+    padding: 0 1.25rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    transition:
+      border-color 0.15s,
+      background-color 0.15s,
+      color 0.15s;
+  }
+  .tab-pill:hover {
+    border-color: var(--color-teal);
+  }
+  .tab-pill[aria-selected="true"],
+  .tab-pill[aria-current="page"] {
+    border-color: #006c66;
+    background: linear-gradient(180deg, #00827b, #006c66);
+    color: #ffffff;
+  }
+  /* Tante sezioni (pannello admin): pillole un po' più strette, sempre alte quanto un dito. */
+  .tab-pill-sm {
+    min-height: 2.75rem;
+    padding-inline: 1.0625rem;
+    font-size: 1rem;
+  }
+
+  /* Numeri dell'istanza: una scheda per voce, la cifra grande e il nome sopra. */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  @media (min-width: 768px) {
+    .stat-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+  }
+  @media (min-width: 1100px) {
+    .stat-grid:not(.stat-grid-3) {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+  .stat-card {
+    min-width: 0;
+    border-radius: 1.25rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 1rem 1.125rem 1.125rem;
+    box-shadow: var(--shadow-card);
+  }
+  .stat-card dt {
+    font-size: 1rem;
+    line-height: 1.3;
+    color: var(--color-muted);
+  }
+  .stat-card dd {
+    margin-top: 0.375rem;
+    overflow-wrap: anywhere;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--color-ink);
+  }
+  .stat-sub {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--color-ink-soft);
+  }
+
+  /* Tabelle di servizio: testo leggibile, righe ariose; su telefono scorrono dentro il loro riquadro. */
+  .data-table-wrap {
+    overflow-x: auto;
+    border-radius: 1.25rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    box-shadow: var(--shadow-card);
+  }
+  .data-table-wrap:focus-visible {
+    outline: 3px solid var(--color-teal);
+    outline-offset: 2px;
+  }
+  .data-table {
+    width: 100%;
+    min-width: 40rem;
+    border-collapse: collapse;
+    font-size: 1rem;
+    line-height: 1.4;
+    text-align: left;
+  }
+  .data-table thead {
+    background: color-mix(in srgb, var(--color-mist) 70%, var(--color-paper));
+  }
+  .data-table th {
+    padding: 0.875rem 1rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-ink-soft);
+  }
+  .data-table td {
+    border-top: 1px solid var(--color-line);
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+    color: var(--color-ink);
+  }
+  .data-table tbody tr:hover {
+    background: color-mix(in srgb, var(--color-mist) 35%, transparent);
+  }
+
+  /* Interruttore vero (apri/sospendi): il pomello scorre, la parola dice lo stato. */
+  .switch {
+    display: inline-flex;
+    min-height: 2.75rem;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.625rem;
+    border-radius: 999px;
+    padding: 0.25rem 0.25rem 0.25rem 0.875rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-muted);
+  }
+  .switch::after {
+    content: "";
+    width: 3.25rem;
+    height: 2rem;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 1rem 50%, var(--color-paper) 0.75rem, transparent 0.78rem),
+      var(--line-strong);
+    transition: background 0.18s;
+  }
+  .switch[aria-checked="true"] {
+    color: var(--color-teal-deep);
+  }
+  .switch[aria-checked="true"]::after {
+    background:
+      radial-gradient(circle at 2.25rem 50%, var(--color-paper) 0.75rem, transparent 0.78rem),
+      var(--color-teal);
+  }
+
+  /* Scelta di un profilo (prova, accesso dimostrativo): una riga grande con le iniziali, quella attiva evidenziata. */
+  .profile-pick {
+    display: flex;
+    width: 100%;
+    min-height: 4.25rem;
+    align-items: center;
+    gap: 0.875rem;
+    border-radius: 1.25rem;
+    border: 1.5px solid var(--line-strong);
+    background: var(--color-paper);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    transition:
+      border-color 0.15s,
+      background-color 0.15s;
+  }
+  .profile-pick:hover {
+    border-color: var(--color-teal);
+  }
+  .profile-pick-on {
+    border-color: var(--color-teal);
+    background: var(--color-marker-soft);
+  }
+  .profile-pick-initials {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-mist);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--color-teal-deep);
+  }
+  .profile-pick-on .profile-pick-initials {
+    background: var(--color-teal-deep);
+    color: var(--color-paper);
+  }
+  /* Elenco vuoto, in una riga: dice che cosa manca e da dove arriva. */
+  .empty-note {
+    border-radius: 1.25rem;
+    border: 1.5px dashed var(--line-strong);
+    padding: 1.125rem 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+
+  /* Scelta tra poche voci: pillole grandi con il pallino della radio dentro. */
+  .choice-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .choice-pill {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    gap: 0.625rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--line-strong);
+    background: var(--color-paper);
+    padding: 0 1.125rem 0 0.875rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      background-color 0.15s;
+  }
+  .choice-pill input {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    accent-color: var(--color-teal);
+  }
+  .choice-pill:has(input:checked) {
+    border-color: var(--color-teal);
+    background: var(--color-marker-soft);
+  }
+  .choice-pill:has(input:focus-visible) {
+    outline: 3px solid var(--color-teal);
+    outline-offset: 2px;
+  }
+
+  /* Stato del progetto: una scheda per servizio, con ciò che manca. */
+  .status-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.875rem;
+  }
+  .status-card {
+    display: block;
+    height: 100%;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  .status-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--color-line);
+    padding-top: 1.25rem;
+  }
+  .status-list li {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: var(--color-ink-soft);
+  }
+  .status-list svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--tone-accent, var(--color-teal));
+  }
+  /* La stessa lista senza scheda intorno, su due colonne dove c'è spazio (servizi in preparazione). */
+  @media (min-width: 640px) {
+    .status-card {
+      padding: 1.75rem;
+    }
+  }
+  @media (min-width: 800px) {
+    .status-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  /* Campo di ricerca: una pillola alta, la lente a sinistra e il tasto per svuotare a destra. */
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3.75rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--line-strong);
+    background: var(--color-paper);
+    padding: 0 0.5rem 0 1.25rem;
+    box-shadow: var(--shadow-card);
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+  }
+  .search-field:focus-within {
+    border-color: var(--color-teal);
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--color-teal) 18%, transparent),
+      var(--shadow-card);
+  }
+  .search-field > svg {
+    width: 1.375rem;
+    height: 1.375rem;
+    flex-shrink: 0;
+    color: var(--color-teal);
+  }
+  .search-field input {
+    min-width: 0;
+    flex: 1;
+    height: 3.5rem;
+    background: transparent;
+    font-size: 1.125rem;
+    color: var(--color-ink);
+    outline: none;
+  }
+  .search-field input::placeholder {
+    color: var(--color-muted);
+    opacity: 1;
+  }
+  .search-field input::-webkit-search-cancel-button {
+    display: none;
+  }
+  .search-field button {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--color-ink-soft);
+  }
+  .search-field button:hover {
+    background: var(--color-mist);
+    color: var(--color-ink);
+  }
+  /* Nessun risultato: riquadro tratteggiato, una frase e una via d'uscita. */
+  .empty-state {
+    border-radius: var(--radius-xl);
+    border: 1.5px dashed var(--line-strong);
+    background: color-mix(in srgb, var(--color-paper) 60%, transparent);
+    padding: 2.25rem 1.25rem;
+    text-align: center;
+  }
+
+  /* Domande frequenti: ricerca e argomenti di fianco, risposte al centro. */
+  .faq-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+    padding-block: clamp(1.25rem, 0.75rem + 2vw, 2.75rem) clamp(3.5rem, 2.5rem + 4vw, 6.5rem);
+  }
+  .faq-topics {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 0.125rem var(--gutter) 0.375rem;
+    scrollbar-width: none;
+  }
+  .faq-topics::-webkit-scrollbar {
+    display: none;
+  }
+  .faq-topic {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.625rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 0 1rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--color-ink);
+    transition:
+      background-color 0.15s,
+      border-color 0.15s;
+  }
+  .faq-topic:hover {
+    border-color: color-mix(in srgb, var(--color-teal) 45%, transparent);
+    background: var(--color-mist);
+  }
+  .faq-topic > span {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-muted);
+  }
+  @media (min-width: 1024px) {
+    .faq-layout {
+      grid-template-columns: 18.5rem minmax(0, 1fr);
+      align-items: start;
+      gap: 4.5rem;
+    }
+    .faq-side {
+      position: sticky;
+      top: 6.75rem;
+    }
+    .faq-topics {
+      flex-direction: column;
+      gap: 0.125rem;
+      overflow: visible;
+      margin-inline: 0;
+      padding: 0;
+    }
+    .faq-topic {
+      width: 100%;
+      justify-content: space-between;
+      border-color: transparent;
+      border-radius: 0.875rem;
+      background: transparent;
+      padding: 0 0.875rem;
+    }
+  }
+
+  /* ───────── Guide e glossario: ricerca in testa, schede a griglia ───────── */
+  .finder {
+    padding-block: clamp(1.25rem, 0.75rem + 2vw, 2.75rem) clamp(3.5rem, 2.5rem + 4vw, 6.5rem);
+  }
+  .guide-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .guide-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .guide-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+  /* Articoli (guide, voci del glossario): la luce delle aperture sfuma dietro titolo e sommario. */
+  /* 17/11/2026 (20 interventi, punto 11): su computer titolo della guida e «In breve» fianco a fianco */
+  @media (min-width: 1024px) {
+    .guide-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 23rem);
+      gap: 2rem;
+      align-items: start;
+    }
+    .guide-top > header {
+      max-width: none;
+    }
+  }
+  .article-shell {
+    background: var(--aurora-soft);
+    background-repeat: no-repeat;
+    background-size: 100% 36rem;
+  }
+  .article-body {
+    padding-block: clamp(1rem, 0.5rem + 2vw, 2.5rem) clamp(3.5rem, 2.5rem + 4vw, 6.5rem);
+  }
+  .finder-head {
+    padding-block: clamp(1.25rem, 0.75rem + 2vw, 2.75rem) 1.25rem;
+  }
+  .finder-body {
+    padding-block: 2rem clamp(3.5rem, 2.5rem + 4vw, 6.5rem);
+  }
+  /* Glossario: lettere a pillola, lettera grande in testa al gruppo, voci in un'unica scheda. */
+  .letter-pill {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--color-mist);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    transition: background-color 0.15s;
+  }
+  .letter-pill:hover {
+    background: var(--color-marker-soft);
+  }
+  .letter-head {
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-teal-deep);
+  }
+  .term-list {
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    box-shadow: var(--shadow-card);
+  }
+  .term-list > div + div {
+    border-top: 1px solid var(--color-line);
+  }
+  /* Scheda di una guida: titolo, due righe, «Leggi la guida». */
+  .guide-card {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 1.25rem 1.375rem 1.125rem;
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.2s,
+      border-color 0.2s;
+  }
+  .guide-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--color-teal) 40%, transparent);
+    box-shadow: var(--shadow-lift);
+  }
+  .guide-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.3125rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+  }
+  .guide-card-text {
+    display: -webkit-box;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: var(--color-ink-soft);
+  }
+  .guide-card-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.875rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-teal-deep);
+  }
+  .guide-card-go svg {
+    transition: transform 0.2s;
+  }
+  .guide-card:hover .guide-card-go svg {
+    transform: translateX(3px);
+  }
+  /* Scheda-riga: tessera, titolo con una riga sotto, freccia. Per argomenti e collegamenti brevi. */
+  .row-card {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 4.75rem;
+    align-items: center;
+    gap: 1rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 0.875rem 1.125rem;
+    text-align: left;
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+    transition:
+      transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.2s,
+      border-color 0.2s;
+  }
+  .row-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--color-teal) 40%, transparent);
+    box-shadow: var(--shadow-lift);
+  }
+  .row-card-warm {
+    border-color: color-mix(in srgb, var(--color-warn) 22%, transparent);
+    background: color-mix(in srgb, var(--color-cream) 70%, var(--color-paper));
+  }
+  .row-card-title {
+    display: block;
+    font-size: 1.1875rem;
+    font-weight: 800;
+    line-height: 1.25;
+    color: var(--color-ink);
+  }
+  .row-card-meta {
+    display: block;
+    margin-top: 0.125rem;
+    font-size: 1rem;
+    color: var(--color-ink-soft);
+  }
+  .row-card-go {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    color: var(--color-teal);
+    transition: transform 0.2s;
+  }
+  .row-card:hover .row-card-go {
+    transform: translateX(3px);
+  }
+
+  /* Passo in più in fondo a guide e voci: una proposta sola, nel colore del servizio. */
+  .next-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--tone-accent) 18%, var(--color-line));
+    background:
+      radial-gradient(26rem 14rem at 100% 0%, var(--tone-bg), transparent 70%),
+      var(--color-paper);
+    padding: 1.5rem 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  @media (min-width: 640px) {
+    .next-card {
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+  }
+  .next-card-title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    line-height: 1.22;
+    letter-spacing: -0.012em;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+  .next-card-text {
+    margin-top: 0.5rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+  .next-card-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.375rem;
+    margin-top: 1.25rem;
+  }
+  .next-card-alt {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.5rem;
+    padding-block: 0.375rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--color-teal-deep);
+  }
+  .next-card-alt span {
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  }
+  .next-card-alt:hover span {
+    text-decoration-color: currentColor;
+  }
+  .next-card-alt svg {
+    transition: transform 200ms var(--ease-out-soft);
+  }
+  .next-card-alt:hover svg {
+    transform: translateX(3px);
+  }
+  /* Corpo delle guide: sezioni distanziate, titoli netti, elenchi con il punto menta, riquadri morbidi. */
+  .guide-prose {
+    font-size: 1.125rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+  }
+  .guide-prose > * + * {
+    margin-top: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  }
+  .guide-h2 {
+    scroll-margin-top: 6.5rem;
+    font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.875rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+  .guide-h2 svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    color: var(--color-teal);
+  }
+  .guide-box {
+    border-radius: var(--radius-xl);
+    background: var(--color-mist);
+    padding: 1.5rem 1.25rem;
+  }
+  .guide-box-warm {
+    border: 1px solid color-mix(in srgb, var(--color-warn) 14%, transparent);
+    background: color-mix(in srgb, var(--color-cream) 60%, var(--color-paper));
+  }
+  @media (min-width: 640px) {
+    .guide-box {
+      padding: 2.25rem;
+    }
+  }
+  .dot-list {
+    display: grid;
+    gap: 0.625rem;
+  }
+  .dot-list > li {
+    position: relative;
+    padding-left: 1.75rem;
+  }
+  .dot-list > li::before {
+    content: "";
+    position: absolute;
+    left: 0.25rem;
+    top: 0.62em;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-sage);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-marker) 40%, transparent);
+  }
+  .num-list {
+    display: grid;
+    gap: 0.875rem;
+    counter-reset: voce;
+  }
+  .num-list > li {
+    position: relative;
+    min-height: 2rem;
+    padding-left: 2.875rem;
+    counter-increment: voce;
+  }
+  .num-list > li::before {
+    content: counter(voce);
+    position: absolute;
+    left: 0;
+    top: -0.05em;
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-paper);
+    font-size: 0.9375rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-teal-deep);
+    box-shadow: var(--shadow-card);
+  }
+  .num-list-mist > li::before {
+    background: var(--color-mist);
+    box-shadow: none;
+  }
+  /* Strumenti gratuiti: il corpo sotto l'apertura e le colonne della lista finale. */
+  .tool-body {
+    padding-block: clamp(1.25rem, 0.75rem + 2vw, 2.75rem) clamp(2rem, 1.25rem + 3vw, 4rem);
+  }
+  .list-col {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 1.375rem 1.25rem;
+    box-shadow: var(--shadow-card);
+  }
+  @media (min-width: 640px) {
+    .list-col {
+      padding: 1.75rem;
+    }
+  }
+  .list-col-head {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-ink);
+  }
+  .list-col-count {
+    margin-left: auto;
+    border-radius: 999px;
+    background: var(--color-mist);
+    padding: 0.125rem 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: var(--color-teal-deep);
+  }
+  .tick-list {
+    display: grid;
+    margin-top: 1rem;
+  }
+  .tick-list > li + li {
+    border-top: 1px solid var(--color-line);
+  }
+  .tick-list label {
+    display: flex;
+    min-height: 2.75rem;
+    cursor: pointer;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding-block: 0.75rem;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+    color: var(--color-ink);
+  }
+  .tick-list input {
+    width: 1.375rem;
+    height: 1.375rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    accent-color: var(--color-teal);
+  }
+  .tick-list label:has(input:checked) {
+    color: var(--color-muted);
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in srgb, currentColor 50%, transparent);
+  }
+  /* Scheda laterale degli articoli: collegamenti e strumenti a portata di mano. */
+  .side-card {
+    border-radius: 1.5rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 1.25rem 1.375rem;
+    box-shadow: var(--shadow-card);
+  }
+  .side-card-title {
+    font-size: 1.125rem;
+    font-weight: 800;
+    line-height: 1.25;
+    color: var(--color-ink);
+  }
+  /* Elenchi di collegamenti (guide collegate, fonti): ogni voce è alta quanto un dito, anche su due righe. */
+  .link-list {
+    font-size: 1.0625rem;
+  }
+  .link-list a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    min-width: 2.75rem; /* 27/11/2026: anche una voce di una parola corta («Asma») è larga quanto un dito */
+    align-items: center;
+    padding-block: 0.625rem;
+    line-height: 1.35;
+  }
+
+  /* Invito in fondo alla pagina: una scheda larga, testo a sinistra e azioni a destra. */
+  .cta-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--color-sage) 22%, transparent);
+    background:
+      radial-gradient(34rem 20rem at 100% 0%, color-mix(in srgb, var(--color-marker) 34%, transparent), transparent 64%),
+      linear-gradient(160deg, var(--color-tint-capisci), var(--color-paper) 70%);
+    padding: 1.5rem 1.25rem;
+    box-shadow: var(--shadow-lift);
+  }
+  @media (min-width: 640px) {
+    .cta-card {
+      padding: 2.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .cta-card {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 3.5rem;
+      padding: 3rem 3.25rem;
+    }
+  }
+
+  /* Chi siamo: la fotografia accanto al racconto. */
+  .story {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1.5rem, 1rem + 2.4vw, 4rem);
+  }
+  .story-photo {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    border-radius: 2rem;
+    border-top-left-radius: 5.5rem;
+    box-shadow: var(--shadow-float);
+  }
+  .story-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+    filter: brightness(var(--photo-dim, 1));
+  }
+  @media (min-width: 900px) {
+    .story {
+      grid-template-columns: minmax(0, 0.88fr) minmax(0, 1fr);
+    }
+    .story-photo {
+      aspect-ratio: 5 / 4;
+      border-radius: 2.5rem;
+      border-top-left-radius: 7rem;
+    }
+  }
+
+  /* ───────── Pagina Servizi: il referto in grande, poi le schede con un medico ───────── */
+  .page-hero-overlap {
+    padding-bottom: clamp(7.5rem, 6rem + 6vw, 11.5rem);
+  }
+  /* Apertura senza onda: la luce sfuma da sola nel fondo della pagina. */
+  .page-hero-flat {
+    padding-bottom: clamp(3.5rem, 2.2rem + 5.4vw, 7rem);
+  }
+  /* Apertura a due colonne: testo a sinistra, un disegno a destra solo dove c'è spazio. */
+  .page-hero-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 2.5rem;
+  }
+  .page-hero-split > :not(:first-child) {
+    display: none;
+  }
+  @media (min-width: 1180px) {
+    .page-hero-split {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 4rem;
+    }
+    .page-hero-split > :not(:first-child) {
+      display: block;
+    }
+  }
+  /* Per i medici: la richiesta come appare nel portale, con l'etichetta della firma che sporge. */
+  .case-visual {
+    position: relative;
+    width: 23.5rem;
+    margin-right: 1rem;
+    padding-bottom: 2rem;
+  }
+  .case-chip {
+    position: absolute;
+    left: -2.25rem;
+    bottom: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    border-radius: 999px;
+    padding: 0.7rem 1.1rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .steps-visual {
+    position: relative;
+    width: 27.5rem;
+    height: 15.625rem;
+  }
+  .steps-visual > svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .steps-visual > svg > path {
+    stroke: var(--marker-line, var(--color-marker));
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1 11;
+  }
+  .steps-visual > .tile-ico {
+    position: absolute;
+  }
+
+  /* ───────── Prezzi: quattro schede con le righe allineate (subgrid) ───────── */
+  @media (min-width: 700px) {
+    /* Gli importi sulla stessa riga anche quando solo una scheda ha la dicitura sopra («Primo referto»). */
+  }
+  /* 17/11/2026 (20 interventi, punto 4): un solo servizio a pagamento = una scheda larga, non una colonna di quattro. */
+
+  /* ───────── Come funziona: una scheda per servizio, «Tu» e «Ricevi» affiancati ───────── */
+  .how-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.875rem;
+  }
+  .how-grid > li {
+    display: flex;
+  }
+  .how-card {
+    position: relative;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--tone-accent, var(--color-sage)) 18%, var(--color-line));
+    background: linear-gradient(165deg, var(--tone-bg, var(--color-paper)), var(--color-paper) 46%);
+    padding: 1.25rem 1.25rem 1rem;
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 280ms var(--ease-out-soft),
+      box-shadow 280ms var(--ease-out-soft),
+      border-color 280ms var(--ease-out-soft);
+  }
+  .how-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in srgb, var(--tone-accent, var(--color-teal)) 40%, var(--color-line));
+  }
+  .how-card:has(a:focus-visible) {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  .how-pair {
+    display: grid;
+    gap: 0.875rem;
+    margin-top: 1.125rem;
+    font-size: 1.0625rem;
+    line-height: 1.45;
+  }
+  .how-pair dt {
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tone-accent, var(--color-teal));
+  }
+  .how-pair dd {
+    margin-top: 0.25rem;
+    color: var(--color-ink-soft);
+  }
+  .how-go {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--tone-accent, var(--color-teal));
+  }
+  .how-go svg {
+    transition: transform 220ms var(--ease-out-soft);
+  }
+  .how-card:hover .how-go svg {
+    transform: translateX(3px);
+  }
+  @media (min-width: 640px) {
+    .how-card {
+      padding: 1.75rem 1.75rem 1.25rem;
+    }
+    .how-pair {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.75rem;
+      font-size: 1.125rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .how-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  /* Elenco di ciò che non si fa: righe con la crocetta, due colonne da tablet. */
+  .excl-grid {
+    display: grid;
+    gap: 0.625rem;
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    color: var(--color-ink);
+  }
+  .excl-grid > li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 1.125rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 0.875rem 1rem;
+  }
+  @media (min-width: 640px) {
+    .excl-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.875rem;
+      font-size: 1.125rem;
+    }
+    .excl-grid > li {
+      padding: 1.125rem 1.375rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .excl-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ───────── Gli altri servizi: righe compatte su telefono, schede da tablet ───────── */
+  .other-grid {
+    display: grid;
+    gap: 0.625rem;
+  }
+  .other-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0 0.875rem;
+    height: 100%;
+    border-radius: 1.5rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 0.875rem 1rem 0.875rem 0.875rem;
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 260ms var(--ease-out-soft),
+      box-shadow 260ms var(--ease-out-soft),
+      border-color 260ms var(--ease-out-soft);
+  }
+  .other-card:hover,
+  .other-card:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+    border-color: color-mix(in srgb, var(--tone-accent, var(--color-teal)) 40%, var(--color-line));
+  }
+  .other-name {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+  .other-line {
+    display: none;
+  }
+  @media (max-width: 899.98px) {
+    .other-card-text .other-line {
+      display: block;
+      margin-top: 0.125rem;
+      font-size: 1rem;
+      line-height: 1.35;
+      color: var(--color-ink-soft);
+    }
+  }
+  .other-price {
+    display: block;
+    margin-top: 0.125rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+  }
+  .other-price strong {
+    font-family: var(--font-serif);
+    font-weight: 800;
+    color: var(--color-ink);
+  }
+  .other-go {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    color: var(--tone-accent, var(--color-teal));
+    background: color-mix(in srgb, var(--tone-bg, var(--color-mist)) 80%, var(--color-paper));
+    transition: transform 220ms var(--ease-out-soft);
+  }
+  .other-go > span {
+    display: none;
+  }
+  .other-card:hover .other-go {
+    transform: translateX(3px);
+  }
+  @media (min-width: 900px) {
+    .other-grid {
+      grid-template-columns: repeat(var(--others, 3), minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+    .other-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      border-radius: var(--radius-xl);
+      padding: 1.75rem;
+    }
+    .other-card > .tile-ico {
+      margin-bottom: 1.25rem;
+    }
+    .other-name {
+      font-size: 1.4375rem;
+    }
+    .other-line {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 1.0625rem;
+      line-height: 1.45;
+      color: var(--color-ink-soft);
+    }
+    .other-price {
+      margin-top: 1rem;
+      font-size: 1.0625rem;
+    }
+    .other-price strong {
+      font-size: 1.5rem;
+    }
+    .other-go {
+      width: auto;
+      height: auto;
+      min-height: 2.75rem;
+      margin-top: auto;
+      padding-top: 0.75rem;
+      gap: 0.375rem;
+      border-radius: 0;
+      background: none;
+      font-size: 1.0625rem;
+      font-weight: 700;
+    }
+    .other-go > span {
+      display: inline;
+    }
+  }
+
+  /* ───────── Domande frequenti ───────── */
+  .faq-list {
+    overflow: hidden;
+    border-radius: 1.75rem;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    box-shadow: var(--shadow-card);
+  }
+  .faq-list > details + details {
+    border-top: 1px solid var(--color-line);
+  }
+  .faq-list summary {
+    display: flex;
+    min-height: 4.25rem;
+    cursor: pointer;
+    list-style: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-ink);
+    transition: background-color 160ms var(--ease-out-soft);
+  }
+  .faq-list summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-list summary:hover {
+    background: color-mix(in srgb, var(--color-mist) 55%, transparent);
+  }
+  .faq-plus {
+    display: inline-flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--color-mist);
+    color: var(--color-teal);
+    transition: transform 220ms var(--ease-out-soft);
+  }
+  .faq-list details[open] .faq-plus {
+    transform: rotate(45deg);
+  }
+  .faq-answer {
+    max-width: 46rem;
+    padding: 0 1.25rem 1.375rem;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+  }
+  @media (min-width: 640px) {
+    .faq-list summary {
+      padding: 1.125rem 1.75rem;
+      font-size: 1.1875rem;
+    }
+    .faq-answer {
+      padding: 0 1.75rem 1.625rem;
+      font-size: 1.125rem;
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Pagine dei servizi e pezzi condivisi
+ * ══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  .video-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: radial-gradient(120% 120% at 0% 0%, var(--color-marker-soft), var(--color-strong) 70%);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .journey-draw {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: journey-draw 1.6s var(--ease-out-soft) 0.2s forwards;
+    }
+    .scene-pop {
+      animation: scene-pop 0.5s var(--ease-out-soft);
+    }
+  }
+  /* Glossario: barra delle lettere fissa sotto la testata. */
+  .glossary-letters {
+    top: 3.75rem;
+  }
+  @media (min-width: 1024px) {
+    .glossary-letters {
+      top: 4.5rem;
+    }
+  }
+  @media (min-width: 1160px) {
+    .glossary-letters {
+      top: 4.75rem;
+    }
+  }
+  /* Scelta guidata: risposte grandi. */
+  .need-option {
+    display: flex;
+    min-height: 4.5rem;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.875rem;
+    border-radius: 1.5rem;
+    border: 1.5px solid var(--color-line);
+    background: var(--color-paper);
+    padding: 0.75rem 1.125rem 0.75rem 0.875rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-ink);
+    box-shadow: var(--shadow-card);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s,
+      transform 0.2s var(--ease-out-soft);
+  }
+  .need-option:hover {
+    border-color: color-mix(in srgb, var(--tone-accent) 55%, transparent);
+    transform: translateY(-2px);
+  }
+  .need-option:has(input:checked) {
+    border-color: var(--tone-accent);
+    background: linear-gradient(120deg, var(--tone-bg), var(--color-paper));
+    box-shadow: var(--shadow-lift);
+  }
+  .need-option:has(input:focus-visible) {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  @media (min-width: 640px) {
+    .need-option {
+      min-height: 5rem;
+      gap: 1rem;
+      padding: 0.875rem 1.25rem 0.875rem 1rem;
+      font-size: 1.25rem;
+    }
+  }
+  /* Il consiglio: una scheda con la tinta del servizio. */
+  .need-result {
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--tone-accent) 24%, transparent);
+    background: linear-gradient(165deg, var(--tone-bg), var(--color-paper) 70%);
+    padding: 1.5rem 1.25rem 1.625rem;
+    box-shadow: var(--shadow-float);
+  }
+  .need-empty {
+    display: flex;
+    min-height: 12rem;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1.125rem;
+    border-radius: var(--radius-xl);
+    border: 1.5px dashed var(--line-strong);
+    background: color-mix(in srgb, var(--color-paper) 60%, transparent);
+    padding: 1.5rem 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .need-result {
+      padding: 2.25rem;
+    }
+    .need-empty {
+      padding: 2.25rem;
+    }
+  }
+  /* Fasce orarie come pulsanti grandi. */
+  /* Le fasce di un giorno in colonne uguali: otto per riga su computer, tre su telefono. */
+}
+@keyframes journey-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes scene-pop {
+  from {
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Barra dell'intervallo e «dal referto al report» */
+/* Barra dell'intervallo: dove cade un valore rispetto all'intervallo stampato (decorativa, il testo lo dice a parole). */
+.range-bar { position: relative; display: block; height: 0.5rem; border-radius: 999px; background: var(--color-mist); }
+.range-bar > i { position: absolute; top: 0; bottom: 0; left: var(--band-start, 22%); right: calc(100% - var(--band-end, 78%)); border-radius: 999px; background: var(--color-marker); }
+.range-bar > b { position: absolute; top: 50%; width: 0.95rem; height: 0.95rem; border-radius: 999px; transform: translate(-50%, -50%); background: var(--color-teal); border: 3px solid var(--color-paper); box-shadow: 0 0 0 1px var(--color-teal); }
+.range-bar > b.out { background: var(--color-warn); box-shadow: 0 0 0 1px var(--color-warn); }
+
+/* ───────── Report «a colpo d'occhio» (ciclo 5) ─────────
+   Prima quanti numeri sono dentro o fuori dall'intervallo stampato, poi una scheda per valore con la stessa barra della home.
+   I colori non bastano mai da soli: ogni posizione è scritta a parole e ha la sua icona. */
+.range-fig { display: block; }
+.range-bar-lg { height: 0.625rem; }
+.range-bar-lg > b { width: 1.2rem; height: 1.2rem; }
+.range-ticks { position: relative; display: block; height: 1.35rem; margin-top: 0.4rem; font-size: 0.9375rem; font-weight: 600; line-height: 1.35rem; color: var(--color-muted); }
+.range-ticks > span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+.range-ticks > span.is-start { transform: none; }
+.range-ticks > span.is-end { transform: translateX(-100%); }
+
+.pos-label { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.0625rem; font-weight: 700; line-height: 1.3; color: var(--color-teal-deep); }
+.pos-ico { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; width: 1.625rem; height: 1.625rem; border-radius: 999px; background: var(--color-marker-soft); color: var(--color-teal-deep); }
+.pos-ico svg { width: 0.95rem; height: 0.95rem; }
+.pos-above-range, .pos-below-range { color: var(--color-warn); }
+.pos-above-range .pos-ico, .pos-below-range .pos-ico { background: var(--color-warn); color: var(--color-paper); }
+.pos-not-comparable { color: var(--color-muted); }
+.pos-not-comparable .pos-ico { background: var(--color-mist); color: var(--color-muted); }
+
+.paid-note { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; padding: 0.5rem 0.875rem; border-radius: 999px; background: var(--color-marker-soft); font-size: 1rem; font-weight: 700; color: var(--color-teal-deep); }
+/* Terzo giro, punti 3 e 4: nome del referto e avviso «questo referto c'è già». */
+.twin-note { padding: 0.875rem 1rem; border-radius: var(--radius-lg); border: 1px dashed color-mix(in srgb, var(--color-amber) 55%, var(--color-line)); background: color-mix(in srgb, var(--color-amber) 9%, var(--color-paper)); font-size: 1rem; line-height: 1.5; color: var(--color-ink); max-width: 42rem; }
+.rename-box { padding: 1rem 1.125rem; border-radius: var(--radius-lg); border: 1px solid var(--color-line); background: var(--color-paper); max-width: 42rem; }
+/* Su telefono resta la freccia nel cerchio: la scritta è per i lettori di schermo e la riga sopra l'elenco spiega il gesto. */
+
+/* Comando del passo: sotto i 1024 px resta attaccato al fondo dello schermo, sopra la barra dell'area personale.
+   È «sticky», non «fixed»: sta dentro la sua sezione e non dipende dalla transizione di pagina. */
+@media (max-width: 1023.98px) {
+  .step-bar { position: sticky; bottom: calc(4.75rem + env(safe-area-inset-bottom)); z-index: 20; margin-inline: -0.375rem; padding: 0.625rem; border-radius: 1.75rem; border: 1px solid var(--color-line); background: color-mix(in srgb, var(--color-paper) 94%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: var(--shadow-float); }
+  /* Il pulsante «torna su» occuperebbe lo stesso angolo. */
+  body:has(.step-bar) .back-to-top { display: none; }
+  /* Fuori dall'area (esempio pubblico) non c'è la barra in basso: il comando sta sul fondo dello schermo. */
+  .step-bar.step-bar-free { bottom: calc(0.75rem + env(safe-area-inset-bottom)); }
+  /* Nell'area personale la barra in basso porta già ovunque: il piè di pagina si riduce a marchio, 112 e note legali. */
+  body:has([data-bottom-nav]) .site-footer .grid > nav,
+  body:has([data-bottom-nav]) .site-footer .footer-payoff { display: none; }
+  body:has([data-bottom-nav]) .site-footer .scope-strong { padding-top: 3.5rem; }
+}
+/* 18/11/2026 (secondo giro, punto 4): nell'area personale, a ogni larghezza, il piè di pagina è quello di uno strumento:
+   il 112 e le note legali. Niente porte, niente elenco dei servizi, niente marchio ripetuto (è già nella testata). */
+body:has([data-bottom-nav]) .site-footer .footer-doors,
+body:has([data-bottom-nav]) .site-footer .footer-acc,
+body:has([data-bottom-nav]) .site-footer .footer-col,
+body:has([data-bottom-nav]) .site-footer .footer-payoff,
+body:has([data-bottom-nav]) .site-footer .footer-brand > a,
+body:has([data-bottom-nav]) .site-footer .footer-brand > .brand-logo,
+body:has([data-bottom-nav]) .site-footer > svg { display: none; }
+body:has([data-bottom-nav]) .site-footer .scope-strong { padding-top: 1.75rem; padding-bottom: 1.25rem; }
+body:has([data-bottom-nav]) .site-footer .footer-emergency { margin-top: 0; }
+body:has([data-bottom-nav]) .site-footer .footer-legal { margin-top: 1.25rem; }
+
+/* 18/11/2026 (secondo giro, punto 9): piè di pagina su telefono. */
+.footer-acc { margin-top: 1.75rem; border-top: 1px solid rgb(255 255 255 / 0.14); }
+.footer-acc details { border-bottom: 1px solid rgb(255 255 255 / 0.14); }
+.footer-acc summary { display: flex; align-items: center; justify-content: space-between; min-height: 3.25rem; cursor: pointer; list-style: none; font-size: 1.0625rem; font-weight: 700; color: var(--color-ink); }
+.footer-acc summary::-webkit-details-marker { display: none; }
+.footer-acc summary svg { width: 1.25rem; height: 1.25rem; color: var(--color-teal); transition: transform 180ms var(--ease-out-soft); }
+.footer-acc details[open] summary svg { transform: rotate(180deg); }
+.footer-acc ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.25rem; padding-bottom: 0.75rem; }
+@media (max-width: 767.98px) {
+  .site-footer .footer-doors { display: none; }
+  .site-footer .scope-strong { padding-top: 3.25rem; }
+  .site-footer .footer-payoff { margin-top: 1rem; font-size: 1.3125rem; }
+  .site-footer .footer-emergency { margin-top: 1.25rem; }
+  .site-footer .footer-legal { margin-top: 1.5rem; }
+}
+
+/* «Dal referto al report»: il foglio del laboratorio in alto a sinistra, inclinato; il report chiaro davanti, in basso a destra. */
+.transform-stage { position: relative; }
+.transform-doc { position: relative; width: 68%; transform: rotate(-3deg); transform-origin: 0 0; font-family: var(--font-mono); background: #fbfbf8; color: #3b4a4f; border-radius: 10px; box-shadow: var(--shadow-float); }
+.transform-report { position: relative; z-index: 2; width: 74%; margin: -4.75rem 0 0 auto; border-radius: 1.75rem; background: var(--color-paper); box-shadow: var(--shadow-float), 0 0 0 1px color-mix(in srgb, var(--color-marker) 60%, transparent); }
+.transform-arrow { position: absolute; z-index: 3; left: -1.75rem; top: 2.5rem; display: flex; height: 3.5rem; width: 3.5rem; align-items: center; justify-content: center; border-radius: 999px; background: #7be0d2; color: #0c3340; box-shadow: 0 0 0 8px rgb(123 224 210 / 0.22); }
+.transform-arrow svg { transform: rotate(40deg); }
+@media (prefers-reduced-motion: no-preference) {
+  .transform-arrow { animation: arrow-pulse 2.6s ease-in-out infinite; }
+}
+@keyframes arrow-pulse { 50% { box-shadow: 0 0 0 16px rgb(123 224 210 / 0); } }
+
+/* ───────── Punto di Partenza (V3, 11/11/2026): stesso sistema, accenti moderati per le tre nature ───────── */
+/* Le tre nature: menta = Base, azzurro = Contestuale, ambra attenuata = Non di routine. */
+
+/* Bolla con icona: stessa forma ovunque (aree, passaggi, colonne del risultato). */
+
+/* Il foglio della scheda, disegnato: decorativo, segue i token (anche nel tema scuro). */
+
+/* Avanzamento: pallini uniti da una linea; su telefono, sotto i pallini, una riga con il nome intero del passo attuale. */
+/* Su telefono i nomi dei passi non si vedono accanto ai pallini, ma restano nella lista per i lettori di schermo. */
+/* Il passo attuale, scritto per intero sotto i pallini: sta nel flusso, quindi può andare a capo senza coprire nulla. */
+/* «Passo 2 di 5 ·» e il nome del passo sono due blocchi: a capo si va solo tra l'uno e l'altro,
+   mai con «· Il» in fondo alla riga o con il punto da solo in testa. */
+/* Parole lunghe su schermi stretti: a capo dentro la scelta, mai fuori dallo schermo. */
+
+/* Le 10 aree: una card per area. */
+
+/* Avanti / Indietro: su telefono restano a portata di pollice, solo dentro il flusso. */
+/* Dentro il flusso, su telefono, «Torna su» sale sopra la barra dei pulsanti. */
+
+/* La tua mappa in breve */
+
+/* Anello di completezza: misura la mappa, non la persona. */
+
+/* Le tre colonne del risultato */
+
+/* Ponte verso il referto: una sola azione grande. */
+
+/* Landing */
+/* Una colonna vera (non «auto»): la riga più lunga non allarga più l'elenco oltre lo schermo.
+   Su telefono e tablet ogni area è icona a sinistra, titolo ed etichetta uno sotto l'altro a destra:
+   la stessa forma per tutte, con qualsiasi grandezza del testo. */
+
+/* Fase 3 · Punto di Partenza: la guida sta subito sotto la hero; le spiegazioni la seguono. */
+/* La barra «Avanti» resta attaccata solo alle risposte: non può mai salire sopra il testo della domanda. */
+
+/* Fase 3 · Facsimile del referto: identico all'originale da 640 px; su telefono le colonne vanno a capo intere.
+   Da 640 px il carattere si regola sulla riga più lunga (--facs-chars), così il documento entra intero nel riquadro;
+   se una riga è davvero troppo lunga scorre il riquadro, mai la pagina. */
+
+/* ───────── Salute nel tempo e famiglia (13/11/2026) ─────────
+   Persone (cerchi con le iniziali), scelta della persona, grafico dell'andamento, promemoria con la data a calendario.
+   Solo token del tema: funziona in chiaro, in scuro e con il testo grande. */
+.persona-avatar { display: inline-grid; flex-shrink: 0; place-items: center; border-radius: 999px; font-weight: 800; letter-spacing: 0.02em; line-height: 1; }
+.persona-avatar-sm { width: 2.5rem; height: 2.5rem; font-size: 0.9375rem; }
+.persona-avatar-md { width: 3.25rem; height: 3.25rem; font-size: 1.0625rem; }
+.persona-avatar-lg { width: 4.25rem; height: 4.25rem; font-size: 1.375rem; }
+.persona-tone-io { background: var(--color-strong); color: var(--color-on-strong); }
+.persona-tone-0 { background: var(--color-tint-medico); color: var(--color-accent-medico); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-accent-medico) 30%, transparent); }
+.persona-tone-1 { background: var(--color-tint-parere); color: var(--color-accent-parere); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-accent-parere) 30%, transparent); }
+.persona-tone-2 { background: var(--color-marker-soft); color: var(--color-teal-deep); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-teal) 30%, transparent); }
+.persona-tone-3 { background: var(--color-cream); color: var(--color-warn); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-warn) 30%, transparent); }
+.persona-tone-4 { background: var(--color-mist); color: var(--color-ink); box-shadow: inset 0 0 0 1.5px var(--color-line); }
+.persona-tone-5 { background: var(--color-tint-capisci); color: var(--color-sage-deep); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-sage) 30%, transparent); }
+
+.persona-switch { display: flex; flex-wrap: wrap; gap: 0.625rem; }
+.persona-pill { display: flex; min-height: 3.5rem; min-width: 0; max-width: 100%; align-items: center; gap: 0.75rem; border-radius: 999px; border: 1.5px solid var(--color-line); background: var(--color-paper); padding: 0.375rem 1.25rem 0.375rem 0.375rem; font-size: 1.0625rem; line-height: 1.2; color: var(--color-ink); transition: border-color 0.15s, background-color 0.15s; }
+.persona-pill:hover { border-color: var(--color-teal); }
+.persona-pill-on { border-color: var(--color-teal); background: var(--color-marker-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-teal) 14%, transparent); }
+
+/* Grafico dell'andamento: fascia dell'intervallo stampato, linea sottile, un punto per referto. */
+
+/* Promemoria: la data come un foglietto di calendario. */
+.rem-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1rem; align-items: start; border-radius: var(--radius-xl); border: 1px solid var(--color-line); background: var(--color-paper); padding: 1rem; box-shadow: var(--shadow-card); }
+@media (min-width: 640px) { .rem-card { gap: 1.25rem; padding: 1.25rem 1.5rem; } }
+.rem-card.is-done { box-shadow: none; background: var(--color-canvas); }
+.rem-card.is-soon { border-color: color-mix(in srgb, var(--color-teal) 40%, var(--color-line)); }
+.rem-date { display: flex; width: 4.25rem; flex-direction: column; align-items: center; overflow: hidden; border-radius: 1rem; border: 1.5px solid var(--color-line); background: var(--color-paper); text-align: center; line-height: 1; }
+.rem-date-month { width: 100%; background: var(--color-strong); padding: 0.3125rem 0; font-size: 0.875rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-on-strong); }
+.rem-date-day { padding: 0.5rem 0 0.125rem; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; color: var(--color-ink); font-variant-numeric: tabular-nums; }
+.rem-date-year { padding-bottom: 0.4375rem; font-size: 0.875rem; font-weight: 700; color: var(--color-muted); }
+.rem-card.is-done .rem-date { opacity: 0.6; }
+.rem-when { display: inline-flex; align-items: center; gap: 0.375rem; border-radius: 999px; background: var(--color-marker-soft); padding: 0.125rem 0.75rem; font-size: 0.9375rem; font-weight: 800; color: var(--color-teal-deep); }
+.rem-when.is-past { background: var(--color-mist); color: var(--color-muted); }
+
+/* Famiglia: una scheda per persona. */
+.fam-card { display: flex; min-width: 0; flex-direction: column; gap: 1rem; border-radius: var(--radius-xl); border: 1px solid var(--color-line); background: var(--color-paper); padding: 1.25rem; box-shadow: var(--shadow-card); }
+.fam-card-self { background: radial-gradient(20rem 10rem at 100% 0%, color-mix(in srgb, var(--color-marker) 22%, transparent), transparent 70%), var(--color-paper); }
+.fam-facts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.fam-fact { display: inline-flex; min-height: 2.25rem; align-items: center; gap: 0.4375rem; border-radius: 999px; background: var(--color-mist); padding: 0 0.875rem; font-size: 0.9375rem; font-weight: 700; color: var(--color-ink-soft); }
+
+/* Striscia della famiglia nel cruscotto. */
+.fam-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 0.75rem; }
+.fam-strip-item { display: flex; min-height: 4.5rem; min-width: 0; align-items: center; gap: 0.875rem; border-radius: 1.25rem; border: 1px solid var(--color-line); background: var(--color-paper); padding: 0.75rem 1rem; transition: border-color 0.15s; }
+.fam-strip-item:hover { border-color: var(--color-teal); }
+
+/* Pagina pubblica «Famiglia»: le tre ragioni per restare, con un pezzo vero di prodotto. */
+.fam-hero-stack { position: relative; display: grid; gap: 1rem; }
+.fam-hero-stack > * { min-width: 0; }
+@media (min-width: 1024px) {
+  .fam-hero-stack { padding: 1rem 0 1rem 2rem; }
+  .fam-hero-stack > :nth-child(2) { margin-left: -2.5rem; margin-right: 2.5rem; }
+}
+.fam-pillars { display: grid; gap: 1.25rem; }
+@media (min-width: 900px) { .fam-pillars { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.fam-pillar { display: flex; min-width: 0; flex-direction: column; gap: 1rem; border-radius: var(--radius-xl); border: 1px solid var(--color-line); background: var(--color-paper); padding: 1.5rem; box-shadow: var(--shadow-card); }
+.fam-pillar-num { display: inline-grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: 999px; background: var(--color-strong); font-size: 1.0625rem; font-weight: 800; color: var(--color-on-strong); }
+.fam-plan { position: relative; overflow: hidden; border-radius: var(--radius-xl); border: 1.5px solid color-mix(in srgb, var(--color-teal) 40%, var(--color-line)); background: radial-gradient(30rem 16rem at 100% 0%, color-mix(in srgb, var(--color-marker) 26%, transparent), transparent 66%), var(--color-paper); padding: 1.75rem 1.5rem; box-shadow: var(--shadow-lift); }
+@media (min-width: 640px) { .fam-plan { padding: 2.5rem; } }
+.fam-plan-price { font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--color-ink); font-variant-numeric: tabular-nums; }
+.fam-proposal { display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 999px; border: 1.5px dashed color-mix(in srgb, var(--color-warn) 55%, transparent); background: var(--color-cream); padding: 0.25rem 0.875rem; font-size: 0.9375rem; font-weight: 800; color: var(--color-warn); }
+
+@media print {
+  .rem-card, .fam-card { box-shadow: none; break-inside: avoid; }
+}
+
+/* Home (13/11/2026): la promessa è il titolo, i tre servizi diventano il filo sotto, più piccolo. */
+/* Home, sezione Famiglia (13/11/2026): tre voci brevi in riga, al posto di un elenco lungo. */
+
+/* «Presto anche con un medico» (13/11/2026): blocco discreto, senza prezzi. */
+.presto-medico { display: flex; flex-direction: column; gap: 1.25rem; border-radius: var(--radius-xl); border: 1px dashed color-mix(in srgb, var(--color-accent-medico) 35%, var(--color-line)); background: color-mix(in srgb, var(--color-tint-medico) 45%, var(--color-paper)); padding: 1.5rem; }
+@media (min-width: 768px) { .presto-medico { flex-direction: row; align-items: center; justify-content: space-between; padding: 1.75rem 2rem; } }
+.presto-medico-kicker { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent-medico); }
+.presto-medico-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: currentColor; opacity: 0.7; }
+.presto-medico-title { margin-top: 0.375rem; font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem); font-weight: 800; line-height: 1.15; color: var(--color-ink); }
+.presto-medico-lead { margin-top: 0.375rem; max-width: 40rem; font-size: 1.0625rem; line-height: 1.5; color: var(--color-ink-soft); }
+/* Le tre righe «Che cosa arriverà» della pagina /con-un-medico (non sono collegamenti). */
+
+/* 18/11/2026 (secondo giro, punto 4): le voci dell'area personale nel menu della testata, su telefono. */
+.menu-area { margin-bottom: 0.25rem; }
+.menu-area-who { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.25rem 1rem; padding: 0.5rem 0 0.5rem; }
+.menu-area-label { font-size: 0.875rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-teal); }
+.menu-area-name { min-width: 0; overflow-wrap: anywhere; font-size: 1rem; font-weight: 600; color: var(--color-ink-soft); }
+
+/* 18/11/2026 (secondo giro, punto 13): glossario su telefono, una riga per lettera che si apre al tocco. */
+.gl-head-btn { display: none; }
+@media (max-width: 639.98px) {
+  .gl-body { margin-top: 0; }
+  .gl-body.space-y-10 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
+  .gl-sec .gl-head-plain { display: none; }
+  .gl-sec .letter-head { font-size: 1rem; line-height: 1.3; }
+  .gl-head-btn { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr) auto; align-items: center; column-gap: 0.75rem; width: 100%; min-height: 3.5rem; padding: 0.5rem 0.875rem; border-radius: var(--radius-lg); border: 1px solid var(--color-line); background: var(--color-paper); text-align: left; cursor: pointer; }
+  .gl-head-letter { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 800; line-height: 1; color: var(--color-teal-deep); }
+  .gl-head-sample { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-sans); font-size: 1rem; font-weight: 500; color: var(--color-ink-soft); }
+  .gl-head-btn svg { width: 1.25rem; height: 1.25rem; color: var(--color-teal); transition: transform 180ms var(--ease-out-soft); }
+  .gl-sec[data-open] .gl-head-btn svg { transform: rotate(180deg); }
+  .gl-sec:not([data-open]) > .term-list { display: none; }
+  .gl-sec[data-open] > .term-list { margin-top: 0.5rem; margin-bottom: 0.75rem; }
+}
+@media print {
+  .gl-head-btn { display: none !important; }
+  .gl-sec .gl-head-plain { display: inline !important; }
+  .gl-sec > .term-list { display: block !important; }
+}
+
+/* 18/11/2026 (secondo giro, punto 14): la guida stampata è solo la guida. Fuori barra delle sezioni, pulsanti, riquadri
+   di collegamenti e inviti; dentro titolo, «In breve», testo, domande per il medico, domande frequenti, fonti e data. */
+@media print {
+  .article-body nav[aria-label="Percorso"],
+  .article-body .breadcrumbs,
+  .article-body .next-card,
+  .article-body .cat-badge,
+  .article-body .reading-progress,
+  .article-body .faq-plus { display: none !important; }
+  .article-body .guide-prose { max-width: none; }
+  .article-body .grid { display: block; }
+  .article-body .guide-top { display: block; }
+  .article-body .wow-guide-head,
+  .article-body .guide-brief,
+  .article-body .guide-box,
+  .article-body .wow-paper,
+  .article-body .faq-list { box-shadow: none !important; background: none !important; }
+  .article-body .wow-guide-head { margin-top: 0; padding: 0; border: 0; }
+  .article-body .guide-brief { margin-top: 1rem; padding: 0.75rem 1rem; }
+  .article-body .guide-brief dl { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .article-body .guide-prose > * + * { margin-top: 0.875rem; }
+  .article-body .guide-h2 { break-after: avoid; }
+  .article-body .guide-box, .article-body .wow-paper, .article-body .faq-list details { break-inside: avoid; }
+  .article-body .faq-list { border: 0 !important; padding: 0 !important; border-radius: 0 !important; overflow: visible !important; }
+  .article-body .faq-list details { overflow: visible !important; border-radius: 0 !important; }
+  .article-body .faq-list details { border: 0; padding: 0.25rem 0; }
+  .article-body .faq-list summary { min-height: 0; padding: 0; font-weight: 700; }
+  .article-body .faq-answer { padding: 0.125rem 0 0.375rem; }
+  .article-body a { text-decoration: none; color: inherit; }
+  .article-body .link-list a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8125rem; word-break: break-all; }
+  .print-foot { display: block; margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid #999; font-size: 0.8125rem; line-height: 1.4; }
+  .article-body { font-size: 10.5pt; }
+  .article-body .guide-prose p, .article-body .guide-prose li, .article-body .guide-brief dd { font-size: 10.5pt; line-height: 1.4; }
+  .article-body .guide-h2 { font-size: 14pt; }
+  .article-body .guide-box, .article-body .wow-paper { padding: 0.5rem 0.875rem; }
+  .article-body .mt-12 { margin-top: 1rem; }
+  .article-body .page-title { font-size: 22pt; }
+  .article-body .lead { font-size: 12pt; }
+}
+
+/* Quarto giro, punto 9: segnaposto del titolo di /accedi mentre arriva la pagina (nessun h1 provvisorio). */
+.login-heading-placeholder { min-height: 17rem; }
+@media (min-width: 64rem) { .login-heading-placeholder { min-height: 19rem; } }
+
+/* ───────── 22/11/2026: menu in cinque passi (Simone, «Riorganizzare menu e percorso del paziente») ───────── */
+.nav-step { gap: 0.4rem; }
+@media (min-width: 1024px) and (max-width: 1159.98px) { .nav-link.nav-step { padding-inline: 0.3rem; font-size: 0.875rem; } .nav-step { gap: 0.25rem; } .site-header-row { gap: 0.5rem; } }
+.nav-step-n { width: 1.5rem; height: 1.5rem; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 0.875rem; font-weight: 800; border: 1.5px solid var(--color-teal); color: var(--color-teal); }
+.nav-step[aria-current="page"] .nav-step-n { background: var(--color-teal); color: var(--color-paper); }
+.nav-step-cuore .nav-step-n { border-color: var(--color-accent-medico); color: var(--color-accent-medico); }
+.nav-step-cuore[aria-current="page"] .nav-step-n { background: var(--color-accent-medico); color: var(--color-paper); }
+.menu-me { display: flex; align-items: center; gap: 0.875rem; margin-top: 0.5rem; padding: 0.875rem 0.875rem 0.875rem 1rem; border-radius: 1.25rem; background: var(--color-strong); color: var(--color-on-strong); }
+.menu-me b { display: block; font-size: 1.125rem; font-weight: 800; }
+.menu-me small { display: block; font-size: 0.9375rem; line-height: 1.35; color: var(--color-on-strong-soft); }
+.menu-me > svg:last-child { margin-left: auto; flex: none; }
+.menu-me-av { width: 2.75rem; height: 2.75rem; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--color-teal); color: #fff; font-weight: 800; font-size: 1.0625rem; }
+.menu-me-av svg { width: 1.25rem; height: 1.25rem; }
+.menu-grp { margin: 1.25rem 0 0.375rem; padding-left: 0.25rem; font-size: 0.8125rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-muted); }
+.menu-steps { position: relative; display: grid; gap: 0.125rem; margin: 0; padding: 0; list-style: none; }
+.menu-steps::before { content: ""; position: absolute; left: 1.625rem; top: 1.75rem; bottom: 1.75rem; width: 2px; background: var(--color-line); }
+.menu-step-a { position: relative; display: flex; align-items: center; gap: 0.875rem; min-height: 3.75rem; padding: 0.4375rem 0.5rem 0.4375rem 0.25rem; border-radius: 1.125rem; color: var(--color-ink); transition: background-color 150ms var(--ease-out-soft); }
+.menu-step-a:hover, .menu-step-a[aria-current="page"] { background: var(--color-mist); }
+.menu-step-n { position: relative; z-index: 1; width: 2.75rem; height: 2.75rem; flex: none; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--color-teal); background: var(--color-canvas); color: var(--color-teal); font-weight: 800; font-size: 1.0625rem; }
+.menu-step-a[aria-current="page"] .menu-step-n { background: var(--color-teal); color: var(--color-paper); }
+.menu-step-t { min-width: 0; flex: 1; }
+.menu-step-t b { display: block; font-size: 1.125rem; font-weight: 800; letter-spacing: -0.01em; line-height: 1.25; }
+.menu-step-t small { display: block; font-size: 0.9375rem; line-height: 1.35; color: var(--color-muted); }
+.menu-step-ic { width: 1.25rem; height: 1.25rem; flex: none; color: var(--color-muted); }
+.menu-step-cuore .menu-step-n { border-color: var(--color-accent-medico); background: var(--color-tint-medico); color: var(--color-accent-medico); }
+.menu-step-cuore .menu-step-a[aria-current="page"] .menu-step-n { background: var(--color-accent-medico); color: var(--color-paper); }
+.menu-step-tag { display: inline-block; margin-left: 0.4rem; padding: 0.0625rem 0.5rem; border-radius: 999px; vertical-align: 0.125rem; background: var(--color-tint-medico); color: var(--color-accent-medico); font-size: 0.6875rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+.menu-cons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.menu-cons-a { display: grid; gap: 0.125rem; height: 100%; padding: 0.75rem 0.875rem; border-radius: 1rem; border: 1px solid var(--color-line); background: var(--color-paper); color: var(--color-ink); }
+.menu-cons-a:hover, .menu-cons-a[aria-current="page"] { background: var(--color-mist); }
+.menu-cons-a svg { width: 1.25rem; height: 1.25rem; color: var(--color-teal); margin-bottom: 0.25rem; }
+.menu-cons-a b { font-size: 1rem; font-weight: 800; line-height: 1.25; overflow-wrap: anywhere; }
+.menu-cons-a small { font-size: 0.875rem; line-height: 1.3; color: var(--color-muted); }
+.menu-foot { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin: 1.125rem 0 0; padding: 0 0.25rem; list-style: none; }
+.menu-foot a { font-size: 1rem; color: var(--color-muted); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ───────── 27/11/2026 (fase 2) · Una sola veste: i titoli del sito come quelli della home ─────────
+   Prima c'erano due scale: la home (Fraunces 560, tracciatura leggera) e il resto del sito («Luce»: Manrope 800,
+   tracciatura stretta). Ora titoli di pagina, di sezione e di riquadro usano la stessa voce della home.
+   I numeri (.num, .stat-num, prezzi) restano in Manrope: si leggono meglio. */
+@layer components {
+  .display,
+  .display-xl,
+  .display-lg,
+  .display-md,
+  .page-title,
+  .box-title,
+  .prose-rc h2,
+  .guide-h2,
+  .area-h2,
+  .letter-head,
+  .guide-card-title {
+    font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+    font-weight: 560;
+    letter-spacing: -0.014em;
+  }
+  .display-xl,
+  .page-title {
+    line-height: 1.06;
+  }
+  :root[data-theme="dark"] :is(.display, .display-xl, .display-lg, .display-md, .page-title, .box-title, .prose-rc h2, .guide-h2, .area-h2, .letter-head, .guide-card-title) {
+    font-weight: 480;
+  }
+}
+
+/* 27/11/2026 (fase 2): su telefono una tabella a tre colonne diventa una scheda per riga, con l'etichetta accanto
+   a ogni dato. Prima la terza colonna («Conservazione») restava fuori dallo schermo senza che si capisse. */
+@layer components {
+  @media (max-width: 639.98px) {
+    table.rc-stack thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+    table.rc-stack,
+    table.rc-stack tbody,
+    table.rc-stack tr,
+    table.rc-stack td {
+      display: block;
+    }
+    table.rc-stack tr {
+      padding-block: 0.5rem;
+    }
+    table.rc-stack td {
+      padding-block: 0.25rem;
+    }
+    table.rc-stack td[data-label]:not(:first-child)::before {
+      content: attr(data-label) ": ";
+      font-weight: 700;
+      color: var(--color-ink);
+    }
+  }
+}
+
+/* 27/11/2026 (fase 3): «Il passo successivo» in fondo alle pagine lunghe. */
+@layer components {
+  .prossimo-passo {
+    padding-block: 2rem 2.5rem;
+  }
+  .prossimo-passo-box {
+    max-width: 40rem;
+  }
+  .prossimo-passo-k {
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-teal-deep);
+  }
+  .prossimo-passo-link {
+    margin-top: 0.75rem;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 4.5rem;
+    padding: 0.875rem 1.125rem;
+    border-radius: 22px;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    text-decoration: none;
+    box-shadow: var(--shadow-card);
+  }
+  .prossimo-passo-link:hover {
+    border-color: var(--color-teal);
+  }
+  .prossimo-passo-link b {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+  .prossimo-passo-link small {
+    display: block;
+    margin-top: 0.125rem;
+    font-size: 0.9375rem;
+    color: var(--color-ink-soft);
+  }
+  .prossimo-passo-n {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    font-weight: 800;
+    background: var(--color-strong);
+    color: var(--color-on-strong);
+  }
+}

@@ -1,0 +1,94 @@
+/*
+ * «La tua guida personale» nel report (19/11/2026). Veste della tessera 4 della home «chiara e scura».
+ * Le due luci si escludono come nel resto del sito; testo mai sotto i 14 px; righe alte almeno 56 px (tocco comodo).
+ */
+.gp{position:relative;isolation:isolate;overflow:hidden;border-radius:26px;padding:1.3rem 1.05rem 1.2rem;scroll-margin-top:7rem}
+@media (min-width:640px){.gp{padding:1.75rem 1.75rem 1.5rem}}
+.gp-h{display:flex;gap:.9rem;align-items:flex-start}
+.gp-ico{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;flex:none}
+.gp-svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.gp-kicker{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:0;font-size:.875rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+.gp-chip{display:inline-flex;align-items:center;padding:.16rem .6rem;border-radius:999px;font-size:.875rem;font-weight:800;letter-spacing:.02em;text-transform:none}
+.gp-title{margin:.35rem 0 0;font-family:var(--font-fraunces),Georgia,"Times New Roman",serif;font-weight:560;font-size:clamp(1.6rem,4vw,2.1rem);line-height:1.1;letter-spacing:-.012em;text-wrap:balance}
+.gp-lead{margin:.5rem 0 0;font-size:1.0625rem;line-height:1.5}
+.gp-gruppi{display:grid;gap:12px;margin-top:1.25rem}
+@media (min-width:900px){.gp-gruppi{grid-template-columns:repeat(2,minmax(0,1fr))}.gp-esempio .gp-gruppi{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.gp-g{border-radius:20px;padding:.85rem .7rem .7rem;min-width:0}
+.gp-g-t{display:flex;align-items:center;gap:.65rem;margin:0 0 .4rem;padding-inline:.2rem;font-size:1.0625rem;font-weight:800;line-height:1.3}
+.gp-wi{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none}
+.gp-wi .gp-svg{width:24px;height:24px}
+.gp-rows{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.gp-row{display:flex;align-items:center;gap:.75rem;min-height:56px;padding:.6rem .7rem;border-radius:14px;text-decoration:none;color:inherit;transition:background-color .2s,box-shadow .2s}
+.gp-row b{display:block;font-size:1rem;font-weight:800;line-height:1.3}
+.gp-row small{display:block;margin-top:.15rem;font-size:.9375rem;line-height:1.45}
+.gp-go{width:20px;height:20px;flex:none;margin-left:auto;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:translate .2s}
+.gp-row:hover .gp-go{translate:3px 0}
+.gp-row:focus-visible{outline:3px solid var(--color-focus);outline-offset:2px}
+.gp-note{margin:1rem 0 0;font-size:.9375rem;line-height:1.5}
+
+/* Nel report, su telefono, la guida è una scheda che si apre (guida-apribile.tsx): il report resta corto (ciclo 5). */
+.gp-sommario{list-style:none;margin:1.1rem 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.gp-sommario li{display:inline-flex;align-items:center;gap:.5rem;min-height:40px;padding:.3rem .8rem .3rem .3rem;border-radius:999px;font-size:.9375rem;font-weight:800;line-height:1.25}
+.gp-si{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;flex:none}
+.gp-si .gp-svg{width:21px;height:21px}
+.gp-apri{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;min-height:56px;margin-top:1rem;padding:.75rem 1.1rem;border:0;border-radius:16px;font:inherit;font-size:1.0625rem;font-weight:800;line-height:1.25;cursor:pointer;transition:background-color .2s,box-shadow .2s}
+.gp-apri svg{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:rotate .2s}
+.gp-apribile.is-open .gp-apri svg{rotate:180deg}
+.gp-apri:focus-visible{outline:3px solid var(--color-focus);outline-offset:3px}
+@media (max-width:899.98px){.gp-apribile:not(.is-open) .gp-corpo{display:none}.gp-apribile.is-open .gp-sommario{display:none}}
+/* Nella pagina Lettura referti, su telefono, titolo e temi della scheda d'esempio li dice già la sezione: resta il pulsante. */
+@media (max-width:899.98px){.gp-esempio .gp-title,.gp-esempio .gp-sommario{display:none}.gp-esempio .gp-h{align-items:center}}
+@media (min-width:900px){.gp-apri,.gp-sommario{display:none}}
+@media print{.gp-apribile .gp-corpo{display:block!important}.gp-apri,.gp-sommario{display:none!important}}
+
+/* Luce chiara */
+:root:not([data-theme="dark"]) .gp{color:#10303b;background:radial-gradient(95% 46% at 100% 0%,#d3f5ee 0%,#fff 66%);border:2px solid #7be0d2;box-shadow:inset 0 1px 0 #fff,0 0 0 5px rgba(123,224,210,.16),0 30px 54px -30px rgba(0,117,111,.6)}
+:root:not([data-theme="dark"]) .gp-kicker{color:#00756f}
+:root:not([data-theme="dark"]) .gp-chip{background:#cff3ec;color:#00665f}
+:root:not([data-theme="dark"]) .gp-ico{background:#cff3ec;color:#00756f;box-shadow:0 0 0 1px rgba(0,117,111,.14),0 8px 14px -10px rgba(0,117,111,.7)}
+:root:not([data-theme="dark"]) .gp-lead{color:#2e4c57}
+:root:not([data-theme="dark"]) .gp-note{color:#4f676e}
+:root:not([data-theme="dark"]) .gp-k-integratori{--ga:#7a5310;--gb:#fbf1d3}
+:root:not([data-theme="dark"]) .gp-k-alimentazione{--ga:#47701b;--gb:#ebf3df}
+:root:not([data-theme="dark"]) .gp-k-intestino{--ga:#9b3f33;--gb:#f8e9e6}
+:root:not([data-theme="dark"]) .gp-k-esami{--ga:#00665f;--gb:#e2f6f0}
+:root:not([data-theme="dark"]) .gp-k-visita{--ga:#1f5a82;--gb:#e6f0f8}
+:root:not([data-theme="dark"]) .gp-g{background:radial-gradient(90% 70% at 100% 0%,var(--gb),transparent 62%),#fff;border:1px solid color-mix(in srgb,var(--ga) 16%,transparent);box-shadow:0 14px 24px -22px color-mix(in srgb,var(--ga) 70%,transparent)}
+:root:not([data-theme="dark"]) .gp-g-t{color:#10303b}
+:root:not([data-theme="dark"]) .gp-wi{background:var(--gb);color:var(--ga);box-shadow:0 0 0 1px color-mix(in srgb,var(--ga) 14%,transparent)}
+:root:not([data-theme="dark"]) .gp-row small{color:#2e4c57}
+:root:not([data-theme="dark"]) .gp-go{color:var(--ga)}
+:root:not([data-theme="dark"]) .gp-row:hover{background:color-mix(in srgb,var(--gb) 55%,transparent)}
+:root:not([data-theme="dark"]) .gp-row.is-out{background:color-mix(in srgb,var(--gb) 62%,#fff);box-shadow:inset 3px 0 0 var(--ga)}
+:root:not([data-theme="dark"]) .gp-sommario li{background:var(--gb);color:#10303b;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ga) 18%,transparent)}
+:root:not([data-theme="dark"]) .gp-si{background:#fff;color:var(--ga)}
+:root:not([data-theme="dark"]) .gp-apri{background:#00756f;color:#fff;box-shadow:0 12px 22px -14px rgba(0,117,111,.85)}
+:root:not([data-theme="dark"]) .gp-apri:hover{background:#00635e}
+:root:not([data-theme="dark"]) .gp-apribile.is-open .gp-apri{background:#e2f6f0;color:#00665f;box-shadow:inset 0 0 0 1.5px #7be0d2}
+
+/* Luce scura */
+:root[data-theme="dark"] .gp{color:#f3f9f9;background:radial-gradient(95% 46% at 100% 0%,rgba(123,224,210,.2) 0%,transparent 66%),linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.025)),#0b2630;border:1.5px solid rgba(123,224,210,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 0 5px rgba(123,224,210,.07),0 26px 44px -30px rgba(123,224,210,.35)}
+:root[data-theme="dark"] .gp-kicker{color:#7be0d2}
+:root[data-theme="dark"] .gp-chip{background:transparent;box-shadow:inset 0 0 0 1px rgba(123,224,210,.65);color:#7be0d2}
+:root[data-theme="dark"] .gp-ico{background:rgba(123,224,210,.16);color:#7be0d2;box-shadow:inset 0 0 0 1px rgba(123,224,210,.45)}
+:root[data-theme="dark"] .gp-lead{color:rgba(255,255,255,.84)}
+:root[data-theme="dark"] .gp-note{color:rgba(255,255,255,.72)}
+:root[data-theme="dark"] .gp-k-integratori{--ga:#ffd98a;--gg:255,210,122}
+:root[data-theme="dark"] .gp-k-alimentazione{--ga:#bfe58c;--gg:181,224,122}
+:root[data-theme="dark"] .gp-k-intestino{--ga:#ffab9c;--gg:255,159,142}
+:root[data-theme="dark"] .gp-k-esami{--ga:#6fe0d0;--gg:95,211,196}
+:root[data-theme="dark"] .gp-k-visita{--ga:#8cc3f5;--gg:125,184,238}
+:root[data-theme="dark"] .gp-g{background:radial-gradient(120% 95% at 100% 0%,rgba(var(--gg),.18),transparent 62%),rgba(4,19,25,.45);border:1px solid rgba(255,255,255,.12)}
+:root[data-theme="dark"] .gp-g-t{color:#fff}
+:root[data-theme="dark"] .gp-wi{background:rgba(var(--gg),.17);color:var(--ga);box-shadow:inset 0 0 0 1px rgba(var(--gg),.42)}
+:root[data-theme="dark"] .gp-row small{color:rgba(255,255,255,.8)}
+:root[data-theme="dark"] .gp-go{color:var(--ga)}
+:root[data-theme="dark"] .gp-row:hover{background:rgba(255,255,255,.06)}
+:root[data-theme="dark"] .gp-row.is-out{background:rgba(var(--gg),.1);box-shadow:inset 3px 0 0 var(--ga)}
+:root[data-theme="dark"] .gp-sommario li{background:rgba(var(--gg),.12);color:#fff;box-shadow:inset 0 0 0 1px rgba(var(--gg),.38)}
+:root[data-theme="dark"] .gp-si{background:rgba(var(--gg),.18);color:var(--ga)}
+:root[data-theme="dark"] .gp-apri{background:#7be0d2;color:#06222a;box-shadow:0 14px 26px -16px rgba(123,224,210,.7)}
+:root[data-theme="dark"] .gp-apri:hover{background:#9be9de}
+:root[data-theme="dark"] .gp-apribile.is-open .gp-apri{background:transparent;color:#7be0d2;box-shadow:inset 0 0 0 1.5px rgba(123,224,210,.65)}
+
+@media (prefers-reduced-motion:reduce){.gp-row,.gp-go,.gp-apri,.gp-apri svg{transition:none}}

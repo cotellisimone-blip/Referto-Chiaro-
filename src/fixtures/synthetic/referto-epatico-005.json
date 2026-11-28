@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0",
+  "documentId": "demo-referto-epatico-005",
+  "documentKind": "laboratory-text-report",
+  "isSynthetic": true,
+  "language": "it",
+  "displayTitle": "Funzionalità epatica — esempio sintetico",
+  "laboratoryName": "Poliambulatorio Dimostrativo (struttura inesistente)",
+  "patientLabel": "Persona di esempio — nessuna persona reale",
+  "reportDate": "2026-08-15",
+  "pageCount": 1,
+  "extractionVersion": "extractor-fixture-v1",
+  "sourceLines": [
+    {
+      "page": 1,
+      "line": 1,
+      "text": "POLIAMBULATORIO DIMOSTRATIVO — FACSIMILE"
+    },
+    {
+      "page": 1,
+      "line": 2,
+      "text": "Paziente: PERSONA DI ESEMPIO   Data prelievo: 15/08/2026"
+    },
+    {
+      "page": 1,
+      "line": 3,
+      "text": "ESAME                         RISULTATO   UNITÀ    INTERVALLO"
+    },
+    {
+      "page": 1,
+      "line": 4,
+      "text": "AST (GOT)                     24          U/L      < 40"
+    },
+    {
+      "page": 1,
+      "line": 5,
+      "text": "ALT (GPT)                     31          U/L      < 41"
+    },
+    {
+      "page": 1,
+      "line": 6,
+      "text": "Gamma GT                      28          U/L      < 60"
+    },
+    {
+      "page": 1,
+      "line": 7,
+      "text": "Bilirubina totale             0,7         mg/dL    0,2 - 1,2"
+    },
+    {
+      "page": 1,
+      "line": 8,
+      "text": "Fosfatasi alcalina            71          U/L      40 - 130"
+    },
+    {
+      "page": 1,
+      "line": 9,
+      "text": "Albumina                      4,4         g/dL     3,5 - 5,2"
+    },
+    {
+      "page": 1,
+      "line": 10,
+      "text": "Documento dimostrativo. Valori inventati, nessun dato reale."
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-01",
+      "nameRaw": "AST (GOT)",
+      "valueRaw": "24",
+      "unitRaw": "U/L",
+      "referenceRaw": "< 40",
+      "sourcePage": 1,
+      "sourceLine": 4,
+      "sourceTextExact": "AST (GOT)                     24          U/L      < 40",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-02",
+      "nameRaw": "ALT (GPT)",
+      "valueRaw": "31",
+      "unitRaw": "U/L",
+      "referenceRaw": "< 41",
+      "sourcePage": 1,
+      "sourceLine": 5,
+      "sourceTextExact": "ALT (GPT)                     31          U/L      < 41",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-03",
+      "nameRaw": "Gamma GT",
+      "valueRaw": "28",
+      "unitRaw": "U/L",
+      "referenceRaw": "< 60",
+      "sourcePage": 1,
+      "sourceLine": 6,
+      "sourceTextExact": "Gamma GT                      28          U/L      < 60",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-04",
+      "nameRaw": "Bilirubina totale",
+      "valueRaw": "0,7",
+      "unitRaw": "mg/dL",
+      "referenceRaw": "0,2 - 1,2",
+      "sourcePage": 1,
+      "sourceLine": 7,
+      "sourceTextExact": "Bilirubina totale             0,7         mg/dL    0,2 - 1,2",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-05",
+      "nameRaw": "Fosfatasi alcalina",
+      "valueRaw": "71",
+      "unitRaw": "U/L",
+      "referenceRaw": "40 - 130",
+      "sourcePage": 1,
+      "sourceLine": 8,
+      "sourceTextExact": "Fosfatasi alcalina            71          U/L      40 - 130",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-06",
+      "nameRaw": "Albumina",
+      "valueRaw": "4,4",
+      "unitRaw": "g/dL",
+      "referenceRaw": "3,5 - 5,2",
+      "sourcePage": 1,
+      "sourceLine": 9,
+      "sourceTextExact": "Albumina                      4,4         g/dL     3,5 - 5,2",
+      "parseConfidence": "high",
+      "warnings": []
+    }
+  ],
+  "notice": "Questa è una simulazione con dati inventati. Nessun esame di una persona reale è stato elaborato. Gli intervalli fanno parte del facsimile e non sono valori di riferimento universali."
+}

@@ -1,0 +1,104 @@
+import { domicilioEnabled, mediciEnabled } from "@/lib/medici";
+
+export interface FaqItem {
+  q: string;
+  a: string;
+  topic: "servizio" | "dati" | "medico" | "pagamenti";
+}
+
+/** Domande frequenti del sito. Nessun prezzo scritto a mano: i prezzi stanno nel listino e nella pagina Prezzi. */
+const FAQ_CON_MEDICI: FaqItem[] = [
+  {
+    topic: "servizio",
+    q: "State facendo una diagnosi?",
+    a: "No. La spiegazione automatica è informativa: dice che cosa misura un esame e riporta i numeri esattamente come sono stampati. Che cosa significano per te lo valuta un medico.",
+  },
+  {
+    topic: "servizio",
+    q: "L'intelligenza artificiale può sbagliare?",
+    a: "Sì. Per questo ogni valore mostra la riga del documento da cui proviene e ti chiediamo di controllarlo prima di andare avanti. Se un dato non si legge, non lo spieghiamo: non tiriamo a indovinare. In questa versione dimostrativa le spiegazioni sono testi fissi, non generati da un modello.",
+  },
+  {
+    topic: "servizio",
+    q: "Perché pagare, se un'AI gratuita legge il referto?",
+    a: "Una chat gratuita spiega bene molte parole. Qui ogni numero torna alla riga del tuo referto, si confronta con l'intervallo del tuo laboratorio, ci fermiamo se un dato non si legge e non diamo mai diagnosi o dosi. Lo spieghiamo per esteso nella pagina «Cura Privata o un'AI gratuita?», con i casi in cui la risposta gratuita basta.",
+  },
+  {
+    topic: "servizio",
+    q: "Quali documenti si possono spiegare?",
+    a: "La prima versione è pensata per i referti di laboratorio in formato testo, come gli esami del sangue. Non legge immagini diagnostiche (TAC, RM, ecografie) e non tratta referti istologici, genetici, in gravidanza o di minori.",
+  },
+  {
+    topic: "servizio",
+    q: "E se penso di avere un'emergenza?",
+    a: "Non usare questo sito per le emergenze. In Italia chiama il 112 o rivolgiti ai servizi di emergenza.",
+  },
+  {
+    topic: "dati",
+    q: "Posso caricare il mio referto adesso?",
+    a: "No. Il sito è in fase dimostrativa e non accetta documenti reali: prima servono verifiche legali, di sicurezza e cliniche che non sono ancora concluse. Puoi però provare tutto il percorso con un referto inventato.",
+  },
+  {
+    topic: "dati",
+    q: "Posso caricare il referto di un familiare?",
+    a: "Quando il servizio sarà attivo, solo se sei autorizzato a farlo e nel rispetto delle condizioni previste per il trattamento dei suoi dati. Il servizio per i minori non è previsto nella prima versione.",
+  },
+  {
+    topic: "dati",
+    q: "Mi inviate il referto via email?",
+    a: "No. Le email contengono solo un avviso e un collegamento protetto alla tua area riservata, mai il contenuto del referto.",
+  },
+  {
+    topic: "medico",
+    q: "Chi sono i medici?",
+    a: "Medici abilitati e identificabili: prima di pagare leggi il nome di chi ti visita o ti risponde. Prima di attivare un medico controlliamo la sua iscrizione all'Albo. Nella versione dimostrativa orari, pagamenti e videoconsulti sono simulati: nessuna chiamata parte davvero.",
+  },
+  {
+    topic: "medico",
+    q: "Che differenza c'è tra videoconsulto e secondo parere?",
+    a: "Il videoconsulto è un colloquio con un medico di medicina generale: legge prima i documenti che scegli e ti orienta sul prossimo passo. Il secondo parere è di uno specialista, su una domanda precisa: esamina la documentazione, ne parlate in video e ricevi una sintesi scritta.",
+  },
+  {
+    topic: "medico",
+    q: "Come funziona il secondo parere?",
+    a: "È la prestazione di uno specialista abilitato, non una risposta automatica, su un quesito circoscritto. Lo specialista esamina i documenti, può chiedere integrazioni o non accettare il caso, senza addebito. Se lo accetta ne parlate in video e ricevi una sintesi scritta nei tempi concordati. Oggi si può provare solo nella demo, con dati inventati.",
+  },
+  {
+    topic: "medico",
+    q: "Dove arriva la visita a domicilio?",
+    a: "Partiamo da Brescia città come area pilota. Nella pagina del servizio inserisci comune e CAP: se non siamo ancora nella tua zona te lo diciamo subito e ti proponiamo un videoconsulto.",
+  },
+  {
+    topic: "pagamenti",
+    q: "Quanto costa?",
+    a: "I prezzi sono fissi: li trovi nella pagina Prezzi e su ogni scheda, e il totale lo vedi sempre prima di confermare. Per le prestazioni con un medico paghi solo dopo che il medico ha confermato. Oggi i pagamenti sono simulati: non si può acquistare nulla.",
+  },
+  {
+    topic: "pagamenti",
+    q: "C'è un abbonamento?",
+    a: "No. Paghi solo il servizio che scegli, una volta. Nessun abbonamento e nessun rinnovo automatico.",
+  },
+  {
+    topic: "pagamenti",
+    q: "Posso annullare una richiesta?",
+    a: "Sì. Finché il medico non ha confermato non c'è alcun addebito. Dopo la conferma valgono i termini che leggi nel riepilogo della richiesta, prima di pagare, e nella pagina Prezzi.",
+  },
+];
+
+/**
+ * 14/11/2026: senza medici (src/lib/medici.ts) restano le domande sul referto, sui dati e sui prezzi. Al posto delle
+ * quattro domande sui servizi con un medico ce n'è una sola, con la risposta vera: non ancora.
+ */
+const SENZA_MEDICI: FaqItem[] = [
+  ...FAQ_CON_MEDICI.filter((f) => f.topic !== "medico" && f.q !== "Posso annullare una richiesta?").map((f) =>
+    f.q === "Quanto costa?" ? { ...f, a: f.a.replace(" Per le prestazioni con un medico paghi solo dopo che il medico ha confermato.", "") } : f,
+  ),
+  {
+    topic: "medico",
+    q: "Posso parlare con un medico di Cura Privata?",
+    a: "Non ancora. Stiamo scegliendo i medici con cui lavorare: visita a domicilio, videoconsulto e secondo parere arriveranno dopo, e finché i contratti non sono firmati non li vendiamo. Intanto la spiegazione ti prepara a parlarne con il tuo medico, con le domande già pronte.",
+  },
+];
+
+// 22/11/2026: con la visita a domicilio spenta, via la sua domanda.
+export const FAQ: FaqItem[] = mediciEnabled() ? FAQ_CON_MEDICI.filter((f) => domicilioEnabled() || f.q !== "Dove arriva la visita a domicilio?") : SENZA_MEDICI;

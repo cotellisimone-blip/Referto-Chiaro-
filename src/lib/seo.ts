@@ -1,0 +1,119 @@
+/**
+ * Impostazioni SEO. L'indicizzazione è SPENTA finché i contenuti non hanno la revisione medica:
+ * `ENABLE_INDEXING="true"` (valore esatto) accende robots index, sitemap e canonical.
+ */
+export const SITE_URL = (process.env.PUBLIC_BASE_URL ?? "https://cura-privata.invalid").replace(/\/$/, "");
+
+export function indexingEnabled(env: Record<string, string | undefined> = process.env): boolean {
+  return env.ENABLE_INDEXING === "true";
+}
+
+export function absoluteUrl(path: string): string {
+  return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+/** JSON-LD serializzato in modo sicuro per l'inserimento in uno <script>. */
+export function jsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+export function breadcrumbLd(items: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, item: absoluteUrl(it.path) })),
+  };
+}
+
+/**
+ * Indicizzazione per pagina (ciclo 1). Anche con ENABLE_INDEXING acceso, i contenuti sanitari ancora in bozza
+ * (guide, glossario, Punto di Partenza) restano `noindex, follow` e fuori dalla sitemap finché un medico
+ * identificato non li ha revisionati. Le guide puramente pratiche, senza contenuto clinico, possono essere indicizzate.
+ */
+export const NON_CLINICAL_GUIDES: ReadonlySet<string> = new Set([
+  "fascicolo-sanitario-elettronico",
+  // 18/11/2026 (secondo giro, punto 18): cinque guide pratiche, senza contenuto clinico.
+  "copia-della-cartella-clinica",
+  "referti-online-e-per-email",
+  "fotografare-un-referto",
+  "conservare-i-referti",
+  "leggere-la-ricetta-classi-di-priorita",
+]);
+
+/** Il glossario non ha ancora una revisione medica registrata: resta fuori dagli indici. */
+export const GLOSSARY_REVIEWED = false;
+
+export const NOINDEX_DRAFT = { index: false, follow: true } as const;
+
+export function guideIndexable(g: { slug: string; reviewStatus: string }, env: Record<string, string | undefined> = process.env): boolean {
+  if (!indexingEnabled(env)) return false;
+  return NON_CLINICAL_GUIDES.has(g.slug) || g.reviewStatus !== "draft-needs-clinical-review";
+}
+
+export function glossaryIndexable(env: Record<string, string | undefined> = process.env): boolean {
+  return indexingEnabled(env) && GLOSSARY_REVIEWED;
+}
+
+/**
+ * Dati strutturati dell'organizzazione: SOLO con i dati veri del titolare (nome + P.IVA in configurazione).
+ * Senza, nessun JSON-LD: non si dichiara a Google un'entità che il sito non mostra.
+ */
+export function organizationLd(t: { name: string; vat: string; address?: string; email?: string } | null) {
+  if (!t) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Cura Privata",
+    legalName: t.name,
+    vatID: t.vat,
+    url: SITE_URL,
+    logo: absoluteUrl("/brand/logo-mark.svg"),
+    ...(t.address ? { address: t.address } : {}),
+    ...(t.email ? { email: t.email } : {}),
+  };
+}
+
+/** Le schede degli integratori sono bozze come le guide cliniche: fuori dagli indici finché non sono revisionate. */
+export function integratoreIndexable(i: { reviewStatus: string }, env: Record<string, string | undefined> = process.env): boolean {
+  return indexingEnabled(env) && i.reviewStatus !== "draft-needs-clinical-review";
+}
+
+/**
+ * Lunghezze che i motori mostrano per intero (17/11/2026, 20 interventi, punto 12). Il titolo conta con il suffisso
+ * « · Cura Privata» del modello in layout.tsx; tests/unit/seo.test.ts e tests/e2e/sito-intero.spec.ts le controllano.
+ */
+export const TITLE_MAX = 65;
+export const DESCRIPTION_MAX = 160;
+export const TITLE_SUFFIX = " · Cura Privata";
+
+/**
+ * Titolo di pagina: con il suffisso della marca se ci sta in TITLE_MAX, altrimenti da solo (i titoli lunghi delle
+ * guide dicono già tutto: meglio il titolo intero che la marca tagliata a metà).
+ */
+export function pageTitle(title: string): string | { absolute: string } {
+  return title.length + TITLE_SUFFIX.length <= TITLE_MAX ? title : { absolute: title };
+}
+
+/** Descrizione entro DESCRIPTION_MAX, tagliata a fine parola (mai a metà) con i puntini. */
+export function metaDescription(text: string, max = DESCRIPTION_MAX): string {
+  const t = text.replace(/\s+/g, " ").trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max - 1);
+  return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), 60)).replace(/[,;:.\s]+$/, "")}…`;
+}
+
+/**
+ * 18/11/2026 (secondo giro, punto 17): la data dell'ultima modifica vera delle pagine fisse. Prima la sitemap dichiarava
+ * «oggi» a ogni compilazione; i motori smettono di credere a una data che cambia sempre. Da aggiornare a mano quando
+ * cambiano i testi delle pagine (le guide hanno la loro data).
+ */
+export const PAGES_UPDATED = "2026-11-18";
+export const GLOSSARY_UPDATED = "2026-11-07";
+
+/**
+ * 22/11/2026, pagine per malattia: entrano negli indici solo quando un medico identificato le ha rivedute
+ * (`revisione.stato === "rivista"`, con nome, Ordine e data) e l'interruttore generale è acceso.
+ */
+export function malattiaIndexable(m: { revisione: { stato: string } }, env: Record<string, string | undefined> = process.env): boolean {
+  return indexingEnabled(env) && m.revisione.stato === "rivista";
+}

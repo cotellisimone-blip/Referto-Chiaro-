@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "1.0",
+  "documentId": "demo-referto-emocromo-002",
+  "documentKind": "laboratory-text-report",
+  "isSynthetic": true,
+  "language": "it",
+  "displayTitle": "Emocromo — esempio sintetico",
+  "laboratoryName": "Laboratorio Dimostrativo (struttura inesistente)",
+  "patientLabel": "Persona di esempio — nessuna persona reale",
+  "reportDate": "2026-09-12",
+  "pageCount": 1,
+  "extractionVersion": "extractor-fixture-v1",
+  "sourceLines": [
+    {
+      "page": 1,
+      "line": 1,
+      "text": "LABORATORIO DIMOSTRATIVO — FACSIMILE"
+    },
+    {
+      "page": 1,
+      "line": 2,
+      "text": "Paziente: PERSONA DI ESEMPIO   Data prelievo: 12/09/2026"
+    },
+    {
+      "page": 1,
+      "line": 3,
+      "text": "ESAME                         RISULTATO   UNITÀ    INTERVALLO"
+    },
+    {
+      "page": 1,
+      "line": 4,
+      "text": "Emoglobina                    13,8        g/dL     12,0 - 16,0"
+    },
+    {
+      "page": 1,
+      "line": 5,
+      "text": "Ematocrito                    41,2        %        36,0 - 46,0"
+    },
+    {
+      "page": 1,
+      "line": 6,
+      "text": "Globuli rossi (RBC)           4,62        x10^6/µL 3,80 - 5,20"
+    },
+    {
+      "page": 1,
+      "line": 7,
+      "text": "Globuli bianchi (WBC)         6,1         x10^3/µL 4,0 - 10,0"
+    },
+    {
+      "page": 1,
+      "line": 8,
+      "text": "Piastrine (PLT)               238         x10^3/µL 150 - 400"
+    },
+    {
+      "page": 1,
+      "line": 9,
+      "text": "MCV                           89          fL       80 - 99"
+    },
+    {
+      "page": 1,
+      "line": 10,
+      "text": "Ferritina                     18          ng/mL    20 - 200"
+    },
+    {
+      "page": 1,
+      "line": 11,
+      "text": "Documento dimostrativo. Valori inventati, nessun dato reale."
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-01",
+      "nameRaw": "Emoglobina",
+      "valueRaw": "13,8",
+      "unitRaw": "g/dL",
+      "referenceRaw": "12,0 - 16,0",
+      "sourcePage": 1,
+      "sourceLine": 4,
+      "sourceTextExact": "Emoglobina                    13,8        g/dL     12,0 - 16,0",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-02",
+      "nameRaw": "Ematocrito",
+      "valueRaw": "41,2",
+      "unitRaw": "%",
+      "referenceRaw": "36,0 - 46,0",
+      "sourcePage": 1,
+      "sourceLine": 5,
+      "sourceTextExact": "Ematocrito                    41,2        %        36,0 - 46,0",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-03",
+      "nameRaw": "Globuli rossi (RBC)",
+      "valueRaw": "4,62",
+      "unitRaw": "x10^6/µL",
+      "referenceRaw": "3,80 - 5,20",
+      "sourcePage": 1,
+      "sourceLine": 6,
+      "sourceTextExact": "Globuli rossi (RBC)           4,62        x10^6/µL 3,80 - 5,20",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-04",
+      "nameRaw": "Globuli bianchi (WBC)",
+      "valueRaw": "6,1",
+      "unitRaw": "x10^3/µL",
+      "referenceRaw": "4,0 - 10,0",
+      "sourcePage": 1,
+      "sourceLine": 7,
+      "sourceTextExact": "Globuli bianchi (WBC)         6,1         x10^3/µL 4,0 - 10,0",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-05",
+      "nameRaw": "Piastrine (PLT)",
+      "valueRaw": "238",
+      "unitRaw": "x10^3/µL",
+      "referenceRaw": "150 - 400",
+      "sourcePage": 1,
+      "sourceLine": 8,
+      "sourceTextExact": "Piastrine (PLT)               238         x10^3/µL 150 - 400",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-06",
+      "nameRaw": "MCV",
+      "valueRaw": "89",
+      "unitRaw": "fL",
+      "referenceRaw": "80 - 99",
+      "sourcePage": 1,
+      "sourceLine": 9,
+      "sourceTextExact": "MCV                           89          fL       80 - 99",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-07",
+      "nameRaw": "Ferritina",
+      "valueRaw": "18",
+      "unitRaw": "ng/mL",
+      "referenceRaw": "20 - 200",
+      "sourcePage": 1,
+      "sourceLine": 10,
+      "sourceTextExact": "Ferritina                     18          ng/mL    20 - 200",
+      "parseConfidence": "high",
+      "warnings": []
+    }
+  ],
+  "notice": "Questa è una simulazione con dati inventati. Nessun esame di una persona reale è stato elaborato. Gli intervalli fanno parte del facsimile e non sono valori di riferimento universali."
+}

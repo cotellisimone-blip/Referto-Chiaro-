@@ -1,0 +1,131 @@
+import type { NextConfig } from "next";
+import { CON_UN_MEDICO_HREF, DOCTOR_PATHS, DOMICILIO_PATHS, PARERE_HREF, PARERE_PATHS } from "./src/lib/medici";
+
+/**
+ * Intestazioni di sicurezza su tutte le rotte.
+ *
+ * Nota su `script-src 'unsafe-inline'`: le pagine sono statiche (Cache Components) e non possono
+ * usare nonce per richiesta; Next.js inietta script inline per l'idratazione. Finché non si passa
+ * a un rendering dinamico con nonce o a hash degli script, l'eccezione resta: è tracciata in
+ * docs/PRODUCTION_GATES.md.
+ */
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data:",
+  "connect-src 'self' https://api.stripe.com",
+  "frame-src https://checkout.stripe.com https://js.stripe.com",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self' https://checkout.stripe.com",
+  "frame-ancestors 'none'",
+  "upgrade-insecure-requests",
+].join("; ");
+
+const SECURITY_HEADERS = [
+  { key: "Content-Security-Policy", value: CSP },
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Permissions-Policy", value: 'camera=(), microphone=(), geolocation=(), payment=(self "https://checkout.stripe.com"), browsing-topics=()' },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+];
+
+const nextConfig: NextConfig = {
+  poweredByHeader: false,
+  /* config options here */
+  // Ciclo 2: una seconda build (profilo vetrina) può vivere accanto a quella standard, per i test e2e della vetrina.
+  ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
+  cacheComponents: true,
+  // Driver del database e PDF: restano moduli esterni, non vengono impacchettati nel bundle server.
+  serverExternalPackages: ["@electric-sql/pglite", "pg", "pdf-lib", "@pdf-lib/fontkit", "unpdf"],
+  // Lo schema SQL viene letto a runtime (migrazione idempotente): va incluso nelle funzioni serverless.
+  outputFileTracingIncludes: { "/**": ["./src/db/schema.sql", "./src/domain/reporting/fonts/**"] },
+  partialPrefetching: true,
+  // 13/11/2026: l'interruttore dei servizi con un medico arriva anche al browser (vedi src/lib/medici.ts).
+  // 17/11/2026: anche il profilo vetrina arriva al browser, per l'azione della testata (src/components/site/nav.ts).
+  env: {
+    NEXT_PUBLIC_ENABLE_MEDICI: process.env.ENABLE_MEDICI === "true" ? "true" : "false",
+    // 19/11/2026: il secondo parere ha il suo interruttore (serve uno specialista), vedi src/lib/medici.ts.
+    NEXT_PUBLIC_ENABLE_SECONDO_PARERE: process.env.ENABLE_MEDICI === "true" && process.env.ENABLE_SECONDO_PARERE === "true" ? "true" : "false",
+    // 22/11/2026: la visita a domicilio ha il suo interruttore, spento per decisione di Simone (vedi src/lib/medici.ts).
+    NEXT_PUBLIC_ENABLE_DOMICILIO: process.env.ENABLE_MEDICI === "true" && process.env.ENABLE_DOMICILIO === "true" ? "true" : "false",
+    // 22/11/2026: prodotti di esempio dello Scaffale (solo per provare la grafica); SCAFFALE_ESEMPI=false li spegne.
+    NEXT_PUBLIC_SCAFFALE_ESEMPI: process.env.SCAFFALE_ESEMPI === "false" ? "false" : "true",
+    NEXT_PUBLIC_VETRINA: process.env.SITE_PROFILE?.trim().toLowerCase() === "vetrina" ? "true" : "false",
+  },
+  /** Vecchi indirizzi di Referto Chiaro → nuova mappa del sito Cura Privata (redirect permanenti interni). */
+  async redirects() {
+    const moved: [string, string][] = [
+      ["/esempio", "/referti/esempio"],
+      // 18/11/2026 (terzo giro, punto 3): l'elenco dei referti è la pagina dell'area; questo indirizzo dava «pagina non trovata».
+      ["/area-personale/documenti", "/area-personale"],
+      ["/secondo-parere", "/servizi/secondo-parere"],
+      ["/servizi-prezzi", "/servizi"],
+      ["/servizi/visite-e-consulti", "/servizi/parla-con-un-medico"],
+      ["/videoconsulto", "/servizi/parla-con-un-medico"],
+      ["/faq", "/domande-frequenti"],
+      ["/sicurezza", "/sicurezza-e-privacy"],
+      ["/privacy", "/privacy-policy"],
+      ["/cookie", "/cookie-policy"],
+      ["/referti/come-funziona", "/come-funziona"],
+      // 13/11/2026: l'archivio «in preparazione» è diventato Famiglia e salute nel tempo.
+      ["/servizi/archivio", "/famiglia"],
+      // 15/11/2026 sera: da due a tre sezioni (Prevenzione, Lettura referti, Medici).
+      ["/online", "/prevenzione"],
+      ["/a-domicilio", "/medici"],
+      // 17/11/2026 (20 interventi, punto 1): una pagina per ogni cosa. Le pagine nate prima delle tre sezioni confluiscono lì.
+      ["/referti", "/lettura-referti"],
+      ["/servizi/prevenzione", "/prevenzione"],
+      ["/con-un-medico", "/medici"],
+      // 22/11/2026: il sonno esce da Malattie ed entra nel passo 5, «Prenditi cura di te».
+      ["/malattie/sonno", "/prenditi-cura-di-te/sonno"],
+    ];
+    return [
+      ...moved.map(([source, destination]) => ({ source, destination, permanent: true })),
+      // 14/11/2026: i tre modelli di home del 13/11 erano bozze da scegliere; scelta fatta, portano alla home.
+      { source: "/modelli-home", destination: "/", permanent: false },
+      { source: "/modelli-home/:path*", destination: "/", permanent: false },
+      { source: "/malattie/sonno/:argomento", destination: "/prenditi-cura-di-te/sonno/:argomento", permanent: true },
+      { source: "/area", destination: "/area-personale", permanent: true },
+      // 22/11/2026: visita a domicilio spenta (interruttore ENABLE_DOMICILIO): i suoi indirizzi portano alla pagina Medici.
+      ...(process.env.ENABLE_MEDICI === "true" && process.env.ENABLE_DOMICILIO !== "true"
+        ? DOMICILIO_PATHS.flatMap((p) => [
+            { source: p, destination: CON_UN_MEDICO_HREF, permanent: false },
+            { source: `${p}/:path*`, destination: CON_UN_MEDICO_HREF, permanent: false },
+          ])
+        : []),
+      { source: "/area/:path*", destination: "/area-personale/:path*", permanent: true },
+      // 13/11/2026: con i medici spenti (ENABLE_MEDICI diverso da "true") le loro pagine portano al blocco «Presto anche
+      // con un medico» della sezione Medici. Redirect temporanei: riaccendendo l'interruttore tornano le pagine di prima.
+      // 17/11/2026: spenti, anche l'elenco «I servizi» (che presentava i quattro servizi) porta alle tre sezioni della home.
+      ...(process.env.ENABLE_MEDICI === "true"
+        ? process.env.ENABLE_SECONDO_PARERE === "true"
+          ? []
+          : PARERE_PATHS.flatMap((p) => [
+              { source: p, destination: PARERE_HREF, permanent: false },
+              { source: `${p}/:path*`, destination: PARERE_HREF, permanent: false },
+            ])
+        : [{ source: "/servizi", destination: "/", permanent: false }, ...DOCTOR_PATHS.flatMap((p) => [
+            { source: p, destination: CON_UN_MEDICO_HREF, permanent: false },
+            { source: `${p}/:path*`, destination: CON_UN_MEDICO_HREF, permanent: false },
+          ])]),
+    ];
+  },
+  async headers() {
+    return [{ source: "/(.*)", headers: SECURITY_HEADERS }];
+  },
+  turbopack: {
+    rules: {
+      "*.css": {
+        loaders: ["@tailwindcss/turbopack"],
+        as: "*.css",
+      },
+    },
+  },
+};
+
+export default nextConfig;

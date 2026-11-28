@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "1.0",
+  "documentId": "demo-storico-io-2024",
+  "documentKind": "laboratory-text-report",
+  "isSynthetic": true,
+  "language": "it",
+  "displayTitle": "Controllo annuale 2024 — esempio sintetico",
+  "laboratoryName": "Laboratorio Dimostrativo (struttura inesistente)",
+  "patientLabel": "Persona di esempio — nessuna persona reale",
+  "reportDate": "2024-11-08",
+  "pageCount": 1,
+  "extractionVersion": "extractor-fixture-v1",
+  "sourceLines": [
+    {
+      "page": 1,
+      "line": 1,
+      "text": "LABORATORIO DIMOSTRATIVO — FACSIMILE"
+    },
+    {
+      "page": 1,
+      "line": 2,
+      "text": "Paziente: PERSONA DI ESEMPIO   Data prelievo: 08/11/2024"
+    },
+    {
+      "page": 1,
+      "line": 3,
+      "text": "ESAME                         RISULTATO   UNITÀ    INTERVALLO"
+    },
+    {
+      "page": 1,
+      "line": 4,
+      "text": "Glicemia                      89          mg/dL    70 - 99"
+    },
+    {
+      "page": 1,
+      "line": 5,
+      "text": "Emoglobina glicata (HbA1c)    5,0         %        4,0 - 5,6"
+    },
+    {
+      "page": 1,
+      "line": 6,
+      "text": "Colesterolo totale            192         mg/dL    < 200"
+    },
+    {
+      "page": 1,
+      "line": 7,
+      "text": "Colesterolo LDL               121         mg/dL    < 115"
+    },
+    {
+      "page": 1,
+      "line": 8,
+      "text": "Colesterolo HDL               51          mg/dL    > 40"
+    },
+    {
+      "page": 1,
+      "line": 9,
+      "text": "Trigliceridi                  121         mg/dL    < 150"
+    },
+    {
+      "page": 1,
+      "line": 10,
+      "text": "Creatinina                    0,86        mg/dL    0,70 - 1,20"
+    },
+    {
+      "page": 1,
+      "line": 11,
+      "text": "Documento dimostrativo. Valori inventati, nessun dato reale."
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-01",
+      "nameRaw": "Glicemia",
+      "valueRaw": "89",
+      "unitRaw": "mg/dL",
+      "referenceRaw": "70 - 99",
+      "sourcePage": 1,
+      "sourceLine": 4,
+      "sourceTextExact": "Glicemia                      89          mg/dL    70 - 99",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-02",
+      "nameRaw": "Emoglobina glicata (HbA1c)",
+      "valueRaw": "5,0",
+      "unitRaw": "%",
+      "referenceRaw": "4,0 - 5,6",
+      "sourcePage": 1,
+      "sourceLine": 5,
+      "sourceTextExact": "Emoglobina glicata (HbA1c)    5,0         %        4,0 - 5,6",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-03",
+      "nameRaw": "Colesterolo totale",
+      "valueRaw": "192",
+      "unitRaw": "mg/dL",
+      "referenceRaw": "< 200",
+      "sourcePage": 1,
+      "sourceLine": 6,
+      "sourceTextExact": "Colesterolo totale            192         mg/dL    < 200",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-04",
+      "nameRaw": "Colesterolo LDL",
+      "valueRaw": "121",
+      "unitRaw": "mg/dL",
+      "referenceRaw": "< 115",
+      "sourcePage": 1,
+      "sourceLine": 7,
+      "sourceTextExact": "Colesterolo LDL               121         mg/dL    < 115",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-05",
+      "nameRaw": "Colesterolo HDL",
+      "valueRaw": "51",
+      "unitRaw": "mg/dL",
+      "referenceRaw": "> 40",
+      "sourcePage": 1,
+      "sourceLine": 8,
+      "sourceTextExact": "Colesterolo HDL               51          mg/dL    > 40",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-06",
+      "nameRaw": "Trigliceridi",
+      "valueRaw": "121",
+      "unitRaw": "mg/dL",
+      "referenceRaw": "< 150",
+      "sourcePage": 1,
+      "sourceLine": 9,
+      "sourceTextExact": "Trigliceridi                  121         mg/dL    < 150",
+      "parseConfidence": "high",
+      "warnings": []
+    },
+    {
+      "id": "obs-07",
+      "nameRaw": "Creatinina",
+      "valueRaw": "0,86",
+      "unitRaw": "mg/dL",
+      "referenceRaw": "0,70 - 1,20",
+      "sourcePage": 1,
+      "sourceLine": 10,
+      "sourceTextExact": "Creatinina                    0,86        mg/dL    0,70 - 1,20",
+      "parseConfidence": "high",
+      "warnings": []
+    }
+  ],
+  "notice": "Questa è una simulazione con dati inventati. Nessun esame di una persona reale è stato elaborato. Gli intervalli fanno parte del facsimile e non sono valori di riferimento universali."
+}

@@ -1,0 +1,360 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { CalendarioArrivo, MappaPassi } from "@/components/wow/medici-art";
+import { ArrowRight, Check, CircleAlert, FileText, FlaskConical, MapPin } from "lucide-react";
+import { Photo } from "@/components/ui/photo";
+import { ILLUSTRATIVE_PHOTOS, SHOW_ILLUSTRATIVE_PHOTOS } from "@/content/media";
+import { WaitlistForm } from "@/components/site/waitlist-form";
+import { CoverageCheck } from "@/components/prestazioni/public";
+import { EmergencyNumbers } from "@/components/prestazioni/ui";
+import { MediciRete } from "@/components/sezioni/medici";
+import { MiniVisita, REFERTI_HREF, ServiziMedico, StatoDomicilio, PercorsoSezioni } from "@/components/sezioni/parts";
+import { PRESTAZIONI, prestazionePrice } from "@/domain/prestazioni/listino";
+import { PRICE_NOTE, publicPricesEnabled } from "@/domain/offerta";
+import { domicilioEnabled, mediciEnabled, secondoParereEnabled } from "@/lib/medici";
+import { readFlags } from "@/lib/feature-flags";
+import { nomiMedici } from "@/content/medici";
+import "@/components/sezioni/tre-momenti.css";
+import "@/components/sezioni/sezioni.css";
+import { PageLd } from "@/components/site/page-ld";
+
+export const metadata: Metadata = {
+  title: domicilioEnabled() ? "Medici: in video, a casa o per un secondo parere" : "Un medico, in video o per un secondo parere",
+  description: domicilioEnabled()
+    ? "Videoconsulto, visita a casa con un medico di medicina generale (si parte da Brescia città) e secondo parere di uno specialista. Per esigenze non urgenti."
+    : mediciEnabled()
+      ? "Videoconsulto con un medico di medicina generale e secondo parere di uno specialista. Per esigenze non urgenti."
+      : "In arrivo: videoconsulto con un medico di medicina generale e secondo parere di uno specialista. Lascia l'email: ti avvisiamo quando parte.",
+  alternates: { canonical: "/medici" },
+};
+
+const NOT_FOR = [
+  "Emergenze: chiama il 112.",
+  "Continuità assistenziale pubblica (ex guardia medica): chiama il 116117 negli orari previsti.",
+  "Certificati di malattia e ricette del Servizio sanitario: per quelli resta il tuo medico di famiglia.",
+];
+
+/**
+ * Sezione 3 «Medici» (15/11/2026, prima «A domicilio»; Simone la sera stessa: prevenzione, lettura referti e medici
+ * sono tre sezioni separate). Accesi i medici (src/lib/medici.ts): i tre medici veri (19/11/2026: Sara, Elena e
+ * Riccardo, a Brescia, con i dati che mancano segnati «da completare»), il percorso in quattro schermate, i servizi con
+ * il prezzo, la verifica del CAP e la prova a tre ruoli.
+ * Spenti: «In arrivo», niente medici né prezzi, la stessa spiegazione e la lista d'attesa.
+ */
+export default function MediciPage() {
+  const attivo = mediciEnabled();
+  const prices = publicPricesEnabled();
+  // 22/11/2026: la visita a domicilio è spenta (Simone); la pagina presenta il videoconsulto e il secondo parere.
+  const dom = domicilioEnabled();
+  const info = dom ? PRESTAZIONI.domicilio : PRESTAZIONI.video;
+  const main = dom ? "domicilio" : "video";
+  const demo = readFlags().demoMode;
+  return (
+    <div className="tm ds">
+      <PageLd path="/medici" meta={metadata} name="Medici" />
+      <section className="ds-ph ds-ph-3" aria-labelledby="dom-titolo">
+        <div className="tm-wrap">
+          <PercorsoSezioni current={4} />
+        </div>
+        <div className="tm-wrap ds-ph-g">
+          <div>
+            <p className="ds-sec-tag ds-sec-tag-3">
+              <span>4</span> Un medico <StatoDomicilio attivo={attivo} dark />
+            </p>
+            <h1 id="dom-titolo">
+              Un medico, <em>quando serve.</em>
+            </h1>
+            <p className="tm-lead">
+              {dom
+                ? "In video, a casa tua o di un familiare, oppure un secondo parere di uno specialista. Per esigenze non urgenti; la visita a casa parte da Brescia città."
+                : attivo
+                  ? `Un medico di medicina generale in video, con i tuoi referti già letti. Oppure il secondo parere di uno specialista${secondoParereEnabled() ? "" : ", in arrivo"}. Per esigenze non urgenti.`
+                  : "Un medico di medicina generale in video, oppure il secondo parere di uno specialista. Lo stiamo preparando."}
+            </p>
+            <div className="ds-ph-buy">
+              {attivo && prices ? (
+                <p className="ds-price">
+                  <b>{prestazionePrice(main)}</b>
+                  <span>{dom ? "visita a casa, prezzo fisso" : "videoconsulto, 20–25 minuti"}</span>
+                </p>
+              ) : null}
+              {attivo ? (
+                <Link href={info.startHref} className="tm-btn tm-btn-mint" data-track={dom ? "cta-domicilio" : "cta-video"}>
+                  {dom ? "Richiedi la visita" : "Prenota il videoconsulto"} <ArrowRight aria-hidden className="tm-ic" />
+                </Link>
+              ) : (
+                <a href="#avvisami" className="tm-btn tm-btn-mint" data-track="cta-avvisami">
+                  Avvisami quando parte <ArrowRight aria-hidden className="tm-ic" />
+                </a>
+              )}
+            </div>
+            <p className="tm-fine">{attivo ? (dom ? "Paghi solo dopo che il medico ha confermato l’orario." : "Il prezzo lo vedi prima di confermare.") : "Non è ancora attivo: oggi non si prenota e non si paga nulla."} Per un’emergenza chiama il 112.</p>
+          </div>
+          <div className="ds-ph-art">
+            {SHOW_ILLUSTRATIVE_PHOTOS ? (
+              <figure className="ds-ph-photo ds-ph-photo-scrivania">
+                <Photo photo={ILLUSTRATIVE_PHOTOS.scrivania} sizes="(min-width: 821px) 44vw, 100vw" priority />
+                <figcaption className="tm-illus">Immagine illustrativa</figcaption>
+              </figure>
+            ) : null}
+            <MiniVisita attivo={attivo} />
+          </div>
+        </div>
+      </section>
+
+      {attivo && demo ? (
+        <div className="ds-provabar" role="note">
+          <div className="tm-wrap">
+            <FlaskConical aria-hidden className="tm-ic" />
+            <p>
+              <b>Versione dimostrativa.</b> {dom ? "I medici sono veri, ma qui fasce, pagamenti e visite sono simulati: nessuno verrà davvero e nessun addebito parte." : "I medici sono veri, ma qui fasce, pagamenti e videoconsulti sono simulati: nessuna chiamata parte davvero e nessun addebito."}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      <section className="ds-sec-light" aria-labelledby="dom-modi">
+        <div className="tm-wrap">
+          <div className="tm-sec-h">
+            <div>
+              <p className="tm-kicker">{dom ? "Tre modi" : "Due modi"}</p>
+              <h2 id="dom-modi">
+                {dom ? (
+                  <>
+                    A casa, in video <em>o con uno specialista.</em>
+                  </>
+                ) : (
+                  <>
+                    In video, <em>o con uno specialista.</em>
+                  </>
+                )}
+              </h2>
+            </div>
+            <p>
+              {!dom
+                ? "Il videoconsulto quando vuoi parlarne con un medico. Il secondo parere per un dubbio su una diagnosi o su esami già fatti."
+                : attivo
+                ? "Il medico a casa quando serve una visita di persona. Il videoconsulto quando basta parlarsi. Il secondo parere per un dubbio su esami già fatti."
+                : "Ci sarà il medico a casa quando serve una visita di persona, il videoconsulto quando basta parlarsi, il secondo parere per un dubbio su esami già fatti."}
+            </p>
+          </div>
+          <ServiziMedico prices={prices} attivo={attivo} onSection />
+          {attivo && prices ? <p className="tm-note">{PRICE_NOTE}</p> : null}
+        </div>
+      </section>
+
+      <section className="ds-sec-light ds-sec-alt" aria-labelledby="dom-medici">
+        <div className="tm-wrap">
+          <div className="tm-sec-h">
+            <div>
+              <p className="tm-kicker">I medici</p>
+              <h2 id="dom-medici">
+                {attivo ? <>Tre medici di medicina generale, <em>a Brescia.</em></> : <>Medici con nome e cognome, <em>prima di scegliere.</em></>}
+              </h2>
+            </div>
+            <p>
+              {attivo
+                ? `${nomiMedici()}: medici di medicina generale a Brescia${dom ? "" : ", in video ovunque tu sia"}. Ognuno ha la sua scheda; cognome e iscrizione all’Ordine compaiono qui appena completati, e li leggi sempre prima di pagare.`
+                : "Lavoreremo solo con medici iscritti all’Ordine e verificati, ciascuno con la sua scheda: nome, iscrizione, zona e che cosa fa. Li presenteremo quando avremo i contratti firmati."}
+            </p>
+          </div>
+          {attivo ? (
+            <div className="ds-light-docs">
+              <MediciRete />
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      {dom ? (
+        <>
+      <section className="ds-sec-light" aria-labelledby="dom-come">
+        <div className="tm-wrap">
+          <div className="tm-sec-h">
+            <div>
+              <p className="tm-kicker">{attivo ? "La visita a casa, passo per passo" : "Come funzionerà la visita a casa"}</p>
+              <h2 id="dom-come">
+                Quattro passi, <em>{attivo ? "e sai sempre a che punto sei." : "e saprai sempre a che punto sei."}</em>
+              </h2>
+            </div>
+            <p>
+              {attivo
+                ? "Non paghi nulla quando invii la richiesta. Paghi solo quando vedi nome del medico, orario confermato, indirizzo e prezzo totale."
+                : "Non pagherai nulla all’invio della richiesta: solo quando vedrai nome del medico, orario confermato, indirizzo e prezzo totale."}
+            </p>
+          </div>
+          <MappaPassi />
+          <ol className="ds-flow">
+            <li>
+              <div className="ds-flow-scr" aria-hidden>
+                <p className="ds-f-k">Dove si svolge la visita?</p>
+                <div className="ds-f-in">
+                  <i>Brescia</i>
+                  <i>25122</i>
+                </div>
+                <p className="ds-f-ok">
+                  <Check className="tm-ic" /> Arriviamo da te
+                </p>
+                <span className="ds-f-btn">Vedi le fasce libere</span>
+              </div>
+              <b className="ds-flow-t">
+                <span>1</span> {attivo ? "Scrivi comune e CAP" : "Scriverai comune e CAP"}
+              </b>
+              <p>{attivo ? "Sai subito se arriviamo da te. Se no, te lo diciamo e ti proponiamo un videoconsulto." : "Saprai subito se arriviamo da te. Se no, te lo diremo e ti proporremo un videoconsulto."}</p>
+            </li>
+            <li>
+              <div className="ds-flow-scr" aria-hidden>
+                <p className="ds-f-k">Scegli una fascia</p>
+                <p className="ds-f-day">Domani</p>
+                <div className="ds-f-slots">
+                  <i>9:00</i>
+                  <i className="on">10:00</i>
+                  <i>11:00</i>
+                  <i>14:00</i>
+                  <i>15:00</i>
+                  <i>16:00</i>
+                </div>
+                <p className="ds-f-day">Giovedì</p>
+                <div className="ds-f-slots">
+                  <i>9:00</i>
+                  <i>11:00</i>
+                  <i>15:00</i>
+                </div>
+              </div>
+              <b className="ds-flow-t">
+                <span>2</span> {attivo ? "Scegli una fascia" : "Sceglierai una fascia"}
+              </b>
+              <p>{attivo ? "Vedi solo gli orari davvero liberi. È una richiesta: il medico la conferma o te ne propone un’altra." : "Vedrai solo gli orari davvero liberi. Sarà una richiesta: il medico la confermerà o te ne proporrà un’altra."}</p>
+            </li>
+            <li>
+              <div className="ds-flow-scr" aria-hidden>
+                <p className="ds-f-k">Il medico ha confermato</p>
+                <div className="ds-f-doc">
+                  <span className="ds-av ds-av-teal">
+                    MG
+                    <i className="ds-av-on" />
+                  </span>
+                  <b>Il tuo medico</b>
+                </div>
+                <p className="ds-f-row">
+                  Quando <b>Domani, 10:00</b>
+                </p>
+                <p className="ds-f-row">
+                  Dove <b>Via di Prova 1</b>
+                </p>
+                <p className="ds-f-row">
+                  Totale <b>{attivo && prices ? prestazionePrice("domicilio") : "prezzo fisso"}</b>
+                </p>
+                <span className="ds-f-btn">Conferma e paga</span>
+              </div>
+              <b className="ds-flow-t">
+                <span>3</span> {attivo ? "Confermi quando sai tutto" : "Confermerai quando saprai tutto"}
+              </b>
+              <p>{attivo ? "Nome, orario, indirizzo e prezzo: li vedi prima di pagare. Puoi ancora annullare." : "Nome, orario, indirizzo e prezzo: li vedrai prima di pagare. Potrai ancora annullare."}</p>
+            </li>
+            <li>
+              <div className="ds-flow-scr" aria-hidden>
+                <p className="ds-f-k">Riepilogo della visita</p>
+                <p className="ds-f-sum">«Visitato a domicilio per tosse da tre giorni, senza febbre. Indicazioni date a voce e per iscritto.»</p>
+                <p className="ds-f-next">
+                  <small>Prossimo passo</small>
+                  Sentire il medico di famiglia se non migliora in una settimana.
+                </p>
+              </div>
+              <b className="ds-flow-t">
+                <span>4</span> Visita e riepilogo scritto
+              </b>
+              <p>{attivo ? "Circa 45 minuti a casa. Poi trovi il riepilogo nella tua richiesta, da stampare o mostrare al tuo medico." : "Circa 45 minuti a casa. Poi troverai il riepilogo nella tua richiesta, da stampare o mostrare al tuo medico."}</p>
+            </li>
+          </ol>
+          <p className="tm-note">{attivo ? "Le schermate sono un esempio, con dati inventati." : "Le schermate mostrano come sarà, con dati inventati."}</p>
+        </div>
+      </section>
+
+        </>
+      ) : null}
+
+      {attivo && dom ? (
+        <section id="copertura" className="ds-sec-light ds-sec-alt" aria-labelledby="dom-dove">
+          <div className="tm-wrap ds-ph-g ds-g-even">
+            <div>
+              <p className="tm-kicker">
+                <MapPin aria-hidden className="tm-ic" /> Area pilota
+              </p>
+              <h2 id="dom-dove">
+                Dove arriviamo: <em>Brescia città.</em>
+              </h2>
+              <p className="tm-lead">Allarghiamo la zona solo quando abbiamo abbastanza medici per garantire le fasce che mostriamo.</p>
+            </div>
+            <div className="ds-cov">
+              <CoverageCheck />
+              <EmergencyNumbers />
+            </div>
+          </div>
+        </section>
+      ) : attivo ? null : (
+        <section id="avvisami" className="ds-sec-light ds-sec-alt" aria-labelledby="dom-avvisami">
+          <div className="tm-wrap ds-ph-g ds-g-even">
+            <div>
+              <CalendarioArrivo />
+              <p className="tm-kicker mt-4">Lista d’attesa</p>
+              <h2 id="dom-avvisami">
+                Avvisami <em>quando parte.</em>
+              </h2>
+              <p className="tm-lead">Il servizio non è ancora attivo. Lascia la tua email: ti scriviamo quando si può prenotare il videoconsulto.</p>
+            </div>
+            <div className="ds-cov">
+              {/* 22/11/2026: senza visita a domicilio la zona non serve più: il CAP è facoltativo. */}
+              <WaitlistForm interest="visite" />
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="ds-sec-light" aria-labelledby="dom-non">
+        <div className="tm-wrap">
+          <div className="ds-rule">
+            <CircleAlert aria-hidden className="tm-ic" />
+            <div>
+              <h2 id="dom-non">Quando non è la strada giusta</h2>
+              <ul>
+                {NOT_FOR.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          {attivo ? (
+            <div className="ds-sec-end">
+              <Link href={info.startHref} className="tm-btn tm-btn-ink" data-track={dom ? "cta-domicilio" : "cta-video"}>
+                {dom ? "Richiedi la visita" : "Prenota il videoconsulto"} <ArrowRight aria-hidden className="tm-ic" />
+              </Link>
+              <Link href="/prova" className="tm-btn tm-btn-line">
+                Prova il percorso completo
+              </Link>
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      <section className="ds-bridge" aria-labelledby="dom-ponte">
+        <div className="tm-wrap">
+          <Link href={REFERTI_HREF} className="ds-bridge-a ds-bridge-2">
+            <span className="ds-door-ic" aria-hidden>
+              <FileText className="tm-ic" />
+            </span>
+            <span>
+              <span className="ds-sec-tag ds-sec-tag-2">
+                <span>3</span> Capisci il referto
+              </span>
+              <span id="dom-ponte" className="ds-bridge-t">
+                Prima o dopo la visita: il tuo referto spiegato in parole semplici.
+              </span>
+            </span>
+            <ArrowRight aria-hidden className="tm-ic ds-bridge-go" />
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}
