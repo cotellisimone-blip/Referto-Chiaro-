@@ -142,12 +142,11 @@ export default function PrezziPage() {
         <div className="container-rc">
           {/* 27/11/2026 (fase 6, esperto dei testi: «Prezzi come pagina di decisione»): prima di tutto, da che cosa parti.
               Ogni situazione ha una risposta sola, con il suo prezzo e il pulsante giusto. */}
-          <section aria-labelledby="prezzi-scegli" className="mb-10 sm:mb-14" data-testid="prezzi-scegli">
+          <section aria-labelledby="prezzi-scegli" className="mb-8 sm:mb-14" data-testid="prezzi-scegli">
             <h2 id="prezzi-scegli" className="display-lg max-w-3xl">
               Che cosa ti serve?
             </h2>
-            <p className="mt-3 max-w-2xl text-[1.0625rem] text-ink-soft">Scegli la frase che ti somiglia di più: accanto c’è che cosa fa per te e quanto costa.</p>
-            <ul className="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-5">
+            <ul className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-5">
               {scelte.map((x) => (
                 <li key={x.chi} className="tile-card" data-scelta={x.id}>
                   <div className="min-w-0">
@@ -155,7 +154,8 @@ export default function PrezziPage() {
                     <p className="tile-card-text">
                       <b>{x.cosa}</b> · {x.prezzo}
                     </p>
-                    <p className="tile-card-text">{x.nota}</p>
+                    {/* Su telefono la pagina resta sotto le 7 schermate: la nota si legge da computer e nella pagina di arrivo. */}
+                    <p className="tile-card-text hidden sm:block">{x.nota}</p>
                     <Link href={x.href} className="link mt-2 inline-flex min-h-11 items-center font-semibold">
                       {x.azione} <ArrowRight aria-hidden className="ml-1 h-4 w-4" />
                     </Link>
@@ -164,7 +164,8 @@ export default function PrezziPage() {
               ))}
             </ul>
             <p className="mt-5 max-w-3xl text-[1.0625rem] text-ink-soft">
-              Stai male adesso? Non è un caso per noi: chiama il 112. Di notte e nei festivi, per un consiglio, la guardia medica (116117 in Lombardia e in molte regioni).
+              Stai male adesso? Non è un caso per noi: chiama il 112.
+              <span className="hidden sm:inline"> Di notte e nei festivi, per un consiglio, la guardia medica (116117 in Lombardia e in molte regioni).</span>
             </p>
           </section>
           {/* 22/11/2026 (analisi di chiarezza, punti 24 e 29): prima di tutto, che cosa è gratis e che cosa si paga. */}
